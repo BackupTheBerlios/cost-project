@@ -1,7 +1,10 @@
-		CHANGES IN COSTcore VERSION 0.0
+		CHANGES IN COSTcore VERSION 0.0-1
 
 NEW FEATURES
-    o
+    o S4 class for CS data "csData"
+    o S4 class for LS data "lsData"
+    o S4 class for ES data "esData"
+        
 USER-VISIBLE CHANGES
 BUG FIXES
 UTILITIES
