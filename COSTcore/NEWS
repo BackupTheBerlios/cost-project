@@ -2,8 +2,8 @@
 
 NEW FEATURES
     o S4 class for CS data "csData"
-    o S4 class for LS data "lsData"
-    o S4 class for ES data "esData"
+    o S4 class for LS data "clData"
+    o S4 class for ES data "ceData"
         
 USER-VISIBLE CHANGES
 BUG FIXES

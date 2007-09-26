@@ -2,8 +2,8 @@
 import("methods")
 #export()
 exportClasses(
-	"esData",
-	"lsData",
+	"ceData",
+	"clData",
 	"csData"
 )
 #exportMethods()
