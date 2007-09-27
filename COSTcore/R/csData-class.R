@@ -24,6 +24,14 @@
 # class = cls
 # otolith = oto
 
+#===================================
+#
+# Data hierarchy
+# tr --> hh --> sl --> hl
+# tr --> ca
+#  
+#===================================
+
 setClass("csData",
 	representation(
 		desc="character",
@@ -145,3 +153,122 @@ setClass("csData",
 			fishId=NA) # PK 
 	)
 )
+
+#===================================
+# A set of methods to check names in tables 
+#===================================
+
+# TR
+setGeneric("checkTRnms", function(object, ...){
+	standardGeneric("checkTRnms")
+	}
+)
+
+setMethod("checkTRnms", signature(object="data.frame"), function(object, ...){
+	nms <- names(object)
+	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "VESSEL_LENGTH", "VESSEL_POWER", "VESSEL_SIZE", "VESSEL_TYPE", "NUMBER_HAULS_SETS", "DAYS_AT_SEA", "VESSEL_ID", "SAMPLING_COUNTRY", "SAMPLING_METHOD")
+	lrnms <- length(rnms)
+	if(length(nms)!=lrnms) stop("Table \"tr\" must have the following names:\n", paste(rnms, collapse=", "))
+	if(sum(nms %in% rnms)!=lrnms) stop("Table \"tr\" must have the following names:\n", paste(rnms, collapse=", "))
+})
+
+# HH
+setGeneric("checkHHnms", function(object, ...){
+	standardGeneric("checkHHnms")
+	}
+)
+
+setMethod("checkHHnms", signature(object="data.frame"), function(object, ...){
+	nms <- names(object)
+	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "HAUL_VALIDITY", "AGGREGATION_LEVEL", "DATE", "TIME_SHOT", "FISHING_TIME", "POS_START_LAT_DEC", "POS_START_LON_DEC", "POS_STOP_LAT_DEC", "POS_STOP_LON_DEC", "AREA", "RECTANGLE", "MAIN_FISHING_DEPTH", "MAIN_WATER_DEPTH", "FISHING_ACTIVITY_NAT", "FISHING_ACTIVITY_EU_L5", "FISHING_ACTIVITY_EU_L6", "GEAR", "MESH_SIZE", "SELECTION_DEVICE", "MESH_SIZE_IN_SEL_DEV")
+	lrnms <- length(rnms)
+	if(length(nms)!=lrnms) stop("Table \"hh\" must have the following names:\n", paste(rnms, collapse=", "))
+	if(sum(nms %in% rnms)!=lrnms) stop("Table \"hh\" must have the following names:\n", paste(rnms, collapse=", "))
+})
+
+# SL
+setGeneric("checkSLnms", function(object, ...){
+	standardGeneric("checkSLnms")
+	}
+)
+
+setMethod("checkSLnms", signature(object="data.frame"), function(object, ...){
+	nms <- names(object)
+	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "SEX", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "SUBSAMPLING_CATEGORY", "VALIDITY_CODE", "WEIGHT", "SUBSAMPLE_WEIGHT", "LENGTH_CODE")
+	lrnms <- length(rnms)
+	if(length(nms)!=lrnms) stop("Table \"sl\" must have the following names:\n", paste(rnms, collapse=", "))
+	if(sum(nms %in% rnms)!=lrnms) stop("Table \"sl\" must have the following names:\n", paste(rnms, collapse=", "))
+})
+
+# HL
+setGeneric("checkHLnms", function(object, ...){
+	standardGeneric("checkHLnms")
+	}
+)
+
+setMethod("checkHLnms", signature(object="data.frame"), function(object, ...){
+	nms <- names(object)
+	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "SEX", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "SUBSAMPLING_CATEGORY", "LENGTH_CLASS", "NUMBER_AT_LENGTH")
+	lrnms <- length(rnms)
+	if(length(nms)!=lrnms) stop("Table \"hl\" must have the following names:\n", paste(rnms, collapse=", "))
+	if(sum(nms %in% rnms)!=lrnms) stop("Table \"hl\" must have the following names:\n", paste(rnms, collapse=", "))
+})
+
+# constructor
+setGeneric("csData", function(object, ...){
+	standardGeneric("csData")
+	}
+)
+
+setMethod("csData", signature(object="list"), function(object, ...){
+	if(sum(names(object) %in% c("tr","hh","sl","hl"))!=4)
+		stop("The list must have at least the elements \"tr\", \"hh\", \"sl\" and \"hl\".")
+	tr <- object$tr
+	hh <- object$hh
+	sl <- object$sl
+	hl <- object$hl
+	
+	# checks on names (a bad option that needs to be discussed)	
+	checkTRnms(tr)
+	checkHHnms(hh)
+	checkSLnms(sl)
+	checkHLnms(hl)
+
+	# remove record type 
+	tr <- tr[,-1]
+	hh <- hh[,-1]
+	sl <- sl[,-1]
+	hl <- hl[,-1]
+	
+	# create object and name columns properly 
+	obj <- new("csData")
+	names(tr) <- names(obj@tr)
+	names(hh) <- names(obj@hh)
+	names(sl) <- names(obj@sl)
+	names(hl) <- names(obj@hl)
+	new("csData", tr=tr, hh=hh, sl=sl, hl=hl)
+})
+
+#setMethod("csData", signature("data.frame"), function(tr, hh, sl, hl, ...){
+#
+#	# checks on names (a bad option that needs to be discussed)	
+#	checkTRnms(tr)
+#	checkHHnms(hh)
+#	checkSLnms(sl)
+#	checkHLnms(hl)
+#
+#	# remove record type 
+#	tr <- tr[,-1]
+#	hh <- hh[,-1]
+#	sl <- sl[,-1]
+#	hl <- hl[,-1]
+#	
+#	# create object and name columns properly 
+#	obj <- new("csData")
+#	names(tr) <- names(obj@tr)
+#	names(hh) <- names(obj@hh)
+#	names(sl) <- names(obj@sl)
+#	names(hl) <- names(obj@hl)
+#	new("csData", tr=tr, hh=hh, sl=sl, hl=hl)
+#})
+#

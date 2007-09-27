@@ -1,9 +1,20 @@
 #importFrom()
 import("methods")
-#export()
+export(
+	"checkIdentical",
+	"checkFail",
+	"checkRun",
+	"checkTrue",
+	"finishTest",
+	"setCon",
+	"startTest",
+	"tagTest"
+)
 exportClasses(
 	"ceData",
 	"clData",
 	"csData"
 )
-#exportMethods()
+exportMethods(
+	"csData"
+)

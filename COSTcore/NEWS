@@ -4,6 +4,10 @@ NEW FEATURES
     o S4 class for CS data "csData"
     o S4 class for LS data "clData"
     o S4 class for ES data "ceData"
+    o Constructor for csData
+    o CS Sole dataset available with data("soleData")
+    o Test methods borrowed from FLCore
+
         
 USER-VISIBLE CHANGES
 BUG FIXES
