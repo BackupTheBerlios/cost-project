@@ -1,9 +1,9 @@
-#===================================
+#====================================================================
 #
 # EJ, 24/09/2007
 # csData-class
 #
-#===================================
+#====================================================================
 
 # 
 # samp = sampling
@@ -24,6 +24,7 @@
 # class = cls
 # otolith = oto
 
+
 #===================================
 #
 # Data hierarchy
@@ -31,6 +32,47 @@
 # tr --> ca
 #  
 #===================================
+
+validcsData <- function(object){
+
+	tr <- object@tr
+	hh <- object@hh
+	sl <- object@sl
+	hl <- object@hl
+	ca <- object@ca
+
+	# I will rely o the prototype to check col names and size. I'm not sure it's a good strategy !
+	obj <- new("csData")
+	tr0 <- obj@tr
+	hh0 <- obj@hh
+	sl0 <- obj@sl
+	hl0 <- obj@hl
+	ca0 <- obj@ca
+	
+	# check columns
+	if(checkNms(tr, names(tr0))==FALSE) stop("Check slot candidate \"tr\" columns' size and names.")
+	if(checkNms(hh, names(hh0))==FALSE) stop("Check slot candidate \"hh\" columns' size and names.")
+	if(checkNms(sl, names(sl0))==FALSE) stop("Check slot candidate \"sl\" columns' size and names.")
+	if(checkNms(hl, names(hl0))==FALSE) stop("Check slot candidate \"hl\" columns' size and names.")
+	if(checkNms(ca, names(ca0))==FALSE) stop("Check slot candidate \"ca\" columns' size and names.")
+	
+	# check PK
+	if(checkTRpk(tr)==FALSE) stop("Data integrity problem in slot candidate \"tr\". PK not unique.")
+	if(checkHHpk(hh)==FALSE) stop("Data integrity problem in slot candidate \"hh\". PK not unique.")
+	if(checkSLpk(sl)==FALSE) stop("Data integrity problem in slot candidate \"sl\". PK not unique.")
+	if(checkHLpk(hl)==FALSE) stop("Data integrity problem in slot candidate \"hl\". PK not unique.")
+	if(checkCApk(ca)==FALSE) stop("Data integrity problem in slot candidate \"ca\". PK not unique.")
+
+	# check data integrity
+	if(checkTRpk(tr)==FALSE) stop("Data integrity problem in table \"tr\". PK not unique.")
+	if(checkHHpk(hh)==FALSE) stop("Data integrity problem in table \"hh\". PK not unique.")
+	if(checkSLpk(sl)==FALSE) stop("Data integrity problem in table \"sl\". PK not unique.")
+	if(checkHLpk(hl)==FALSE) stop("Data integrity problem in table \"hl\". PK not unique.")
+	if(checkCApk(ca)==FALSE) stop("Data integrity problem in table \"ca\". PK not unique.")
+
+	# Everything is fine
+	return(TRUE)
+}
 
 setClass("csData",
 	representation(
@@ -154,67 +196,7 @@ setClass("csData",
 	)
 )
 
-#===================================
-# A set of methods to check names in tables 
-#===================================
-
-# TR
-setGeneric("checkTRnms", function(object, ...){
-	standardGeneric("checkTRnms")
-	}
-)
-
-setMethod("checkTRnms", signature(object="data.frame"), function(object, ...){
-	nms <- names(object)
-	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "VESSEL_LENGTH", "VESSEL_POWER", "VESSEL_SIZE", "VESSEL_TYPE", "NUMBER_HAULS_SETS", "DAYS_AT_SEA", "VESSEL_ID", "SAMPLING_COUNTRY", "SAMPLING_METHOD")
-	lrnms <- length(rnms)
-	if(length(nms)!=lrnms) stop("Table \"tr\" must have the following names:\n", paste(rnms, collapse=", "))
-	if(sum(nms %in% rnms)!=lrnms) stop("Table \"tr\" must have the following names:\n", paste(rnms, collapse=", "))
-})
-
-# HH
-setGeneric("checkHHnms", function(object, ...){
-	standardGeneric("checkHHnms")
-	}
-)
-
-setMethod("checkHHnms", signature(object="data.frame"), function(object, ...){
-	nms <- names(object)
-	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "HAUL_VALIDITY", "AGGREGATION_LEVEL", "DATE", "TIME_SHOT", "FISHING_TIME", "POS_START_LAT_DEC", "POS_START_LON_DEC", "POS_STOP_LAT_DEC", "POS_STOP_LON_DEC", "AREA", "RECTANGLE", "MAIN_FISHING_DEPTH", "MAIN_WATER_DEPTH", "FISHING_ACTIVITY_NAT", "FISHING_ACTIVITY_EU_L5", "FISHING_ACTIVITY_EU_L6", "GEAR", "MESH_SIZE", "SELECTION_DEVICE", "MESH_SIZE_IN_SEL_DEV")
-	lrnms <- length(rnms)
-	if(length(nms)!=lrnms) stop("Table \"hh\" must have the following names:\n", paste(rnms, collapse=", "))
-	if(sum(nms %in% rnms)!=lrnms) stop("Table \"hh\" must have the following names:\n", paste(rnms, collapse=", "))
-})
-
-# SL
-setGeneric("checkSLnms", function(object, ...){
-	standardGeneric("checkSLnms")
-	}
-)
-
-setMethod("checkSLnms", signature(object="data.frame"), function(object, ...){
-	nms <- names(object)
-	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "SEX", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "SUBSAMPLING_CATEGORY", "VALIDITY_CODE", "WEIGHT", "SUBSAMPLE_WEIGHT", "LENGTH_CODE")
-	lrnms <- length(rnms)
-	if(length(nms)!=lrnms) stop("Table \"sl\" must have the following names:\n", paste(rnms, collapse=", "))
-	if(sum(nms %in% rnms)!=lrnms) stop("Table \"sl\" must have the following names:\n", paste(rnms, collapse=", "))
-})
-
-# HL
-setGeneric("checkHLnms", function(object, ...){
-	standardGeneric("checkHLnms")
-	}
-)
-
-setMethod("checkHLnms", signature(object="data.frame"), function(object, ...){
-	nms <- names(object)
-	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "SEX", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "SUBSAMPLING_CATEGORY", "LENGTH_CLASS", "NUMBER_AT_LENGTH")
-	lrnms <- length(rnms)
-	if(length(nms)!=lrnms) stop("Table \"hl\" must have the following names:\n", paste(rnms, collapse=", "))
-	if(sum(nms %in% rnms)!=lrnms) stop("Table \"hl\" must have the following names:\n", paste(rnms, collapse=", "))
-})
-
-# constructor
+# constructor (missing ca)
 setGeneric("csData", function(object, ...){
 	standardGeneric("csData")
 	}

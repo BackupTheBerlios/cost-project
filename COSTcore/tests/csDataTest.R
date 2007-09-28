@@ -23,10 +23,11 @@ zz <- startTest("csDataTest.txt")
 tagTest("csData testing ...")
 
 #! Checks
-checkRun(checkTRnms(tr))
-checkRun(checkHHnms(hh))
-checkRun(checkSLnms(sl))
-checkRun(checkHLnms(hl))
+
+checkTrue(checkTRnms(tr))
+checkTrue(checkHHnms(hh))
+checkTrue(checkSLnms(sl))
+checkTrue(checkHLnms(hl))
 
 #! Constructors
 
