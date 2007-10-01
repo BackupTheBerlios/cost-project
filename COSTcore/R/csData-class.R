@@ -3,9 +3,15 @@
 # EJ, 24/09/2007
 # csData-class
 #
+# Data hierarchy
+# tr --> hh --> sl --> hl
+# tr --> ca
+#  
 #====================================================================
 
-# 
+#====================================================================
+# Abbreviates
+#
 # samp = sampling
 # country = ctry
 # flag =flg 
@@ -23,17 +29,13 @@
 # weight = wt
 # class = cls
 # otolith = oto
+#====================================================================
 
+#====================================================================
+# Class definition and validity check
+#====================================================================
 
-#===================================
-#
-# Data hierarchy
-# tr --> hh --> sl --> hl
-# tr --> ca
-#  
-#===================================
-
-validcsData <- function(object){
+valcsData <- function(object){
 
 	tr <- object@tr
 	hh <- object@hh
@@ -57,18 +59,17 @@ validcsData <- function(object){
 	if(checkNms(ca, names(ca0))==FALSE) stop("Check slot candidate \"ca\" columns' size and names.")
 	
 	# check PK
-	if(checkTRpk(tr)==FALSE) stop("Data integrity problem in slot candidate \"tr\". PK not unique.")
-	if(checkHHpk(hh)==FALSE) stop("Data integrity problem in slot candidate \"hh\". PK not unique.")
-	if(checkSLpk(sl)==FALSE) stop("Data integrity problem in slot candidate \"sl\". PK not unique.")
-	if(checkHLpk(hl)==FALSE) stop("Data integrity problem in slot candidate \"hl\". PK not unique.")
-	if(checkCApk(ca)==FALSE) stop("Data integrity problem in slot candidate \"ca\". PK not unique.")
+	if(checkTRpk(tr)==FALSE) stop("Primary key not unique in slot candidate \"tr\".")
+	if(checkHHpk(hh)==FALSE) stop("Primary key not unique in slot candidate \"hh\".")
+	if(checkSLpk(sl)==FALSE) stop("Primary key not unique in slot candidate \"sl\".")
+	if(checkHLpk(hl)==FALSE) stop("Primary key not unique in slot candidate \"hl\".")
+	if(checkCApk(ca)==FALSE) stop("Primary key not unique in slot candidate \"ca\".")
 
 	# check data integrity
-	if(checkTRpk(tr)==FALSE) stop("Data integrity problem in table \"tr\". PK not unique.")
-	if(checkHHpk(hh)==FALSE) stop("Data integrity problem in table \"hh\". PK not unique.")
-	if(checkSLpk(sl)==FALSE) stop("Data integrity problem in table \"sl\". PK not unique.")
-	if(checkHLpk(hl)==FALSE) stop("Data integrity problem in table \"hl\". PK not unique.")
-	if(checkCApk(ca)==FALSE) stop("Data integrity problem in table \"ca\". PK not unique.")
+	if(checkDataIntegrity(tr[,1:6], hh[,1:6])==FALSE) stop("Data integrity problem in table \"hh\". Missing related records in \"tr\".")
+	if(checkDataIntegrity(hh[,1:7], sl[,1:7])==FALSE) stop("Data integrity problem in table \"sl\". Missing related records in \"hh\".")
+	if(checkDataIntegrity(sl[,1:14], hl[,1:14])==FALSE) stop("Data integrity problem in table \"hl\". Missing related records in \"sl\".")
+#	if(checkDataIntegrity(tr[,1:6], ca[,1:6])==FALSE) stop("Data integrity problem in table \"ca\". Missing related records in \"tr\".")
 
 	# Everything is fine
 	return(TRUE)
@@ -193,24 +194,53 @@ setClass("csData",
 			matStage=NA,
 			num=NA,
 			fishId=NA) # PK 
-	)
+	),
+	validity=valcsData
 )
 
-# constructor (missing ca)
-setGeneric("csData", function(object, ...){
+#====================================================================
+# Class constructor
+#====================================================================
+setGeneric("csData", function(tr, hh, sl, hl, ca, ...){
 	standardGeneric("csData")
 	}
 )
 
-setMethod("csData", signature(object="list"), function(object, ...){
-	if(sum(names(object) %in% c("tr","hh","sl","hl"))!=4)
-		stop("The list must have at least the elements \"tr\", \"hh\", \"sl\" and \"hl\".")
-	tr <- object$tr
-	hh <- object$hh
-	sl <- object$sl
-	hl <- object$hl
-	
-	# checks on names (a bad option that needs to be discussed)	
+setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.frame", "missing"), function(tr, hh, sl, hl, ...){
+	# create object and name columns properly 
+	obj <- new("csData")
+	names(tr) <- names(obj@tr)
+	names(hh) <- names(obj@hh)
+	names(sl) <- names(obj@sl)
+	names(hl) <- names(obj@hl)
+	new("csData", tr=tr, hh=hh, sl=sl, hl=hl)
+})
+
+setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.frame", "data.frame"), function(tr, hh, sl, hl, ca, ...){
+	# create object and name columns properly 
+	obj <- new("csData")
+	names(tr) <- names(obj@tr)
+	names(hh) <- names(obj@hh)
+	names(sl) <- names(obj@sl)
+	names(hl) <- names(obj@hl)
+	names(ca) <- names(obj@ca)
+	new("csData", tr=tr, hh=hh, sl=sl, hl=hl, ca=ca)
+})
+
+#====================================================================
+# IO constructor
+#====================================================================
+
+setMethod("csData", signature("character", "character", "character", "character", "missing"), function(tr, hh, sl, hl, ...){
+
+	# read CSV files
+	# ToDo
+	tr <- read.csv(tr)
+	hh <- read.csv(hh)
+	sl <- read.csv(sl)
+	hl <- read.csv(hl)
+
+	# check names are correct
 	checkTRnms(tr)
 	checkHHnms(hh)
 	checkSLnms(sl)
@@ -221,7 +251,7 @@ setMethod("csData", signature(object="list"), function(object, ...){
 	hh <- hh[,-1]
 	sl <- sl[,-1]
 	hl <- hl[,-1]
-	
+
 	# create object and name columns properly 
 	obj <- new("csData")
 	names(tr) <- names(obj@tr)
@@ -230,27 +260,3 @@ setMethod("csData", signature(object="list"), function(object, ...){
 	names(hl) <- names(obj@hl)
 	new("csData", tr=tr, hh=hh, sl=sl, hl=hl)
 })
-
-#setMethod("csData", signature("data.frame"), function(tr, hh, sl, hl, ...){
-#
-#	# checks on names (a bad option that needs to be discussed)	
-#	checkTRnms(tr)
-#	checkHHnms(hh)
-#	checkSLnms(sl)
-#	checkHLnms(hl)
-#
-#	# remove record type 
-#	tr <- tr[,-1]
-#	hh <- hh[,-1]
-#	sl <- sl[,-1]
-#	hl <- hl[,-1]
-#	
-#	# create object and name columns properly 
-#	obj <- new("csData")
-#	names(tr) <- names(obj@tr)
-#	names(hh) <- names(obj@hh)
-#	names(sl) <- names(obj@sl)
-#	names(hl) <- names(obj@hl)
-#	new("csData", tr=tr, hh=hh, sl=sl, hl=hl)
-#})
-#

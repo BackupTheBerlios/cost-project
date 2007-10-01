@@ -1,17 +1,18 @@
-		CHANGES IN COSTcore VERSION 0.0-1
+		CHANGES IN COSTcore VERSION 0.0-2
 
 NEW FEATURES
     o S4 class for CS data "csData"
-    o S4 class for LS data "clData"
-    o S4 class for ES data "ceData"
     o Constructor for csData
     o CS Sole dataset available with data("soleData")
-    o Test methods borrowed from FLCore
-
+    o checkDataIntegrity method to check that the related table as records in reference table
+    o checkNms to check names in data.frame against a character vector
         
 USER-VISIBLE CHANGES
 BUG FIXES
 UTILITIES
+    o IO constructor csData
+    o Test methods borrowed from FLCore
+
 DOCUMENTATION
 DEPRECATED & DEFUNCT
 

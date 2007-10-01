@@ -131,73 +131,22 @@ setMethod("checkCApk", signature(object="data.frame"), function(object, ...){
 })
 
 #====================================================================
-# A set of methods to check data integrity 
+# Methods to check data integrity 
 #====================================================================
 
-# check data integrity
+# data integrity 
 setGeneric("checkDataIntegrity", function(target, current, ...){
 	standardGeneric("checkDataIntegrity")
 	}
 )
 
-setMethod("checkDataIntegrity", signature(target="data.frame", current="data.frame"), function(target, current, ...){
-	trg <- apply(target, 2, paste, collapse="")
-	crr <- apply(unique(current), 2, paste, collapse="")
-	sum(crr %in% trg)==length(crr)
-})
-
-
-# TR
-setGeneric("checkHH2TR", function(hh, tr, ...){
-	standardGeneric("checkHH2TR")
+setMethod("checkDataIntegrity", signature(target="data.frame", current="data.frame"), function(target, current, report=FALSE, ...){
+	trg <- apply(target, 1, paste, collapse="")
+	current <- unique(current)
+	crr <- apply(current, 1, paste, collapse="")
+	if(report==TRUE){
+		current[crr %in% trg,]	
+	} else {
+		sum(crr %in% trg)==length(crr)
 	}
-)
-
-setMethod("checkHH2TR", signature(tr="data.frame", hh="data.frame"), function(tr, hh, ...){
-	# coerce to character to avoid problems with factor definition
-	tr <- apply(tr[,1:6], 2, as.character)
-	hh <- apply(unique(hh[,1:6]),2,as.character)
-	all.equal(tr, hh)
-})
-
-# HH
-setGeneric("checkHH2SL", function(hh, sl, ...){
-	standardGeneric("checkHH2SL")
-	}
-)
-
-setMethod("checkHH2SL", signature(hh="data.frame", sl="data.frame"), function(hh, sl, ...){
-	hh <- apply(hh[,1:7], 2, as.character)
-	sl <- apply(unique(sl[,1:7]), 2, as.character)
-	all.equal(hh, sl)
-})
-
-# SL
-setGeneric("checkSLpk", function(object, ...){
-	standardGeneric("checkSLpk")
-	}
-)
-
-setMethod("checkSLpk", signature(object="data.frame"), function(object, ...){
-	all.equal(object[,1:14], unique(object[,1:14]))
-})
-
-# HL
-setGeneric("checkHLpk", function(object, ...){
-	standardGeneric("checkHLpk")
-	}
-)
-
-setMethod("checkHLpk", signature(object="data.frame"), function(object, ...){
-	all.equal(object[,1:15], unique(object[,1:15]))
-})
-
-# CA
-setGeneric("checkCApk", function(object, ...){
-	standardGeneric("checkCApk")
-	}
-)
-
-setMethod("checkCApk", signature(object="data.frame"), function(object, ...){
-	all.equal(object[,c(1:16,18,19,27)], unique(object[,c(1:16,18,19,27)]))
 })

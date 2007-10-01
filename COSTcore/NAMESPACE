@@ -16,5 +16,16 @@ exportClasses(
 	"csData"
 )
 exportMethods(
+	"checkNms",
+	"checkDataIntegrity",
+	"checkTRnms",
+	"checkHHnms",
+	"checkSLnms",
+	"checkHLnms",
+	"checkTRpk",
+	"checkHHpk",
+	"checkSLpk",
+	"checkHLpk",
+	"checkCApk",
 	"csData"
 )
