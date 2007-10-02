@@ -1,11 +1,21 @@
-		CHANGES IN COSTcore VERSION 0.0-2
+		CHANGES IN COSTcore VERSION 0.0-3
 
 NEW FEATURES
     o S4 class for CS data "csData"
     o Constructor for csData
+    o S4 class for CE data "ceData"
+    o Constructor for ceData
+    o S4 class for CL data "clData"
+    o Constructor for clData
     o CS Sole dataset available with data("soleData")
     o checkDataIntegrity method to check that the related table as records in reference table
     o checkNms to check names in data.frame against a character vector
+    o csData object for Sole available with data("sole.cs")
+    o accessor functions for csData, ceData and clData
+    o documentation for "csData"
+    o documentation for "ceData"
+    o documentation for "clData"
+
         
 USER-VISIBLE CHANGES
 BUG FIXES

@@ -1,5 +1,6 @@
 \name{checkDataIntegrity-methods}
 \docType{methods}
+\alias{checkDataIntegrity}
 \alias{checkDataIntegrity-methods}
 \alias{checkDataIntegrity,data.frame,data.frame-method}
 

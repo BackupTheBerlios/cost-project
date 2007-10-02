@@ -31,7 +31,7 @@ setGeneric("checkTRnms", function(object, ...){
 
 setMethod("checkTRnms", signature(object="data.frame"), function(object, ...){
 	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "VESSEL_LENGTH", "VESSEL_POWER", "VESSEL_SIZE", "VESSEL_TYPE", "NUMBER_HAULS_SETS", "DAYS_AT_SEA", "VESSEL_ID", "SAMPLING_COUNTRY", "SAMPLING_METHOD")
-	if(checkNms(object, rnms)==FALSE) stop("Check table \"tr\" columns' size and names.")
+	if(checkNms(object, rnms)==FALSE) stop("Check table \"TR\" columns' size and names.")
 	return(TRUE)
 })
 
@@ -44,7 +44,7 @@ setGeneric("checkHHnms", function(object, ...){
 setMethod("checkHHnms", signature(object="data.frame"), function(object, ...){
 	nms <- names(object)
 	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "HAUL_VALIDITY", "AGGREGATION_LEVEL", "DATE", "TIME_SHOT", "FISHING_TIME", "POS_START_LAT_DEC", "POS_START_LON_DEC", "POS_STOP_LAT_DEC", "POS_STOP_LON_DEC", "AREA", "RECTANGLE", "MAIN_FISHING_DEPTH", "MAIN_WATER_DEPTH", "FISHING_ACTIVITY_NAT", "FISHING_ACTIVITY_EU_L5", "FISHING_ACTIVITY_EU_L6", "GEAR", "MESH_SIZE", "SELECTION_DEVICE", "MESH_SIZE_IN_SEL_DEV")
-	if(checkNms(object, rnms)==FALSE) stop("Check table \"hh\" columns' size and names.")
+	if(checkNms(object, rnms)==FALSE) stop("Check table \"HH\" columns' size and names.")
 	return(TRUE)
 })
 
@@ -57,7 +57,7 @@ setGeneric("checkSLnms", function(object, ...){
 setMethod("checkSLnms", signature(object="data.frame"), function(object, ...){
 	nms <- names(object)
 	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "SEX", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "SUBSAMPLING_CATEGORY", "VALIDITY_CODE", "WEIGHT", "SUBSAMPLE_WEIGHT", "LENGTH_CODE")
-	if(checkNms(object, rnms)==FALSE) stop("Check table \"sl\" columns' size and names.")
+	if(checkNms(object, rnms)==FALSE) stop("Check table \"SL\" columns' size and names.")
 	return(TRUE)
 })
 
@@ -70,11 +70,48 @@ setGeneric("checkHLnms", function(object, ...){
 setMethod("checkHLnms", signature(object="data.frame"), function(object, ...){
 	nms <- names(object)
 	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "SEX", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "SUBSAMPLING_CATEGORY", "LENGTH_CLASS", "NUMBER_AT_LENGTH")
-	if(checkNms(object, rnms)==FALSE) stop("Check table \"hl\" columns' size and names.")
+	if(checkNms(object, rnms)==FALSE) stop("Check table \"HL\" columns' size and names.")
 	return(TRUE)
 })
 
 # CA
+setGeneric("checkCAnms", function(object, ...){
+	standardGeneric("checkCAnms")
+	}
+)
+
+setMethod("checkCAnms", signature(object="data.frame"), function(object, ...){
+	nms <- names(object)
+	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "SEX", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "STOCK", "AREA", "STATISTICAL_RECTANGLE", "LENGTH_CODE", "LENGTH_CLASS", "AGE", "AGE_PLUS_GROUP", "OTOLITH_WEIGHT", "OTOLITH_SIDE", "INDIVIDUAL_MEAN_WEIGHT", "MATURITY_SCALE", "NUMBER", "SINGLE_FISH_ID")
+	if(checkNms(object, rnms)==FALSE) stop("Check table \"CA\" columns' size and names.")
+	return(TRUE)
+})
+
+# CL
+setGeneric("checkCLnms", function(object, ...){
+	standardGeneric("checkCLnms")
+	}
+)
+
+setMethod("checkCLnms", signature(object="data.frame"), function(object, ...){
+	nms <- names(object)
+	rnms <- c("RECORD_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "QUARTER", "MONTH", "AREA", "STATISTICAL_RECTANGLE", "SPECIES_CODE", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "FISHING_ACTIVITY_NAT", "FISHING_ACTIVITY_EU_L5", "FISHING_ACTIVITY_EU_L6", "UNALLOCATED_CATCH_WEIGHT", "AREA_MISREPORTED_CATCH_WEIGHT", "OFFICIAL_LANDINGS_WEIGHT", "LANDINGS_MULTIPLIER", "OFFICIAL_LANDINGS_VALUE")
+	if(checkNms(object, rnms)==FALSE) stop("Check table \"Cl\" columns' size and names.")
+	return(TRUE)
+})
+
+# CE
+setGeneric("checkCEnms", function(object, ...){
+	standardGeneric("checkCEnms")
+	}
+)
+
+setMethod("checkCEnms", signature(object="data.frame"), function(object, ...){
+	nms <- names(object)
+	rnms <- c("RECORD_TYPE", "FLAG_COUNTRY", "YEAR", "QUARTER", "MONTH", "AREA", "STATISTICAL_RECTANGLE", "FISHING_ACTIVITY_NAT", "FISHING_ACTIVITY_EU_L5", "FISHING_ACTIVITY_EU_L6", "NUMBER_OF_TRIPS", "NUMBER_OF_HAULS", "FISHING_TIME", "KW_DAYS", "GT_DAYS", "DAYS_AT_SEA")
+	if(checkNms(object, rnms)==FALSE) stop("Check table \"CE\" columns' size and names.")
+	return(TRUE)
+})
 
 #====================================================================
 # A set of methods to check PK in tables 
@@ -129,6 +166,27 @@ setGeneric("checkCApk", function(object, ...){
 setMethod("checkCApk", signature(object="data.frame"), function(object, ...){
 	all.equal(object[,c(1:16,18,19,27)], unique(object[,c(1:16,18,19,27)]))
 })
+
+# CL
+setGeneric("checkCLpk", function(object, ...){
+	standardGeneric("checkCLpk")
+	}
+)
+
+setMethod("checkCLpk", signature(object="data.frame"), function(object, ...){
+	all.equal(object[,c(1:14)], unique(object[,c(1:14)]))
+})
+
+# CE
+setGeneric("checkCEpk", function(object, ...){
+	standardGeneric("checkCEpk")
+	}
+)
+
+setMethod("checkCEpk", signature(object="data.frame"), function(object, ...){
+	all.equal(object[,c(1:9)], unique(object[,c(1:9)]))
+})
+
 
 #====================================================================
 # Methods to check data integrity 

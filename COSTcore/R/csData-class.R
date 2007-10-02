@@ -206,17 +206,17 @@ setGeneric("csData", function(tr, hh, sl, hl, ca, ...){
 	}
 )
 
-setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.frame", "missing"), function(tr, hh, sl, hl, ...){
+setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.frame", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", ...){
 	# create object and name columns properly 
 	obj <- new("csData")
 	names(tr) <- names(obj@tr)
 	names(hh) <- names(obj@hh)
 	names(sl) <- names(obj@sl)
 	names(hl) <- names(obj@hl)
-	new("csData", tr=tr, hh=hh, sl=sl, hl=hl)
+	new("csData", tr=tr, hh=hh, sl=sl, hl=hl, desc=desc)
 })
 
-setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.frame", "data.frame"), function(tr, hh, sl, hl, ca, ...){
+setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.frame", "data.frame"), function(tr, hh, sl, hl, ca,  desc="Unknown stock",...){
 	# create object and name columns properly 
 	obj <- new("csData")
 	names(tr) <- names(obj@tr)
@@ -224,14 +224,19 @@ setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.fr
 	names(sl) <- names(obj@sl)
 	names(hl) <- names(obj@hl)
 	names(ca) <- names(obj@ca)
-	new("csData", tr=tr, hh=hh, sl=sl, hl=hl, ca=ca)
+	new("csData", tr=tr, hh=hh, sl=sl, hl=hl, ca=ca, desc=desc)
+})
+
+setMethod("csData", signature("missing", "missing", "missing", "missing", "missing"), function(desc="Unknown stock", ...){
+	# create object and name columns properly 
+	new("csData", desc=desc)
 })
 
 #====================================================================
 # IO constructor
 #====================================================================
 
-setMethod("csData", signature("character", "character", "character", "character", "missing"), function(tr, hh, sl, hl, ...){
+setMethod("csData", signature("character", "character", "character", "character", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", ...){
 
 	# read CSV files
 	# ToDo
@@ -258,5 +263,64 @@ setMethod("csData", signature("character", "character", "character", "character"
 	names(hh) <- names(obj@hh)
 	names(sl) <- names(obj@sl)
 	names(hl) <- names(obj@hl)
-	new("csData", tr=tr, hh=hh, sl=sl, hl=hl)
+	new("csData", tr=tr, hh=hh, sl=sl, hl=hl, desc=desc)
 })
+
+#====================================================================
+# Accessor functions
+#====================================================================
+
+setGeneric("tr", function(object, ...){
+	standardGeneric("tr")
+	}
+)
+
+setMethod("tr", signature("csData"), function(object, ...){
+	object@tr
+	}
+)
+
+setGeneric("hh", function(object, ...){
+	standardGeneric("hh")
+	}
+)
+
+setMethod("hh", signature("csData"), function(object, ...){
+	object@hh
+	}
+)
+
+setGeneric("sl", function(object, ...){
+	standardGeneric("sl")
+	}
+)
+
+setMethod("sl", signature("csData"), function(object, ...){
+	object@sl
+	}
+)
+
+setGeneric("hl", function(object, ...){
+	standardGeneric("hl")
+	}
+)
+
+setMethod("hl", signature("csData"), function(object, ...){
+	object@hl
+	}
+)
+
+setGeneric("ca", function(object, ...){
+	standardGeneric("ca")
+	}
+)
+
+setMethod("ca", signature("csData"), function(object, ...){
+	object@ca
+	}
+)
+
+setMethod("desc", signature("csData"), function(object, ...){
+	object@desc
+	}
+)
