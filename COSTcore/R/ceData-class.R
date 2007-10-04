@@ -41,7 +41,6 @@ setClass("ceData",
 			month=NA, # PK
 			area=NA, # PK
 			rectangle=NA, # PK 
-			landCat=NA, # PK 
 			foCatNat=NA, # PK
 			foCatEu5=NA, # PK
 			foCatEu6=NA, # PK
@@ -93,7 +92,7 @@ setMethod("ceData", signature("character"), function(ce, desc="Unknown stock", .
 	# create object and name columns properly 
 	obj <- new("ceData")
 	names(ce) <- names(obj@ce)
-	new("ceData", cl=ce, desc=desc)
+	new("ceData", ce=ce, desc=desc)
 })
 
 #====================================================================

@@ -266,6 +266,43 @@ setMethod("csData", signature("character", "character", "character", "character"
 	new("csData", tr=tr, hh=hh, sl=sl, hl=hl, desc=desc)
 })
 
+
+setMethod("csData", signature("character", "character", "character", "character", "character"), function(tr, hh, sl, hl, ca, desc="Unknown stock", ...){
+
+	# read CSV files
+	# ToDo
+	tr <- read.csv(tr)
+	hh <- read.csv(hh)
+	sl <- read.csv(sl)
+	hl <- read.csv(hl)
+	ca <- read.csv(ca)
+
+	# check names are correct
+	checkTRnms(tr)
+	checkHHnms(hh)
+	checkSLnms(sl)
+	checkHLnms(hl)
+  checkCAnms(ca)
+
+	# remove record type 
+	tr <- tr[,-1]
+	hh <- hh[,-1]
+	sl <- sl[,-1]
+	hl <- hl[,-1]
+  ca <- ca[,-1]
+
+	# create object and name columns properly 
+	obj <- new("csData")
+	names(tr) <- names(obj@tr)
+	names(hh) <- names(obj@hh)
+	names(sl) <- names(obj@sl)
+	names(hl) <- names(obj@hl)
+	names(ca) <- names(obj@ca)
+	new("csData", tr=tr, hh=hh, sl=sl, hl=hl, ca=ca, desc=desc)
+})
+
+
+
 #====================================================================
 # Accessor functions
 #====================================================================

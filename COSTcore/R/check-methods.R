@@ -82,7 +82,7 @@ setGeneric("checkCAnms", function(object, ...){
 
 setMethod("checkCAnms", signature(object="data.frame"), function(object, ...){
 	nms <- names(object)
-	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "SEX", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "STOCK", "AREA", "STATISTICAL_RECTANGLE", "LENGTH_CODE", "LENGTH_CLASS", "AGE", "AGE_PLUS_GROUP", "OTOLITH_WEIGHT", "OTOLITH_SIDE", "INDIVIDUAL_MEAN_WEIGHT", "MATURITY_SCALE", "NUMBER", "SINGLE_FISH_ID")
+	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "SEX", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "STOCK", "AREA", "RECTANGLE", "LENGTH_CODE", "LENGTH_CLASS", "AGE", "AGE_PLUS_GROUP", "OTOLITH_WEIGHT", "OTOLITH_SIDE", "IND_MEAN_WEIGHT", "MATURITY_SCALE", "MATURITY_STAGE", "NUMBER", "SINGLE_FISH_NB")
 	if(checkNms(object, rnms)==FALSE) stop("Check table \"CA\" columns' size and names.")
 	return(TRUE)
 })
@@ -95,7 +95,7 @@ setGeneric("checkCLnms", function(object, ...){
 
 setMethod("checkCLnms", signature(object="data.frame"), function(object, ...){
 	nms <- names(object)
-	rnms <- c("RECORD_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "QUARTER", "MONTH", "AREA", "STATISTICAL_RECTANGLE", "SPECIES_CODE", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "FISHING_ACTIVITY_NAT", "FISHING_ACTIVITY_EU_L5", "FISHING_ACTIVITY_EU_L6", "UNALLOCATED_CATCH_WEIGHT", "AREA_MISREPORTED_CATCH_WEIGHT", "OFFICIAL_LANDINGS_WEIGHT", "LANDINGS_MULTIPLIER", "OFFICIAL_LANDINGS_VALUE")
+	rnms <- c("RECORD_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "QUARTER", "MONTH", "AREA", "RECTANGLE", "SPECIES_CODE", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "FISHING_ACTIVITY_NAT", "FISHING_ACTIVITY_EU_L5", "FISHING_ACTIVITY_EU_L6", "UNALL_CATCH_WEIGHT", "ARMIS_CATCH_WEIGHT", "OFF_LANDINGS_WEIGHT", "LANDINGS_MULT", "OFF_LANDINGS_VALUE")
 	if(checkNms(object, rnms)==FALSE) stop("Check table \"Cl\" columns' size and names.")
 	return(TRUE)
 })
@@ -108,7 +108,7 @@ setGeneric("checkCEnms", function(object, ...){
 
 setMethod("checkCEnms", signature(object="data.frame"), function(object, ...){
 	nms <- names(object)
-	rnms <- c("RECORD_TYPE", "FLAG_COUNTRY", "YEAR", "QUARTER", "MONTH", "AREA", "STATISTICAL_RECTANGLE", "FISHING_ACTIVITY_NAT", "FISHING_ACTIVITY_EU_L5", "FISHING_ACTIVITY_EU_L6", "NUMBER_OF_TRIPS", "NUMBER_OF_HAULS", "FISHING_TIME", "KW_DAYS", "GT_DAYS", "DAYS_AT_SEA")
+	rnms <- c("RECORD_TYPE", "VESSEL_FLAG_COUNTRY", "YEAR", "QUARTER", "MONTH", "AREA", "RECTANGLE", "FISHING_ACTIVITY_NAT", "FISHING_ACTIVITY_EU_L5", "FISHING_ACTIVITY_EU_L6", "NUMBER_OF_TRIPS", "NB_OF_SETS_HAULS", "FISHING_TIME", "KW_DAYS", "GT_DAYS", "DAYS_AT_SEA")
 	if(checkNms(object, rnms)==FALSE) stop("Check table \"CE\" columns' size and names.")
 	return(TRUE)
 })
@@ -164,7 +164,7 @@ setGeneric("checkCApk", function(object, ...){
 )
 
 setMethod("checkCApk", signature(object="data.frame"), function(object, ...){
-	all.equal(object[,c(1:16,18,19,27)], unique(object[,c(1:16,18,19,27)]))
+	all.equal(object[,c(1:16,18,19,25,27)], unique(object[,c(1:16,18,19,25,27)]))
 })
 
 # CL
