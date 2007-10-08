@@ -67,7 +67,9 @@ setGeneric("clData", function(cl, ...){
 )
 
 setMethod("clData", signature("data.frame"), function(cl, desc="Unknown stock", ...){
-	# create object and name columns properly 
+	# remove record type 
+	cl <- cl[,-1]
+  # create object and name columns properly 
 	obj <- new("clData")
 	names(cl) <- names(obj@cl)
 	new("clData", cl=cl, desc=desc)
@@ -117,3 +119,57 @@ setMethod("desc", signature("clData"), function(object, ...){
 	object@desc
 	}
 )
+
+#====================================================================
+# 'Head' and 'Tail' functions  (setGeneric methods in 'csData-class.R')
+#====================================================================
+
+
+setMethod("head", signature("clData"), function(x, ...){
+  object <- new("clData",desc=x@desc)
+  object@cl <- head(x@cl)
+  return(object)  
+	}
+)
+
+
+setMethod("tail", signature("clData"), function(x, ...){
+  object <- new("clData",desc=x@desc)
+  object@cl <- tail(x@cl)
+  return(object)  
+	}
+)
+
+#====================================================================
+# 'summary' function
+#====================================================================
+
+setMethod("summary", signature("clData"), function(object, ...){
+  ll <- list()
+  ll$desc <- object@desc
+  ll$cl <- summary(object@cl)
+  return(ll)  
+	}
+)
+
+#====================================================================
+# 'dim' function
+#====================================================================
+
+setMethod("dim", signature("clData"), function(x){
+return(dim(x@cl))  
+})
+
+#====================================================================
+# 'is.' function
+#====================================================================
+
+setGeneric("is.clData", function(object){
+standardGeneric("is.clData")
+})
+
+
+setMethod("is.clData","ANY", function(object){
+return(is(object)[1]=="clData")
+})
+

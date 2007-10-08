@@ -63,7 +63,9 @@ setGeneric("ceData", function(ce, ...){
 )
 
 setMethod("ceData", signature("data.frame"), function(ce, desc="Unknown stock", ...){
-	# create object and name columns properly 
+	# remove record type 
+	ce <- ce[,-1]
+  # create object and name columns properly 
 	obj <- new("ceData")
 	names(ce) <- names(obj@ce)
 	new("ceData", ce=ce, desc=desc)
@@ -118,3 +120,60 @@ setMethod("desc", signature("ceData"), function(object, ...){
 	object@desc
 	}
 )
+
+#====================================================================
+# 'Head' and 'Tail' functions  (setGeneric methods in 'csData-class.R')
+#====================================================================
+
+
+setMethod("head", signature("ceData"), function(x, ...){
+  object <- new("ceData",desc=x@desc)
+  object@ce <- head(x@ce)
+  return(object)  
+	}
+)
+
+
+setMethod("tail", signature("ceData"), function(x, ...){
+  object <- new("ceData",desc=x@desc)
+  object@ce <- tail(x@ce)
+  return(object)  
+	}
+)
+
+#====================================================================
+# 'summary' function
+#====================================================================
+
+setMethod("summary", signature("ceData"), function(object, ...){
+  ll <- list()
+  ll$desc <- object@desc
+  ll$ce <- summary(object@ce)
+  return(ll)  
+	}
+)
+
+
+#====================================================================
+# 'dim' function
+#====================================================================
+
+setMethod("dim", signature("ceData"), function(x){
+return(dim(x@ce))  
+})
+
+#====================================================================
+# 'is.' function
+#====================================================================
+
+setGeneric("is.ceData", function(object){
+standardGeneric("is.ceData")
+})
+
+
+setMethod("is.ceData","ANY", function(object){
+return(is(object)[1]=="ceData")
+})
+
+
+

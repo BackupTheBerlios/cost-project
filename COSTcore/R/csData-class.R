@@ -207,7 +207,12 @@ setGeneric("csData", function(tr, hh, sl, hl, ca, ...){
 )
 
 setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.frame", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", ...){
-	# create object and name columns properly 
+	# remove record type
+  tr <- tr[,-1]
+	hh <- hh[,-1]
+	sl <- sl[,-1]
+	hl <- hl[,-1] 
+  # create object and name columns properly 
 	obj <- new("csData")
 	names(tr) <- names(obj@tr)
 	names(hh) <- names(obj@hh)
@@ -217,7 +222,13 @@ setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.fr
 })
 
 setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.frame", "data.frame"), function(tr, hh, sl, hl, ca,  desc="Unknown stock",...){
-	# create object and name columns properly 
+	# remove record type
+  tr <- tr[,-1]
+	hh <- hh[,-1]
+	sl <- sl[,-1]
+	hl <- hl[,-1] 
+	ca <- ca[,-1]
+  # create object and name columns properly 
 	obj <- new("csData")
 	names(tr) <- names(obj@tr)
 	names(hh) <- names(obj@hh)
@@ -361,3 +372,76 @@ setMethod("desc", signature("csData"), function(object, ...){
 	object@desc
 	}
 )
+
+#====================================================================
+# 'Head' and 'Tail' functions
+#====================================================================
+
+
+setMethod("head", signature("csData"), function(x, ...){
+  object <- new("csData",desc=x@desc)
+  object@tr <- head(x@tr)
+  object@hh <- head(x@hh)
+  object@sl <- head(x@sl)
+  object@hl <- head(x@hl)
+  object@ca <- head(x@ca)
+  return(object)  
+	}
+)
+
+
+setMethod("tail", signature("csData"), function(x, ...){
+  object <- new("csData",desc=x@desc)
+  object@tr <- tail(x@tr)
+  object@hh <- tail(x@hh)
+  object@sl <- tail(x@sl)
+  object@hl <- tail(x@hl)
+  object@ca <- tail(x@ca)
+  return(object)  
+	}
+)
+
+#====================================================================
+# 'summary' function
+#====================================================================
+
+setMethod("summary", signature("csData"), function(object, ...){
+  ll <- list()
+  ll$desc <- object@desc
+  ll$tr <- summary(object@tr)
+  ll$hh <- summary(object@hh)
+  ll$sl <- summary(object@sl)
+  ll$hl <- summary(object@hl)
+  ll$ca <- summary(object@ca)
+  return(ll)  
+	}
+)
+
+
+#====================================================================
+# 'dim' function
+#====================================================================
+
+setMethod("dim", signature("csData"), function(x){
+  ll <- list()
+  ll$tr <- dim(x@tr)
+  ll$hh <- dim(x@hh)
+  ll$sl <- dim(x@sl)
+  ll$hl <- dim(x@hl)
+  ll$ca <- dim(x@ca)
+  return(ll)  
+	}
+)
+
+#====================================================================
+# 'is.' function
+#====================================================================
+
+setGeneric("is.csData", function(object){
+standardGeneric("is.csData")
+})
+
+
+setMethod("is.csData","ANY", function(object){
+return(is(object)[1]=="csData")
+})
