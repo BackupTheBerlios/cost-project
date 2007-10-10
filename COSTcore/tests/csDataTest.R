@@ -21,7 +21,7 @@ setCon()
 zz <- startTest("csDataTest.txt")
 tagTest("csData testing ...")
 
-data(sole.cs)
+data(sole)
 data(soleData)
 checkTrue(is(sole.cs, "csData"))
 
@@ -31,14 +31,19 @@ checkTrue(checkTRnms(tr))
 checkTrue(checkHHnms(hh))
 checkTrue(checkSLnms(sl))
 checkTrue(checkHLnms(hl))
+checkTrue(checkCAnms(ca))
 
-#! Constructors & accessors
+# Constructors
 checkRun(csobj <- new("csData"))
 checkTrue(is(csobj, "csData"))
 checkRun(csobj <- csData())
 checkTrue(is(csobj, "csData"))
 checkRun(csobj <- csData(tr[,-1], hh[,-1], sl[,-1], hl[,-1]))
 checkTrue(is(csobj, "csData"))
+checkRun(csobj <- csData(tr[,-1], hh[,-1], sl[,-1], hl[,-1], ca[,-1]))
+checkTrue(is(csobj, "csData"))
+
+# Accessors
 checkEqual(csobj@tr, tr(csobj))
 checkEqual(csobj@hh, hh(csobj))
 checkEqual(csobj@sl, sl(csobj))
@@ -81,5 +86,12 @@ checkEqual(o[-1], o0)
 #! Replacement
 
 #! Selection
+
+#! utils methods
+checkRun(head(sole.cs))
+checkRun(tail(sole.cs))
+checkRun(summary(sole.cs))
+checkRun(dim(sole.cs))
+checkTrue(is.csData(sole.cs))
 
 finishTest()

@@ -1,5 +1,5 @@
 #importFrom()
-import("methods")
+import("methods", "utils")
 export(
 	"checkIdentical",
 	"checkFail",
@@ -24,6 +24,7 @@ exportMethods(
 	"checkHHnms",
 	"checkSLnms",
 	"checkHLnms",
+	"checkCAnms",
 	"checkTRpk",
 	"checkHHpk",
 	"checkSLpk",
@@ -43,5 +44,11 @@ exportMethods(
 	"checkCEpk",
 	"checkCEnms",
 	"ceData",
-	"ce"
+	"ce",
+	"head",
+	"tail",
+	"summary",
+	"is.csData",
+	"is.ceData",
+	"is.clData"
 )

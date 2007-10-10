@@ -63,9 +63,7 @@ setGeneric("ceData", function(ce, ...){
 )
 
 setMethod("ceData", signature("data.frame"), function(ce, desc="Unknown stock", ...){
-	# remove record type 
-	ce <- ce[,-1]
-  # create object and name columns properly 
+	# create object and name columns properly 
 	obj <- new("ceData")
 	names(ce) <- names(obj@ce)
 	new("ceData", ce=ce, desc=desc)
@@ -122,7 +120,7 @@ setMethod("desc", signature("ceData"), function(object, ...){
 )
 
 #====================================================================
-# 'Head' and 'Tail' functions  (setGeneric methods in 'csData-class.R')
+# 'Head' and 'Tail' functions
 #====================================================================
 
 

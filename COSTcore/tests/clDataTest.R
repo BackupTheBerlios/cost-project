@@ -21,17 +21,42 @@ setCon()
 zz <- startTest("clDataTest.txt")
 tagTest("clData testing ...")
 
-#! Checks
+data(sole)
+data(soleData)
+checkTrue(is(sole.cl, "clData"))
 
-#! Constructors & accessors
+#! Checks
+checkTrue(checkCLnms(cl))
+
+#! Constructors
 checkRun(clobj <- new("clData"))
 checkTrue(is(clobj, "clData"))
 checkRun(clobj <- clData())
 checkTrue(is(clobj, "clData"))
 checkEqual(clobj@cl, cl(clobj))
+checkRun(clobj <- clData(cl[,-1]))
+checkTrue(is(clobj, "clData"))
+
+# Acclssors
+checkEqual(clobj@cl, cl(clobj))
+
+#! check object is well formed
+checkRun(o0 <- cl(clobj))
+o0 <- c(o0)
+names(o0) <- NULL
+o <- c(cl)
+names(o) <- NULL
+checkEqual(o[-1], o0)
 
 #! Replacement
 
 #! Selection
+
+#! utils methods
+checkRun(head(sole.cl))
+checkRun(tail(sole.cl))
+checkRun(summary(sole.cl))
+checkRun(dim(sole.cl))
+checkTrue(is.clData(sole.cl))
 
 finishTest()

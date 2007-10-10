@@ -67,9 +67,7 @@ setGeneric("clData", function(cl, ...){
 )
 
 setMethod("clData", signature("data.frame"), function(cl, desc="Unknown stock", ...){
-	# remove record type 
-	cl <- cl[,-1]
-  # create object and name columns properly 
+	# create object and name columns properly 
 	obj <- new("clData")
 	names(cl) <- names(obj@cl)
 	new("clData", cl=cl, desc=desc)
