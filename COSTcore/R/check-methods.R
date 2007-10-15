@@ -82,7 +82,7 @@ setGeneric("checkCAnms", function(object, ...){
 
 setMethod("checkCAnms", signature(object="data.frame"), function(object, ...){
 	nms <- names(object)
-	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "SEX", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "STOCK", "AREA", "RECTANGLE", "LENGTH_CODE", "LENGTH_CLASS", "AGE", "AGE_PLUS_GROUP", "OTOLITH_WEIGHT", "OTOLITH_SIDE", "IND_MEAN_WEIGHT", "MATURITY_SCALE", "MATURITY_STAGE", "NUMBER", "SINGLE_FISH_NB")
+	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "SEX", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "STOCK", "AREA", "RECTANGLE", "LENGTH_CLASS", "AGE", "SINGLE_FISH_NB", "LENGTH_CODE", "AGE_PLUS_GROUP", "OTOLITH_WEIGHT", "OTOLITH_SIDE", "IND_WEIGHT", "MATURITY_SCALE", "MATURITY_STAGE")
 	if(checkNms(object, rnms)==FALSE) stop("Check table \"CA\" columns' size and names.")
 	return(TRUE)
 })
@@ -124,7 +124,7 @@ setGeneric("checkTRpk", function(object, ...){
 )
 
 setMethod("checkTRpk", signature(object="data.frame"), function(object, ...){
-	all.equal(object[,1:6], unique(object[,1:6]))
+	identical(object[,1:6], unique(object[,1:6]))
 })
 
 # HH
@@ -134,7 +134,7 @@ setGeneric("checkHHpk", function(object, ...){
 )
 
 setMethod("checkHHpk", signature(object="data.frame"), function(object, ...){
-	all.equal(object[,1:7], unique(object[,1:7]))
+	identical(object[,1:7], unique(object[,1:7]))
 })
 
 # SL
@@ -144,7 +144,7 @@ setGeneric("checkSLpk", function(object, ...){
 )
 
 setMethod("checkSLpk", signature(object="data.frame"), function(object, ...){
-	all.equal(object[,1:14], unique(object[,1:14]))
+	identical(object[,1:14], unique(object[,1:14]))
 })
 
 # HL
@@ -154,7 +154,7 @@ setGeneric("checkHLpk", function(object, ...){
 )
 
 setMethod("checkHLpk", signature(object="data.frame"), function(object, ...){
-	all.equal(object[,1:15], unique(object[,1:15]))
+	identical(object[,1:15], unique(object[,1:15]))
 })
 
 # CA
@@ -164,7 +164,7 @@ setGeneric("checkCApk", function(object, ...){
 )
 
 setMethod("checkCApk", signature(object="data.frame"), function(object, ...){
-	all.equal(object[,c(1:16,18,19,25,27)], unique(object[,c(1:16,18,19,25,27)]))
+	identical(object[,c(1:19)], unique(object[,c(1:19)]))
 })
 
 # CL
@@ -174,7 +174,7 @@ setGeneric("checkCLpk", function(object, ...){
 )
 
 setMethod("checkCLpk", signature(object="data.frame"), function(object, ...){
-	all.equal(object[,c(1:14)], unique(object[,c(1:14)]))
+	identical(object[,c(1:14)], unique(object[,c(1:14)]))
 })
 
 # CE
@@ -184,7 +184,7 @@ setGeneric("checkCEpk", function(object, ...){
 )
 
 setMethod("checkCEpk", signature(object="data.frame"), function(object, ...){
-	all.equal(object[,c(1:9)], unique(object[,c(1:9)]))
+	identical(object[,c(1:9)], unique(object[,c(1:9)]))
 })
 
 
@@ -203,7 +203,7 @@ setMethod("checkDataIntegrity", signature(target="data.frame", current="data.fra
 	current <- unique(current)
 	crr <- apply(current, 1, paste, collapse="")
 	if(report==TRUE){
-		current[crr %in% trg,]	
+		current[!(crr %in% trg),]	
 	} else {
 		sum(crr %in% trg)==length(crr)
 	}

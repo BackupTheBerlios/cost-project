@@ -41,7 +41,7 @@ setClass("clData",
 			quarter=NA, # PK 
 			month=NA, # PK
 			area=NA, # PK
-			rectangle=NA, # PK 
+			rect=NA, # PK 
 			spp=NA, # PK 
 			landCat=NA, # PK 
 			commCatScl=NA, # PK
@@ -155,7 +155,7 @@ setMethod("summary", signature("clData"), function(object, ...){
 #====================================================================
 
 setMethod("dim", signature("clData"), function(x){
-return(dim(x@cl))  
+	return(dim(x@cl))  
 })
 
 #====================================================================
@@ -163,11 +163,47 @@ return(dim(x@cl))
 #====================================================================
 
 setGeneric("is.clData", function(object){
-standardGeneric("is.clData")
+	standardGeneric("is.clData")
 })
 
 
 setMethod("is.clData","ANY", function(object){
-return(is(object)[1]=="clData")
+	return(is(object)[1]=="clData")
 })
+
+#====================================================================
+# select
+#====================================================================
+
+#setMethod("[", signature(x="clData", i="ANY", j="missing", drop="missing"), function(x,i,j,drop){
+#	df0 <- cl(x)
+#	df0 <- df0[i,]
+#	clData(df0)
+#})
+#
+#setMethod("[", signature(x="clData", i="ANY", j="ANY", drop="missing"), function(x,i,j,drop){
+#	df0 <- cl(x)
+#	df0[i,j]
+#})
+
+#====================================================================
+# subset
+#====================================================================
+
+setMethod("subset", signature(x="clData"), function(x,subset,...){
+	e <- substitute(subset)
+	df0 <- cl(x)	
+	r <- eval(e, df0, parent.frame())
+	clData(df0[r,])
+})
+
+#====================================================================
+# replacement
+#====================================================================
+
+#setReplaceMethod("[", signature(x="clData", i="ANY", j="ANY", value="ANY"), function(x, i, j, value){
+#	df0 <- cl(x)
+#	df0[i,j] <- value
+#	clData(df0)
+#})
 

@@ -1,4 +1,3 @@
-#importFrom()
 import("methods", "utils")
 export(
 	"checkIdentical",
@@ -18,6 +17,8 @@ exportClasses(
 	"csData"
 )
 exportMethods(
+#	"[",
+#	"[<-",
 	"checkNms",
 	"checkDataIntegrity",
 	"checkTRnms",
@@ -50,5 +51,6 @@ exportMethods(
 	"summary",
 	"is.csData",
 	"is.ceData",
-	"is.clData"
+	"is.clData",
+	"subset"
 )

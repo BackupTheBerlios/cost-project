@@ -113,7 +113,7 @@ setClass("csData",
 			foVal=NA,
 			aggLev=NA,
 			date=NA,
-			timeShot=NA,
+			time=NA,
 			foDur=NA,
 			latIni=NA,
 			lonIni=NA,
@@ -157,14 +157,14 @@ setClass("csData",
 			proj=NA, # FK
 			trpNum=NA, # FK
 			staNum=NA, # FK
-			spp=NA, # PK 
-			sex=NA, # PK
-			catchCat=NA, # PK 
-			landCat=NA, # PK 
-			commCatScl=NA, # PK
-			commCat=NA, # PK
-			subSampCat=NA, # PK
-			lenCls=NA, 
+			spp=NA, # FK 
+			sex=NA, # FK
+			catchCat=NA, # FK 
+			landCat=NA, # FK 
+			commCatScl=NA, # FK
+			commCat=NA, # FK
+			subSampCat=NA, # FK
+			lenCls=NA, # PK
 			lenNum=NA),
 		ca=data.frame(
 			sampType=NA, # FK
@@ -183,17 +183,17 @@ setClass("csData",
 			stock=NA, # PK
 			area=NA, # PK
 			rect=NA, # PK
-			lenCode=NA, # PK
 			lenCls=NA, # PK
 			age=NA, # PK
-			plusGrp=NA, # PK
+			fishId=NA, # PK
+			lenCode=NA,
+			plusGrp=NA,
 			otoWt=NA,
 			otoSide=NA,
 			indWt=NA,
 			matScale=NA,
-			matStage=NA,
-			num=NA,
-			fishId=NA) # PK 
+			matStage=NA
+			)
 	),
 	validity=valcsData
 )
@@ -205,6 +205,30 @@ setGeneric("csData", function(tr, hh, sl, hl, ca, ...){
 	standardGeneric("csData")
 	}
 )
+
+setMethod("csData", signature("data.frame", "missing", "missing", "missing", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", ...){
+	# create object and name columns properly 
+	obj <- new("csData")
+	names(tr) <- names(obj@tr)
+	new("csData", tr=tr, desc=desc)
+})
+
+setMethod("csData", signature("data.frame", "data.frame", "missing", "missing", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", ...){
+	# create object and name columns properly 
+	obj <- new("csData")
+	names(tr) <- names(obj@tr)
+	names(hh) <- names(obj@hh)
+	new("csData", tr=tr, hh=hh, desc=desc)
+})
+
+setMethod("csData", signature("data.frame", "data.frame", "data.frame", "missing", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", ...){
+	# create object and name columns properly 
+	obj <- new("csData")
+	names(tr) <- names(obj@tr)
+	names(hh) <- names(obj@hh)
+	names(sl) <- names(obj@sl)
+	new("csData", tr=tr, hh=hh, sl=sl, desc=desc)
+})
 
 setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.frame", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", ...){
 	# create object and name columns properly 
@@ -440,3 +464,69 @@ setGeneric("is.csData", function(object){
 setMethod("is.csData","ANY", function(object){
 	return(is(object, "csData"))
 })
+
+#====================================================================
+# select
+#====================================================================
+#
+#setMethod("[", signature(x="ceData", i="ANY", j="missing", drop="missing"), function(x,i,j,drop){
+#
+#})
+#
+#setMethod("[", signature(x="ceData", i="ANY", j="ANY", drop="missing"), function(x,i,j,drop){
+#
+#})
+
+#====================================================================
+# subset
+#====================================================================
+
+if (!isGeneric("subset")) setGeneric("subset")
+
+setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr"){
+browser()
+	if(table!="tr") stop("Subseting implemented only for slot tr.")
+	
+	# get idx
+	trpk <- tr(x)[,1:6]
+	hhfk <- hh(x)[,1:6]
+	hhpk <- hh(x)[,1:7]
+	slfk <- sl(x)[,1:7]
+	slpk <- sl(x)[,1:14]
+	hlfk <- hl(x)[,1:14]
+	hlpk <- hl(x)[,1:15]
+	cafk <- ca(x)[,1:6]
+	capk <- ca(x)[,1:19]
+	
+	# new idx
+	e <- substitute(subset)
+	df0 <- do.call(table, list(object=x))
+	r <- eval(e, df0, parent.frame())
+	
+	# subset
+	tr <- df0[r,]
+	tridx <- apply(tr[,1:6],1,paste,collapse="")
+	hh <- hh(x)[apply(hhfk,1,paste,collapse="") %in% tridx,]	
+	hhidx <- apply(hh[,1:7],1,paste,collapse="")
+	sl <- sl(x)[apply(slfk,1,paste,collapse="") %in% hhidx,]	
+	slidx <- apply(sl[,1:14],1,paste,collapse="")
+	hl <- hl(x)[apply(hlfk,1,paste,collapse="") %in% slidx,]	
+	ca <- ca(x)[apply(cafk,1,paste,collapse="") %in% tridx,]
+
+	# output
+	if(nrow(tr)<1) csData()
+	if(nrow(hh)<1) csData(tr=tr)
+	if(nrow(sl)<1) csData(tr=tr, hh=hh)
+	if(nrow(hl)<1) csData(tr=tr, hh=hh, sl=sl)
+	if(nrow(ca)<1) csData(tr=tr, hh=hh, sl=sl, hl=hl)
+	else csData(tr=tr, hh=hh, sl=sl, hl=hl, ca=ca)
+})
+
+
+#====================================================================
+# replacement
+#====================================================================
+
+if (!isGeneric("replace")) setGeneric("replace")
+
+

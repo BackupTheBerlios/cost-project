@@ -49,8 +49,30 @@ names(o) <- NULL
 checkEqual(o[-1], o0)
 
 #! Replacement
+checkFail(sole.ce[ce(sole.ce)$quarter==1,"quarter"]<-5)
+checkRun(sole.ce[,"daysAtSea"]<-10)
+checkTrue(is(sole.ce,"ceData"))
+checkFail(sole.ce[,"quarter"]<-10)
 
 #! Selection
+checkRun(sole.ce[ce(sole.ce)$quarter==1,])
+checkTrue(is(sole.ce[ce(sole.ce)$quarter==1,], "ceData"))
+checkRun(sole.ce[ce(sole.ce)$quarter==1,2])
+checkTrue(is(sole.ce[ce(sole.ce)$quarter==1,2], "factor"))
+checkRun(sole.ce[,2])
+checkTrue(is(sole.ce[,2], "factor"))
+checkRun(sole.ce[ce(sole.ce)$quarter==1,"quarter"])
+checkTrue(is(sole.ce[ce(sole.ce)$quarter==1,"quarter"],"factor"))
+checkRun(sole.ce[,"quarter"])
+checkTrue(is(sole.ce[,"quarter"],"factor"))
+checkRun(sole.ce[ce(sole.ce)$quarter==1,c(1:4)])
+checkTrue(is(sole.ce[ce(sole.ce)$quarter==1,c(1:4)],"data.frame"))
+checkRun(sole.ce[ce(sole.ce)$quarter==1,c("year","quarter")])
+checkTrue(is(sole.ce[ce(sole.ce)$quarter==1,c("year","quarter")],"data.frame"))
+checkRun(subset(sole.ce, quarter==1))
+checkTrue(is(subset(sole.ce, quarter==1), "ceData"))
+checkRun(subset(sole.ce, quarter==1 & area=="27.7.e"))
+checkTrue(is(subset(sole.ce, quarter==1 & area=="27.7.e"), "ceData"))
 
 #! utils methods
 checkRun(head(sole.ce))

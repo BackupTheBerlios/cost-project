@@ -49,8 +49,31 @@ names(o) <- NULL
 checkEqual(o[-1], o0)
 
 #! Replacement
+checkFail(sole.cl[cl(sole.cl)$quarter==1,"quarter"]<-5)
+checkRun(sole.cl[,"landValue"]<-10)
+checkTrue(is(sole.cl,"clData"))
+checkFail(sole.cl[,"quarter"]<-10)
 
 #! Selection
+
+checkRun(sole.cl[cl(sole.cl)$quarter==1,])
+checkTrue(is(sole.cl[cl(sole.cl)$quarter==1,], "clData"))
+checkRun(sole.cl[cl(sole.cl)$quarter==1,2])
+checkTrue(is(sole.cl[cl(sole.cl)$quarter==1,2], "factor"))
+checkRun(sole.cl[,2])
+checkTrue(is(sole.cl[,2], "factor"))
+checkRun(sole.cl[cl(sole.cl)$quarter==1,"quarter"])
+checkTrue(is(sole.cl[cl(sole.cl)$quarter==1,"quarter"],"factor"))
+checkRun(sole.cl[,"quarter"])
+checkTrue(is(sole.cl[,"quarter"],"factor"))
+checkRun(sole.cl[cl(sole.cl)$quarter==1,c(1:4)])
+checkTrue(is(sole.cl[cl(sole.cl)$quarter==1,c(1:4)],"data.frame"))
+checkRun(sole.cl[cl(sole.cl)$quarter==1,c("year","quarter")])
+checkTrue(is(sole.cl[cl(sole.cl)$quarter==1,c("year","quarter")],"data.frame"))
+checkRun(subset(sole.cl, quarter==1))
+checkTrue(is(subset(sole.cl, quarter==1), "clData"))
+checkRun(subset(sole.cl, quarter==1 & area=="27.7.e"))
+checkTrue(is(subset(sole.cl, quarter==1 & area=="27.7.e"), "clData"))
 
 #! utils methods
 checkRun(head(sole.cl))

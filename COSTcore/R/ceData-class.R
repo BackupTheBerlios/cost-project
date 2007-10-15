@@ -40,7 +40,7 @@ setClass("ceData",
 			quarter=NA, # PK 
 			month=NA, # PK
 			area=NA, # PK
-			rectangle=NA, # PK 
+			rect=NA, # PK 
 			foCatNat=NA, # PK
 			foCatEu5=NA, # PK
 			foCatEu6=NA, # PK
@@ -157,7 +157,7 @@ setMethod("summary", signature("ceData"), function(object, ...){
 #====================================================================
 
 setMethod("dim", signature("ceData"), function(x){
-return(dim(x@ce))  
+	return(dim(x@ce))  
 })
 
 #====================================================================
@@ -165,13 +165,49 @@ return(dim(x@ce))
 #====================================================================
 
 setGeneric("is.ceData", function(object){
-standardGeneric("is.ceData")
+	standardGeneric("is.ceData")
 })
 
 
 setMethod("is.ceData","ANY", function(object){
-return(is(object)[1]=="ceData")
+	return(is(object)[1]=="ceData")
 })
 
+#====================================================================
+# select
+#====================================================================
+#
+#setMethod("[", signature(x="ceData", i="ANY", j="missing", drop="missing"), function(x,i,j,drop){
+#	df0 <- ce(x)
+#	df0 <- df0[i,]
+#	ceData(df0)
+#})
+#
+#setMethod("[", signature(x="ceData", i="ANY", j="ANY", drop="missing"), function(x,i,j,drop){
+#	df0 <- ce(x)
+#	df0[i,j]
+#})
+
+#====================================================================
+# subset
+#====================================================================
+
+setMethod("subset", signature(x="ceData"), function(x,subset,...){
+	e <- substitute(subset)
+	df0 <- ce(x)	
+	r <- eval(e, df0, parent.frame())
+	ceData(df0[r,])
+})
+
+
+#====================================================================
+# replacement
+#====================================================================
+
+#setReplaceMethod("[", signature(x="ceData", i="ANY", j="ANY", value="ANY"), function(x, i, j=missing, value){
+#	df0 <- ce(x)
+#	df0[i,j] <- value
+#	ceData(df0)
+#})
 
 

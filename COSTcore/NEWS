@@ -1,3 +1,20 @@
+		CHANGES IN COSTcore VERSION 0.0-5
+
+NEW FEATURES
+    o small adjustments to class definition to make it compatible with FF5 20071011
+    o subset for ceData and clData objects
+    o [ for ceData and clData objects 
+    o [<- for ceData and clData objects 
+        
+USER-VISIBLE CHANGES
+BUG FIXES
+    o checkPk* was using all.equal which breaked the code in the case of FALSE, now uses identical 
+
+UTILITIES
+DOCUMENTATION
+DEPRECATED & DEFUNCT
+
+
 		CHANGES IN COSTcore VERSION 0.0-4
 
 NEW FEATURES
