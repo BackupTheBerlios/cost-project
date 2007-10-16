@@ -1,10 +1,13 @@
 		CHANGES IN COSTcore VERSION 0.0-5
 
 NEW FEATURES
+    o subset for csData
     o small adjustments to class definition to make it compatible with FF5 20071011
     o subset for ceData and clData objects
     o [ for ceData and clData objects 
     o [<- for ceData and clData objects 
+    o new validity for csData that allows missing data in child tables
+    o new creators for csData that dispatch in missing child tables
         
 USER-VISIBLE CHANGES
 BUG FIXES

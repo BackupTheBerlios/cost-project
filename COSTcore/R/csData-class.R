@@ -36,7 +36,6 @@
 #====================================================================
 
 valcsData <- function(object){
-
 	tr <- object@tr
 	hh <- object@hh
 	sl <- object@sl
@@ -206,14 +205,14 @@ setGeneric("csData", function(tr, hh, sl, hl, ca, ...){
 	}
 )
 
-setMethod("csData", signature("data.frame", "missing", "missing", "missing", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", ...){
+setMethod("csData", signature("data.frame", "missing", "missing", "missing", "missing"), function(tr, desc="Unknown stock", ...){
 	# create object and name columns properly 
 	obj <- new("csData")
 	names(tr) <- names(obj@tr)
 	new("csData", tr=tr, desc=desc)
 })
 
-setMethod("csData", signature("data.frame", "data.frame", "missing", "missing", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", ...){
+setMethod("csData", signature("data.frame", "data.frame", "missing", "missing", "missing"), function(tr, hh, desc="Unknown stock", ...){
 	# create object and name columns properly 
 	obj <- new("csData")
 	names(tr) <- names(obj@tr)
@@ -221,7 +220,7 @@ setMethod("csData", signature("data.frame", "data.frame", "missing", "missing", 
 	new("csData", tr=tr, hh=hh, desc=desc)
 })
 
-setMethod("csData", signature("data.frame", "data.frame", "data.frame", "missing", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", ...){
+setMethod("csData", signature("data.frame", "data.frame", "data.frame", "missing", "missing"), function(tr, hh, sl, desc="Unknown stock", ...){
 	# create object and name columns properly 
 	obj <- new("csData")
 	names(tr) <- names(obj@tr)
@@ -484,7 +483,7 @@ setMethod("is.csData","ANY", function(object){
 if (!isGeneric("subset")) setGeneric("subset")
 
 setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr"){
-browser()
+
 	if(table!="tr") stop("Subseting implemented only for slot tr.")
 	
 	# get idx

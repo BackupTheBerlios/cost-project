@@ -15,8 +15,9 @@ setGeneric("checkNms", function(object, nms, ...){
 )
 
 setMethod("checkNms", signature("data.frame", "character"), function(object, nms, ...){
+	nms <- toupper(nms)
 	lnms <- length(nms)
-	nms1 <- names(object)
+	nms1 <- toupper(names(object))
 	if(length(nms1)!=lnms) stop(return(FALSE))
 #	if(sum(nms1 %in% nms)!=lnms) stop(return(FALSE))
 	if(sum(nms1==nms)!=lnms) stop(return(FALSE))
@@ -199,8 +200,10 @@ setGeneric("checkDataIntegrity", function(target, current, ...){
 )
 
 setMethod("checkDataIntegrity", signature(target="data.frame", current="data.frame"), function(target, current, report=FALSE, ...){
+
 	trg <- apply(target, 1, paste, collapse="")
 	current <- unique(current)
+	if(sum(is.na(current))==ncol(current)) return(TRUE)
 	crr <- apply(current, 1, paste, collapse="")
 	if(report==TRUE){
 		current[!(crr %in% trg),]	
@@ -208,3 +211,4 @@ setMethod("checkDataIntegrity", signature(target="data.frame", current="data.fra
 		sum(crr %in% trg)==length(crr)
 	}
 })
+
