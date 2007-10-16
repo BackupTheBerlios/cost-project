@@ -13,7 +13,7 @@ valclData <- function(object){
 
 	cl <- object@cl
 
-	# I will rely o the prototype to check col names and size. I'm not sure it's a good strategy !
+	# I will rely on the prototype to check col names and size. I'm not sure it's a good strategy !
 	obj <- new("clData")
 	cl0 <- obj@cl
 	
