@@ -52,5 +52,6 @@ exportMethods(
 	"is.csData",
 	"is.ceData",
 	"is.clData",
-	"subset"
+	"subset",
+	"rbind2"
 )

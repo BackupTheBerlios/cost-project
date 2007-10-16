@@ -174,19 +174,14 @@ setMethod("is.ceData","ANY", function(object){
 })
 
 #====================================================================
-# select
+# rbind
 #====================================================================
-#
-#setMethod("[", signature(x="ceData", i="ANY", j="missing", drop="missing"), function(x,i,j,drop){
-#	df0 <- ce(x)
-#	df0 <- df0[i,]
-#	ceData(df0)
-#})
-#
-#setMethod("[", signature(x="ceData", i="ANY", j="ANY", drop="missing"), function(x,i,j,drop){
-#	df0 <- ce(x)
-#	df0[i,j]
-#})
+
+setMethod("rbind2", signature(x="ceData", y="ceData"), function(x,y){
+	df0 <- rbind2(ce(x),ce(y))
+	ceData(df0)
+
+})
 
 #====================================================================
 # subset

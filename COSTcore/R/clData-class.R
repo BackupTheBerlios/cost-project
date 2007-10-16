@@ -13,7 +13,7 @@ valclData <- function(object){
 
 	cl <- object@cl
 
-	# I will rely on the prototype to check col names and size. I'm not sure it's a good strategy !
+	# I will rely o the prototype to check col names and size. I'm not sure it's a good strategy !
 	obj <- new("clData")
 	cl0 <- obj@cl
 	
@@ -172,19 +172,14 @@ setMethod("is.clData","ANY", function(object){
 })
 
 #====================================================================
-# select
+# rbind
 #====================================================================
 
-#setMethod("[", signature(x="clData", i="ANY", j="missing", drop="missing"), function(x,i,j,drop){
-#	df0 <- cl(x)
-#	df0 <- df0[i,]
-#	clData(df0)
-#})
-#
-#setMethod("[", signature(x="clData", i="ANY", j="ANY", drop="missing"), function(x,i,j,drop){
-#	df0 <- cl(x)
-#	df0[i,j]
-#})
+setMethod("rbind2", signature(x="clData", y="clData"), function(x,y){
+	df0 <- rbind2(cl(x),cl(y))
+	clData(df0)
+
+})
 
 #====================================================================
 # subset

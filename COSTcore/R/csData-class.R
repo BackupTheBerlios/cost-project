@@ -465,16 +465,34 @@ setMethod("is.csData","ANY", function(object){
 })
 
 #====================================================================
-# select
+# rbind2
 #====================================================================
-#
-#setMethod("[", signature(x="ceData", i="ANY", j="missing", drop="missing"), function(x,i,j,drop){
-#
-#})
-#
-#setMethod("[", signature(x="ceData", i="ANY", j="ANY", drop="missing"), function(x,i,j,drop){
-#
-#})
+
+setMethod("rbind2", signature(x="csData", y="csData"), function(x,y){
+browser()
+	# get info
+	tr1 <- tr(x)
+	hh1 <- hh(x)
+	sl1 <- sl(x)
+	hl1 <- hl(x)
+	ca1 <- ca(x)
+
+	tr2 <- tr(y)
+	hh2 <- hh(y)
+	sl2 <- sl(y)
+	hl2 <- hl(y)
+	ca2 <- ca(y)
+
+	# bind
+	tr <- rbind2(tr1,tr2)
+	hh <- rbind2(hh1,hh2)
+	sl <- rbind2(sl1,sl2)
+	hl <- rbind2(hl1,hl2)
+	ca <- rbind2(ca1,ca2)
+
+	# new object
+	csData(tr=unique(tr), hh=unique(hh), sl=unique(sl), hl=unique(hl), ca=unique(ca))
+})
 
 #====================================================================
 # subset

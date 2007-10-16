@@ -31,7 +31,7 @@ checkTrue(checkTRnms(tr))
 checkTrue(checkHHnms(hh))
 checkTrue(checkSLnms(sl))
 checkTrue(checkHLnms(hl))
-checkTrue(checkCAnms(ca))
+#checkTrue(checkCAnms(ca))
 
 # Constructors
 checkRun(csobj <- new("csData"))
@@ -40,15 +40,15 @@ checkRun(csobj <- csData())
 checkTrue(is(csobj, "csData"))
 checkRun(csobj <- csData(tr[,-1], hh[,-1], sl[,-1], hl[,-1]))
 checkTrue(is(csobj, "csData"))
-checkRun(csobj <- csData(tr[,-1], hh[,-1], sl[,-1], hl[,-1], ca[,-1]))
-checkTrue(is(csobj, "csData"))
+#checkRun(csobj <- csData(tr[,-1], hh[,-1], sl[,-1], hl[,-1], ca[,-1]))
+#checkTrue(is(csobj, "csData"))
 
 # Accessors
 checkEqual(csobj@tr, tr(csobj))
 checkEqual(csobj@hh, hh(csobj))
 checkEqual(csobj@sl, sl(csobj))
 checkEqual(csobj@hl, hl(csobj))
-checkEqual(csobj@ca, ca(csobj))
+#checkEqual(csobj@ca, ca(csobj))
 
 #! check object is well formed
 # tr
@@ -86,6 +86,10 @@ checkEqual(o[-1], o0)
 #! Replacement
 
 #! Selection
+checkRun(cs1 <- subset(sole.cs, trpNum=="LIM1"))
+checkTrue(is(cs1, "csData"))
+checkRun(cs1 <- subset(sole.cs, 1))
+checkTrue(is(cs1, "csData"))
 
 #! utils methods
 checkRun(head(sole.cs))
@@ -94,4 +98,11 @@ checkRun(summary(sole.cs))
 checkRun(dim(sole.cs))
 checkTrue(is.csData(sole.cs))
 
+#! rbind2
+cs1 <- subset(sole.cs, trpNum=="LIM1")
+cs2 <- subset(sole.cs, 1)
+checkRun(cs3 <- rbind2(cs1,cs2))
+checkTrue(is(cs3, "csData"))
+
 finishTest()
+
