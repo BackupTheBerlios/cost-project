@@ -13,12 +13,16 @@ export(
 )
 exportClasses(
 	"ceData",
+	"ceDataVal",
+#	"ceDataCons",
 	"clData",
-	"csData"
+	"clDataVal",
+#	"clDataCons",
+	"csData",
+	"csDataVal"
+#	"csDataCons"
 )
 exportMethods(
-#	"[",
-#	"[<-",
 	"checkNms",
 	"checkDataIntegrity",
 	"checkTRnms",
@@ -53,5 +57,11 @@ exportMethods(
 	"is.ceData",
 	"is.clData",
 	"subset",
-	"rbind2"
+	"rbind2",
+	"ceDataVal",
+#	"ceDataCons",
+	"clDataVal",
+#	"clDataCons",
+	"csDataVal"
+#	"csDataCons"
 )

@@ -1,3 +1,20 @@
+		CHANGES IN COSTcore VERSION 0.1-0
+
+NEW FEATURES
+    o new clDataVal class and creator
+    o new csDataVal class and creator
+    o new ceDataVal class and creator
+        
+USER-VISIBLE CHANGES
+BUG FIXES
+    o checkNms was comparing the object with itself, now corrected
+identical 
+
+UTILITIES
+DOCUMENTATION
+DEPRECATED & DEFUNCT
+
+
 		CHANGES IN COSTcore VERSION 0.0-6
 
 NEW FEATURES

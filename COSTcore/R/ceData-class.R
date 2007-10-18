@@ -18,7 +18,7 @@ valceData <- function(object){
 	ce0 <- obj@ce
 	
 	# check columns
-	if(checkNms(ce, names(ce))==FALSE) stop("Check slot candidate \"ce\" columns' size and names.")
+	if(checkNms(ce, names(ce0))==FALSE) stop("Check slot candidate \"ce\" columns' size and names.")
 	
 	# check PK
 	if(checkCEpk(ce)==FALSE) stop("Primary key not unique in slot candidate \"ce\".")

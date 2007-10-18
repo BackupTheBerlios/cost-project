@@ -31,7 +31,7 @@ checkTrue(checkTRnms(tr))
 checkTrue(checkHHnms(hh))
 checkTrue(checkSLnms(sl))
 checkTrue(checkHLnms(hl))
-#checkTrue(checkCAnms(ca))
+checkTrue(checkCAnms(ca))
 
 # Constructors
 checkRun(csobj <- new("csData"))
