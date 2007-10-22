@@ -469,7 +469,7 @@ setMethod("is.csData","ANY", function(object){
 #====================================================================
 
 setMethod("rbind2", signature(x="csData", y="csData"), function(x,y){
-browser()
+
 	# get info
 	tr1 <- tr(x)
 	hh1 <- hh(x)
