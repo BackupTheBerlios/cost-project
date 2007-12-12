@@ -73,6 +73,15 @@ setMethod("clData", signature("data.frame"), function(cl, desc="Unknown stock", 
 	new("clData", cl=cl, desc=desc)
 })
 
+setMethod("clData", signature("matrix"), function(cl, desc="Unknown stock", ...){
+	# coerce to dataframe
+	cl <- as.data.frame(cl)
+	# create object and name columns properly 
+	obj <- new("clData")
+	names(cl) <- names(obj@cl)
+	new("clData", cl=cl, desc=desc)
+})
+
 setMethod("clData", signature("missing"), function(desc="Unknown stock", ...){
 	new("clData", desc=desc)
 })

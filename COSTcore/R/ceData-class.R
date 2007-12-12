@@ -69,6 +69,15 @@ setMethod("ceData", signature("data.frame"), function(ce, desc="Unknown stock", 
 	new("ceData", ce=ce, desc=desc)
 })
 
+setMethod("ceData", signature("matrix"), function(ce, desc="Unknown stock", ...){
+	# coerce to data.frame
+	ce <- as.data.frame(ce)
+	# create object and name columns properly 
+	obj <- new("ceData")
+	names(ce) <- names(obj@ce)
+	new("ceData", ce=ce, desc=desc)
+})
+
 setMethod("ceData", signature("missing"), function(desc="Unknown stock", ...){
 	new("ceData", desc=desc)
 })

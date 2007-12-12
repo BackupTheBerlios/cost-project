@@ -69,4 +69,76 @@ setMethod("clDataCons", signature("missing"), function(desc="Unknown stock", ...
 	new("clDataCons", desc=desc)
 })
 
+#====================================================================
+# 'Head' and 'Tail' functions  (setGeneric methods in 'csData-class.R')
+#====================================================================
+
+
+setMethod("head", signature("clDataCons"), function(x, ...){
+  object <- new("clDataCons",desc=x@desc)
+  object@cl <- head(x@cl)
+  return(object)  
+	}
+)
+
+
+setMethod("tail", signature("clDataCons"), function(x, ...){
+  object <- new("clDataCons",desc=x@desc)
+  object@cl <- tail(x@cl)
+  return(object)  
+	}
+)
+
+#====================================================================
+# 'summary' function
+#====================================================================
+
+setMethod("summary", signature("clDataCons"), function(object, ...){
+  ll <- list()
+  ll$desc <- object@desc
+  ll$cl <- summary(object@cl)
+  return(ll)  
+	}
+)
+
+#====================================================================
+# 'dim' function
+#====================================================================
+
+setMethod("dim", signature("clDataCons"), function(x){
+	return(dim(x@cl))  
+})
+
+#====================================================================
+# 'is.' function
+#====================================================================
+
+setGeneric("is.clDataCons", function(object){
+	standardGeneric("is.clDataCons")
+})
+
+
+setMethod("is.clDataCons","ANY", function(object){
+	return(is(object)[1]=="clDataCons")
+})
+
+#====================================================================
+# rbind
+#====================================================================
+
+setMethod("rbind2", signature(x="clDataCons", y="clDataCons"), function(x,y){
+	df0 <- rbind2(cl(x),cl(y))
+	new("clDataCons", df0)
+})
+
+#====================================================================
+# subset
+#====================================================================
+
+setMethod("subset", signature(x="clDataCons"), function(x,subset,...){
+	e <- substitute(subset)
+	df0 <- cl(x)	
+	r <- eval(e, df0, parent.frame())
+	new("clDataCons", df0[r,])
+})
 

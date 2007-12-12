@@ -67,7 +67,7 @@ valcsData <- function(object){
 	# check data integrity
 	if(checkDataIntegrity(tr[,1:6], hh[,1:6])==FALSE) stop("Data integrity problem in table \"hh\". Missing related records in \"tr\".")
 	if(checkDataIntegrity(hh[,1:7], sl[,1:7])==FALSE) stop("Data integrity problem in table \"sl\". Missing related records in \"hh\".")
-	if(checkDataIntegrity(sl[,1:14], hl[,1:14])==FALSE) stop("Data integrity problem in table \"hl\". Missing related records in \"sl\".")
+	if(checkDataIntegrity(sl[,1:13], hl[,c(1:8,10:14)])==FALSE) stop("Data integrity problem in table \"hl\". Missing related records in \"sl\".")
 #	if(checkDataIntegrity(tr[,1:6], ca[,1:6])==FALSE) stop("Data integrity problem in table \"ca\". Missing related records in \"tr\".")
 
 	# Everything is fine
@@ -138,7 +138,7 @@ setClass("csData",
 			trpNum=NA, # FK
 			staNum=NA, # FK
 			spp=NA, # PK 
-			sex=NA, # PK
+#			sex=NA, # PK
 			catchCat=NA, # PK 
 			landCat=NA, # PK 
 			commCatScl=NA, # PK
@@ -170,9 +170,11 @@ setClass("csData",
 			landCtry=NA, # FK
 			vslFlgCtry=NA, # FK
 			year=NA, # FK
+			quarter=NA,
+			month=NA,
 			proj=NA, # FK
 			trpNum=NA, # FK
-			staNum=NA, # PK (optional)
+			staNum=NA, # PK
 			spp=NA, # PK 
 			sex=NA, # PK
 			catchCat=NA, # PK 
@@ -509,11 +511,11 @@ setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr"){
 	hhfk <- hh(x)[,1:6]
 	hhpk <- hh(x)[,1:7]
 	slfk <- sl(x)[,1:7]
-	slpk <- sl(x)[,1:14]
-	hlfk <- hl(x)[,1:14]
+	slpk <- sl(x)[,1:13]
+	hlfk <- hl(x)[,c(1:8,11:14)]
 	hlpk <- hl(x)[,1:15]
-	cafk <- ca(x)[,1:6]
-	capk <- ca(x)[,1:19]
+	cafk <- ca(x)[,c(1:4,7:8)]
+	capk <- ca(x)[,c(1:4,7:21)]
 	
 	# new idx
 	e <- substitute(subset)
@@ -526,7 +528,7 @@ setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr"){
 	hh <- hh(x)[apply(hhfk,1,paste,collapse="") %in% tridx,]	
 	hhidx <- apply(hh[,1:7],1,paste,collapse="")
 	sl <- sl(x)[apply(slfk,1,paste,collapse="") %in% hhidx,]	
-	slidx <- apply(sl[,1:14],1,paste,collapse="")
+	slidx <- apply(sl[,1:13],1,paste,collapse="")
 	hl <- hl(x)[apply(hlfk,1,paste,collapse="") %in% slidx,]	
 	ca <- ca(x)[apply(cafk,1,paste,collapse="") %in% tridx,]
 

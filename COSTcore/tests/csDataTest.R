@@ -40,15 +40,15 @@ checkRun(csobj <- csData())
 checkTrue(is(csobj, "csData"))
 checkRun(csobj <- csData(tr[,-1], hh[,-1], sl[,-1], hl[,-1]))
 checkTrue(is(csobj, "csData"))
-#checkRun(csobj <- csData(tr[,-1], hh[,-1], sl[,-1], hl[,-1], ca[,-1]))
-#checkTrue(is(csobj, "csData"))
+checkRun(csobj <- csData(tr[,-1], hh[,-1], sl[,-1], hl[,-1], ca[,-1]))
+checkTrue(is(csobj, "csData"))
 
 # Accessors
 checkEqual(csobj@tr, tr(csobj))
 checkEqual(csobj@hh, hh(csobj))
 checkEqual(csobj@sl, sl(csobj))
 checkEqual(csobj@hl, hl(csobj))
-#checkEqual(csobj@ca, ca(csobj))
+checkEqual(csobj@ca, ca(csobj))
 
 #! check object is well formed
 # tr
@@ -80,6 +80,14 @@ checkRun(o0 <- hl(csobj))
 o0 <- c(o0)
 names(o0) <- NULL
 o <- c(hl)
+names(o) <- NULL
+checkEqual(o[-1], o0)
+
+# ca
+checkRun(o0 <- ca(csobj))
+o0 <- c(o0)
+names(o0) <- NULL
+o <- c(ca)
 names(o) <- NULL
 checkEqual(o[-1], o0)
 

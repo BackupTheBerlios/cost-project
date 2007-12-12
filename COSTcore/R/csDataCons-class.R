@@ -120,7 +120,6 @@ setClass("csDataCons",
 			space=NA,
 			technical=NA,
 			sort=NA, 
-			sex=NA,
 			wt=NA, 
 			subSampWt=NA, 
 			lenCode=NA),
@@ -217,11 +216,73 @@ setMethod("desc", signature("csDataCons"), function(object, ...){
 )
 
 #====================================================================
+# 'Head' and 'Tail' functions
+#====================================================================
+
+setMethod("head", signature("csDataCons"), function(x, ...){
+  object <- new("csDataCons",desc=x@desc)
+  object@tr <- head(x@tr)
+  object@hh <- head(x@hh)
+  object@sl <- head(x@sl)
+  object@hl <- head(x@hl)
+  object@ca <- head(x@ca)
+  return(object)  
+	}
+)
+
+setMethod("tail", signature("csDataCons"), function(x, ...){
+  object <- new("csDataCons",desc=x@desc)
+  object@tr <- tail(x@tr)
+  object@hh <- tail(x@hh)
+  object@sl <- tail(x@sl)
+  object@hl <- tail(x@hl)
+  object@ca <- tail(x@ca)
+  return(object)  
+	}
+)
+
+#====================================================================
 # 'summary' function
 #====================================================================
 
 setMethod("summary", signature("csDataCons"), function(object, ...){
-	stop("Not implemented yet !")
+  ll <- list()
+  ll$desc <- object@desc
+  ll$tr <- summary(object@tr)
+  ll$hh <- summary(object@hh)
+  ll$sl <- summary(object@sl)
+  ll$hl <- summary(object@hl)
+  ll$ca <- summary(object@ca)
+  return(ll)  
+	}
+)
+
+#====================================================================
+# 'dim' function
+#====================================================================
+
+setMethod("dim", signature("csDataCons"), function(x){
+  ll <- list()
+  ll$tr <- dim(x@tr)
+  ll$hh <- dim(x@hh)
+  ll$sl <- dim(x@sl)
+  ll$hl <- dim(x@hl)
+  ll$ca <- dim(x@ca)
+  return(ll)  
+	}
+)
+
+#====================================================================
+# 'is.' function
+#====================================================================
+
+setGeneric("is.csDataCons", function(object){
+	standardGeneric("is.csDataCons")
+})
+
+
+setMethod("is.csDataCons","ANY", function(object){
+	return(is(object, "csDataCons"))
 })
 
 #====================================================================
@@ -260,18 +321,15 @@ setMethod("rbind2", signature(x="csDataCons", y="csDataCons"), function(x,y){
 
 setMethod("subset", signature(x="csDataCons"), function(x,subset,..., table="tr"){
 
-	if(table!="tr") stop("Subseting implemented only for slot tr.")
-	
 	# get idx
-	trpk <- tr(x)[,1:6]
-	hhfk <- hh(x)[,1:6]
-	hhpk <- hh(x)[,1:7]
-	slfk <- sl(x)[,1:7]
-	slpk <- sl(x)[,1:14]
-	hlfk <- hl(x)[,1:14]
-	hlpk <- hl(x)[,1:15]
-	cafk <- ca(x)[,1:6]
-	capk <- ca(x)[,1:19]
+	trpk <- tr(x)$PSUid
+	hhfk <- hh(x)$PSUid
+	hhpk <- hh(x)$SSUid
+	slfk <- sl(x)$SSUid
+	slpk <- sl(x)$TSUid
+	hlfk <- hl(x)$TSUid
+	cafk <- ca(x)$PSUid
+	cafk2 <- ca(x)$SSUid
 	
 	# new idx
 	e <- substitute(subset)
@@ -279,14 +337,37 @@ setMethod("subset", signature(x="csDataCons"), function(x,subset,..., table="tr"
 	r <- eval(e, df0, parent.frame())
 	
 	# subset
-	tr <- df0[r,]
-	tridx <- apply(tr[,1:6],1,paste,collapse="")
-	hh <- hh(x)[apply(hhfk,1,paste,collapse="") %in% tridx,]	
-	hhidx <- apply(hh[,1:7],1,paste,collapse="")
-	sl <- sl(x)[apply(slfk,1,paste,collapse="") %in% hhidx,]	
-	slidx <- apply(sl[,1:14],1,paste,collapse="")
-	hl <- hl(x)[apply(hlfk,1,paste,collapse="") %in% slidx,]	
-	ca <- ca(x)[apply(cafk,1,paste,collapse="") %in% tridx,]
+	if(table=="tr"){
+		tr <- df0[r,]
+		hh <- hh[hh$PSUid %in% tr$PSUid]
+		sl <- sl[sl$SSUid %in% hh$SSUid]
+		hl <- hl[hl$TSUid %in% sl$TSUid]
+		ca <- ca[ca$PSUid %in% tr$PSUid]
+	} else if (table=="hh"){
+		hh <- df0[r,]
+		tr <- tr[tr$PSUid %in% unique(hh$PSUid)]
+		sl <- sl[sl$SSUid %in% hh$SSUid]
+		hl <- hl[hl$TSUid %in% sl$TSUid]
+		ca <- ca[ca$PSUid %in% tr$PSUid]
+	} else if(table=="sl"){
+		sl <- df0[r,]
+		tr <- tr[tr$PSUid %in% unique(sl$PSUid)]
+		hh <- hh[hh$SSUid %in% unique(sl$SSUid)]
+		hl <- hl[hl$TSUid %in% sl$TSUid]
+		ca <- ca[ca$PSUid %in% tr$PSUid]
+	} else if(table=="hl"){
+		hl <- df0[r,]
+		tr <- tr[tr$PSUid %in% unique(hl$PSUid)]
+		hh <- hh[hh$SSUid %in% unique(hl$SSUid)]
+		sl <- sl[sl$TSUid %in% unique(hl$TSUid)]
+		ca <- ca[ca$PSUid %in% tr$PSUid]
+	} else if(table=="ca"){
+		ca <- df0[r,]
+		tr <- tr[tr$PSUid %in% unique(ca$PSUid)]
+		hh <- hh[hh$PSUid %in% tr$PSUid]
+		sl <- sl[sl$SSUid %in% hh$SSUid]
+		hl <- hl[hl$TSUid %in% sl$TSUid]
+	}		
 
 	# output
 	if(nrow(tr)<1) csData()

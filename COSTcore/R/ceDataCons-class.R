@@ -65,4 +65,91 @@ setMethod("ceDataCons", signature("missing"), function(desc="Unknown stock", ...
 	new("ceDataCons", desc=desc)
 })
 
+#====================================================================
+# Accessor functions
+#====================================================================
+
+setMethod("ce", signature("ceDataCons"), function(object, ...){
+	object@ce
+	}
+)
+
+setMethod("desc", signature("ceDataCons"), function(object, ...){
+	object@desc
+	}
+)
+
+#====================================================================
+# 'Head' and 'Tail' functions
+#====================================================================
+
+
+setMethod("head", signature("ceDataCons"), function(x, ...){
+  object <- new("ceDataCons",desc=x@desc)
+  object@ce <- head(x@ce)
+  return(object)  
+	}
+)
+
+
+setMethod("tail", signature("ceDataCons"), function(x, ...){
+  object <- new("ceDataCons",desc=x@desc)
+  object@ce <- tail(x@ce)
+  return(object)  
+	}
+)
+
+#====================================================================
+# 'summary' function
+#====================================================================
+
+setMethod("summary", signature("ceDataCons"), function(object, ...){
+  ll <- list()
+  ll$desc <- object@desc
+  ll$ce <- summary(object@ce)
+  return(ll)  
+	}
+)
+
+
+#====================================================================
+# 'dim' function
+#====================================================================
+
+setMethod("dim", signature("ceDataCons"), function(x){
+	return(dim(x@ce))  
+})
+
+#====================================================================
+# 'is.' function
+#====================================================================
+
+setGeneric("is.ceDataCons", function(object){
+	standardGeneric("is.ceDataCons")
+})
+
+
+setMethod("is.ceDataCons","ANY", function(object){
+	return(is(object)[1]=="ceDataCons")
+})
+
+#====================================================================
+# rbind
+#====================================================================
+
+setMethod("rbind2", signature(x="ceDataCons", y="ceDataCons"), function(x,y){
+	df0 <- rbind2(ce(x),ce(y))
+	new("ceDataCons", ce=df0)
+})
+
+#====================================================================
+# subset
+#====================================================================
+
+setMethod("subset", signature(x="ceDataCons"), function(x,subset,...){
+	e <- substitute(subset)
+	df0 <- ce(x)	
+	r <- eval(e, df0, parent.frame())
+	new("ceDataCons", df0[r,])
+})
 

@@ -1,3 +1,22 @@
+		CHANGES IN COSTcore VERSION 0.5-0
+
+NEW FEATURES
+    o new constructor for ceData and clData for matrix objects.
+    o All classes adjusted to FF5 12/11 version. 
+    o accessors for ceDataCons 
+    o methods for ceDataCons: head, tail, summary, is, dim
+    o rbind2 for ceDataCons
+    o subset for ceDataCons
+    o accessors for clDataCons
+    o methods for clDataCons: head, tail, summary, is, dim
+    o rbind2 for clDataCons
+    o subset for clDataCons
+    o accessors for csDataCons 
+    o methods for csDataCons: head, tail, summary, is, dim
+    o rbind2 for csDataCons
+    o subset for csDataCons
+   
+
 		CHANGES IN COSTcore VERSION 0.2-0
 
 NEW FEATURES

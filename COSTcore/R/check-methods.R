@@ -57,7 +57,7 @@ setGeneric("checkSLnms", function(object, ...){
 
 setMethod("checkSLnms", signature(object="data.frame"), function(object, ...){
 	nms <- names(object)
-	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "SEX", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "SUBSAMPLING_CATEGORY", "VALIDITY_CODE", "WEIGHT", "SUBSAMPLE_WEIGHT", "LENGTH_CODE")
+	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "SUBSAMPLING_CATEGORY", "VALIDITY_CODE", "WEIGHT", "SUBSAMPLE_WEIGHT", "LENGTH_CODE")
 	if(checkNms(object, rnms)==FALSE) stop("Check table \"SL\" columns' size and names.")
 	return(TRUE)
 })
@@ -83,7 +83,7 @@ setGeneric("checkCAnms", function(object, ...){
 
 setMethod("checkCAnms", signature(object="data.frame"), function(object, ...){
 	nms <- names(object)
-	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "SEX", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "STOCK", "AREA", "RECTANGLE", "LENGTH_CLASS", "AGE", "SINGLE_FISH_NB", "LENGTH_CODE", "AGE_PLUS_GROUP", "OTOLITH_WEIGHT", "OTOLITH_SIDE", "INDIVIDUAL_WEIGHT", "MATURITY_SCALE", "MATURITY_STAGE")
+	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "QUARTER", "MONTH", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "SEX", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "STOCK", "AREA", "RECTANGLE", "LENGTH_CLASS", "AGE", "SINGLE_FISH_NB", "LENGTH_CODE", "AGE_PLUS_GROUP", "OTOLITH_WEIGHT", "OTOLITH_SIDE", "INDIVIDUAL_WEIGHT", "MATURITY_SCALE", "MATURITY_STAGE")
 	if(checkNms(object, rnms)==FALSE) stop("Check table \"CA\" columns' size and names.")
 	return(TRUE)
 })
@@ -145,7 +145,7 @@ setGeneric("checkSLpk", function(object, ...){
 )
 
 setMethod("checkSLpk", signature(object="data.frame"), function(object, ...){
-	identical(object[,1:14], unique(object[,1:14]))
+	identical(object[,1:13], unique(object[,1:13]))
 })
 
 # HL
@@ -165,7 +165,7 @@ setGeneric("checkCApk", function(object, ...){
 )
 
 setMethod("checkCApk", signature(object="data.frame"), function(object, ...){
-	identical(object[,c(1:19)], unique(object[,c(1:19)]))
+	identical(object[,c(1:4,7:21)], unique(object[,c(1:4,7:21)]))
 })
 
 # CL
