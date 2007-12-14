@@ -94,7 +94,7 @@ checkEqual(o[-1], o0)
 #! Replacement
 
 #! Selection
-checkRun(cs1 <- subset(sole.cs, trpNum=="LIM1"))
+checkRun(cs1 <- subset(sole.cs, trpCode=="LIM1"))
 checkTrue(is(cs1, "csData"))
 checkRun(cs1 <- subset(sole.cs, 1))
 checkTrue(is(cs1, "csData"))
@@ -107,7 +107,7 @@ checkRun(dim(sole.cs))
 checkTrue(is.csData(sole.cs))
 
 #! rbind2
-cs1 <- subset(sole.cs, trpNum=="LIM1")
+cs1 <- subset(sole.cs, trpCode=="LIM1")
 cs2 <- subset(sole.cs, 1)
 checkRun(cs3 <- rbind2(cs1,cs2))
 checkTrue(is(cs3, "csData"))

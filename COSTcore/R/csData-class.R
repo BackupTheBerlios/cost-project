@@ -91,7 +91,7 @@ setClass("csData",
 			vslFlgCtry=NA, # PK
 			year=NA, # PK
 			proj=NA, # PK
-			trpNum=NA, # PK
+			trpCode=NA, # PK
 			vslLen=NA, 
 			vslPwr=NA, 
 			vslSize=NA, 
@@ -107,7 +107,7 @@ setClass("csData",
 			vslFlgCtry=NA, # FK
 			year=NA, # FK
 			proj=NA, # FK
-			trpNum=NA, # FK
+			trpCode=NA, # FK
 			staNum=NA, # PK
 			foVal=NA,
 			aggLev=NA,
@@ -135,7 +135,7 @@ setClass("csData",
 			vslFlgCtry=NA, # FK
 			year=NA, # FK
 			proj=NA, # FK
-			trpNum=NA, # FK
+			trpCode=NA, # FK
 			staNum=NA, # FK
 			spp=NA, # PK 
 #			sex=NA, # PK
@@ -154,7 +154,7 @@ setClass("csData",
 			vslFlgCtry=NA, # FK
 			year=NA, # FK
 			proj=NA, # FK
-			trpNum=NA, # FK
+			trpCode=NA, # FK
 			staNum=NA, # FK
 			spp=NA, # FK 
 			sex=NA, # FK
@@ -173,7 +173,7 @@ setClass("csData",
 			quarter=NA,
 			month=NA,
 			proj=NA, # FK
-			trpNum=NA, # FK
+			trpCode=NA, # FK
 			staNum=NA, # PK
 			spp=NA, # PK 
 			sex=NA, # PK
