@@ -4,6 +4,7 @@
 \alias{clData-class}
 \alias{clData-methods}
 \alias{clData,data.frame-method}
+\alias{clData,matrix-method}
 \alias{clData,character-method}
 \alias{clData,missing-method}
 \title{Class "clData"}

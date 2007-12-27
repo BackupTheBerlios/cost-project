@@ -3,6 +3,9 @@
 \alias{checkNms}
 \alias{checkNms-methods}
 \alias{checkNms,data.frame,character-method}
+\alias{checkTys}
+\alias{checkTys-methods}
+\alias{checkTys,data.frame,list-method}
 \alias{checkTRnms}
 \alias{checkTRnms-methods}
 \alias{checkTRnms,data.frame-method}
@@ -51,6 +54,7 @@
 }
 \section{Methods}{
 \item{checkNms}{Check names in a data.frame against a character vector.}
+\item{checkTys}{Check column types in a data.frame against a list of class names.}
 \item{checkTRnms}{Wrapper for TR checkNms.}
 \item{checkHHnms}{Wrapper for HH checkNms.}
 \item{checkSLnms}{Wrapper for SL checkNms.}

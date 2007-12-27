@@ -4,6 +4,7 @@
 \alias{ceData-class}
 \alias{ceData-methods}
 \alias{ceData,data.frame-method}
+\alias{ceData,matrix-method}
 \alias{ceData,character-method}
 \alias{ceData,missing-method}
 \title{Class "ceData"}
