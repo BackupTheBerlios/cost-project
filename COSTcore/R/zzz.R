@@ -1,7 +1,7 @@
 .onLoad <- function(lib,pkg) {
-	cat("--------------------------------------------------------------\n")
+	cat("-------------------------------------------------------------------\n")
 	pkg.info <- drop(read.dcf(file=system.file("DESCRIPTION", package="COSTcore"), fields=c("Version", "Built")))
-	cat("COSTcore - \"Beta\"\n")
-	cat(paste("(Version: ", pkg.info["Version"], ". Built on: ", pkg.info["Built"], ")\n", sep=""))
-	cat("-----------------------------------------------------------------\n")
+	cat(" COSTcore - \"Beta\"\n")
+	cat(paste(" (Version: ", pkg.info["Version"], ". Built on: ", pkg.info["Built"], ")\n", sep=""))
+	cat("-------------------------------------------------------------------\n")
 }

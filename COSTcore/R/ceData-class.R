@@ -23,6 +23,10 @@ valceData <- function(object){
 	# check PK
 	if(checkCEpk(ce)==FALSE) stop("Primary key not unique in slot candidate \"ce\".")
 
+	# check column types
+	tys0 <- lapply(ce0,class)
+	if(checkTys(ce, tys0)==FALSE) stop("Column types not correct in slot candidate \"ce\".")
+
 	# Everything is fine
 	return(TRUE)
 }
@@ -35,21 +39,21 @@ setClass("ceData",
 	prototype(
 		desc="my stock",
 		ce=data.frame(
-			vslFlgCtry=NA, # PK
-			year=NA, # PK
-			quarter=NA, # PK 
-			month=NA, # PK
-			area=NA, # PK
-			rect=NA, # PK 
-			foCatNat=NA, # PK
-			foCatEu5=NA, # PK
-			foCatEu6=NA, # PK
-			trpNum=NA,
-			foNum=NA,
-			foDur=NA,
-			effKwDays=NA,
-			effGtDays=NA,
-			daysAtSea=NA)		
+			vslFlgCtry=as.factor(NA), # PK
+			year=as.numeric(NA), # PK
+			quarter=as.numeric(NA), # PK 
+			month=as.numeric(NA), # PK
+			area=as.factor(NA), # PK
+			rect=as.factor(NA), # PK 
+			foCatNat=as.factor(NA), # PK
+			foCatEu5=as.factor(NA), # PK
+			foCatEu6=as.factor(NA), # PK
+			trpNum=as.numeric(NA),
+			foNum=as.numeric(NA),
+			foDur=as.numeric(NA),
+			effKwDays=as.numeric(NA),
+			effGtDays=as.numeric(NA),
+			daysAtSea=as.numeric(NA))		
 	),
 	validity=valceData
 )
@@ -65,7 +69,11 @@ setGeneric("ceData", function(ce, ...){
 setMethod("ceData", signature("data.frame"), function(ce, desc="Unknown stock", ...){
 	# create object and name columns properly 
 	obj <- new("ceData")
-	names(ce) <- names(obj@ce)
+	ce0 <- obj@ce
+	names(ce) <- names(ce0)
+	# corce columns
+	ce <- coerceDataFrameColumns(ce, ce0)
+	# object
 	new("ceData", ce=ce, desc=desc)
 })
 
@@ -73,9 +81,10 @@ setMethod("ceData", signature("matrix"), function(ce, desc="Unknown stock", ...)
 	# coerce to data.frame
 	ce <- as.data.frame(ce)
 	# create object and name columns properly 
-	obj <- new("ceData")
-	names(ce) <- names(obj@ce)
-	new("ceData", ce=ce, desc=desc)
+#	obj <- new("ceData")
+#	names(ce) <- names(obj@ce)
+#	new("ceData", ce=ce, desc=desc)
+	ceData(ce, desc)
 })
 
 setMethod("ceData", signature("missing"), function(desc="Unknown stock", ...){
@@ -95,13 +104,14 @@ setMethod("ceData", signature("character"), function(ce, desc="Unknown stock", .
 	# check names are correct
 	checkCEnms(ce)
 
-	# remove record type 
+	# remove record "type" 
 	ce <- ce[,-1]
 
 	# create object and name columns properly 
-	obj <- new("ceData")
-	names(ce) <- names(obj@ce)
-	new("ceData", ce=ce, desc=desc)
+#	obj <- new("ceData")
+#	names(ce) <- names(obj@ce)
+#	new("ceData", ce=ce, desc=desc)
+	ceData(ce=ce, dec=desc)
 })
 
 #====================================================================

@@ -64,6 +64,18 @@ valcsData <- function(object){
 	if(checkHLpk(hl)==FALSE) stop("Primary key not unique in slot candidate \"hl\".")
 	if(checkCApk(ca)==FALSE) stop("Primary key not unique in slot candidate \"ca\".")
 
+	# check column types
+	tys0 <- lapply(tr0,class)
+	if(checkTys(tr, tys0)==FALSE) stop("Column types not correct in slot candidate \"tr\".")
+	tys0 <- lapply(hh0,class)
+	if(checkTys(hh, tys0)==FALSE) stop("Column types not correct in slot candidate \"hh\".")
+	tys0 <- lapply(sl0,class)
+	if(checkTys(sl, tys0)==FALSE) stop("Column types not correct in slot candidate \"sl\".")
+	tys0 <- lapply(hl0,class)
+	if(checkTys(hl, tys0)==FALSE) stop("Column types not correct in slot candidate \"hl\".")
+	tys0 <- lapply(ca0,class)
+	if(checkTys(ca, tys0)==FALSE) stop("Column types not correct in slot candidate \"ca\".")
+
 	# check data integrity
 	if(checkDataIntegrity(tr[,1:6], hh[,1:6])==FALSE) stop("Data integrity problem in table \"hh\". Missing related records in \"tr\".")
 	if(checkDataIntegrity(hh[,1:7], sl[,1:7])==FALSE) stop("Data integrity problem in table \"sl\". Missing related records in \"hh\".")
@@ -86,114 +98,113 @@ setClass("csData",
 	prototype(
 		desc="my stock",
 		tr=data.frame(
-			sampType=NA, # PK
-			landCtry=NA, # PK
-			vslFlgCtry=NA, # PK
-			year=NA, # PK
-			proj=NA, # PK
-			trpCode=NA, # PK
-			vslLen=NA, 
-			vslPwr=NA, 
-			vslSize=NA, 
-			vsType=NA, 
-			foNum=NA, 
-			daysAtSea=NA, 
-			vslId=NA, 
-			sampCtry=NA, 
-			sampMeth=NA),
+			sampType=as.factor(NA), # PK
+			landCtry=as.factor(NA), # PK
+			vslFlgCtry=as.factor(NA), # PK
+			year=as.numeric(NA), # PK
+			proj=as.factor(NA), # PK
+			trpCode=as.factor(NA), # PK
+			vslLen=as.numeric(NA), 
+			vslPwr=as.numeric(NA), 
+			vslSize=as.numeric(NA), 
+			vsType=as.factor(NA), 
+			foNum=as.numeric(NA), 
+			daysAtSea=as.numeric(NA), 
+			vslId=as.numeric(NA), 
+			sampCtry=as.factor(NA), 
+			sampMeth=as.factor(NA)),
 		hh=data.frame(
-			sampType=NA, # FK
-			landCtry=NA, # FK
-			vslFlgCtry=NA, # FK
-			year=NA, # FK
-			proj=NA, # FK
-			trpCode=NA, # FK
-			staNum=NA, # PK
-			foVal=NA,
-			aggLev=NA,
-			date=NA,
-			time=NA,
-			foDur=NA,
-			latIni=NA,
-			lonIni=NA,
-			latFin=NA,
-			lonFin=NA,
-			area=NA,
-			rect=NA,
-			foDep=NA,
-			waterDep=NA,
-			foCatNat=NA,
-			foCatEu5=NA,
-			foCatEu6=NA,
-			gear=NA,
-			meshSize=NA,
-			selDev=NA,
-			meshSizeSelDev=NA),
+			sampType=as.factor(NA), # FK
+			landCtry=as.factor(NA), # FK
+			vslFlgCtry=as.factor(NA), # FK
+			year=as.numeric(NA), # FK
+			proj=as.factor(NA), # FK
+			trpCode=as.factor(NA), # FK
+			staNum=as.numeric(NA), # PK
+			foVal=as.factor(NA),
+			aggLev=as.factor(NA),
+			date=as.factor(NA),
+			time=as.factor(NA),
+			foDur=as.numeric(NA),
+			latIni=as.numeric(NA),
+			lonIni=as.numeric(NA),
+			latFin=as.numeric(NA),
+			lonFin=as.numeric(NA),
+			area=as.factor(NA),
+			rect=as.factor(NA),
+			foDep=as.numeric(NA),
+			waterDep=as.numeric(NA),
+			foCatNat=as.factor(NA),
+			foCatEu5=as.factor(NA),
+			foCatEu6=as.factor(NA),
+			gear=as.factor(NA),
+			meshSize=as.numeric(NA),
+			selDev=as.factor(NA),
+			meshSizeSelDev=as.numeric(NA)),
 		sl=data.frame(
-			sampType=NA, # FK
-			landCtry=NA, # FK
-			vslFlgCtry=NA, # FK
-			year=NA, # FK
-			proj=NA, # FK
-			trpCode=NA, # FK
-			staNum=NA, # FK
-			spp=NA, # PK 
-#			sex=NA, # PK
-			catchCat=NA, # PK 
-			landCat=NA, # PK 
-			commCatScl=NA, # PK
-			commCat=NA, # PK
-			subSampCat=NA, # PK
-			valCode=NA, 
-			wt=NA, 
-			subSampWt=NA, 
-			lenCode=NA),
+			sampType=as.factor(NA), # FK
+			landCtry=as.factor(NA), # FK
+			vslFlgCtry=as.factor(NA), # FK
+			year=as.numeric(NA), # FK
+			proj=as.factor(NA), # FK
+			trpCode=as.factor(NA), # FK
+			staNum=as.numeric(NA), # FK
+			spp=as.factor(NA), # PK 
+			catchCat=as.factor(NA), # PK 
+			landCat=as.factor(NA), # PK 
+			commCatScl=as.factor(NA), # PK
+			commCat=as.factor(NA), # PK
+			subSampCat=as.factor(NA), # PK
+			valCode=as.factor(NA), 
+			wt=as.numeric(NA), 
+			subSampWt=as.numeric(NA), 
+			lenCode=as.factor(NA)),
 		hl=data.frame(
-			sampType=NA, # FK
-			landCtry=NA, # FK
-			vslFlgCtry=NA, # FK
-			year=NA, # FK
-			proj=NA, # FK
-			trpCode=NA, # FK
-			staNum=NA, # FK
-			spp=NA, # FK 
-			sex=NA, # FK
-			catchCat=NA, # FK 
-			landCat=NA, # FK 
-			commCatScl=NA, # FK
-			commCat=NA, # FK
-			subSampCat=NA, # FK
-			lenCls=NA, # PK
-			lenNum=NA),
+			sampType=as.factor(NA), # FK
+			landCtry=as.factor(NA), # FK
+			vslFlgCtry=as.factor(NA), # FK
+			year=as.numeric(NA), # FK
+			proj=as.factor(NA), # FK
+			trpCode=as.factor(NA), # FK
+			staNum=as.numeric(NA), # FK
+			spp=as.factor(NA), # FK 
+			sex=as.factor(NA), # PK
+			catchCat=as.factor(NA), # FK 
+			landCat=as.factor(NA), # FK 
+			commCatScl=as.factor(NA), # FK
+			commCat=as.factor(NA), # FK
+			subSampCat=as.factor(NA), # FK
+			lenCls=as.numeric(NA), # PK
+			lenNum=as.numeric(NA)),
 		ca=data.frame(
-			sampType=NA, # FK
-			landCtry=NA, # FK
-			vslFlgCtry=NA, # FK
-			year=NA, # FK
-			quarter=NA,
-			month=NA,
-			proj=NA, # FK
-			trpCode=NA, # FK
-			staNum=NA, # PK
-			spp=NA, # PK 
-			sex=NA, # PK
-			catchCat=NA, # PK 
-			landCat=NA, # PK 
-			commCatScl=NA, # PK
-			commCat=NA, # PK
-			stock=NA, # PK
-			area=NA, # PK
-			rect=NA, # PK
-			lenCls=NA, # PK
-			age=NA, # PK
-			fishId=NA, # PK
-			lenCode=NA,
-			plusGrp=NA,
-			otoWt=NA,
-			otoSide=NA,
-			indWt=NA,
-			matScale=NA,
-			matStage=NA
+			sampType=as.factor(NA), # FK
+			landCtry=as.factor(NA), # FK
+			vslFlgCtry=as.factor(NA), # FK
+			year=as.numeric(NA), # FK
+			quarter=as.numeric(NA),
+			month=as.numeric(NA),
+			proj=as.factor(NA), # FK
+			trpCode=as.factor(NA), # FK
+			staNum=as.numeric(NA), # PK
+			spp=as.factor(NA), # PK 
+			sex=as.factor(NA), # PK
+			catchCat=as.factor(NA), # PK 
+			landCat=as.factor(NA), # PK 
+			commCatScl=as.factor(NA), # PK
+			commCat=as.factor(NA), # PK
+			stock=as.factor(NA), # PK
+			area=as.factor(NA), # PK
+			rect=as.factor(NA), # PK
+			lenCls=as.numeric(NA), # PK
+			age=as.numeric(NA), # PK
+			fishId=as.numeric(NA), # PK
+			lenCode=as.factor(NA),
+			plusGrp=as.factor(NA),
+			otoWt=as.numeric(NA),
+			otoSide=as.factor(NA),
+			indWt=as.numeric(NA),
+			matScale=as.factor(NA),
+			matStage=as.factor(NA)
 			)
 	),
 	validity=valcsData
@@ -210,45 +221,103 @@ setGeneric("csData", function(tr, hh, sl, hl, ca, ...){
 setMethod("csData", signature("data.frame", "missing", "missing", "missing", "missing"), function(tr, desc="Unknown stock", ...){
 	# create object and name columns properly 
 	obj <- new("csData")
-	names(tr) <- names(obj@tr)
+	
+	# tr
+	tr0 <- obj@tr
+	names(tr) <- names(tr0)
+	tr <- coerceDataFrameColumns(tr, tr0)
+
+	# object
 	new("csData", tr=tr, desc=desc)
 })
 
 setMethod("csData", signature("data.frame", "data.frame", "missing", "missing", "missing"), function(tr, hh, desc="Unknown stock", ...){
 	# create object and name columns properly 
 	obj <- new("csData")
-	names(tr) <- names(obj@tr)
-	names(hh) <- names(obj@hh)
+
+	# tr
+	tr0 <- obj@tr
+	names(tr) <- names(tr0)
+	tr <- coerceDataFrameColumns(tr, tr0)
+	# hh
+	hh0 <- obj@hh
+	names(hh) <- names(hh0)
+	hh <- coerceDataFrameColumns(hh, hh0)
+
+	# object
 	new("csData", tr=tr, hh=hh, desc=desc)
 })
 
 setMethod("csData", signature("data.frame", "data.frame", "data.frame", "missing", "missing"), function(tr, hh, sl, desc="Unknown stock", ...){
 	# create object and name columns properly 
 	obj <- new("csData")
-	names(tr) <- names(obj@tr)
-	names(hh) <- names(obj@hh)
-	names(sl) <- names(obj@sl)
+
+	# tr
+	tr0 <- obj@tr
+	names(tr) <- names(tr0)
+	tr <- coerceDataFrameColumns(tr, tr0)
+	# hh
+	hh0 <- obj@hh
+	names(hh) <- names(hh0)
+	hh <- coerceDataFrameColumns(hh, hh0)
+	# sl
+	sl0 <- obj@sl
+	names(sl) <- names(sl0)
+	sl <- coerceDataFrameColumns(sl, sl0)
+
+	# object
 	new("csData", tr=tr, hh=hh, sl=sl, desc=desc)
 })
 
 setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.frame", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", ...){
 	# create object and name columns properly 
 	obj <- new("csData")
-	names(tr) <- names(obj@tr)
-	names(hh) <- names(obj@hh)
-	names(sl) <- names(obj@sl)
-	names(hl) <- names(obj@hl)
+
+	# tr
+	tr0 <- obj@tr
+	names(tr) <- names(tr0)
+	tr <- coerceDataFrameColumns(tr, tr0)
+	# hh
+	hh0 <- obj@hh
+	names(hh) <- names(hh0)
+	hh <- coerceDataFrameColumns(hh, hh0)
+	# sl
+	sl0 <- obj@sl
+	names(sl) <- names(sl0)
+	sl <- coerceDataFrameColumns(sl, sl0)
+	# hl
+	hl0 <- obj@hl
+	names(hl) <- names(hl0)
+	hl <- coerceDataFrameColumns(hl, hl0)
+
 	new("csData", tr=tr, hh=hh, sl=sl, hl=hl, desc=desc)
 })
 
 setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.frame", "data.frame"), function(tr, hh, sl, hl, ca,  desc="Unknown stock",...){
 	# create object and name columns properly 
 	obj <- new("csData")
-	names(tr) <- names(obj@tr)
-	names(hh) <- names(obj@hh)
-	names(sl) <- names(obj@sl)
-	names(hl) <- names(obj@hl)
-	names(ca) <- names(obj@ca)
+	# tr
+	tr0 <- obj@tr
+	names(tr) <- names(tr0)
+	tr <- coerceDataFrameColumns(tr, tr0)
+	# hh
+	hh0 <- obj@hh
+	names(hh) <- names(hh0)
+	hh <- coerceDataFrameColumns(hh, hh0)
+	# sl
+	sl0 <- obj@sl
+	names(sl) <- names(sl0)
+	sl <- coerceDataFrameColumns(sl, sl0)
+	# hl
+	hl0 <- obj@hl
+	names(hl) <- names(hl0)
+	hl <- coerceDataFrameColumns(hl, hl0)
+	# ca
+	ca0 <- obj@ca
+	names(ca) <- names(ca0)
+	ca <- coerceDataFrameColumns(ca, ca0)
+
+	# object
 	new("csData", tr=tr, hh=hh, sl=sl, hl=hl, ca=ca, desc=desc)
 })
 
@@ -288,7 +357,7 @@ setMethod("csData", signature("character", "character", "character", "character"
 	names(hh) <- names(obj@hh)
 	names(sl) <- names(obj@sl)
 	names(hl) <- names(obj@hl)
-	new("csData", tr=tr, hh=hh, sl=sl, hl=hl, desc=desc)
+	csData(tr=tr, hh=hh, sl=sl, hl=hl, desc=desc)
 })
 
 
@@ -323,7 +392,7 @@ setMethod("csData", signature("character", "character", "character", "character"
 	names(sl) <- names(obj@sl)
 	names(hl) <- names(obj@hl)
 	names(ca) <- names(obj@ca)
-	new("csData", tr=tr, hh=hh, sl=sl, hl=hl, ca=ca, desc=desc)
+	csData(tr=tr, hh=hh, sl=sl, hl=hl, ca=ca, desc=desc)
 })
 
 

@@ -35,6 +35,7 @@ exportMethods(
 	"checkSLpk",
 	"checkHLpk",
 	"checkCApk",
+	"checkTys",
 	"csData",
 	"desc",
 	"tr",
@@ -63,6 +64,7 @@ exportMethods(
 	"clDataVal",
 	"clDataCons",
 	"csDataVal",
-	"csDataCons"
+	"csDataCons",
+	"coerceDataFrameColumns"
 )
 

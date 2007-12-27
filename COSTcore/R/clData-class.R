@@ -23,6 +23,10 @@ valclData <- function(object){
 	# check PK
 	if(checkCLpk(cl)==FALSE) stop("Primary key not unique in slot candidate \"cl\".")
 
+	# check column types
+	tys0 <- lapply(cl0,class)
+	if(checkTys(cl, tys0)==FALSE) stop("Column types not correct in slot candidate \"cl\".")
+
 	# Everything is fine
 	return(TRUE)
 }
@@ -35,25 +39,25 @@ setClass("clData",
 	prototype(
 		desc="my stock",
 		cl=data.frame(
-			landCtry=NA, # PK
-			vslFlgCtry=NA, # PK
-			year=NA, # PK
-			quarter=NA, # PK 
-			month=NA, # PK
-			area=NA, # PK
-			rect=NA, # PK 
-			spp=NA, # PK 
-			landCat=NA, # PK 
-			commCatScl=NA, # PK
-			commCat=NA, # PK
-			foCatNat=NA, # PK
-			foCatEu5=NA, # PK
-			foCatEu6=NA, # PK
-			unallocCatchWt=NA,
-			misRepCatchWt=NA,
-			landWt=NA,
-			landMult=NA,
-			landValue=NA)		
+			landCtry=as.factor(NA), # PK
+			vslFlgCtry=as.factor(NA), # PK
+			year=as.numeric(NA), # PK
+			quarter=as.numeric(NA), # PK 
+			month=as.numeric(NA), # PK
+			area=as.factor(NA), # PK
+			rect=as.factor(NA), # PK 
+			spp=as.factor(NA), # PK 
+			landCat=as.factor(NA), # PK 
+			commCatScl=as.factor(NA), # PK
+			commCat=as.factor(NA), # PK
+			foCatNat=as.factor(NA), # PK
+			foCatEu5=as.factor(NA), # PK
+			foCatEu6=as.factor(NA), # PK
+			unallocCatchWt=as.numeric(NA),
+			misRepCatchWt=as.numeric(NA),
+			landWt=as.numeric(NA),
+			landMult=as.numeric(NA),
+			landValue=as.numeric(NA))		
 	),
 	validity=valclData
 )
@@ -69,7 +73,11 @@ setGeneric("clData", function(cl, ...){
 setMethod("clData", signature("data.frame"), function(cl, desc="Unknown stock", ...){
 	# create object and name columns properly 
 	obj <- new("clData")
-	names(cl) <- names(obj@cl)
+	cl0 <- obj@cl
+	names(cl) <- names(cl0)
+	# corce columns
+	cl <- coerceDataFrameColumns(cl, cl0)
+	# object
 	new("clData", cl=cl, desc=desc)
 })
 
@@ -77,9 +85,7 @@ setMethod("clData", signature("matrix"), function(cl, desc="Unknown stock", ...)
 	# coerce to dataframe
 	cl <- as.data.frame(cl)
 	# create object and name columns properly 
-	obj <- new("clData")
-	names(cl) <- names(obj@cl)
-	new("clData", cl=cl, desc=desc)
+	clData(cl=cl, desc=desc)
 })
 
 setMethod("clData", signature("missing"), function(desc="Unknown stock", ...){
@@ -103,9 +109,7 @@ setMethod("clData", signature("character"), function(cl, desc="Unknown stock", .
 	cl <- cl[,-1]
 
 	# create object and name columns properly 
-	obj <- new("clData")
-	names(cl) <- names(obj@cl)
-	new("clData", cl=cl, desc=desc)
+	clData(cl=cl, desc=desc)
 })
 
 #====================================================================

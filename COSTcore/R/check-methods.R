@@ -212,3 +212,19 @@ setMethod("checkDataIntegrity", signature(target="data.frame", current="data.fra
 	}
 })
 
+#====================================================================
+# check types of columns in tables 
+#====================================================================
+
+setGeneric("checkTys", function(object, tys, ...){
+	standardGeneric("checkTys")
+	}
+)
+
+setMethod("checkTys", signature("data.frame", "list"), function(object, tys, ...){
+	n <- ncol(object)
+	lst <- split(1:n, 1:n)
+	lst <- lapply(lst, function(x) is(object[,x], tys[[x]]))
+	identical(sum(unlist(lst)),n) 
+})
+

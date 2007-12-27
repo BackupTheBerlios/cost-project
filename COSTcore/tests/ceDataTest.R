@@ -21,8 +21,8 @@ setCon()
 zz <- startTest("ceDataTest.txt")
 tagTest("ceData testing ...")
 
-data(sole)
 data(soleData)
+checkRun(sole.ce <- ceData(ce[,-1]))
 checkTrue(is(sole.ce, "ceData"))
 
 #! Checks
@@ -41,34 +41,17 @@ checkTrue(is(ceobj, "ceData"))
 checkEqual(ceobj@ce, ce(ceobj))
 
 #! check object is well formed
+#! need more work !!
 checkRun(o0 <- ce(ceobj))
 o0 <- c(o0)
 names(o0) <- NULL
+o0 <- lapply(o0, "as.character")
 o <- c(ce)
 names(o) <- NULL
+o <- lapply(o, "as.character")
 checkEqual(o[-1], o0)
 
-#! Replacement
-#checkFail(sole.ce[ce(sole.ce)$quarter==1,"quarter"]<-5)
-#checkRun(sole.ce[,"daysAtSea"]<-10)
-#checkTrue(is(sole.ce,"ceData"))
-#checkFail(sole.ce[,"quarter"]<-10)
-
 #! Selection
-#checkRun(subset(sole.ce, quarter==1))
-#checkTrue(is(subset(sole.ce, quarter==1), "ceData"))
-#checkRun(sole.ce[ce(sole.ce)$quarter==1,2])
-#checkTrue(is(sole.ce[ce(sole.ce)$quarter==1,2], "factor"))
-#checkRun(sole.ce[,2])
-#checkTrue(is(sole.ce[,2], "factor"))
-#checkRun(sole.ce[ce(sole.ce)$quarter==1,"quarter"])
-#checkTrue(is(sole.ce[ce(sole.ce)$quarter==1,"quarter"],"factor"))
-#checkRun(sole.ce[,"quarter"])
-#checkTrue(is(sole.ce[,"quarter"],"factor"))
-#checkRun(sole.ce[ce(sole.ce)$quarter==1,c(1:4)])
-#checkTrue(is(sole.ce[ce(sole.ce)$quarter==1,c(1:4)],"data.frame"))
-#checkRun(sole.ce[ce(sole.ce)$quarter==1,c("year","quarter")])
-#checkTrue(is(sole.ce[ce(sole.ce)$quarter==1,c("year","quarter")],"data.frame"))
 checkRun(subset(sole.ce, quarter==1))
 checkTrue(is(subset(sole.ce, quarter==1), "ceData"))
 checkRun(subset(sole.ce, quarter==1 & area=="27.7.e"))

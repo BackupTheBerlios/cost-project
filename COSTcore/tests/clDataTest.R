@@ -21,8 +21,8 @@ setCon()
 zz <- startTest("clDataTest.txt")
 tagTest("clData testing ...")
 
-data(sole)
 data(soleData)
+checkRun(sole.cl <- clData(cl[,-1]))
 checkTrue(is(sole.cl, "clData"))
 
 #! Checks

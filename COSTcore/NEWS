@@ -1,3 +1,24 @@
+		CHANGES IN COSTcore VERSION 0.6-0
+
+NEW FEATURES
+    o ceData class definition defines column types based on FF5 20071112
+    o clData class definition defines column types based on FF5 20071112
+    o csData class definition defines column types based on FF5 20071112
+    o validity check now checks the column types on ceData
+    o validity check now checks the column types on clData
+    o validity check now checks the column types on csData
+    o "checkTys" new method to check type of column against a reference list
+    o "coerceDataFrameColumns" new method to corce all columns of a dataframe into the column types of another dataframe
+    o ceData("data.frame") creator now coerces columns into corrected data types before calling "new".
+    o ceData creators other than ceData("data.frame") now call ceData("data.frame") to use the column coercing. 
+    o clData("data.frame") creator now coerces columns into corrected data types before calling "new".
+    o clData creators other than clData("data.frame") now call clData("data.frame") to use the column coercing. 
+    o csData creator now coerces columns into corrected data types before calling "new".
+    o csData io now call clData creator to use the column coercing. 
+    o tests adjusted to reflect the above changes
+    
+
+
 		CHANGES IN COSTcore VERSION 0.5-0
 
 NEW FEATURES
@@ -15,7 +36,6 @@ NEW FEATURES
     o methods for csDataCons: head, tail, summary, is, dim
     o rbind2 for csDataCons
     o subset for csDataCons
-   
 
 		CHANGES IN COSTcore VERSION 0.2-0
 
