@@ -64,7 +64,6 @@ checkRun(head(sole.ce))
 checkRun(tail(sole.ce))
 checkRun(summary(sole.ce))
 checkRun(dim(sole.ce))
-checkTrue(is.ceData(sole.ce))
 
 #! rbind2
 ce1 <- subset(sole.ce, quarter==1)

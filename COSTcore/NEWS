@@ -17,6 +17,12 @@ NEW FEATURES
     o csData io now call clData creator to use the column coercing. 
     o tests adjusted to reflect the above changes
     
+DOCUMENTATION
+    o most man pages added
+DEPRECATED & DEFUNCT
+    o is.ceData, the checking should be done with 'is'.
+    o is.clData, the checking should be done with 'is'.
+    o is.csData, the checking should be done with 'is'.
 
 
 		CHANGES IN COSTcore VERSION 0.5-0

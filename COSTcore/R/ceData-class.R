@@ -183,14 +183,14 @@ setMethod("dim", signature("ceData"), function(x){
 # 'is.' function
 #====================================================================
 
-setGeneric("is.ceData", function(object){
-	standardGeneric("is.ceData")
-})
+#setGeneric("is.ceData", function(object){
+#	standardGeneric("is.ceData")
+#})
 
 
-setMethod("is.ceData","ANY", function(object){
-	return(is(object)[1]=="ceData")
-})
+#setMethod("is.ceData","ANY", function(object){
+#	return(is(object)[1]=="ceData")
+#})
 
 #====================================================================
 # rbind

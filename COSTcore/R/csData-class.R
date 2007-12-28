@@ -526,14 +526,14 @@ setMethod("dim", signature("csData"), function(x){
 # 'is.' function
 #====================================================================
 
-setGeneric("is.csData", function(object){
-	standardGeneric("is.csData")
-})
+# setGeneric("is.csData", function(object){
+# 	standardGeneric("is.csData")
+# })
 
 
-setMethod("is.csData","ANY", function(object){
-	return(is(object, "csData"))
-})
+# setMethod("is.csData","ANY", function(object){
+# 	return(is(object, "csData"))
+# })
 
 #====================================================================
 # rbind2

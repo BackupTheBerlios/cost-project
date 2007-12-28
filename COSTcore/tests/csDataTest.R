@@ -104,7 +104,6 @@ checkRun(head(sole.cs))
 checkRun(tail(sole.cs))
 checkRun(summary(sole.cs))
 checkRun(dim(sole.cs))
-checkTrue(is.csData(sole.cs))
 
 #! rbind2
 cs1 <- subset(sole.cs, trpCode=="LIM1")

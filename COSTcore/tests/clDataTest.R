@@ -82,7 +82,6 @@ checkRun(head(sole.cl))
 checkRun(tail(sole.cl))
 checkRun(summary(sole.cl))
 checkRun(dim(sole.cl))
-checkTrue(is.clData(sole.cl))
 
 #! rbind2
 cl1 <- subset(sole.cl, quarter==1)

@@ -9,7 +9,7 @@ finishTest <- function(con=getOption("con")){
 	close(con)
 }
 
-tagTest <- function(tag="My tag is better than yours !", con=getOption("con")){
+tagTest <- function(tag="My tag !", con=getOption("con")){
 	if(is.character(con)) con <- get(con)
 	cat(tag, "\n", file=con)
 	cat(date(), "\n", file=con)

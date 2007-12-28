@@ -175,14 +175,14 @@ setMethod("dim", signature("clData"), function(x){
 # 'is.' function
 #====================================================================
 
-setGeneric("is.clData", function(object){
-	standardGeneric("is.clData")
-})
+# setGeneric("is.clData", function(object){
+# 	standardGeneric("is.clData")
+# })
 
 
-setMethod("is.clData","ANY", function(object){
-	return(is(object)[1]=="clData")
-})
+# setMethod("is.clData","ANY", function(object){
+# 	return(is(object)[1]=="clData")
+# })
 
 #====================================================================
 # rbind
