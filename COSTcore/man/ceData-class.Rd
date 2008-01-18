@@ -14,7 +14,7 @@ The creator function "ceData" can be called to create objects from this class.
 }
 \section{Slots}{
 \tabular{lrll}{
-\bold{slot} \tab \tab \bold{class} \tab \bold{description} \cr
+\bold{slot} \tab \bold{columns} \tab \bold{class} \tab \bold{description} \cr
 \bold{\code{desc}} \tab \tab \code{character} \tab object description \cr
 \bold{\code{ce}} \tab \tab \code{data.frame} \tab effort information \cr
  \tab vslFlgCtry \tab \code{factor} \tab vessel flag country \cr
@@ -35,7 +35,17 @@ The creator function "ceData" can be called to create objects from this class.
 }
 }
 \section{Methods}{
-No methods defined with class "csData" in the signature.
+  \describe{
+    \item{ce}{\code{signature(object = "ceData")}: ... }
+    \item{ceDataVal}{\code{signature(object = "ceData")}: ... }
+    \item{desc}{\code{signature(object = "ceData")}: ... }
+    \item{dim}{\code{signature(x = "ceData")}: ... }
+    \item{head}{\code{signature(x = "ceData")}: ... }
+    \item{rbind2}{\code{signature(x = "ceData", y = "ceData")}: ... }
+    \item{subset}{\code{signature(x = "ceData")}: ... }
+    \item{summary}{\code{signature(object = "ceData")}: ... }
+    \item{tail}{\code{signature(x = "ceData")}: ... }
+	 }
 }
 \author{Ernesto Jardim <ernesto@ipimar.pt>}
 \examples{

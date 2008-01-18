@@ -18,7 +18,7 @@ The creator function "csData" can be called to create objects from this class.
 }
 \section{Slots}{
 \tabular{lrll}{
-\bold{slot} \tab \tab \bold{class} \tab \bold{description} \cr
+\bold{slot} \tab \bold{columns} \tab \bold{class} \tab \bold{description} \cr
 \bold{\code{desc}} \tab \tab \code{character} \tab object description \cr
  \tab \tab \tab \cr
 \bold{\code{tr}} \tab \tab \code{data.frame} \tab  trip information \cr
@@ -136,7 +136,21 @@ The creator function "csData" can be called to create objects from this class.
 }
 }
 \section{Methods}{
-No methods defined with class "csData" in the signature.
+  \describe{
+    \item{ca}{\code{signature(object = "csData")}: ... }
+    \item{csDataVal}{\code{signature(object = "csData")}: ... }
+    \item{desc}{\code{signature(object = "csData")}: ... }
+    \item{dim}{\code{signature(x = "csData")}: ... }
+    \item{head}{\code{signature(x = "csData")}: ... }
+    \item{hh}{\code{signature(object = "csData")}: ... }
+    \item{hl}{\code{signature(object = "csData")}: ... }
+    \item{rbind2}{\code{signature(x = "csData", y = "csData")}: ... }
+    \item{sl}{\code{signature(object = "csData")}: ... }
+    \item{subset}{\code{signature(x = "csData")}: ... }
+    \item{summary}{\code{signature(object = "csData")}: ... }
+    \item{tail}{\code{signature(x = "csData")}: ... }
+    \item{tr}{\code{signature(object = "csData")}: ... }
+	 }
 }
 \author{Ernesto Jardim <ernesto@ipimar.pt>}
 \examples{

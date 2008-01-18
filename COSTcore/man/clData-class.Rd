@@ -14,7 +14,7 @@ The creator function "clData" can be called to create objects from this class.
 }
 \section{Slots}{
 \tabular{lrll}{
-\bold{slot} \tab \tab \bold{class} \tab \bold{description} \cr
+\bold{slot} \tab \bold{columns} \tab \bold{class} \tab \bold{description} \cr
 \bold{\code{desc}} \tab \tab \code{character} \tab object description \cr
 \bold{\code{cl}} \tab \tab \code{data.frame} \tab landings information \cr
  \tab landCtry \tab \code{factor} \tab landing country \cr
@@ -39,7 +39,17 @@ The creator function "clData" can be called to create objects from this class.
 }
 }
 \section{Methods}{
-No methods defined with class "clData" in the signature.
+  \describe{
+    \item{cl}{\code{signature(object = "clData")}: ... }
+    \item{clDataVal}{\code{signature(object = "clData")}: ... }
+    \item{desc}{\code{signature(object = "clData")}: ... }
+    \item{dim}{\code{signature(x = "clData")}: ... }
+    \item{head}{\code{signature(x = "clData")}: ... }
+    \item{rbind2}{\code{signature(x = "clData", y = "clData")}: ... }
+    \item{subset}{\code{signature(x = "clData")}: ... }
+    \item{summary}{\code{signature(object = "clData")}: ... }
+    \item{tail}{\code{signature(x = "clData")}: ... }
+	 }
 }
 \author{Ernesto Jardim <ernesto@ipimar.pt>}
 \examples{

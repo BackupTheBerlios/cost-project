@@ -10,6 +10,6 @@ Method to check that all data in current has a related record in target. It is u
 }
 \section{Methods}{
 \describe{
-\item{target = "data.frame", current = "data.frame"}{Check that current has related records in target.}
+\item{\code{checkDataIntegrity(target = "data.frame", current = "data.frame")}}{Check that current has related records in target.}
 }}
 \keyword{methods}

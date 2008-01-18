@@ -53,20 +53,20 @@
 	Check methods used to validate S4 classes. These are meant for internal usage only, not to be directly called by users.
 }
 \section{Methods}{
-\item{checkNms}{Check names in a data.frame against a character vector.}
-\item{checkTys}{Check column types in a data.frame against a list of class names.}
-\item{checkTRnms}{Wrapper for TR checkNms.}
-\item{checkHHnms}{Wrapper for HH checkNms.}
-\item{checkSLnms}{Wrapper for SL checkNms.}
-\item{checkHLnms}{Wrapper for HL checkNms.}
-\item{checkCAnms}{Wrapper for CA checkNms.}
-\item{checkCLnms}{Wrapper for CL checkNms.}
-\item{checkCEnms}{Wrapper for CE checkNms.}
-\item{checkTRpk}{Check TR primary key.}
-\item{checkHHpk}{Check HH primary key.}
-\item{checkSLpk}{Check SL primary key.}
-\item{checkHLpk}{Check HL primary key.}
-\item{checkCLpk}{Check CL primary key.}
-\item{checkCEpk}{Check CE primary key.}
+\item{\code{checkNms(object, names)}}{Check names in a data.frame against a character vector.}
+\item{\code{checkTys(object, tys)}}{Check column types in a data.frame against a list of class names.}
+\item{\code{checkTRnms(object)}}{Wrapper for TR checkNms.}
+\item{\code{checkHHnms(object)}}{Wrapper for HH checkNms.}
+\item{\code{checkSLnms(object)}}{Wrapper for SL checkNms.}
+\item{\code{checkHLnms(object)}}{Wrapper for HL checkNms.}
+\item{\code{checkCAnms(object)}}{Wrapper for CA checkNms.}
+\item{\code{checkCLnms(object)}}{Wrapper for CL checkNms.}
+\item{\code{checkCEnms(object)}}{Wrapper for CE checkNms.}
+\item{\code{checkTRpk(object)}}{Check TR primary key.}
+\item{\code{checkHHpk(object)}}{Check HH primary key.}
+\item{\code{checkSLpk(object)}}{Check SL primary key.}
+\item{\code{checkHLpk(object)}}{Check HL primary key.}
+\item{\code{checkCLpk(object)}}{Check CL primary key.}
+\item{\code{checkCEpk(object)}}{Check CE primary key.}
 }
 \keyword{methods}

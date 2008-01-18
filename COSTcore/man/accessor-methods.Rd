@@ -38,17 +38,17 @@
 \alias{desc,ceDataCons-method}
 \title{Accessor methods in COSTcore}
 \description{
-	Accessor methods are used to get a slot from an object. It is supposed to implement "encapsulation" in S4, although not completely. Users are strongly advised to use these fucntions on their own code so that future changes on the class definition don't break it.
+	Accessor methods are used to get specific slots from an object. It is supposed to implement "encapsulation" in S4, although not completely. Users are strongly advised to use these fucntions on their own code so that future changes on the class definition don't break it.
 }
 \section{Methods}{
-\item{tr}{csData, csDataVal, csDataCons \code{tr} slot accessor.}
-\item{hh}{csData, csDataVal, csDataCons \code{hh} slot accessor.}
-\item{sl}{csData, csDataVal, csDataCons \code{sl} slot accessor.}
-\item{hl}{csData, csDataVal, csDataCons \code{hl} slot accessor.}
-\item{ca}{csData, csDataVal, csDataCons \code{ca} slot accessor.}
-\item{cl}{clData, clDataVal, clDataCons \code{cl} slot accessor.}
-\item{ce}{ceData, ceDataVal, ceDataCons \code{ce} slot accessor.}
-\item{desc}{description slot accessor for all classes.}
+\item{tr(object)}{csData, csDataVal, csDataCons \code{tr} slot accessor.}
+\item{hh(object)}{csData, csDataVal, csDataCons \code{hh} slot accessor.}
+\item{sl(object)}{csData, csDataVal, csDataCons \code{sl} slot accessor.}
+\item{hl(object)}{csData, csDataVal, csDataCons \code{hl} slot accessor.}
+\item{ca(object)}{csData, csDataVal, csDataCons \code{ca} slot accessor.}
+\item{cl(object)}{clData, clDataVal, clDataCons \code{cl} slot accessor.}
+\item{ce(object)}{ceData, ceDataVal, ceDataCons \code{ce} slot accessor.}
+\item{desc(object)}{description slot accessor for all classes.}
 }
 \examples{
 	obj <- csData()
