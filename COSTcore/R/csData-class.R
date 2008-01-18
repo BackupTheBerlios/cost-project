@@ -98,114 +98,118 @@ setClass("csData",
 	prototype(
 		desc="my stock",
 		tr=data.frame(
-			sampType=as.factor(NA), # PK
-			landCtry=as.factor(NA), # PK
-			vslFlgCtry=as.factor(NA), # PK
+			sampType=as.character(NA), # PK
+			landCtry=as.character(NA), # PK
+			vslFlgCtry=as.character(NA), # PK
 			year=as.numeric(NA), # PK
-			proj=as.factor(NA), # PK
-			trpCode=as.factor(NA), # PK
+			proj=as.character(NA), # PK
+			trpCode=as.character(NA), # PK
 			vslLen=as.numeric(NA), 
 			vslPwr=as.numeric(NA), 
 			vslSize=as.numeric(NA), 
-			vsType=as.factor(NA), 
+			vsType=as.character(NA), 
 			foNum=as.numeric(NA), 
 			daysAtSea=as.numeric(NA), 
 			vslId=as.numeric(NA), 
-			sampCtry=as.factor(NA), 
-			sampMeth=as.factor(NA)),
+			sampCtry=as.character(NA), 
+			sampMeth=as.character(NA),
+			stringsAsFactors=F),
 		hh=data.frame(
-			sampType=as.factor(NA), # FK
-			landCtry=as.factor(NA), # FK
-			vslFlgCtry=as.factor(NA), # FK
+			sampType=as.character(NA), # FK
+			landCtry=as.character(NA), # FK
+			vslFlgCtry=as.character(NA), # FK
 			year=as.numeric(NA), # FK
-			proj=as.factor(NA), # FK
-			trpCode=as.factor(NA), # FK
+			proj=as.character(NA), # FK
+			trpCode=as.character(NA), # FK
 			staNum=as.numeric(NA), # PK
-			foVal=as.factor(NA),
-			aggLev=as.factor(NA),
-			date=as.factor(NA),
-			time=as.factor(NA),
+			foVal=as.character(NA),
+			aggLev=as.character(NA),
+			date=as.character(NA),
+			time=as.character(NA),
 			foDur=as.numeric(NA),
 			latIni=as.numeric(NA),
 			lonIni=as.numeric(NA),
 			latFin=as.numeric(NA),
 			lonFin=as.numeric(NA),
-			area=as.factor(NA),
-			rect=as.factor(NA),
+			area=as.character(NA),
+			rect=as.character(NA),
 			foDep=as.numeric(NA),
 			waterDep=as.numeric(NA),
-			foCatNat=as.factor(NA),
-			foCatEu5=as.factor(NA),
-			foCatEu6=as.factor(NA),
-			gear=as.factor(NA),
+			foCatNat=as.character(NA),
+			foCatEu5=as.character(NA),
+			foCatEu6=as.character(NA),
+			gear=as.character(NA),
 			meshSize=as.numeric(NA),
-			selDev=as.factor(NA),
-			meshSizeSelDev=as.numeric(NA)),
+			selDev=as.character(NA),
+			meshSizeSelDev=as.numeric(NA),
+			stringsAsFactors=F),
 		sl=data.frame(
-			sampType=as.factor(NA), # FK
-			landCtry=as.factor(NA), # FK
-			vslFlgCtry=as.factor(NA), # FK
+			sampType=as.character(NA), # FK
+			landCtry=as.character(NA), # FK
+			vslFlgCtry=as.character(NA), # FK
 			year=as.numeric(NA), # FK
-			proj=as.factor(NA), # FK
-			trpCode=as.factor(NA), # FK
+			proj=as.character(NA), # FK
+			trpCode=as.character(NA), # FK
 			staNum=as.numeric(NA), # FK
-			spp=as.factor(NA), # PK 
-			catchCat=as.factor(NA), # PK 
-			landCat=as.factor(NA), # PK 
-			commCatScl=as.factor(NA), # PK
-			commCat=as.factor(NA), # PK
-			subSampCat=as.factor(NA), # PK
-			valCode=as.factor(NA), 
+			spp=as.character(NA), # PK 
+			catchCat=as.character(NA), # PK 
+			landCat=as.character(NA), # PK 
+			commCatScl=as.character(NA), # PK
+			commCat=as.character(NA), # PK
+			subSampCat=as.character(NA), # PK
+			valCode=as.character(NA), 
 			wt=as.numeric(NA), 
 			subSampWt=as.numeric(NA), 
-			lenCode=as.factor(NA)),
+			lenCode=as.character(NA),
+			stringsAsFactors=F),
 		hl=data.frame(
-			sampType=as.factor(NA), # FK
-			landCtry=as.factor(NA), # FK
-			vslFlgCtry=as.factor(NA), # FK
+			sampType=as.character(NA), # FK
+			landCtry=as.character(NA), # FK
+			vslFlgCtry=as.character(NA), # FK
 			year=as.numeric(NA), # FK
-			proj=as.factor(NA), # FK
-			trpCode=as.factor(NA), # FK
+			proj=as.character(NA), # FK
+			trpCode=as.character(NA), # FK
 			staNum=as.numeric(NA), # FK
-			spp=as.factor(NA), # FK 
-			sex=as.factor(NA), # PK
-			catchCat=as.factor(NA), # FK 
-			landCat=as.factor(NA), # FK 
-			commCatScl=as.factor(NA), # FK
-			commCat=as.factor(NA), # FK
-			subSampCat=as.factor(NA), # FK
+			spp=as.character(NA), # FK 
+			sex=as.character(NA), # PK
+			catchCat=as.character(NA), # FK 
+			landCat=as.character(NA), # FK 
+			commCatScl=as.character(NA), # FK
+			commCat=as.character(NA), # FK
+			subSampCat=as.character(NA), # FK
 			lenCls=as.numeric(NA), # PK
-			lenNum=as.numeric(NA)),
+			lenNum=as.numeric(NA),
+			stringsAsFactors=F),
 		ca=data.frame(
-			sampType=as.factor(NA), # FK
-			landCtry=as.factor(NA), # FK
-			vslFlgCtry=as.factor(NA), # FK
+			sampType=as.character(NA), # FK
+			landCtry=as.character(NA), # FK
+			vslFlgCtry=as.character(NA), # FK
 			year=as.numeric(NA), # FK
 			quarter=as.numeric(NA),
 			month=as.numeric(NA),
-			proj=as.factor(NA), # FK
-			trpCode=as.factor(NA), # FK
+			proj=as.character(NA), # FK
+			trpCode=as.character(NA), # FK
 			staNum=as.numeric(NA), # PK
-			spp=as.factor(NA), # PK 
-			sex=as.factor(NA), # PK
-			catchCat=as.factor(NA), # PK 
-			landCat=as.factor(NA), # PK 
-			commCatScl=as.factor(NA), # PK
-			commCat=as.factor(NA), # PK
-			stock=as.factor(NA), # PK
-			area=as.factor(NA), # PK
-			rect=as.factor(NA), # PK
+			spp=as.character(NA), # PK 
+			sex=as.character(NA), # PK
+			catchCat=as.character(NA), # PK 
+			landCat=as.character(NA), # PK 
+			commCatScl=as.character(NA), # PK
+			commCat=as.character(NA), # PK
+			stock=as.character(NA), # PK
+			area=as.character(NA), # PK
+			rect=as.character(NA), # PK
 			lenCls=as.numeric(NA), # PK
 			age=as.numeric(NA), # PK
 			fishId=as.numeric(NA), # PK
-			lenCode=as.factor(NA),
-			plusGrp=as.factor(NA),
+			lenCode=as.character(NA),
+			plusGrp=as.character(NA),
 			otoWt=as.numeric(NA),
-			otoSide=as.factor(NA),
+			otoSide=as.character(NA),
 			indWt=as.numeric(NA),
-			matScale=as.factor(NA),
-			matStage=as.factor(NA)
-			)
+			matScale=as.character(NA),
+			matStage=as.character(NA),
+			stringsAsFactors=F)
 	),
 	validity=valcsData
 )
@@ -460,8 +464,6 @@ setMethod("desc", signature("csData"), function(object, ...){
 # 'Head' and 'Tail' functions
 #====================================================================
 
-if (!isGeneric("head")) setGeneric("head")
-
 setMethod("head", signature("csData"), function(x, ...){
   object <- new("csData",desc=x@desc)
   object@tr <- head(x@tr)
@@ -472,8 +474,6 @@ setMethod("head", signature("csData"), function(x, ...){
   return(object)  
 	}
 )
-
-if (!isGeneric("tail")) setGeneric("tail")
 
 setMethod("tail", signature("csData"), function(x, ...){
   object <- new("csData",desc=x@desc)
@@ -489,8 +489,6 @@ setMethod("tail", signature("csData"), function(x, ...){
 #====================================================================
 # 'summary' function
 #====================================================================
-
-if (!isGeneric("summary")) setGeneric("summary")
 
 setMethod("summary", signature("csData"), function(object, ...){
   ll <- list()
@@ -508,8 +506,6 @@ setMethod("summary", signature("csData"), function(object, ...){
 #====================================================================
 # 'dim' function
 #====================================================================
-
-if (!isGeneric("dim")) setGeneric("dim")
 
 setMethod("dim", signature("csData"), function(x){
   ll <- list()

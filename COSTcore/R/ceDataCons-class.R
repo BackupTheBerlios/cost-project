@@ -34,17 +34,17 @@ setClass("ceDataCons",
 	prototype(
 		desc="my stock",
 		ce=data.frame(
-			vslFlgCtry=NA, # PK
-			time=NA, # PK
-			space=NA, # PK 
-			technical=NA, # PK
-			trpNum=NA,
-			foNum=NA,
-			foDur=NA,
-			effKwDays=NA,
-			effGtDays=NA,
-			daysAtSea=NA)		
-	),
+			vslFlgCtry=as.factor(NA), # PK
+			time=as.factor(NA), # PK
+			space=as.factor(NA), # PK 
+			technical=as.factor(NA), # PK
+			trpNum=as.numeric(NA),
+			foNum=as.numeric(NA),
+			foDur=as.numeric(NA),
+			effKwDays=as.numeric(NA),
+			effGtDays=as.numeric(NA),
+			daysAtSea=as.numeric(NA)
+		)),
 	validity=valcecData
 )
 

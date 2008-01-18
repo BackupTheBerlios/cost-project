@@ -81,84 +81,141 @@ setClass("csDataCons",
 	prototype(
 		desc="my stock",
 		tr=data.frame(
-			PSUid=NA, # field to be created by the EDA process, one per each record = PK
-			sampType=NA, # PK
-			landCtry=NA, # PK
-			vslFlgCtry=NA, # PK
-			year=NA, # PK
-			proj=NA, # PK
-			trpNum=NA, # PK
-			vslLen=NA, 
-			vslPwr=NA, 
-			vslSize=NA, 
-			vsType=NA, 
-			foNum=NA, 
-			daysAtSea=NA, 
-			vslId=NA, # PK
-			sampCtry=NA, 
-			sampMeth=NA),
+			PSUid=as.numeric(NA), # field to be created by the EDA process, one per each record = PK
+			time=as.factor(NA),
+			technical=as.factor(NA),
+			sampType=as.factor(NA), # PK
+			landCtry=as.factor(NA), # PK
+			vslFlgCtry=as.factor(NA), # PK
+			#year=as.numeric(NA), # PK 	=> time
+			proj=as.factor(NA), # PK
+			trpCode=as.factor(NA), # PK
+			#vslLen=as.numeric(NA), 	=> tech
+			#vslPwr=as.numeric(NA), 	=> tech 
+			#vslSize=as.numeric(NA), 	=> tech 
+			#vsType=as.character(NA), 	=> tech
+			foNum=as.numeric(NA), 
+			daysAtSea=as.numeric(NA), 
+			vslId=as.numeric(NA), 
+			sampCtry=as.factor(NA), 
+			sampMeth=as.factor(NA)),
 		hh=data.frame(
-			PSUid=NA, # FK
-			staNum=NA, # PK
-			SSUid=NA, # field to be created by the EDA process, one per each record = FK+PK
-			time=NA,
-			space=NA,
-			technical=NA,
-			aggLev=NA,
-			foDur=NA),
+			PSUid=as.numeric(NA), # FK
+			SSUid=as.numeric(NA), # field to be created by the EDA process, one per each record = FK+PK
+			time=as.factor(NA),
+			space=as.factor(NA),
+			technical=as.factor(NA),
+			sampType=as.character(NA), # FK
+			landCtry=as.character(NA), # FK
+			vslFlgCtry=as.character(NA), # FK
+			#year=as.numeric(NA), # PK 	=> time
+			proj=as.character(NA), # FK
+			trpCode=as.character(NA), # FK
+			staNum=as.numeric(NA), # PK
+			foVal=as.character(NA),
+			aggLev=as.character(NA),
+			#date=as.character(NA), 	=> time
+			#time=as.character(NA), 	=> time
+			foDur=as.numeric(NA),
+			latIni=as.numeric(NA),
+			lonIni=as.numeric(NA),
+			latFin=as.numeric(NA),
+			lonFin=as.numeric(NA),
+			#area=as.character(NA),	=> space
+			#rect=as.character(NA),	=> space
+			foDep=as.numeric(NA)
+			#waterDep=as.numeric(NA),
+			#foCatNat=as.character(NA),	=> tech
+			#foCatEu5=as.character(NA),	=> tech
+			#foCatEu6=as.character(NA),	=> tech
+			#gear=as.character(NA),	=> tech
+			#meshSize=as.numeric(NA),	=> tech
+			#selDev=as.character(NA),	=> tech
+			#meshSizeSelDev=as.numeric(NA)	=> tech
+			),
 		sl=data.frame(
-			PSUid=NA, # This field helps on linking with TR table
-			SSUid=NA, # FK 
-			spp=NA, # PK 
-			catchCat=NA, # PK 
-			landCat=NA, # PK
-			commCatScl=NA, # PK
-			commCat=NA, # PK
-			subSampCat=NA, # PK
-			TSUid=NA, # field to be created by the EDA process, one per each record = FK+PK
-			time=NA,
-			space=NA,
-			technical=NA,
-			sort=NA, 
-			wt=NA, 
-			subSampWt=NA, 
-			lenCode=NA),
+			PSUid=as.numeric(NA), # FK
+			SSUid=as.numeric(NA), # field to be created by the EDA process, one per each record = FK+PK
+			TSUid=as.numeric(NA), # field to be created by the EDA process, one per each record = FK+PK
+			time=as.factor(NA),
+			space=as.factor(NA),
+			technical=as.factor(NA),
+			sort=as.factor(NA),
+			sampType=as.factor(NA), # FK
+			landCtry=as.factor(NA), # FK
+			vslFlgCtry=as.factor(NA), # FK
+			#year=as.numeric(NA), # PK 	=> time
+			proj=as.factor(NA), # FK
+			trpCode=as.factor(NA), # FK
+			staNum=as.numeric(NA), # FK
+			spp=as.factor(NA), # PK 
+			#catchCat=as.character(NA), # PK	=> sort 
+			#landCat=as.character(NA), # PK	=> sort 
+			#commCatScl=as.character(NA), # PK	=> sort
+			#commCat=as.character(NA), # PK	=> sort
+			#subSampCat=as.character(NA), # PK	=> sort
+			valCode=as.factor(NA), 
+			wt=as.numeric(NA), 
+			subSampWt=as.numeric(NA), 
+			lenCode=as.factor(NA)),
 		hl=data.frame(
 			PSUid=NA, # This field helps on linking with TR table
 			SSUid=NA, # This field helps on linking with HH table 
 			TSUid=NA, # FK
-			time=NA,
-			space=NA,
-			technical=NA,
-			sort=NA, 
-			lenCls=NA, # PK
-			lenNum=NA),
+			time=as.factor(NA),
+			space=as.factor(NA),
+			technical=as.factor(NA),
+			sort=as.factor(NA),
+			sampType=as.character(NA), # FK
+			landCtry=as.character(NA), # FK
+			vslFlgCtry=as.character(NA), # FK
+			#year=as.numeric(NA), # PK 	=> time
+			proj=as.character(NA), # FK
+			trpCode=as.character(NA), # FK
+			staNum=as.numeric(NA), # FK
+			spp=as.character(NA), # FK 
+			sex=as.character(NA), # PK
+			#catchCat=as.character(NA), # PK	=> sort 
+			#landCat=as.character(NA), # PK	=> sort 
+			#commCatScl=as.character(NA), # PK	=> sort
+			#commCat=as.character(NA), # PK	=> sort
+			#subSampCat=as.character(NA), # PK	=> sort
+			lenCls=as.numeric(NA), # PK
+			lenNum=as.numeric(NA)),
 		ca=data.frame(
 			PSUid=NA, # FK
 			SSUid=NA, # must match SSUid in HH so that info about tech can be used if necessary
-			space=NA,
-			time=NA,
-			technical=NA,
-			sort=NA,
-			spp=NA, # PK 
-			sex=NA, # PK
-			catchCat=NA, # PK 
-			landCat=NA, # PK 
-			commCatScl=NA, # PK
-			commCat=NA, # PK
-			stock=NA, # PK
-			area=NA, # PK
-			rect=NA, # PK
-			lenCls=NA, # PK
-			age=NA, # PK
-			fishId=NA, # PK
-			lenCode=NA,
-			plusGrp=NA,
-			otoWt=NA,
-			otoSide=NA,
-			indWt=NA,
-			matScale=NA,
-			matStage=NA)
+			time=as.factor(NA),
+			space=as.factor(NA),
+			technical=as.factor(NA),
+			sampType=as.character(NA), # FK
+			landCtry=as.character(NA), # FK
+			vslFlgCtry=as.character(NA), # FK
+			#year=as.numeric(NA), # FK	=> time
+			#quarter=as.numeric(NA),	=> time
+			#month=as.numeric(NA),	=> time
+			proj=as.character(NA), # FK
+			trpCode=as.character(NA), # FK
+			staNum=as.numeric(NA), # PK
+			spp=as.character(NA), # PK 
+			sex=as.character(NA), # PK
+			#catchCat=as.character(NA), # PK	=> sort 
+			#landCat=as.character(NA), # PK	=> sort 
+			#commCatScl=as.character(NA), # PK	=> sort
+			#commCat=as.character(NA), # PK	=> sort
+			stock=as.character(NA), # PK
+			#area=as.character(NA),	=> space
+			#rect=as.character(NA),	=> space
+			lenCls=as.numeric(NA), # PK
+			age=as.numeric(NA), # PK
+			fishId=as.numeric(NA), # PK
+			lenCode=as.character(NA),
+			plusGrp=as.character(NA),
+			otoWt=as.numeric(NA),
+			otoSide=as.character(NA),
+			indWt=as.numeric(NA),
+			matScale=as.character(NA),
+			matStage=as.character(NA))
 	),
 	validity=valcscData
 )

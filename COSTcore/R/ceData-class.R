@@ -39,21 +39,22 @@ setClass("ceData",
 	prototype(
 		desc="my stock",
 		ce=data.frame(
-			vslFlgCtry=as.factor(NA), # PK
+			vslFlgCtry=as.character(NA), # PK
 			year=as.numeric(NA), # PK
 			quarter=as.numeric(NA), # PK 
 			month=as.numeric(NA), # PK
-			area=as.factor(NA), # PK
-			rect=as.factor(NA), # PK 
-			foCatNat=as.factor(NA), # PK
-			foCatEu5=as.factor(NA), # PK
-			foCatEu6=as.factor(NA), # PK
+			area=as.character(NA), # PK
+			rect=as.character(NA), # PK 
+			foCatNat=as.character(NA), # PK
+			foCatEu5=as.character(NA), # PK
+			foCatEu6=as.character(NA), # PK
 			trpNum=as.numeric(NA),
 			foNum=as.numeric(NA),
 			foDur=as.numeric(NA),
 			effKwDays=as.numeric(NA),
 			effGtDays=as.numeric(NA),
-			daysAtSea=as.numeric(NA))		
+			daysAtSea=as.numeric(NA),
+			stringsAsFactors=F)		
 	),
 	validity=valceData
 )
@@ -142,6 +143,7 @@ setMethod("desc", signature("ceData"), function(object, ...){
 # 'Head' and 'Tail' functions
 #====================================================================
 
+if (!isGeneric("head")) setGeneric("head")
 
 setMethod("head", signature("ceData"), function(x, ...){
   object <- new("ceData",desc=x@desc)
@@ -150,6 +152,7 @@ setMethod("head", signature("ceData"), function(x, ...){
 	}
 )
 
+if (!isGeneric("tail")) setGeneric("tail")
 
 setMethod("tail", signature("ceData"), function(x, ...){
   object <- new("ceData",desc=x@desc)
@@ -161,6 +164,8 @@ setMethod("tail", signature("ceData"), function(x, ...){
 #====================================================================
 # 'summary' function
 #====================================================================
+
+if (!isGeneric("summary")) setGeneric("summary")
 
 setMethod("summary", signature("ceData"), function(object, ...){
   ll <- list()
@@ -174,6 +179,8 @@ setMethod("summary", signature("ceData"), function(object, ...){
 #====================================================================
 # 'dim' function
 #====================================================================
+
+if (!isGeneric("dim")) setGeneric("dim")
 
 setMethod("dim", signature("ceData"), function(x){
 	return(dim(x@ce))  

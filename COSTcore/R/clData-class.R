@@ -39,25 +39,26 @@ setClass("clData",
 	prototype(
 		desc="my stock",
 		cl=data.frame(
-			landCtry=as.factor(NA), # PK
-			vslFlgCtry=as.factor(NA), # PK
+			landCtry=as.character(NA), # PK
+			vslFlgCtry=as.character(NA), # PK
 			year=as.numeric(NA), # PK
 			quarter=as.numeric(NA), # PK 
 			month=as.numeric(NA), # PK
-			area=as.factor(NA), # PK
-			rect=as.factor(NA), # PK 
-			spp=as.factor(NA), # PK 
-			landCat=as.factor(NA), # PK 
-			commCatScl=as.factor(NA), # PK
-			commCat=as.factor(NA), # PK
-			foCatNat=as.factor(NA), # PK
-			foCatEu5=as.factor(NA), # PK
-			foCatEu6=as.factor(NA), # PK
+			area=as.character(NA), # PK
+			rect=as.character(NA), # PK 
+			spp=as.character(NA), # PK 
+			landCat=as.character(NA), # PK 
+			commCatScl=as.character(NA), # PK
+			commCat=as.character(NA), # PK
+			foCatNat=as.character(NA), # PK
+			foCatEu5=as.character(NA), # PK
+			foCatEu6=as.character(NA), # PK
 			unallocCatchWt=as.numeric(NA),
 			misRepCatchWt=as.numeric(NA),
 			landWt=as.numeric(NA),
 			landMult=as.numeric(NA),
-			landValue=as.numeric(NA))		
+			landValue=as.numeric(NA),
+			stringsAsFactors=F)		
 	),
 	validity=valclData
 )

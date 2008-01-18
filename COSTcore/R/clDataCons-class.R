@@ -34,20 +34,20 @@ setClass("clDataCons",
 	prototype(
 		desc="my stock",
 		cl=data.frame(
-			landCtry=NA, # PK
-			vslFlgCtry=NA, # PK
-			time=NA, # PK
-			space=NA, # PK 
-			technical=NA, # PK
-			spp=NA, # PK 
-			landCat=NA, # PK 
-			commCatScl=NA, # PK
-			commCat=NA, # PK
-			unallocCatchWt=NA,
-			misRepCatchWt=NA,
-			landWt=NA,
-			landMult=NA,
-			landValue=NA)		
+			landCtry=as.factor(NA), # PK
+			vslFlgCtry=as.factor(NA), # PK
+			time=as.factor(NA), # PK
+			space=as.factor(NA), # PK 
+			technical=as.factor(NA), # PK
+			spp=as.factor(NA), # PK 
+			landCat=as.character(NA), # PK 
+			commCatScl=as.character(NA), # PK
+			commCat=as.character(NA), # PK
+			unallocCatchWt=as.numeric(NA),
+			misRepCatchWt=as.numeric(NA),
+			landWt=as.numeric(NA),
+			landMult=as.numeric(NA),
+			landValue=as.numeric(NA))		
 	),
 	validity=valclcData
 )

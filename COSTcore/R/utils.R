@@ -8,7 +8,6 @@
 #====================================================================
 # coerceDataFrameColumns
 #====================================================================
-
 setGeneric("coerceDataFrameColumns", function(object, refObject, ...){
 	standardGeneric("coerceDataFrameColumns")
 	}
@@ -21,11 +20,11 @@ setMethod("coerceDataFrameColumns", signature("data.frame", "data.frame"), funct
 	n <- ncol(object)
 	for(i in 1:n){
 		cls <- class(refObject[,i])
-		if(identical(cls,"factor")){
+		if(cls=="factor"){
 			v <- as(object[,i], "character")
-			v <- factor(v)
+			v <- as(object[,i], "factor")
 		} else {
-			v <- as(object[,i], "numeric")
+			v <- as(object[,i], cls)
 		}
 		object[,i] <- v
 	}

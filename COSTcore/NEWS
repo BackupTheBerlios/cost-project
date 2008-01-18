@@ -1,6 +1,19 @@
 		CHANGES IN COSTcore VERSION 0.6-0
 
 NEW FEATURES
+    o ceDataCons class definition fixed and column types defined
+    o clDataCons class definition fixed and column types defined
+    o csDataCons class definition fixed and column types defined
+    o ceData factor columns changed to character
+    o clData factor columns changed to character
+    o csData factor columns changed to character
+
+DOCUMENTATION
+    o man corrected
+
+		CHANGES IN COSTcore VERSION 0.6-0
+
+NEW FEATURES
     o ceData class definition defines column types based on FF5 20071112
     o clData class definition defines column types based on FF5 20071112
     o csData class definition defines column types based on FF5 20071112
