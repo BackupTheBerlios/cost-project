@@ -1,6 +1,5 @@
 \name{rbind2-methods}
 \docType{methods}
-\alias{rbind2-methods}
 \alias{rbind2,ceData,ceData-method}
 \alias{rbind2,ceDataCons,ceDataCons-method}
 \alias{rbind2,clData,clData-method}
@@ -13,17 +12,12 @@ This method implements rbind2 for classes provided by COSTcore.
 }
 \section{Methods}{
 \describe{
-\item{x = "ceData", y = "ceData"}{rbinds x and y}
-
-\item{x = "ceDataCons", y = "ceDataCons"}{rbinds x and y}
-
-\item{x = "clData", y = "clData"}{rbinds x and y}
-
-\item{x = "clDataCons", y = "clDataCons"}{rbinds x and y}
-
-\item{x = "csData", y = "csData"}{rbinds x and y}
-
-\item{x = "csDataCons", y = "csDataCons"}{rbinds x and y}
+\item{}{\code{signature(x = "ceData", y = "ceData")}}
+\item{}{\code{signature(x = "ceDataCons", y = "ceDataCons")}}
+\item{}{\code{signature(x = "clData", y = "clData")}}
+\item{}{\code{signature(x = "clDataCons", y = "clDataCons")}}
+\item{}{\code{signature(x = "csData", y = "csData")}}
+\item{}{\code{signature(x = "csDataCons", y = "csDataCons")}}
 }}
 \keyword{methods}
 

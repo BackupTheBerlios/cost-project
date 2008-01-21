@@ -1,6 +1,6 @@
 Package: COSTcore
 Title: Core package of COST.
-Version: 0.7-0
+Version: 0.7-5
 Date: 2007
 Author: COST Team and various contributors.
 Description: COSTcore contains the core classes and methods for COST, a framework for analysis of fisheries sampling data.

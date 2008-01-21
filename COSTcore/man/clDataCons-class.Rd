@@ -17,9 +17,9 @@ The creator function "clDataCons" can be called to create objects from this clas
 \bold{\code{cl}} \tab \tab \code{data.frame} \tab landings information \cr
  \tab landCtry \tab \code{factor} \tab landing country \cr
  \tab vslFlgCtry \tab \code{factor} \tab vessel flag country \cr
- \tab time \tab \code{numeric} \tab year \cr
- \tab space \tab \code{numeric} \tab quarter \cr 
- \tab technocal \tab \code{numeric} \tab month \cr
+ \tab time \tab \code{numeric} \tab time strata \cr
+ \tab space \tab \code{numeric} \tab space strata \cr 
+ \tab technocal \tab \code{numeric} \tab technical strata \cr
  \tab spp \tab \code{factor} \tab species \cr 
  \tab landCat \tab \code{factor} \tab landing category \cr 
  \tab commCatScl \tab \code{factor} \tab commercial category scale \cr
@@ -33,12 +33,14 @@ The creator function "clDataCons" can be called to create objects from this clas
 }
 \section{Methods}{
   \describe{
-    \item{dim}{\code{signature(x = "clDataCons")}: ... }
-    \item{head}{\code{signature(x = "clDataCons")}: ... }
-    \item{rbind2}{\code{signature(x = "clDataCons", y = "clDataCons")}: ... }
-    \item{subset}{\code{signature(x = "clDataCons")}: ... }
-    \item{summary}{\code{signature(object = "clDataCons")}: ... }
-    \item{tail}{\code{signature(x = "clDataCons")}: ... }
+    \item{cl}{\code{signature(object = "clData")}: \code{cl} slot accessor.}
+    \item{desc}{\code{signature(object = "clDataCons")}: \code{desc} slot accessor.}
+    \item{dim}{\code{signature(x = "clDataCons")}: dimensions of \code{cl} slot (see \code{\link{dim}}).}
+    \item{head}{\code{signature(x = "clDataCons")}: first rows of the \code{cl} slot (see \code{\link{head}}).}
+    \item{rbind2}{\code{signature(x = "clDataCons", y = "clDataCons")}: bind two \code{clDataCons} objects by adding rows (see \code{\link{rbind2}}).}
+    \item{subset}{\code{signature(x = "clDataCons")}: subset a \code{clDataCons} object (see \code{\link{subset}}).}
+    \item{summary}{\code{signature(object = "clDataCons")}: summary a \code{clDataCons} object (see \code{\link{summary}}).}
+    \item{tail}{\code{signature(x = "clDataCons")}: last rows of the \code{cl} slot (see \code{\link{tail}}).}
 	 }
 }
 \author{Ernesto Jardim <ernesto@ipimar.pt>}

@@ -33,17 +33,18 @@ finishTest(con=getOption("con"))
   \item{tag}{A tag.}
 }
 \details{
-  \item{setCon(con="zz")}{Set name of connection to file.}
-  \item{startTest(file="testReport.txt")}{Starts test by creating the report file and opening the connection to it defined by sQuote{con}.}
-  \item{tagTest(tag="My tag !", con=getOption("con"))}{Tags the test for future reference. Automatically includes date and time.}
-  \item{checkTrue(x, con = getOption("con"))}{Check \sQuote{x} expression is \code{TRUE} and report to file opened by connection defined in \sQuote{con}.}
-  \item{checkFalse(x, con = getOption("con"))}{Check \sQuote{x} expression is \code{FALSE} and report to file opened by connection defined in \sQuote{con}.}
-  \item{checkIdentical(x, y, con = getOption("con"))}{Check \sQuote{x} and \sQuote{y} are \code{identical} and report to file opened by connection defined in \sQuote{con}.}
-  \item{checkRun(x, con = getOption("con"))}{Check \sQuote{x} expression runs succefully and report to file opened by connection defined in \sQuote{con}.}
-  \item{checkFail(x, con = getOption("con"))}{Check \sQuote{x} expression fails to run and report to file opened by connection defined in \sQuote{con}.}
-  \item{checkEqual(x, y, con = getOption("con"))}{Check \sQuote{x} and \sQuote{y} are \code{equal} and report to file opened by connection defined in \sQuote{con}.}
-  \item{finishTest(con=getOption("con"))}{Closes connection defined by \sQuote{con}.}
-}
+\describe{
+  \item{setCon}{Set name of connection to file.}
+  \item{startTest}{Starts test by creating the report file and opening the connection to it defined by sQuote{con}.}
+  \item{tagTest}{Tags the test for future reference. Automatically includes date and time.}
+  \item{checkTrue}{Check \sQuote{x} expression is \code{TRUE} and report to file opened by connection defined in \sQuote{con}.}
+  \item{checkFalse}{Check \sQuote{x} expression is \code{FALSE} and report to file opened by connection defined in \sQuote{con}.}
+  \item{checkIdentical}{Check \sQuote{x} and \sQuote{y} are \code{identical} and report to file opened by connection defined in \sQuote{con}.}
+  \item{checkRun}{Check \sQuote{x} expression runs succefully and report to file opened by connection defined in \sQuote{con}.}
+  \item{checkFail}{Check \sQuote{x} expression fails to run and report to file opened by connection defined in \sQuote{con}.}
+  \item{checkEqual}{Check \sQuote{x} and \sQuote{y} are \code{equal} and report to file opened by connection defined in \sQuote{con}.}
+  \item{finishTest}{Closes connection defined by \sQuote{con}.}
+}}
 \value{A report with the results of the tests.}
 \references{These functions were originally developed for FLR (\url{http://flr-project.org}).}
 \author{FLCore Team and Ernesto Jardim \email{ernesto@ipimar.pt}}

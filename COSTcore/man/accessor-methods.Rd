@@ -41,26 +41,27 @@
 	Accessor methods are used to get specific slots from an object. It is supposed to implement "encapsulation" in S4, although not completely. Users are strongly advised to use these fucntions on their own code so that future changes on the class definition don't break it.
 }
 \section{Methods}{
-\item{tr(object)}{csData, csDataVal, csDataCons \code{tr} slot accessor.}
-\item{hh(object)}{csData, csDataVal, csDataCons \code{hh} slot accessor.}
-\item{sl(object)}{csData, csDataVal, csDataCons \code{sl} slot accessor.}
-\item{hl(object)}{csData, csDataVal, csDataCons \code{hl} slot accessor.}
-\item{ca(object)}{csData, csDataVal, csDataCons \code{ca} slot accessor.}
-\item{cl(object)}{clData, clDataVal, clDataCons \code{cl} slot accessor.}
-\item{ce(object)}{ceData, ceDataVal, ceDataCons \code{ce} slot accessor.}
-\item{desc(object)}{description slot accessor for all classes.}
-}
+  \describe{
+	\item{tr}{\code{signature(object = csData or csDataVal or csDataCons)}: \code{tr} slot accessor.}
+	\item{hh}{\code{signature(object = csData or csDataVal or csDataCons)}: \code{hh} slot accessor.}
+	\item{sl}{\code{signature(object = csData or csDataVal or csDataCons)}: \code{sl} slot accessor.}
+	\item{hl}{\code{signature(object = csData or csDataVal or csDataCons)}: \code{hl} slot accessor.}
+	\item{ca}{\code{signature(object = csData or csDataVal or csDataCons)}: \code{ca} slot accessor.}
+	\item{ce}{\code{signature(object = ceData or ceDataVal or ceDataCons)}: \code{ce} slot accessor.}
+	\item{cl}{\code{signature(object = clData or clDataVal or clDataCons)}: \code{cl} slot accessor.}
+	\item{desc}{\code{signature(object = csData or csDataVal or csDataCons)}: description slot accessor.}
+}}
 \examples{
-	obj <- csData()
-	tr(obj)
-	hh(obj)
-	sl(obj)
-	hl(obj)
-	ca(obj)
-	obj <- ceData()
-	ce(obj)
-	obj <- clData()
-	cl(obj)
+obj <- csData()
+tr(obj)
+hh(obj)
+sl(obj)
+hl(obj)
+ca(obj)
+obj <- ceData()
+ce(obj)
+obj <- clData()
+cl(obj)
 }
 \keyword{methods}
 

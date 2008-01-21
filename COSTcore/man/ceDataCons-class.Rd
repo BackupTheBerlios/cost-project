@@ -16,9 +16,9 @@ The creator function "ceDataCons" can be called to create objects from this clas
 \bold{\code{desc}} \tab \tab \code{character} \tab object description \cr
 \bold{\code{ce}} \tab \tab \code{data.frame} \tab effort information \cr
  \tab vslFlgCtry \tab \code{factor} \tab vessel flag country \cr
- \tab time \tab \code{factor} \tab year \cr
- \tab space \tab \code{factor} \tab quarter \cr 
- \tab technical \tab \code{factor} \tab month \cr
+ \tab time \tab \code{factor} \tab time strata \cr
+ \tab space \tab \code{factor} \tab space strata \cr 
+ \tab technical \tab \code{factor} \tab technical strata \cr
  \tab trpNum \tab \code{numeric} \tab number of trips \cr
  \tab foNum \tab \code{numeric} \tab number of fishing operations \cr
  \tab foDur \tab \code{numeric} \tab duration of fishing operations \cr
@@ -29,14 +29,14 @@ The creator function "ceDataCons" can be called to create objects from this clas
 }
 \section{Methods}{
   \describe{
-    \item{ce}{\code{signature(object = "ceDataCons")}: ... }
-    \item{desc}{\code{signature(object = "ceDataCons")}: ... }
-    \item{dim}{\code{signature(x = "ceDataCons")}: ... }
-    \item{head}{\code{signature(x = "ceDataCons")}: ... }
-    \item{rbind2}{\code{signature(x = "ceDataCons", y = "ceDataCons")}: ... }
-    \item{subset}{\code{signature(x = "ceDataCons")}: ... }
-    \item{summary}{\code{signature(object = "ceDataCons")}: ... }
-    \item{tail}{\code{signature(x = "ceDataCons")}: ... }
+    \item{ce}{\code{signature(object = "ceDataCons")}: \code{ce} slot accessor.}
+    \item{desc}{\code{signature(object = "ceDataCons")}: \code{desc} slot accessor.}
+    \item{dim}{\code{signature(x = "ceDataCons")}: dimensions of \code{ce} slot (see \code{\link{dim}}).}
+    \item{head}{\code{signature(x = "ceDataCons")}: first rows of the \code{ce} slot (see \code{\link{head}}).}
+    \item{rbind2}{\code{signature(x = "ceDataCons", y = "ceDataCons")}: bind two \code{ceDataCons} objects by adding rows (see \code{\link{rbind2}}).}
+    \item{subset}{\code{signature(x = "ceDataCons")}: subset a \code{ceDataCons} object (see \code{\link{subset}}).}
+    \item{summary}{\code{signature(object = "ceDataCons")}: summary a \code{ceDataCons} object (see \code{\link{summary}}).}
+    \item{tail}{\code{signature(x = "ceData")}: last rows of the \code{ce} slot (see \code{\link{tail}}).}
 	 }
 }
 \author{Ernesto Jardim <ernesto@ipimar.pt>}

@@ -1,4 +1,13 @@
-		CHANGES IN COSTcore VERSION 0.6-0
+		CHANGES IN COSTcore VERSION 0.8-0
+
+NEW FEATURES
+    o accessors "cl" and "desc" for clDataCons
+DOCUMENTATION
+    o man reviewed
+BUG FIXES
+    o field "sort" missing from ca slot on csDataCons class
+
+		CHANGES IN COSTcore VERSION 0.7-0
 
 NEW FEATURES
     o ceDataCons class definition fixed and column types defined

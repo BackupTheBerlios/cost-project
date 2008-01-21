@@ -29,11 +29,12 @@
 Utilities to be used on sQuote{COST} classes that return meta information about the object's contents.
 }
 \section{Methods}{
-\item{dim}{Dimensions.}
-\item{head}{First ten rows of data.}
-\item{summary}{Summary statistics.}
-\item{tail}{Last ten rows of data.}
-}
+\describe{
+	\item{dim}{\code{signature(object)}: dimensions.}
+	\item{head}{\code{signature(object)}: first ten rows of data.}
+	\item{summary}{\code{signature(object)}: summary statistics.}
+	\item{tail}{\code{signature(object)}: last ten rows of data.}
+}}
 \seealso{
 \code{\link{dim}}, \code{\link{head}}, \code{\link{summary}}, \code{\link{tail}} 
 }

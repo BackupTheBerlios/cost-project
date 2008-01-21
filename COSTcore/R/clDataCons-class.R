@@ -70,6 +70,20 @@ setMethod("clDataCons", signature("missing"), function(desc="Unknown stock", ...
 })
 
 #====================================================================
+# Accessor functions
+#====================================================================
+
+setMethod("cl", signature("clDataCons"), function(object, ...){
+	object@cl
+	}
+)
+
+setMethod("desc", signature("clDataCons"), function(object, ...){
+	object@desc
+	}
+)
+
+#====================================================================
 # 'Head' and 'Tail' functions  (setGeneric methods in 'csData-class.R')
 #====================================================================
 

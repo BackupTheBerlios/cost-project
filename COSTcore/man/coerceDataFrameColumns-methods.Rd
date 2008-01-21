@@ -8,7 +8,7 @@
 }
 \section{Methods}{
 \describe{
-\item{\code{coerceDataFrameColumns(object = "data.frame", refObject = "data.frame")}}{Checks the class of \code{refObject} columns and coerces the \code{object} columns in agreement.}
+\item{coerceDataFrameColumns}{\code{signature(object = "data.frame", refObject = "data.frame")}: Checks the class of \code{refObject} columns and coerces the \code{object} columns in agreement.}
 }}
 \keyword{methods}
 

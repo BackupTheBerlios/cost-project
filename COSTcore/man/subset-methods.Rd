@@ -1,6 +1,5 @@
 \name{subset-methods}
 \docType{methods}
-\alias{subset-methods}
 \alias{subset,ceData-method}
 \alias{subset,ceDataCons-method}
 \alias{subset,clData-method}
@@ -13,18 +12,12 @@ This method implements subseting for classes provided by COSTcore.
 }
 \section{Methods}{
 \describe{
-
-\item{x = "ceData"}{subseting \code{ce} slot.}
-
-\item{x = "ceDataCons"}{subseting \code{ce} slot.}
-
-\item{x = "clData"}{subseting \code{cl} slot.}
-
-\item{x = "clDataCons"}{subseting \code{ce} slot.}
-
-\item{x = "csData"}{subseting object based on \code{tr} slot.}
-
-\item{x = "csDataCons"}{subseting object based on \code{tr} slot.}
+\item{}{\code{signature(x = "ceData")}}
+\item{}{\code{signature(x = "ceDataCons")}}
+\item{}{\code{signature(x = "clData")}}
+\item{}{\code{signature(x = "clDataCons")}}
+\item{}{\code{signature(x = "csData")}}
+\item{}{\code{signature(x = "csDataCons")}}
 }}
 \keyword{methods}
 

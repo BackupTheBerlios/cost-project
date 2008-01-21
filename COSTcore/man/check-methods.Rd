@@ -53,20 +53,22 @@
 	Check methods used to validate S4 classes. These are meant for internal usage only, not to be directly called by users.
 }
 \section{Methods}{
-\item{\code{checkNms(object, names)}}{Check names in a data.frame against a character vector.}
-\item{\code{checkTys(object, tys)}}{Check column types in a data.frame against a list of class names.}
-\item{\code{checkTRnms(object)}}{Wrapper for TR checkNms.}
-\item{\code{checkHHnms(object)}}{Wrapper for HH checkNms.}
-\item{\code{checkSLnms(object)}}{Wrapper for SL checkNms.}
-\item{\code{checkHLnms(object)}}{Wrapper for HL checkNms.}
-\item{\code{checkCAnms(object)}}{Wrapper for CA checkNms.}
-\item{\code{checkCLnms(object)}}{Wrapper for CL checkNms.}
-\item{\code{checkCEnms(object)}}{Wrapper for CE checkNms.}
-\item{\code{checkTRpk(object)}}{Check TR primary key.}
-\item{\code{checkHHpk(object)}}{Check HH primary key.}
-\item{\code{checkSLpk(object)}}{Check SL primary key.}
-\item{\code{checkHLpk(object)}}{Check HL primary key.}
-\item{\code{checkCLpk(object)}}{Check CL primary key.}
-\item{\code{checkCEpk(object)}}{Check CE primary key.}
-}
+\describe{
+	\item{checkNms}{\code{signature(object, names)}: Check names in a data.frame against a character vector.}
+	\item{checkTys}{\code{signature(object, tys)}: Check column types in a data.frame against a list of class names.}
+	\item{checkTRnms}{\code{signature(object)}: Wrapper for TR checkNms.}
+	\item{checkHHnms}{\code{signature(object)}: Wrapper for HH checkNms.}
+	\item{checkSLnms}{\code{signature(object)}: Wrapper for SL checkNms.}
+	\item{checkHLnms}{\code{signature(object)}: Wrapper for HL checkNms.}
+	\item{checkCAnms}{\code{signature(object)}: Wrapper for CA checkNms.}
+	\item{checkCLnms}{\code{signature(object)}: Wrapper for CL checkNms.}
+	\item{checkCEnms}{\code{signature(object)}: Wrapper for CE checkNms.}
+	\item{checkTRpk}{\code{signature(object)}: Check TR primary key.}
+	\item{checkHHpk}{\code{signature(object)}: Check HH primary key.}
+	\item{checkSLpk}{\code{signature(object)}: Check SL primary key.}
+	\item{checkHLpk}{\code{signature(object)}: Check HL primary key.}
+	\item{checkCLpk}{\code{signature(object)}: Check CL primary key.}
+	\item{checkCEpk}{\code{signature(object)}: Check CE primary key.}
+}}
 \keyword{methods}
+

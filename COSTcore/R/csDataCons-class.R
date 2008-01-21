@@ -188,6 +188,7 @@ setClass("csDataCons",
 			time=as.factor(NA),
 			space=as.factor(NA),
 			technical=as.factor(NA),
+			sort=as.factor(NA),
 			sampType=as.character(NA), # FK
 			landCtry=as.character(NA), # FK
 			vslFlgCtry=as.character(NA), # FK
