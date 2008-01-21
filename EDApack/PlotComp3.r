@@ -17,7 +17,7 @@ setGeneric("SampComp.plot", function(object1,object2,...){
 	standardGeneric("SampComp.plot")
 })
 
-
+                                                                     
 setMethod("SampComp.plot", signature(object1="csData",object2="clData"), function(object1,object2,TechStrat="commCat",TimeStrat="quarter",...){
 #Tests on stratification parameters
 if (!TechStrat%in%c("commCat","foCatNat","foCatEu5","foCatEu6")) stop("Wrong 'TechStrat' parameter!")

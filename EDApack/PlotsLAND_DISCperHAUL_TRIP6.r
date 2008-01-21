@@ -23,7 +23,7 @@ setGeneric("LD.Volume", function(object,...){
 	standardGeneric("LD.Volume")
 })
 
-                                                       
+
 
 
 setMethod("LD.Volume", signature(object="csData"), function(object,fraction="all",species="all",TechStrat="gear",TimeStrat="quarter",...){   #TimeStrat = "year", "quarter", "month"   
