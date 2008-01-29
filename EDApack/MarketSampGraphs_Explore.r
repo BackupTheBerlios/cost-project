@@ -50,6 +50,7 @@ dimVec <- c(length(SpacMes),length(TechMes),length(TimMes))
 TechDf <- data.frame(str=factor(c(names(SpacMes),names(TechMes),names(TimMes)),levels=c(names(SpacMes),names(TimMes),names(TechMes))),
                      mes=c(SpacMes,TechMes,TimMes),pop=c(SpacPop,TechPop,TimPop),GRP=rep(c("Space","Technical","Time"),dimVec))
 TechDf <- TechDf[TechDf$GRP%in%show,] ; TechDf$grp <- factor(TechDf$GRP,labels=1:length(unique(TechDf$GRP)))
+TechDf$GRPplus <- factor(TechDf$GRP,levels=c("Space","Technical","Time"),labels=c(paste("Space =",SpaceStrat),paste("Technical =",TechStrat),paste("Time =",TimeStrat)))
 mes <- TechDf$mes ; names(mes) <- TechDf$grp
 
 #graphs 
@@ -62,7 +63,8 @@ sapply(names(GP),function(x) if (is.null(eval(parse('',text=paste("dots$",x,sep=
 if (is.null(dots$xlab)) dots$xlab <- "" ; if (is.null(dots$ylab)) dots$ylab <- "Frequency" 
 if (is.null(dots$main)) dots$main <- paste("Relative Rates of Total Weight of Landings and Number of Fish Measured\nby",paste(unique(TechDf$GRP),collapse=", "),"Strata")
 
-barchart(pop~str|GRP,data=TechDf,scales=list(x=list(relation="free"),font=dots$font.axis),main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),
+barchart(pop~str|GRPplus,data=TechDf,scales=list(x=list(relation="free"),font=dots$font.axis),main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
+          ylab=list(dots$ylab,font=dots$font.lab),par.strip.text=list(font=dots$font.lab),
          prepanel=function(x,y,...){
              x <- x[,drop=TRUE]
              prepanel.default.bwplot(x,y,...)},
