@@ -116,7 +116,7 @@ object$Delta[,2] <- as.factor(object$Delta[,2]) ; if (test) {object$Delta[,3] <-
 	} else {return(FALSE)}}}}}                                                                                                                                                           #
 	decal[!sapply(1:length(delimit),concord,delimit)] <- 0                                                                                                                               #
                                                                                                                                                                 #----------------------#
-print(xyplot(YY~XX,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),
+print(xyplot(YY~XX,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),scales=list(font=dots$font.axis),
        key=eval(parse('',text=c("NULL",paste("list(points=list(pch=dots$pch[1],fill=as.character(levels(ff)),cex=dots$p.cex[1],lwd=dots$lwd[1],col=dots$col[1]),",
                 "text=list(levels(object$Delta[,3])),title=names(object$Delta)[3],cex.title=0.8,font=dots$font.lab,space=show.legend,columns=1,border=TRUE)",sep=""))[c(!test,test)])),
        panel= function(x,y,...) {
@@ -158,12 +158,13 @@ setMethod("plot",signature("Delta.length"), function(x,y=NULL,...){
 
   Som.djku <- apply(object$d.jku,2,sum,na.rm=TRUE)
   Som.wku <- sum(object$w.ku,na.rm=TRUE) 
-  VecMesId <- object$d.jku[listOP,]
+  VecMesId <- object$d.jku[listOP,,drop=FALSE]
   SommeDelta <- round(apply(object$delta.jku,1,sum)[listOP],2)
-  VecSomme <- object$w.ku[listOP]%*%t(Som.djku/Som.wku)
+  VecSomme <- object$w.ku[listOP]%*%t(Som.djku/Som.wku) ; if (length(listOP)==1) dimnames(VecSomme)[[1]] <- listOP
   nam <- dimnames(VecSomme)
   df <- data.frame(x1=rep(colnames(VecSomme),each=nrow(VecSomme)),y1=rep(rownames(VecSomme),ncol(VecSomme)),Ech=as.vector(VecMesId),Exp=as.vector(VecSomme))
-  xyplot(Ech+Exp~x1|y1 ,data=df,type=c("h","l"),lty=rep(dots$lty,length=2),col=rep(dots$col,length=2),lwd=rep(dots$lwd,length=2),distribute.type=TRUE,scales=list(x=list(rot=90)),
+  xyplot(Ech+Exp~x1|y1 ,data=df,type=c("h","l"),lty=rep(dots$lty,length=2),par.strip.text=list(font=dots$font.lab),
+  col=rep(dots$col,length=2),lwd=rep(dots$lwd,length=2),distribute.type=TRUE,scales=list(font=dots$font.axis,x=list(rot=90)),
   main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab))
 })
 
@@ -190,7 +191,8 @@ setMethod("plot.Samp",signature("Delta.list"), function(x,SampNum,show.legend="r
   SommeDelta <- round(apply(object$delta.jku,1,sum)[SampNum],2)
   VecSomme <- object$w.ku[SampNum]%*%t(Som.djku/Som.wku)
   df <- data.frame(x1=colnames(VecSomme),Ech=as.vector(VecMesId),Exp=as.vector(VecSomme))
-  xyplot(Ech+Exp~x1,data=df,type=c("h","l"),lty=rep(dots$lty,length=2),col=rep(dots$col,length=2),lwd=rep(dots$lwd,length=2),distribute.type=TRUE,scales=list(x=list(rot=90)),
+  xyplot(Ech+Exp~x1,data=df,type=c("h","l"),lty=rep(dots$lty,length=2),par.strip.text=list(font=dots$font.lab),col=rep(dots$col,length=2),
+  lwd=rep(dots$lwd,length=2),distribute.type=TRUE,scales=list(font=dots$font.axis,x=list(rot=90)),
   key=list(lines=list(lty=rep(dots$lty,length=2),col=rep(dots$col,length=2),lwd=rep(dots$lwd,length=2)),text=list(c("Sampled","Overall")),font=dots$font.lab,space=show.legend,columns=1,border=TRUE),
   main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab))
 })
