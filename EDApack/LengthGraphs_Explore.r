@@ -1,8 +1,8 @@
 ######################################
 ##                                  ##
 ## Delta plots (outliers detection) ##
-##                                  ##
-##       MM 14/01/2008              ##
+## Length Distributions (hl)        ##
+##       MM 31/01/2008              ##
 ######################################
 
 ##save 'Sole' & 'GraphsPar' .RData files and change the path
@@ -200,6 +200,41 @@ setMethod("plot.Samp",signature("Delta.list"), function(x,SampNum,show.legend="r
 
 
 
+
+
+setGeneric("plot.LD", function(x,...){
+	standardGeneric("plot.LD")
+	}
+)
+
+
+setMethod("plot.LD",signature("csData"), function(x,Species,Fraction="LAN",trpCode,staNum="all",...){
+  if (length(Species)!=1) stop("Only one species!!") ; if (length(trpCode)!=1) stop("Only one trip!!")
+  trpCode <- as.character(trpCode) ; staNum <- as.character(staNum) ; if ("all"%in%staNum) staNum <- "all" 
+  require(lattice)
+  load("GraphsPar.RData")                                                                                                                            #<<<<----to be replaced by 'data(...)'
+  object <- x@hl ; lgthCode <- as.character(x@sl[(x@sl$trpCode%in%trpCode)&(x@sl$spp%in%Species),"lenCode"][1])
+  stepp <- c(1,5,10,25) ; names(stepp) <- c("mm","scm","cm","25mm") ; ste <- stepp[lgthCode]
+  dots <- list(...) ; if (is.null(dots$p.col)) dots$p.col <- "black" ; if (is.null(dots$p.bg)) dots$p.bg <- "lightblue" ; if (is.null(dots$cex.axis)) dots$cex.axis <- 0.8
+  
+ sapply(names(GP),function(x) if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+ if (is.null(dots$xlab)) dots$xlab <- "Length" ; if (is.null(dots$ylab)) dots$ylab <- "Number" 
+ if (is.null(dots$main)) dots$main <- paste("Length Distributions by samples for trip n°",trpCode) 
+
+ df <- object[(object$trpCode%in%trpCode)&(object$catchCat%in%Fraction)&(object$spp%in%Species),]
+ if ("all"%in%staNum) staNum <- unique(as.character(df$staNum))
+ df <- df[df$staNum%in%staNum,] ; df$staNum <- factor(df$staNum)
+ #on redéfinit le facteur classe de taille pour prendre aussi en compte les tailles absentes
+ df$lenCls <- factor(df$lenCls,levels=seq(min(df$lenCls),max(df$lenCls),by=ste)) ; 
+ LD <- tapply(df$lenNum,list(staNum=df$staNum,lenCls=df$lenCls),sum,na.rm=TRUE)
+ LD[is.na(LD)] <- 0  ; ll <- dimnames(LD)
+ DF <- data.frame(staNum=rep(ll$staNum,ncol(LD)),lenCls=rep(ll$lenCls,each=nrow(LD)),val=as.numeric(LD))
+ DF$staNum <- factor(DF$staNum,levels=as.character(sort(as.numeric(levels(DF$staNum)))))
+  barchart(val~lenCls|staNum,data=DF,ylim=c(0,max(DF$val)*1.05),scales=list(x=list(rot=dots$rot,cex=dots$cex.axis),font=dots$font.axis),main=list(dots$main,font=dots$font.main),
+  xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),par.strip.text=list(font=dots$font.lab),col=dots$p.bg,fill=dots$p.bg)  
+})
+  
+
 ###########
 # Example #
 ###########
@@ -222,9 +257,14 @@ bb <- plot(aa2,selection=TRUE,show.legend="right")         #select FOs (points) 
 plot(bb)
 plot.Samp(aa2,"194")
 
+#length distribution by trip 
+plot.LD(sole3.cs,"SOL","LAN","LIM1")    #sampType="S"
+plot.LD(sole3.cs,"SOL","LAN","131395")    #sampType="M"
 
-
-
+#for all the trip
+temp <- sole3.cs
+temp@hl$staNum <- "999"
+plot.LD(temp,"SOL","LAN","LIM1") 
  
  
  
