@@ -1,0 +1,12 @@
+Package: COSTeda
+Title: Exploratory Data Analysis methods for COST.
+Version: 0.1
+Date: 2008
+Author: COST Team and various contributors.
+Description: COSTeda provides the ability to graphically assess sampling coverage, explore and summarize the data and identify unusual observations. Furthermore, it can be used as a descriptive quality control tool.
+Depends: R(>= 2.6.0), COSTcore, lattice, nnet
+Maintainer: Mathieu Merzereaud <Mathieu.Merzereaud@ifremer.fr>
+License: GPL 2 or above
+LazyLoad: Yes
+LazyData: Yes
+
