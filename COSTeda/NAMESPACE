@@ -1,0 +1,34 @@
+import("methods","utils","graphics","lattice","nnet")
+
+importClassesFrom("COSTcore")
+
+importFrom("COSTcore")
+
+exportClasses(
+	"ALmult",
+	"Delta.list",
+	"Delta.length",
+	"LD.Vol"
+)
+
+exportMethods(
+	"AL.multi",
+	"plot",
+	"Delta.cs",
+	"plot.Samp",
+	"plot.Delta.list",
+	"plot.Delta.length",
+	"plot.LD",
+  "SampComp.plot",
+  "LD.Volume",
+  "FD.plot",
+  "FD.boxplot",
+  "FO.plot",
+  "FO.boxplot",
+  "WL.plot",
+  "ML.plot",
+  "ML.boxplot",
+  "SL.boxplot",
+  "L.plot.design",
+  "SummarY"
+)
