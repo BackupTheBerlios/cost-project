@@ -176,7 +176,8 @@ data(GraphsPar)
 dots <- list(...) ; if (is.null(dots$pch)) dots$pch <- 19
 sapply(names(GP),function(x) if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
 if (is.null(dots$xlab)) dots$xlab <- "Trip Code" ; if (is.null(dots$ylab)) dots$ylab <- "Weight (Kg)" 
-if (is.null(dots$main)) dots$main <- "Weight by Fishing Day for each Trip"
+if (is.null(dots$main)) dots$main <- paste("Weight by Fishing Day for each Trip\nSpecies :",
+                                           paste(x@species,collapse=", "),"    Fraction :",paste(x@fraction,collapse=", "))
 
 obj <- x@VolFD_TR ; names(obj) <- sapply(names(x@VolFD_TR),function(x) strsplit(x,"::")[[1]][1])
 vec <- unlist(x@VolFD_TR) ; nvec <- unlist(lapply(x@VolFD_TR,length)) 
