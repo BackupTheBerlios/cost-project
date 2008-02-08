@@ -1,0 +1,28 @@
+\name{L.plot.design,csData-method}
+\alias{L.plot.design}
+\alias{L.plot.design,csData-method}
+\docType{methods}
+\title{Plot.design of "csData" individual biological parameters in "ca"}
+\description{
+Version of \emph{plot.design} procedure from \pkg{graphics} package applied to \emph{csData} biological parameters.
+}
+
+\usage{
+L.plot.design(object,\dots)
+}
+
+\arguments{
+  \item{object}{A \emph{csData} object with \emph{ca} informations.}
+  \item{...}{Further arguments.}
+}
+
+\author{Mathieu Merzereaud}
+
+\seealso{\code{\link{WL.plot}}, \code{\link{ML.plot}}, \code{\link{ML.boxplot}}, \code{\link{SL.boxplot}}
+}
+
+\examples{
+data(sole3.cs)
+L.plot.design(sole3.cs)
+}
+\keyword{methods}
