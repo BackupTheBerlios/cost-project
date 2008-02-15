@@ -123,9 +123,9 @@ setClass("csData",
 			trpCode=as.character(NA), # FK
 			staNum=as.numeric(NA), # PK
 			foVal=as.character(NA),
+			aggLev=as.character(NA),
 			catReg=as.character(NA),
 			sppReg=as.character(NA),
-			aggLev=as.character(NA),
 			date=as.character(NA),
 			time=as.character(NA),
 			foDur=as.numeric(NA),
@@ -574,39 +574,39 @@ setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr"){
 	# get idx
 	trpk <- tr(x)[,1:6]
 	trpk <- apply(trpk,1,paste,collapse="")
-	trpk <- gsub([[:space:]],"",trpk)
+	trpk <- gsub("[[:space:]]","",trpk)
 
 	hhfk <- hh(x)[,1:6]
 	hhfk <- apply(hhfk,1,paste,collapse="")
-	hhfk <- gsub([[:space:]],"",hhfk)
+	hhfk <- gsub("[[:space:]]","",hhfk)
 
 	hhpk <- hh(x)[,1:7]
 	hhpk <- apply(hhpk,1,paste,collapse="")
-	hhpk <- gsub([[:space:]],"",hhpk)
+	hhpk <- gsub("[[:space:]]","",hhpk)
 
 	slfk <- sl(x)[,1:7]
 	slfk <- apply(slfk,1,paste,collapse="")
-	slfk <- gsub([[:space:]],"",slfk)
+	slfk <- gsub("[[:space:]]","",slfk)
 
 	slpk <- sl(x)[,1:13]
 	slpk <- apply(slpk,1,paste,collapse="")
-	slpk <- gsub([[:space:]],"",slpk)
+	slpk <- gsub("[[:space:]]","",slpk)
 
 	hlfk <- hl(x)[,c(1:8,10:14)]
 	hlfk <- apply(hlfk,1,paste,collapse="")
-	hlfk <- gsub([[:space:]],"",hlfk)
+	hlfk <- gsub("[[:space:]]","",hlfk)
 
 #	hlpk <- hl(x)[,1:15]
 #	hlpk <- apply(hlpk,1,paste,collapse="")
-#	hlpk <- gsub([[:space:]],"",hlpk)
+#	hlpk <- gsub("[[:space:]]","",hlpk)
 
 	cafk <- ca(x)[,c(1:6)]
 	cafk <- apply(cafk,1,paste,collapse="")
-	cafk <- gsub([[:space:]],"",cafk)
+	cafk <- gsub("[[:space:]]","",cafk)
 
 #	capk <- ca(x)[,c(1:21)]
 #	capk <- apply(capk,1,paste,collapse="")
-#	capk <- gsub([[:space:]],"",capk)
+#	capk <- gsub("[[:space:]]","",capk)
 	
 	# new idx
 	e <- substitute(subset)
@@ -616,13 +616,13 @@ setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr"){
 	# subset
 	tr <- df0[r,]
 	tridx <- apply(tr[,1:6],1,paste,collapse="")
-	tridx <- gsub([[:space:]],"",tridx)
+	tridx <- gsub("[[:space:]]","",tridx)
 	hh <- hh(x)[hhfk %in% tridx,]	
 	hhidx <- apply(hh[,1:7],1,paste,collapse="")
-	hhidx <- gsub([[:space:]],"",hhidx)
+	hhidx <- gsub("[[:space:]]","",hhidx)
 	sl <- sl(x)[slfk %in% hhidx,]	
 	slidx <- apply(sl[,1:13],1,paste,collapse="")
-	slidx <- gsub([[:space:]],"",slidx)
+	slidx <- gsub("[[:space:]]","",slidx)
 	hl <- hl(x)[hlfk %in% slidx,]	
 	ca <- ca(x)[cafk %in% tridx,]
 
