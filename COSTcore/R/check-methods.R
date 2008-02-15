@@ -165,7 +165,7 @@ setGeneric("checkCApk", function(object, ...){
 )
 
 setMethod("checkCApk", signature(object="data.frame"), function(object, ...){
-	identical(object[,c(1:4,7:21)], unique(object[,c(1:4,7:21)]))
+	identical(object[,c(1:21)], unique(object[,c(1:21)]))
 })
 
 # CL

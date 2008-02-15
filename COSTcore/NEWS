@@ -1,13 +1,16 @@
-		CHANGES IN COSTcore VERSION 1.0-0 RC 01
+		CHANGES IN COSTcore VERSION 1.0-0
 
 NEW FEATURES
     o fields "catReg" and "sppReg" added in hh slot in csDataCons class
     o fields "catReg" and "sppReg" added in hh slot in csData class
+    o csData class ca slot now includes "quarter" and "month" in the primary key
+    o method "checkCApk" now considers fields 1:21 of csData class ca slot to be unique
 DOCUMENTATION
     o man reviewed
 BUG FIXES
     o fields "month" and "quarter" were in the wrong order in ca slot in csData class
-
+    o subset method had a bug, the id vectors were left with white spaces that jeopardized the matching, now fixed
+    
 		CHANGES IN COSTcore VERSION 0.8-0
 
 NEW FEATURES
