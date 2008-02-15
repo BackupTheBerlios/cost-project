@@ -3,8 +3,15 @@
 NEW FEATURES
     o fields "catReg" and "sppReg" added in hh slot in csDataCons class
     o fields "catReg" and "sppReg" added in hh slot in csData class
+    o method "checkHHnms" adjusted to include CATCH REGISTRATION and SPECIES REGISTRATION fields
+    o csData class ca slot fields order was changed, "quarter" and "month" now are after "staNum"
+    o method "checkCAnms" adjusted to new ca table order
     o csData class ca slot now includes "quarter" and "month" in the primary key
     o method "checkCApk" now considers fields 1:21 of csData class ca slot to be unique
+    o fields "valCode" removed from sl slot in csData class
+    o fields "valCode" removed from sl slot in csDataCons class
+    o method "checkSLnms" adjusted to remove VALIDITY CODE field
+
 DOCUMENTATION
     o man reviewed
 BUG FIXES
