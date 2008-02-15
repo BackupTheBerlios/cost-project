@@ -7,9 +7,7 @@
 \alias{subset,csData-method}
 \alias{subset,csDataCons-method}
 \title{subset for `COSTcore' classes}
-\description{
-This method implements subseting for classes provided by COSTcore.
-}
+\description{This method implements subseting for the classes provided by COSTcore.}
 \section{Methods}{
 \describe{
 \item{}{\code{signature(x = "ceData")}}

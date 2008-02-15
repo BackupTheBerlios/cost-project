@@ -7,9 +7,7 @@
 \alias{rbind2,csData,csData-method}
 \alias{rbind2,csDataCons,csDataCons-method}
 \title{rbind2 for `COSTcore' classes}
-\description{
-This method implements rbind2 for classes provided by COSTcore.
-}
+\description{This method implements rbind2 for the classes provided by COSTcore.}
 \section{Methods}{
 \describe{
 \item{}{\code{signature(x = "ceData", y = "ceData")}}

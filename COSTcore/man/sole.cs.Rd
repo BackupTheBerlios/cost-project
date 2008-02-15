@@ -1,22 +1,23 @@
 \name{sole.cs}
 \alias{sole.cs}
 \docType{data}
-\title{Sole's commercial sampling data.}
+\title{Sole commercial sampling data.}
 \description{
-Sole csData object used for testing and developing pourposes.
+A csData object containing sole data to be used for testing and development purposes.  
 }
 \usage{sole.cs}
 \format{Formal class 'csData' [package "COSTcore"] with 6 slots: \code{desc}, \code{tr}, \code{hh}, \code{sl}, \code{hl} and \code{ca}.}
 \section{WARNING}{
-The data provided is for testing pourposes only and can not be used for any other objective.
+This data is provided is for testing only and should not be used for any other purpose. 
 }
 \details{
-ToDo
+To Do
 }
 \source{
-ToDo
+To Do
 }
 \examples{
 data(sole.cs)
 }
 \keyword{datasets}
+

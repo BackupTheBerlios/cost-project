@@ -1,4 +1,4 @@
-		CHANGES IN COSTcore VERSION 1.0-0 RC (0.9-0)
+		CHANGES IN COSTcore VERSION 1.0-0 RC 01
 
 NEW FEATURES
     o fields "catReg" and "sppReg" added in hh slot in csDataCons class

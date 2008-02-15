@@ -6,7 +6,7 @@
 \alias{csDataCons,csDataVal-method}
 \alias{csDataCons,missing-method}
 \title{Class "csDataCons"}
-\description{This class is similar to \link{csDataVal} but stores the information aggregated at space,time, technical level. Normaly it should be post-stratified information that can be used to apply statistical methods safely (we hope).}
+\description{The csDataCons-class is similar to \link{csDataVal} but stores consolidated commercial sampling data, i.e. that which is aggregated over spatial, temporal and technical (e.g. gear type) strata.  The expectation is that this post-stratified data will be the basis for the application of statistical methods.}
 \section{Objects from the Class}{
 The creator function "csDataCons" can be called to create objects from this class.
 }
@@ -43,6 +43,8 @@ The creator function "csDataCons" can be called to create objects from this clas
  \tab trpCode \tab \code{factor} \tab trip code \cr
  \tab staNum \tab \code{numeric} \tab station number \cr
  \tab foVal \tab \code{factor} \tab fishing operation validity \cr
+ \tab catReg \tab \code{character} \tab parts (landings/discards) of the catch registered \cr
+ \tab sppReg \tab \code{character} \tab species of the catch registered \cr
  \tab aggLev \tab \code{factor} \tab aggregation level \cr
  \tab foDur \tab \code{numeric} \tab fishing operation duration \cr
  \tab latIni \tab \code{numeric} \tab latitude of shooting position in decimal degrees \cr

@@ -6,7 +6,7 @@
 \alias{csDataVal,csData-method}
 \alias{csDataVal,missing-method}
 \title{Class "csDataVal"}
-\description{This class is equal to \link{csData} but stores the information after being processed for coding errors, typos, outliers, etc. The information contained is considered to be validated, which means it can now be used for post-stratifications and other aggregation exercises.}
+\description{The csDataVal-class is equivalent in structure to \link{csData} but stores a validated form of the commercial landings data contained in the \link{csData}class. The validation process consists of checking the compatibility of entries of variables of type character against the permissible code lists, the checking of numeric variable types, the checking of numeric variable ranges, and the identification of outliers. Data of "csDataVal" is considered suitable for analysis and is additionally a prerequisite to aggregation over strata to form data of class "csDataCons".}
 \section{Objects from the Class}{
 The creator function "csDataVal" can be called to create objects from this class.
 }
@@ -41,6 +41,8 @@ The creator function "csDataVal" can be called to create objects from this class
  \tab trpCode \tab \code{character} \tab trip code \cr
  \tab staNum \tab \code{numeric} \tab station number \cr
  \tab foVal \tab \code{character} \tab fishing operation validity \cr
+ \tab catReg \tab \code{character} \tab parts (landings/discards) of the catch registered \cr
+ \tab sppReg \tab \code{character} \tab species of the catch registered \cr
  \tab aggLev \tab \code{character} \tab aggregation level \cr
  \tab date \tab \code{character} \tab date \cr
  \tab time \tab \code{character} \tab time \cr
@@ -103,11 +105,11 @@ The creator function "csDataVal" can be called to create objects from this class
  \tab landCtry \tab \code{character} \tab landing country \cr
  \tab vslFlgCtry \tab \code{character} \tab vessel flag country \cr
  \tab year \tab \code{numeric} \tab year \cr
- \tab quarter \tab \code{numeric} \tab quarter \cr
- \tab month \tab \code{numeric} \tab month \cr
  \tab proj \tab \code{character} \tab project \cr
  \tab trpCode \tab \code{character} \tab trip code \cr
  \tab staNum \tab \code{numeric} \tab station number \cr
+ \tab quarter \tab \code{numeric} \tab quarter \cr
+ \tab month \tab \code{numeric} \tab month \cr
  \tab spp \tab \code{character} \tab species \cr 
  \tab sex \tab \code{character} \tab gender \cr 
  \tab catchCat \tab \code{character} \tab catch category \cr 

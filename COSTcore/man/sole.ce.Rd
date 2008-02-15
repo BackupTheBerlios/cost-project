@@ -1,20 +1,19 @@
 \name{sole.ce}
 \alias{sole.ce}
 \docType{data}
-\title{Sole's commercial effort data.}
+\title{Sole commercial effort data.}
 \description{
-Sole ceData object used for testing and developing pourposes.
-}
+A ceData object containing sole data to be used for testing and development purposes.  }
 \usage{sole.ce}
 \format{Formal class 'ceData' [package "COSTcore"] with 2 slots: \code{desc} and \code{ce}.}
 \section{WARNING}{
-The data provided is for testing pourposes only and can not be used for any other objective.
+This data is provided is for testing only and should not be used for any other purpose. 
 }
 \details{
-ToDo
+To Do
 }
 \source{
-ToDo
+To Do
 }
 \examples{
 data(sole.ce)

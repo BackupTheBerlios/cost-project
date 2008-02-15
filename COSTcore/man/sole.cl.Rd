@@ -1,20 +1,20 @@
 \name{sole.cl}
 \alias{sole.cl}
 \docType{data}
-\title{Sole's commercial landings data.}
+\title{Sole commercial landings data.}
 \description{
-Sole clData object used for testing and developing pourposes.
+A clData object containing sole data to be used for testing and development purposes.  
 }
 \usage{sole.cl}
 \format{Formal class 'clData' [package "COSTcore"] with 2 slots: \code{desc} and \code{cl}.}
 \section{WARNING}{
-The data provided is for testing pourposes only and can not be used for any other objective.
+This data is provided is for testing only and should not be used for any other purpose. 
 }
 \details{
-ToDo
+To Do
 }
 \source{
-ToDo
+To Do
 }
 \examples{
 data(sole.cl)

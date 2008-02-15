@@ -6,7 +6,7 @@
 \alias{clDataVal,clData-method}
 \alias{clDataVal,missing-method}
 \title{Class "clDataVal"}
-\description{This class is equal to \link{clData} but stores the information after being processed for coding errors, typos, outliers, etc. The information contained is considered to be validated, which means it can now be used for post-stratifications and other aggregation exercises.}
+\description{TThe clDataVal-class is equivalent in structure to \link{clData} but stores a validated form of the commercial landings data contained in the \link{clData}class. The validation process consists of checking the compatibility of entries of variables of type character against the permissible code lists, the checking of numeric variable types, the checking of numeric variable ranges, and the identification of outliers. Data of "clDataVal" is considered suitable for analysis and is additionally a prerequisite to aggregation over strata to form data of class "clDataCons".}
 \section{Objects from the Class}{
 The creator function "clDataVal" can be called to create objects from this class.
 }

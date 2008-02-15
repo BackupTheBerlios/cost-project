@@ -6,7 +6,7 @@
 \alias{clDataCons,clDataVal-method}
 \alias{clDataCons,missing-method}
 \title{Class "clDataCons"}
-\description{This class is similar to \link{clDataVal} but stores the information aggregated at space,time, technical level. Normaly it should be post-stratified information that can be used to apply statistical methods safely (we hope).}
+\description{The clDataCons-class is similar to \link{clDataVal} but stores consolidated commercial landings data, i.e. that which is aggregated over spatial, temporal and technical (e.g. gear type) strata.  The expectation is that this post-stratified data will be the basis for the application of statistical methods.}
 \section{Objects from the Class}{
 The creator function "clDataCons" can be called to create objects from this class.
 }

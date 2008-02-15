@@ -8,7 +8,7 @@
 \alias{clData,character-method}
 \alias{clData,missing-method}
 \title{Class "clData"}
-\description{This class stores commercial fisheries landings information and maps the CL tables in Fish Frame version 5.}
+\description{The clData class stores commercial fisheries landings data and maps the format of the CE tables in Fish Frame version 5.}
 \section{Objects from the Class}{
 The creator function "clData" can be called to create objects from this class.
 }

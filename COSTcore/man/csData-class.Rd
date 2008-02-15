@@ -12,7 +12,7 @@
 \alias{csData,character,character,character,character,missing-method}
 \alias{csData,character,character,character,character,character-method}
 \title{Class "csData"}
-\description{This class stores commercial fisheries sampling information and maps the CS tables in Fish Frame version 5.}
+\description{The csData class stores commercial fisheries sampling data and maps the CS tables in Fish Frame version 5.}
 \section{Objects from the Class}{
 The creator function "csData" can be called to create objects from this class.
 }
@@ -47,6 +47,8 @@ The creator function "csData" can be called to create objects from this class.
  \tab trpCode \tab \code{character} \tab trip code \cr
  \tab staNum \tab \code{numeric} \tab station number \cr
  \tab foVal \tab \code{character} \tab fishing operation validity \cr
+ \tab catReg \tab \code{character} \tab parts (landings/discards) of the catch registered \cr
+ \tab sppReg \tab \code{character} \tab species of the catch registered \cr
  \tab aggLev \tab \code{character} \tab aggregation level \cr
  \tab date \tab \code{character} \tab date \cr
  \tab time \tab \code{character} \tab time \cr
@@ -109,11 +111,11 @@ The creator function "csData" can be called to create objects from this class.
  \tab landCtry \tab \code{character} \tab landing country \cr
  \tab vslFlgCtry \tab \code{character} \tab vessel flag country \cr
  \tab year \tab \code{numeric} \tab year \cr
- \tab quarter \tab \code{numeric} \tab quarter \cr
- \tab month \tab \code{numeric} \tab month \cr
  \tab proj \tab \code{character} \tab project \cr
  \tab trpCode \tab \code{character} \tab trip code \cr
  \tab staNum \tab \code{numeric} \tab station number \cr
+ \tab quarter \tab \code{numeric} \tab quarter \cr
+ \tab month \tab \code{numeric} \tab month \cr
  \tab spp \tab \code{character} \tab species \cr 
  \tab sex \tab \code{character} \tab gender \cr 
  \tab catchCat \tab \code{character} \tab catch category \cr 
