@@ -213,6 +213,8 @@ setMethod("rbind2", signature(x="ceData", y="ceData"), function(x,y){
 # subset
 #====================================================================
 
+if (!isGeneric("subset")) setGeneric("subset")
+
 setMethod("subset", signature(x="ceData"), function(x,subset,...){
 	e <- substitute(subset)
 	df0 <- ce(x)	

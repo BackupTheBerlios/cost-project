@@ -37,9 +37,7 @@
 \alias{desc,clDataCons-method}
 \alias{desc,ceDataCons-method}
 \title{Accessor methods in COSTcore}
-\description{
-	Accessor methods are used to get specific slots from an object. It is supposed to implement "encapsulation" in S4, although not completely. Users are strongly advised to use these fucntions on their own code so that future changes on the class definition don't break it.
-}
+\description{These accessor methods can be used to obtain specific slots from a COST object and are designed to implement "encapsulation" within S4 classes. Users are strongly advised to apply these functions when accessing their data to ensure compatibility with any future changes to the class definition.}
 \section{Methods}{
   \describe{
 	\item{tr}{\code{signature(object = csData or csDataVal or csDataCons)}: \code{tr} slot accessor.}

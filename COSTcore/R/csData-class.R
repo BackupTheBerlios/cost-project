@@ -123,6 +123,8 @@ setClass("csData",
 			trpCode=as.character(NA), # FK
 			staNum=as.numeric(NA), # PK
 			foVal=as.character(NA),
+			catReg=as.character(NA),
+			sppReg=as.character(NA),
 			aggLev=as.character(NA),
 			date=as.character(NA),
 			time=as.character(NA),
@@ -157,7 +159,7 @@ setClass("csData",
 			commCatScl=as.character(NA), # PK
 			commCat=as.character(NA), # PK
 			subSampCat=as.character(NA), # PK
-			valCode=as.character(NA), 
+#			valCode=as.character(NA), 
 			wt=as.numeric(NA), 
 			subSampWt=as.numeric(NA), 
 			lenCode=as.character(NA),
@@ -185,11 +187,11 @@ setClass("csData",
 			landCtry=as.character(NA), # FK
 			vslFlgCtry=as.character(NA), # FK
 			year=as.numeric(NA), # FK
-			quarter=as.numeric(NA),
-			month=as.numeric(NA),
 			proj=as.character(NA), # FK
 			trpCode=as.character(NA), # FK
 			staNum=as.numeric(NA), # PK
+			quarter=as.numeric(NA), # PK
+			month=as.numeric(NA), # PK
 			spp=as.character(NA), # PK 
 			sex=as.character(NA), # PK
 			catchCat=as.character(NA), # PK 
@@ -564,8 +566,6 @@ setMethod("rbind2", signature(x="csData", y="csData"), function(x,y){
 #====================================================================
 # subset
 #====================================================================
-
-if (!isGeneric("subset")) setGeneric("subset")
 
 setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr"){
 

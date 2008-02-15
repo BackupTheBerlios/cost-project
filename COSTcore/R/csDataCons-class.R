@@ -113,6 +113,8 @@ setClass("csDataCons",
 			trpCode=as.character(NA), # FK
 			staNum=as.numeric(NA), # PK
 			foVal=as.character(NA),
+			catReg=as.character(NA),
+			sppReg=as.character(NA),
 			aggLev=as.character(NA),
 			#date=as.character(NA), 	=> time
 			#time=as.character(NA), 	=> time

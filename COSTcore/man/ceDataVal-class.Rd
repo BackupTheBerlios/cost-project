@@ -6,7 +6,7 @@
 \alias{ceDataVal,ceData-method}
 \alias{ceDataVal,missing-method}
 \title{Class "ceDataVal"}
-\description{This class is equal to \link{ceData} but stores the information after being processed for coding errors, typos, outliers, etc. The information contained is considered to be validated, which means it can now be used for post-stratifications and other aggregation exercises.}
+\description{The ceDataVal-class is equivalent in structure to \link{ceData} but stores a validated form of the commercial effort data contained in the \link{ceData}class. The validation process consists of checking the compatibility of entries of variables of type character against the permissible code lists, the checking of numeric variable types, the checking of numeric variable ranges, and the identification of outliers. Data of "ceDataVal" is considered suitable for analysis and is additionally a prerequisite to aggregation over strata to form data of class “ceDataCons”.}
 \section{Objects from the Class}{
 The creator function "ceDataVal" can be called to create objects from this class.
 }

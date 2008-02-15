@@ -49,13 +49,11 @@
 \alias{checkCLpk-methods}
 \alias{checkCLpk,data.frame-method}
 \title{Check methods in COSTcore}
-\description{
-	Check methods used to validate S4 classes. These are meant for internal usage only, not to be directly called by users.
-}
+\description{Check methods are used to validate S4 classes. These functions are for internal usage only and are not intended to be called directly by users.}
 \section{Methods}{
 \describe{
-	\item{checkNms}{\code{signature(object, names)}: Check names in a data.frame against a character vector.}
-	\item{checkTys}{\code{signature(object, tys)}: Check column types in a data.frame against a list of class names.}
+	\item{checkNms}{\code{signature(object, names)}: Checks the names in a data.frame against a character vector.}
+	\item{checkTys}{\code{signature(object, tys)}: Checks the column types in a data.frame against a list of class names.}
 	\item{checkTRnms}{\code{signature(object)}: Wrapper for TR checkNms.}
 	\item{checkHHnms}{\code{signature(object)}: Wrapper for HH checkNms.}
 	\item{checkSLnms}{\code{signature(object)}: Wrapper for SL checkNms.}
@@ -63,12 +61,12 @@
 	\item{checkCAnms}{\code{signature(object)}: Wrapper for CA checkNms.}
 	\item{checkCLnms}{\code{signature(object)}: Wrapper for CL checkNms.}
 	\item{checkCEnms}{\code{signature(object)}: Wrapper for CE checkNms.}
-	\item{checkTRpk}{\code{signature(object)}: Check TR primary key.}
-	\item{checkHHpk}{\code{signature(object)}: Check HH primary key.}
-	\item{checkSLpk}{\code{signature(object)}: Check SL primary key.}
-	\item{checkHLpk}{\code{signature(object)}: Check HL primary key.}
-	\item{checkCLpk}{\code{signature(object)}: Check CL primary key.}
-	\item{checkCEpk}{\code{signature(object)}: Check CE primary key.}
+	\item{checkTRpk}{\code{signature(object)}: Checks the TR primary key.}
+	\item{checkHHpk}{\code{signature(object)}: Checks the HH primary key.}
+	\item{checkSLpk}{\code{signature(object)}: Checks the SL primary key.}
+	\item{checkHLpk}{\code{signature(object)}: Checks the HL primary key.}
+	\item{checkCLpk}{\code{signature(object)}: Checks the CL primary key.}
+	\item{checkCEpk}{\code{signature(object)}: Checks the CE primary key.}
 }}
 \keyword{methods}
 
