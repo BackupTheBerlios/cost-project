@@ -327,6 +327,23 @@ setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.fr
 	new("csData", tr=tr, hh=hh, sl=sl, hl=hl, ca=ca, desc=desc)
 })
 
+setMethod("csData", signature("data.frame", "missing", "missing", "missing", "data.frame"), function(tr, hh, sl, hl, ca,  desc="Unknown stock",...){
+	# create object and name columns properly 
+	obj <- new("csData")
+	# tr
+	tr0 <- obj@tr
+	names(tr) <- names(tr0)
+	tr <- coerceDataFrameColumns(tr, tr0)
+	# ca
+	ca0 <- obj@ca
+	names(ca) <- names(ca0)
+	ca <- coerceDataFrameColumns(ca, ca0)
+
+	# object
+	new("csData", tr=tr, ca=ca, desc=desc)
+})
+
+
 setMethod("csData", signature("missing", "missing", "missing", "missing", "missing"), function(desc="Unknown stock", ...){
 	# create object and name columns properly 
 	new("csData", desc=desc)
