@@ -357,10 +357,10 @@ setMethod("csData", signature("character", "character", "character", "character"
 
 	# read CSV files
 	# ToDo
-	tr <- read.csv(tr)
-	hh <- read.csv(hh)
-	sl <- read.csv(sl)
-	hl <- read.csv(hl)
+	tr <- read.csv(tr,...)
+	hh <- read.csv(hh,...)
+	sl <- read.csv(sl,...)
+	hl <- read.csv(hl,...)
 
 	# check names are correct
 	checkTRnms(tr)
@@ -388,11 +388,11 @@ setMethod("csData", signature("character", "character", "character", "character"
 
 	# read CSV files
 	# ToDo
-	tr <- read.csv(tr)
-	hh <- read.csv(hh)
-	sl <- read.csv(sl)
-	hl <- read.csv(hl)
-	ca <- read.csv(ca)
+	tr <- read.csv(tr,...)
+	hh <- read.csv(hh,...)
+	sl <- read.csv(sl,...)
+	hl <- read.csv(hl,...)
+	ca <- read.csv(ca,...)
 
 	# check names are correct
 	checkTRnms(tr)

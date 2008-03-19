@@ -101,7 +101,7 @@ setMethod("clData", signature("character"), function(cl, desc="Unknown stock", .
 
 	# read CSV files
 	# ToDo
-	cl <- read.csv(cl)
+	cl <- read.csv(cl,...)
 
 	# check names are correct
 	checkCLnms(cl)

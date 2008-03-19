@@ -100,7 +100,7 @@ setMethod("ceData", signature("character"), function(ce, desc="Unknown stock", .
 
 	# read CSV files
 	# ToDo
-	ce <- read.csv(ce)
+	ce <- read.csv(ce,...)
 
 	# check names are correct
 	checkCEnms(ce)
