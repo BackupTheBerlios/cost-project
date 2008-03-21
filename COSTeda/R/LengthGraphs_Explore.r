@@ -279,7 +279,7 @@ data(GraphsPar)
 dots <- list(...)
 sapply(names(GP),function(x) if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
 if (is.null(dots$xlab)) dots$xlab <- "Sample number" ; if (is.null(dots$ylab)) dots$ylab <- "Delta values" 
-if (is.null(dots$main)) dots$main <- paste("Delta plot / Species :",paste(object$species,collapse=", "),
+if (is.null(dots$main)) dots$main <- paste("Delta plot / Species :",paste(species,collapse=", "),
                                             "\n Primary strata : ",eval(parse('',text=strat1)),sep="") 
 
 
