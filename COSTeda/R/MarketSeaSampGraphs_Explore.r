@@ -52,7 +52,7 @@ if (TimeStrat=="quarter") op.sub$quarter <- floor((HHmonth-0.1)/3)+1
 }
 
 #Number of sampled fishing days by trip, tech,time,space
-tablEch <- op.sub[op.sub$foVal=="F",]                                                #<------- à modifier avec la nouvelle codification de FF/COST    
+tablEch <- op.sub[op.sub$foVal=="V",]                                                #<------- à modifier avec la nouvelle codification de FF/COST    
 expr1 <- paste(",tablEch$",c(TimeStrat,TechStrat,SpaceStrat),sep="",collapse="") ; if (expr1==",tablEch$") expr1 <- ""                 
 expr2 <- paste(",op.sub$",c(TimeStrat,TechStrat,SpaceStrat),sep="",collapse="") ; if (expr2==",op.sub$") expr2 <- ""                 
 expr3 <- paste(",tabl1$",c(TimeStrat,TechStrat,SpaceStrat),sep="",collapse="") ; if (expr3==",tabl1$") expr3 <- ""                 

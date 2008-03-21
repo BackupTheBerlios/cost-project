@@ -2,20 +2,23 @@
 \alias{SampComp.plot}
 \alias{SampComp.plot,csData,clData-method}
 \docType{methods}
-\title{Plots of volume of landings and number of fish measured by time, technical and space strata}
+\title{Comparative plots of Pop/Sampled variables by time, technical and space strata}
 \description{
-This method creates an exploratory graphic to compare relative volume of landings and relative number of fish measured.
-Calculation can be done for time, technical and/or space stratification. It requires a \emph{csData} object and a \emph{clData} object built from \pkg{COSTcore} package.
+This method creates an exploratory graphic to compare relative values of both a population level variable from a \emph{clData} object, 
+and a sampling level variable from a \emph{csData} object.
+Calculation can be done within time, technical and/or space stratification. It requires a \emph{csData} object and a \emph{clData} object built from \pkg{COSTcore} package.
 }
 
 \usage{
-SampComp.plot(object1,object2,TimeStrat="quarter",TechStrat="commCat",
-              SpaceStrat="area",show="all",separate=FALSE,\dots)
+SampComp.plot(object1,object2,var1="lenNum",var2="landWt",TimeStrat="quarter",TechStrat="commCat",
+              SpaceStrat="area",show="all",\dots)
 }
 
 \arguments{
   \item{object1}{A \emph{csData} object with \emph{tr}, \emph{hh}, \emph{sl} and \emph{hl} informations.}
   \item{object2}{A \emph{clData} object. 'cl' table data defines stratas occurrences.}
+  \item{var1}{A numerical field from \emph{csData} object.}
+  \item{var2}{A \emph{clData} object.} 
   \item{TimeStrat}{
   Field specifying time stratification (to be chosen between \code{"year"}, \code{"quarter"},
   \code{"month"} and \code{NULL}). See Details.}
@@ -27,9 +30,6 @@ SampComp.plot(object1,object2,TimeStrat="quarter",TechStrat="commCat",
   and \code{NULL}). See Details.}
   \item{show}{Character vector specifying which stratas to plot (to be chosen between \code{"Time"}, \code{"Technical"},
   \code{"Space"} and/or \code{"all"})}
-  \item{separate}{
-  Logical value to specify the treatment of missing values in each strata. \code{FALSE} means that
-  calculation will be done within all stratas. \code{TRUE} means that it will be done within each strata separately.}
   \item{...}{Further graphical arguments.}
 }
 
@@ -38,9 +38,8 @@ SampComp.plot(object1,object2,TimeStrat="quarter",TechStrat="commCat",
 \author{Mathieu Merzereaud}
 
 \examples{
-data(sole3.cs)
-data(sole3.cl)
-SampComp.plot(sole3.cs,sole3.cl)
+data(sole)
+SampComp.plot(sole.cs,sole.cl,var1="lenNum",var2="landWt",TimeStrat="quarter",TechStrat="commCat",SpaceStrat="area",show="all")
 }
 
 \keyword{methods}

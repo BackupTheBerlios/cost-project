@@ -22,7 +22,7 @@ ML.boxplot(object,\dots)
 }
 
 \examples{
-data(sole3.cs)
-ML.boxplot(sole3.cs)
+data(sole)
+ML.boxplot(sole.cs)
 }
 \keyword{methods}

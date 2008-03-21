@@ -32,7 +32,7 @@ differences within a single stock of haddock (Melanogrammus aeglefinus)}. ICES J
 \seealso{\code{\link{ALmult}}, \code{\link{plot.ALmult}}}
 
 \examples{
-data(sole3.cs)
-AL.multi(sole3.cs,age.plus=6)
+data(sole)
+AL.multi(sole.cs,age.plus=6)
 }
 \keyword{methods}

@@ -1,10 +1,10 @@
-\name{plot.Samp,Delta.list-method}
+\name{plot.Samp,DeltaID-method}
 \alias{plot.Samp}
-\alias{plot.Samp,Delta.list-method}
+\alias{plot.Samp,DeltaID-method}
 \docType{methods}
-\title{Plot "Delta.length" object for a specified sample}
+\title{Plot "DeltaID" object for a specified sample}
 \description{
-This method plots length distribution of one specified sample, compared with overall relative length distribution. Unlike \emph{plot.Delta.length}, it asks for an object of class \emph{Delta.list}.
+This method plots length distribution of one specified sample, compared with overall relative length distribution.
 }
 
 \usage{
@@ -12,7 +12,7 @@ plot.Samp(x,SampNum,show.legend="right",\dots)
 }
 
 \arguments{
-  \item{x}{A \emph{Delta.list} object created by \emph{Delta.cs} procedure.}
+  \item{x}{A \emph{DeltaID} object created by \emph{plot.Delta} procedure.}
   \item{SampNum}{Character specifying sample Id.}
   \item{show.legend}{Display the legend (\code{""} means "no legend").}
   \item{...}{Further graphical arguments.}
@@ -24,19 +24,13 @@ plot.Samp(x,SampNum,show.legend="right",\dots)
 
 \author{Mathieu Merzereaud}
 
-\seealso{\code{\link{Delta.list}}, \code{\link{Delta.cs}}, \code{\link{Delta.length}}, \code{\link{plot.Delta.list}}, \code{\link{plot.Delta.length}}, \code{\link{plot.LD}}
+\seealso{\code{\link{DeltaID}}, \code{\link{DeltA-class}}, \code{\link{plot.Delta}}, \code{\link{plot.DeltaID}}, \code{\link{plot.LD}}, \code{\link{Delta}}
 }
 
 \examples{
-data(sole3.cs)
-object <- sole3.cs
-#only sea sampling data is kept
-object@tr <- object@tr[object@tr$sampType=="S",]
-object@hh <- object@hh[object@hh$sampType=="S",]
-object@sl <- object@sl[object@sl$sampType=="S",]
-object@hl <- object@hl[object@hl$sampType=="S",]
-
-res <- Delta.cs(object,"SOL","LAN","quarter","month")
-plot.Samp(res,"194")
+data(sole)
+#obj2 <- plot(sole.cs,species="Solea vulgaris",tempStrata="quarter",techStrata="commCat",strat1="techStrata",strat2="tempStrata",selection=TRUE,show.legend="right")
+#"xxx" is the index of an identified sample
+#plot.Samp(obj2,"xxx") 
 }
 \keyword{methods}

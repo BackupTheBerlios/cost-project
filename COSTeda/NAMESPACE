@@ -6,18 +6,17 @@ importFrom("COSTcore")
 
 exportClasses(
 	"ALmult",
-	"Delta.list",
-	"Delta.length",
+	"DeltA",
+	"DeltaID",
 	"LD.Vol"
 )
 
 exportMethods(
 	"AL.multi",
 	"plot",
-	"Delta.cs",
 	"plot.Samp",
-	"plot.Delta.list",
-	"plot.Delta.length",
+	"plot.Delta",
+	"Delta",
 	"plot.LD",
   "SampComp.plot",
   "LD.Volume",

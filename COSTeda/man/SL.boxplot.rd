@@ -22,7 +22,7 @@ SL.boxplot(object,\dots)
 }
 
 \examples{
-data(sole3.cs)
-SL.boxplot(sole3.cs)
+data(sole)
+SL.boxplot(sole.cs)
 }
 \keyword{methods}

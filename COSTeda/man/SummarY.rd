@@ -38,10 +38,10 @@ These methods implements a special \emph{summary} procedure for objects of class
 }
 
 \examples{
-data(sole3.cs)
-SummarY(sole3.cs,tab="ca")
-SummarY(sole3.cs,tab="ca",sizeMax=28)
-SummarY(sole3.cs,tab="ca",except="trpCode")
+data(sole)
+SummarY(sole.cs,tab="ca")
+SummarY(sole.cs,tab="ca",sizeMax=28)
+SummarY(sole.cs,tab="ca",except="trpCode")
 }
 
 \keyword{manip}

@@ -22,7 +22,7 @@ L.plot.design(object,\dots)
 }
 
 \examples{
-data(sole3.cs)
-L.plot.design(sole3.cs)
+data(sole)
+L.plot.design(sole.cs)
 }
 \keyword{methods}

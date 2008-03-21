@@ -33,8 +33,8 @@ differences within a single stock of haddock (Melanogrammus aeglefinus)}. ICES J
 }
 
 \examples{
-data(sole3.cs)
-obj <- AL.multi(sole3.cs,tempStrata="quarter",spaceStrata="rect",
+data(sole)
+obj <- AL.multi(sole.cs,tempStrata="quarter",spaceStrata="rect",
                 elmts=list(tp=c("2","3"),sp="all",tc="all"),
                 grps="tempStrata",age.plus=6)
 plot(obj,l.col=c("steelblue","violetred2"))

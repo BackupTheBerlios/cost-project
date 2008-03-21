@@ -24,8 +24,8 @@ WL.plot(object,selection=FALSE,\dots)
 }
 
 \examples{
-data(sole3.cs)
-WL.plot(sole3.cs)
+data(sole)
+WL.plot(sole.cs)
 
 #4 graphs on the same page
 library(grid)
@@ -33,12 +33,12 @@ grid.newpage()
 pushViewport(viewport(layout = grid.layout(2, 2)))
 
 pushViewport(viewport(layout.pos.col=1,layout.pos.row=1))
-print(WL.plot(sole3.cs),newpage=FALSE) ; popViewport(1)
+print(WL.plot(sole.cs),newpage=FALSE) ; popViewport(1)
 pushViewport(viewport(layout.pos.col=2, layout.pos.row=1))
-print(ML.plot(sole3.cs),newpage=FALSE) ; popViewport(1)
+print(ML.plot(sole.cs),newpage=FALSE) ; popViewport(1)
 pushViewport(viewport(layout.pos.col=1, layout.pos.row=2))
-print(SL.boxplot(sole3.cs),newpage=FALSE) ; popViewport(1)
+print(SL.boxplot(sole.cs),newpage=FALSE) ; popViewport(1)
 pushViewport(viewport(layout.pos.col=2, layout.pos.row=2))
-print(ML.boxplot(sole3.cs),newpage=FALSE) ; popViewport(1)
+print(ML.boxplot(sole.cs),newpage=FALSE) ; popViewport(1)
 }
 \keyword{methods}

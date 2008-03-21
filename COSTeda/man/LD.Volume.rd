@@ -38,15 +38,15 @@ LD.Volume(object,fraction="all",species="all",TimeStrat=NULL,TechStrat=NULL,
 }
 
 \examples{
-data(sole3.cs)
-object <- sole3.cs
+data(sole)
+object <- sole.cs
 #only sea sampling data is kept
 object@tr <- object@tr[object@tr$sampType=="S",]
 object@hh <- object@hh[object@hh$sampType=="S",]
 object@sl <- object@sl[object@sl$sampType=="S",]
 object@hl <- object@hl[object@hl$sampType=="S",]
 
-x <- LD.Volume(object,fraction="LAN",species="SOL")
+x <- LD.Volume(object,fraction="LAN",species="Solea vulgaris")
 }
 
 \keyword{methods}

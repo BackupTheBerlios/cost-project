@@ -22,7 +22,7 @@ ML.plot(object,\dots)
 }
 
 \examples{
-data(sole3.cs)
-ML.plot(sole3.cs)
+data(sole)
+ML.plot(sole.cs)
 }
 \keyword{methods}

@@ -29,18 +29,11 @@ plot.LD(x,species,fraction="LAN",trpCode,staNum="all",\dots)
 
 \author{Mathieu Merzereaud}
 
-\seealso{\code{\link{Delta.list}}, \code{\link{Delta.cs}}, \code{\link{Delta.length}}, \code{\link{plot.Delta.list}}, \code{\link{plot.Delta.length}}, \code{\link{plot.Samp}}
+\seealso{\code{\link{DeltaID}}, \code{\link{DeltA-class}}, \code{\link{plot.Delta}}, \code{\link{plot.DeltaID}}, \code{\link{Delta}}, \code{\link{plot.Samp}}
 }
 
 \examples{
-data(sole3.cs)
-#length distribution by trip
-plot.LD(sole3.cs,"SOL","LAN","LIM1")      #sampType="S"
-plot.LD(sole3.cs,"SOL","LAN","131395")    #sampType="M"
-
-#for all the trip
-temp <- sole3.cs
-temp@hl$staNum <- "999"
-plot.LD(temp,"SOL","LAN","LIM1")
+data(sole)
+plot.LD(sole.cs,"Solea vulgaris","DIS","DIL1197")
 }
 \keyword{methods}
