@@ -161,6 +161,24 @@ tabHL$Unite <- factor(UniteInt,levels=lev,labels=1:length(lev))
 lenSp <- c(1,5,10,25) ; names(lenSp) <- c("mm","scm","cm","25mm")
 tabHL$Length <- factor(tabHL$lenCls,levels=seq(min(tabHL$lenCls,na.rm=TRUE),max(tabHL$lenCls,na.rm=TRUE),by=lenSp[as.character(unique(tabHL$lenCode)[1])]))
 
+eval(parse('',text=paste("nbTot_Lg <- tapply(tabHL$Number,list(tabHL$Length",","[any(c(!Ntp,!Nsp,!Ntc))],
+                          paste(c("as.character(tabHL[,tempStrata])"[!Ntp],"as.character(tabHL[,spaceStrata])"[!Nsp],"as.character(tabHL[,techStrata])"[!Ntc]),collapse=",",sep=""),
+                          "),sum,na.rm=TRUE)",sep="")))
+TotLg <- apply(nbTot_Lg,1,sum,na.rm=TRUE)                             #nombre total sur toutes les strates croisées
+
+if (strategy=="cc") {
+eval(parse('',text=paste("WkvTot <- tapply(tabHL$wt,list(as.character(tabHL$Unite)",","[any(c(!Ntp,!Nsp,!Ntc))],
+                          paste(c("as.character(tabHL[,tempStrata])"[!Ntp],"as.character(tabHL[,spaceStrata])"[!Nsp],"as.character(tabHL[,techStrata])"[!Ntc]),collapse=",",sep=""),
+                          "),mean,na.rm=TRUE)",sep="")))                  
+  } else {                                                                                           
+  tabtabHL <- cbind(tabHL[,1:13],tabHL[,c(tempStrata,spaceStrata,techStrata,"wt","Unite")]) ; tabtabHL <- unique(tabtabHL)                       
+eval(parse('',text=paste("WkvTot <- tapply(tabtabHL$wt,list(as.character(tabtabHL$Unite)",","[any(c(!Ntp,!Nsp,!Ntc))],
+                          paste(c("as.character(tabtabHL[,tempStrata])"[!Ntp],"as.character(tabtabHL[,spaceStrata])"[!Nsp],"as.character(tabtabHL[,techStrata])"[!Ntc]),collapse=",",sep=""),
+                          "),sum,na.rm=TRUE)",sep="")))                          
+  }       
+
+TotW <- sum(WkvTot,na.rm=TRUE)
+
 progint <- function(x,ind,tabHL) {      #ind=1 --> delta, ind=2 --> Nk , ind=3 --> Wk
   tab <- tabHL[x,]
   Djkv <- tapply(tab$Number,list(tab$Length,as.character(tab$Unite)),sum,na.rm=TRUE) ; Djkv[is.na(Djkv)] <- 0
@@ -174,7 +192,8 @@ progint <- function(x,ind,tabHL) {      #ind=1 --> delta, ind=2 --> Nk , ind=3 -
   WkvSum <- sum(Wkv,na.rm=TRUE)
   Nk <- length(Wkv) ; Wk <- sum(Wkv,na.rm=TRUE)
   delta <- Djkv - (DjkvSum/WkvSum)%*%t(Wkv)
-  deltaSamp <- apply(delta,2,sum,na.rm=TRUE)
+  delta2 <- Djkv - (TotLg/TotW)%*%t(Wkv)
+  deltaSamp <- apply(delta2,2,sum,na.rm=TRUE)
   eval(parse('',text=paste("DELTA <- data.frame(samp=names(deltaSamp),delta=deltaSamp",","[any(c(!Ntp,!Nsp,!Ntc))],
                            paste(c("tp=as.character(tab[1,tempStrata])"[!Ntp],"sp=as.character(tab[1,spaceStrata])"[!Nsp],"tc=as.character(tab[1,techStrata])"[!Ntc]),
                            collapse=",",sep=""),")",sep="")))
