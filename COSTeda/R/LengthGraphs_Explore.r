@@ -284,7 +284,7 @@ if (is.null(dots$main)) dots$main <- paste("Delta plot / Species :",paste(specie
 
 
 FStr <- eval(parse('',text=strat1)) ; SStr <- eval(parse('',text=strat2))
-object2 <- object[order(object[,FStr],object[,SStr]),]
+if (!is.null(SStr))  object2 <- object[order(object[,FStr],object[,SStr]),] else object2 <- object[order(object[,FStr]),]
 object2[,FStr] <- as.factor(object2[,FStr]) ; if (!is.null(SStr)) {object2[,SStr] <- ff <- as.factor(object2[,SStr])}
 
 XX <- 1:nrow(object2) ; YY <- object2$delta
@@ -359,7 +359,7 @@ if (is.null(dots$col)) dots$col <- dots$l.col ; if (is.null(dots$lwd)) dots$lwd 
 if (is.null(dots$xlab)) dots$xlab <- "Length" ; if (is.null(dots$ylab)) dots$ylab <- "Numbers" ; if (is.null(dots$main)) dots$main <- "Delta Length Frequencies" 
 
 
-df <- data.frame(x1=rep(colnames(VecSomme),each=nrow(VecSomme)),y1=rep(rownames(VecSomme),ncol(VecSomme)),Ech=as.vector(VecMesId),Exp=as.vector(VecSomme))
+df <- data.frame(x1=as.numeric(rep(colnames(VecSomme),each=nrow(VecSomme))),y1=rep(rownames(VecSomme),ncol(VecSomme)),Ech=as.vector(VecMesId),Exp=as.vector(VecSomme))     #correction sur la classe de x1
 
 xyplot(Ech+Exp~x1|y1 ,data=df,type=c("h","l"),lty=rep(dots$lty,length=2),par.strip.text=list(font=dots$font.lab),
        col=rep(dots$col,length=2),lwd=rep(dots$lwd,length=2),distribute.type=TRUE,scales=list(font=dots$font.axis,x=list(rot=90)),
@@ -407,7 +407,7 @@ if (is.null(dots$xlab)) dots$xlab <- "Length" ; if (is.null(dots$ylab)) dots$yla
 if (is.null(dots$main)) dots$main <- paste("Delta Length Frequencies  /  Sample",SampNum) 
 
 
-df <- data.frame(x1=colnames(VecSomme),Ech=as.vector(VecMesId),Exp=as.vector(VecSomme))
+df <- data.frame(x1=as.numeric(colnames(VecSomme)),Ech=as.vector(VecMesId),Exp=as.vector(VecSomme))          #correction sur la classe de x1
 
 xyplot(Ech+Exp~x1,data=df,type=c("h","l"),lty=rep(dots$lty,length=2),par.strip.text=list(font=dots$font.lab),col=rep(dots$col,length=2),
        lwd=rep(dots$lwd,length=2),distribute.type=TRUE,scales=list(font=dots$font.axis,x=list(rot=90)),
