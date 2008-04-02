@@ -115,7 +115,7 @@ setMethod("checkCEnms", signature(object="data.frame"), function(object, ...){
 })
 
 #====================================================================
-# A set of methods to check PK in tables 
+# A set of methods to get and check PK in tables 
 #====================================================================
 
 # TR
@@ -128,6 +128,15 @@ setMethod("checkTRpk", signature(object="data.frame"), function(object, ...){
 	identical(object[,1:6], unique(object[,1:6]))
 })
 
+setGeneric("getTRpk", function(object, ...){
+	standardGeneric("getTRpk")
+	}
+)
+
+setMethod("getTRpk", signature(object="data.frame"), function(object, ...){
+	object[,1:6]
+})
+
 # HH
 setGeneric("checkHHpk", function(object, ...){
 	standardGeneric("checkHHpk")
@@ -136,6 +145,15 @@ setGeneric("checkHHpk", function(object, ...){
 
 setMethod("checkHHpk", signature(object="data.frame"), function(object, ...){
 	identical(object[,1:7], unique(object[,1:7]))
+})
+
+setGeneric("getHHpk", function(object, ...){
+	standardGeneric("getHHpk")
+	}
+)
+
+setMethod("getHHpk", signature(object="data.frame"), function(object, ...){
+	object[,1:7]
 })
 
 # SL
@@ -148,6 +166,15 @@ setMethod("checkSLpk", signature(object="data.frame"), function(object, ...){
 	identical(object[,1:13], unique(object[,1:13]))
 })
 
+setGeneric("getSLpk", function(object, ...){
+	standardGeneric("getSLpk")
+	}
+)
+
+setMethod("getSLpk", signature(object="data.frame"), function(object, ...){
+	object[,1:13]
+})
+
 # HL
 setGeneric("checkHLpk", function(object, ...){
 	standardGeneric("checkHLpk")
@@ -156,6 +183,15 @@ setGeneric("checkHLpk", function(object, ...){
 
 setMethod("checkHLpk", signature(object="data.frame"), function(object, ...){
 	identical(object[,1:15], unique(object[,1:15]))
+})
+
+setGeneric("getHLpk", function(object, ...){
+	standardGeneric("getHLpk")
+	}
+)
+
+setMethod("getHLpk", signature(object="data.frame"), function(object, ...){
+	object[,1:15]
 })
 
 # CA
@@ -168,6 +204,15 @@ setMethod("checkCApk", signature(object="data.frame"), function(object, ...){
 	identical(object[,c(1:21)], unique(object[,c(1:21)]))
 })
 
+setGeneric("getCApk", function(object, ...){
+	standardGeneric("getCApk")
+	}
+)
+
+setMethod("getCApk", signature(object="data.frame"), function(object, ...){
+	object[,c(1:21)]
+})
+
 # CL
 setGeneric("checkCLpk", function(object, ...){
 	standardGeneric("checkCLpk")
@@ -176,6 +221,15 @@ setGeneric("checkCLpk", function(object, ...){
 
 setMethod("checkCLpk", signature(object="data.frame"), function(object, ...){
 	identical(object[,c(1:14)], unique(object[,c(1:14)]))
+})
+
+setGeneric("getCLpk", function(object, ...){
+	standardGeneric("getCLpk")
+	}
+)
+
+setMethod("getCLpk", signature(object="data.frame"), function(object, ...){
+	object[,c(1:14)]
 })
 
 # CE
@@ -188,6 +242,14 @@ setMethod("checkCEpk", signature(object="data.frame"), function(object, ...){
 	identical(object[,c(1:9)], unique(object[,c(1:9)]))
 })
 
+setGeneric("getCEpk", function(object, ...){
+	standardGeneric("getCEpk")
+	}
+)
+
+setMethod("getCEpk", signature(object="data.frame"), function(object, ...){
+	object[,c(1:9)]
+})
 
 #====================================================================
 # Methods to check data integrity 
