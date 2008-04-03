@@ -79,8 +79,8 @@ valcsData <- function(object){
 	# check data integrity
 	if(checkDataIntegrity(tr[,1:6], hh[,1:6])==FALSE) stop("Data integrity problem in table \"hh\". Missing related records in \"tr\".")
 	if(checkDataIntegrity(hh[,1:7], sl[,1:7])==FALSE) stop("Data integrity problem in table \"sl\". Missing related records in \"hh\".")
-	if(checkDataIntegrity(sl[,1:13], hl[,c(1:8,10:14)])==FALSE) stop("Data integrity problem in table \"hl\". Missing related records in \"sl\".")
-#	if(checkDataIntegrity(tr[,1:6], ca[,1:6])==FALSE) stop("Data integrity problem in table \"ca\". Missing related records in \"tr\".")
+	if(checkDataIntegrity(sl[,1:13], hl[,c(1:13)])==FALSE) stop("Data integrity problem in table \"hl\". Missing related records in \"sl\".")
+	if(checkDataIntegrity(tr[,1:6], ca[,1:6])==FALSE) stop("Data integrity problem in table \"ca\". Missing related records in \"tr\".")
 
 	# Everything is fine
 	return(TRUE)
@@ -173,12 +173,12 @@ setClass("csData",
 			trpCode=as.character(NA), # FK
 			staNum=as.numeric(NA), # FK
 			spp=as.character(NA), # FK 
-			sex=as.character(NA), # PK
 			catchCat=as.character(NA), # FK 
 			landCat=as.character(NA), # FK 
 			commCatScl=as.character(NA), # FK
 			commCat=as.character(NA), # FK
 			subSampCat=as.character(NA), # FK
+			sex=as.character(NA), # PK
 			lenCls=as.numeric(NA), # PK
 			lenNum=as.numeric(NA),
 			stringsAsFactors=F),
@@ -609,7 +609,7 @@ setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr"){
 	slpk <- apply(slpk,1,paste,collapse="")
 	slpk <- gsub("[[:space:]]","",slpk)
 
-	hlfk <- hl(x)[,c(1:8,10:14)]
+	hlfk <- hl(x)[,c(1:13)]
 	hlfk <- apply(hlfk,1,paste,collapse="")
 	hlfk <- gsub("[[:space:]]","",hlfk)
 

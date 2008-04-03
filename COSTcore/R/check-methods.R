@@ -70,7 +70,7 @@ setGeneric("checkHLnms", function(object, ...){
 
 setMethod("checkHLnms", signature(object="data.frame"), function(object, ...){
 	nms <- names(object)
-	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "SEX", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "SUBSAMPLING_CATEGORY", "LENGTH_CLASS", "NUMBER_AT_LENGTH")
+	rnms <- c("RECORD_TYPE", "SAMPLING_TYPE", "LANDING_COUNTRY", "VESSEL_FLAG_COUNTRY", "YEAR", "PROJECT", "TRIP_NUMBER", "STATION_NUMBER", "SPECIES_CODE", "CATCH_CATEGORY", "LANDING_CATEGORY", "COMM_SIZE_CAT_SCALE", "COMM_SIZE_CAT", "SUBSAMPLING_CATEGORY", "SEX", "LENGTH_CLASS", "NUMBER_AT_LENGTH")
 	if(checkNms(object, rnms)==FALSE) stop("Check table \"HL\" columns' size and names.")
 	return(TRUE)
 })

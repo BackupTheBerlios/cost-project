@@ -127,7 +127,7 @@ setClass("csDataCons",
 			#rect=as.character(NA),	=> space
 			foDep=as.numeric(NA)
 			#waterDep=as.numeric(NA), => space
-p			#foCatNat=as.character(NA),	=> tech
+			#foCatNat=as.character(NA),	=> tech
 			#foCatEu5=as.character(NA),	=> tech
 			#foCatEu6=as.character(NA),	=> tech
 			#gear=as.character(NA),	=> tech
