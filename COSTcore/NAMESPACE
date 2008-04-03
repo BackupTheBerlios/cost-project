@@ -65,6 +65,7 @@ exportMethods(
 	"clDataCons",
 	"csDataVal",
 	"csDataCons",
-	"coerceDataFrameColumns"
+	"coerceDataFrameColumns",
+	"createSUid"
 )
 

@@ -2,9 +2,13 @@
 
 NEW FEATURES
     o field "sex" hl slot in csData class moved to position 15
-
+    o method "createSUid" for csDataVal class to create sampling unit identifiers
+    o new creator for csDataCons that post stratify a csDataVal object
+    
 DOCUMENTATION
 BUG FIXES
+    o typo in tr field "vslType" (was vsType) fixed
+    o field valCode in sl slot in csDataCons removed
 
 		CHANGES IN COSTcore VERSION 1.0-0
 

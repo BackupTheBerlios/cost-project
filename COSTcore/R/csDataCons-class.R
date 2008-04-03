@@ -156,7 +156,7 @@ setClass("csDataCons",
 			#commCatScl=as.character(NA), # PK	=> sort
 			#commCat=as.character(NA), # PK	=> sort
 			#subSampCat=as.character(NA), # PK	=> sort
-			valCode=as.factor(NA), 
+#			valCode=as.factor(NA), 
 			wt=as.numeric(NA), 
 			subSampWt=as.numeric(NA), 
 			lenCode=as.factor(NA)),
@@ -232,8 +232,86 @@ setGeneric("csDataCons", function(object, ...){
 )
 
 setMethod("csDataCons", signature("csDataVal"), function(object, desc="Unknown stock", ...){
-	# create object and name columns properly 
-	stop("Not implemented yet !")
+
+	#------------------------------------------------------------------------------
+	# create SUid
+	#------------------------------------------------------------------------------
+	suid <- createSUid(object)
+
+	#------------------------------------------------------------------------------
+	# time
+	#------------------------------------------------------------------------------
+	# hh
+	hh <- suid$hh
+	tm <- as.Date(hh$date)
+	tm <- paste(hh$year,quarters(tm),sep=".")
+	hh$time <- tm
+	# tr
+	tm <- unique(suid$hh[,c("PSUid", "time")])
+	tr <- merge(suid$tr, tm, all.x=TRUE)
+	# sl
+	sl <- suid$sl
+	sl$time <- hh$time[match(sl$SSUid,hh$SSUid)]
+	# hl
+	hl <- suid$hl
+	hl$time <- hh$time[match(hl$SSUid,hh$SSUid)]
+	# ca
+	ca <- suid$ca
+	ca$time <- paste(ca$year, paste("Q", ca$quarter, sep=""), sep=".")
+	
+	#------------------------------------------------------------------------------
+	# tech
+	#------------------------------------------------------------------------------
+	te1 <- apply(tr[,c("vslLen", "vslPwr", "vslSize", "vslType")], 1,paste, collapse=".")
+	te2 <- apply(hh[,c("foCatNat","foCatEu5","foCatEu6","gear","meshSize","selDev","meshSizeSelDev")], 1,paste, collapse=".")
+	#hh
+	hh$technical <- paste(te1[match(hh$PSUid,tr$PSUid)], te2, sep="-")
+	# tr
+	te <- unique(hh[,c("PSUid", "technical")])
+	tr <- merge(tr, te, all.x=TRUE)
+	# sl
+	sl$technical <- hh$technical[match(sl$SSUid,hh$SSUid)]
+	# hl
+	hl$technical <- hh$technical[match(hl$SSUid,hh$SSUid)]
+	# ca
+	ca$technical <- hh$technical[match(ca$SSUid,hh$SSUid)]
+	
+	# Not relevant
+	
+	#------------------------------------------------------------------------------
+	# space
+	#------------------------------------------------------------------------------
+	# hh
+	hh$space <- apply(hh[,c("area","rect","waterDep")], 1,paste, collapse=".") 
+	# tr
+	# not relevant
+	# sl
+	sl$space <- hh$space[match(sl$SSUid,hh$SSUid)]
+	# hl
+	hl$space <- hh$space[match(hl$SSUid,hh$SSUid)]
+	# ca
+	ca$space <- apply(ca[,c("area","rect")], 1,paste, collapse=".")
+	
+	#------------------------------------------------------------------------------
+	# sort
+	#------------------------------------------------------------------------------
+	# sl
+	sl$sort <- apply(sl[,c("catchCat","landCat","commCatScl", "commCat", "subSampCat")], 1,paste, collapse=".")
+	# hl
+	hl$sort <- sl$sort[match(hl$TSUid,sl$TSUid)]
+	# ca
+	ca$sort <- apply(ca[,c("catchCat","landCat","commCatScl", "commCat")], 1,paste, collapse=".")
+	
+	#------------------------------------------------------------------------------
+	# create csDataCons
+	#------------------------------------------------------------------------------
+	csc <- csDataCons()
+	tr <- tr[,match(names(tr(csc)),names(tr))]
+	hh <- hh[,match(names(hh(csc)),names(hh))]
+	sl <- sl[,match(names(sl(csc)),names(sl))]
+	hl <- hl[,match(names(hl(csc)),names(hl))]
+	ca <- ca[,match(names(ca(csc)),names(ca))]
+	new("csDataCons", tr=tr, hh=hh, sl=sl, hl=hl, ca=ca)
 })
 
 setMethod("csDataCons", signature("missing"), function(desc="Unknown stock", ...){
@@ -442,4 +520,87 @@ setMethod("subset", signature(x="csDataCons"), function(x,subset,..., table="tr"
 #====================================================================
 # replacement
 #====================================================================
+
+setMethod("csDataCons", signature("csDataVal"), function(object, desc="Unknown stock", ...){
+
+	#------------------------------------------------------------------------------
+	# create SUid
+	#------------------------------------------------------------------------------
+	suid <- createSUid(object)
+
+	#------------------------------------------------------------------------------
+	# time
+	#------------------------------------------------------------------------------
+	# hh
+	hh <- suid$hh
+	tm <- as.Date(hh$date)
+	tm <- paste(hh$year,quarters(tm),sep=".")
+	hh$time <- tm
+	# tr
+	tm <- unique(suid$hh[,c("PSUid", "time")])
+	tr <- merge(suid$tr, tm, all.x=TRUE)
+	# sl
+	sl <- suid$sl
+	sl$time <- hh$time[match(sl$SSUid,hh$SSUid)]
+	# hl
+	hl <- suid$hl
+	hl$time <- hh$time[match(hl$SSUid,hh$SSUid)]
+	# ca
+	ca <- suid$ca
+	ca$time <- paste(ca$year, paste("Q", ca$quarter, sep=""), sep=".")
+	
+	#------------------------------------------------------------------------------
+	# tech
+	#------------------------------------------------------------------------------
+	te1 <- apply(tr[,c("vslLen", "vslPwr", "vslSize", "vslType")], 1,paste, collapse=".")
+	te2 <- apply(hh[,c("foCatNat","foCatEu5","foCatEu6","gear","meshSize","selDev","meshSizeSelDev")], 1,paste, collapse=".")
+	#hh
+	hh$technical <- paste(te1[match(hh$PSUid,tr$PSUid)], te2, sep="-")
+	# tr
+	te <- unique(hh[,c("PSUid", "technical")])
+	tr <- merge(tr, te, all.x=TRUE)
+	# sl
+	sl$technical <- hh$technical[match(sl$SSUid,hh$SSUid)]
+	# hl
+	hl$technical <- hh$technical[match(hl$SSUid,hh$SSUid)]
+	# ca
+	ca$technical <- hh$technical[match(ca$SSUid,hh$SSUid)]
+	
+	# Not relevant
+	
+	#------------------------------------------------------------------------------
+	# space
+	#------------------------------------------------------------------------------
+	# hh
+	hh$space <- apply(hh[,c("area","rect","waterDep")], 1,paste, collapse=".") 
+	# tr
+	# not relevant
+	# sl
+	sl$space <- hh$space[match(sl$SSUid,hh$SSUid)]
+	# hl
+	hl$space <- hh$space[match(hl$SSUid,hh$SSUid)]
+	# ca
+	ca$space <- apply(ca[,c("area","rect")], 1,paste, collapse=".")
+	
+	#------------------------------------------------------------------------------
+	# sort
+	#------------------------------------------------------------------------------
+	# sl
+	sl$sort <- apply(sl[,c("catchCat","landCat","commCatScl", "commCat", "subSampCat")], 1,paste, collapse=".")
+	# hl
+	hl$sort <- sl$sort[match(hl$TSUid,sl$TSUid)]
+	# ca
+	ca$sort <- apply(ca[,c("catchCat","landCat","commCatScl", "commCat")], 1,paste, collapse=".")
+	
+	#------------------------------------------------------------------------------
+	# create csDataCons
+	#------------------------------------------------------------------------------
+	csc <- csDataCons()
+	tr <- tr[,match(names(tr(csc)),names(tr))]
+	hh <- hh[,match(names(hh(csc)),names(hh))]
+	sl <- sl[,match(names(sl(csc)),names(sl))]
+	hl <- hl[,match(names(hl(csc)),names(hl))]
+	ca <- ca[,match(names(ca(csc)),names(ca))]
+	new("csDataCons", tr=tr, hh=hh, sl=sl, hl=hl, ca=ca)
+})
 

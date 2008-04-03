@@ -24,7 +24,7 @@ tagTest("csDataCons testing ...")
 data(sole)
 
 # constructor
-checkRun(csc <- csDataCons())
+checkRun(csc <- csDataCons(csDataVal(sole.cs)))
 checkTrue(is(csc, "csDataCons"))
 
 finishTest()
