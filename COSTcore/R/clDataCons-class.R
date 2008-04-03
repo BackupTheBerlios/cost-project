@@ -36,6 +36,14 @@ setClass("clDataCons",
 		cl=data.frame(
 			landCtry=as.factor(NA), # PK
 			vslFlgCtry=as.factor(NA), # PK
+# 			year=as.numeric(NA), # PK	=> time
+# 			quarter=as.numeric(NA), # PK	=> time 
+# 			month=as.numeric(NA), # PK	=> time
+# 			area=as.character(NA), # PK	=> space
+# 			rect=as.character(NA), # PK 	=> space
+# 			foCatNat=as.character(NA), # PK	=> tech
+# 			foCatEu5=as.character(NA), # PK	=> tech
+# 			foCatEu6=as.character(NA), # PK	=> tech
 			time=as.factor(NA), # PK
 			space=as.factor(NA), # PK 
 			technical=as.factor(NA), # PK
@@ -61,8 +69,30 @@ setGeneric("clDataCons", function(object, ...){
 )
 
 setMethod("clDataCons", signature("clDataVal"), function(object, ...){
-	# create object and name columns properly 
-	stop("Not implemented yet !")
+
+	cl <- cl(object)
+
+	#------------------------------------------------------------------------------
+	# time
+	#------------------------------------------------------------------------------
+	cl$time <- paste(cl$year, paste("Q", cl$quarter, sep=""), sep=".")
+
+	#------------------------------------------------------------------------------
+	# tech
+	#------------------------------------------------------------------------------
+	cl$technical <- apply(cl[,c("foCatNat","foCatEu5","foCatEu6")], 1,paste, collapse=".") 
+	
+	#------------------------------------------------------------------------------
+	# space
+	#------------------------------------------------------------------------------
+	cl$space <- apply(cl[,c("area","rect")], 1,paste, collapse=".") 
+	
+	#------------------------------------------------------------------------------
+	# create csDataCons
+	#------------------------------------------------------------------------------
+	clc <- clDataCons()
+	cl <- cl[,match(names(cl(clc)),names(cl))]
+	new("clDataCons", cl=cl)
 })
 
 setMethod("clDataCons", signature("missing"), function(desc="Unknown stock", ...){

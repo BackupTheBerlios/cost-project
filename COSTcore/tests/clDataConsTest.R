@@ -26,6 +26,8 @@ data(sole)
 # constructor
 checkRun(clc <- clDataCons())
 checkTrue(is(clc, "clDataCons"))
+checkRun(clc <- clDataCons(clDataVal(sole.cl)))
+checkTrue(is(clc, "clDataCons"))
 
 finishTest()
 

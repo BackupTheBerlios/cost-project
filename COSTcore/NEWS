@@ -4,6 +4,8 @@ NEW FEATURES
     o field "sex" hl slot in csData class moved to position 15
     o method "createSUid" for csDataVal class to create sampling unit identifiers
     o new creator for csDataCons that post stratify a csDataVal object
+    o new creator for clDataCons that post stratify a clDataVal object
+    o new creator for ceDataCons that post stratify a ceDataVal object
     
 DOCUMENTATION
 BUG FIXES

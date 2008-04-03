@@ -35,6 +35,14 @@ setClass("ceDataCons",
 		desc="my stock",
 		ce=data.frame(
 			vslFlgCtry=as.factor(NA), # PK
+# 			year=as.numeric(NA), # PK	=> time
+# 			quarter=as.numeric(NA), # PK	=> time 
+# 			month=as.numeric(NA), # PK	=> time
+# 			area=as.character(NA), # PK	=> space
+# 			rect=as.character(NA), # PK 	=> space
+# 			foCatNat=as.character(NA), # PK	=> tech
+# 			foCatEu5=as.character(NA), # PK	=> tech
+# 			foCatEu6=as.character(NA), # PK	=> tech
 			time=as.factor(NA), # PK
 			space=as.factor(NA), # PK 
 			technical=as.factor(NA), # PK
@@ -57,8 +65,30 @@ setGeneric("ceDataCons", function(object, ...){
 )
 
 setMethod("ceDataCons", signature("ceDataVal"), function(object, ...){
-	# create object and name columns properly 
-	stop("Not implemented yet !")
+
+	ce <- ce(object)
+
+	#------------------------------------------------------------------------------
+	# time
+	#------------------------------------------------------------------------------
+	ce$time <- paste(ce$year, paste("Q", ce$quarter, sep=""), sep=".")
+
+	#------------------------------------------------------------------------------
+	# tech
+	#------------------------------------------------------------------------------
+	ce$technical <- apply(ce[,c("foCatNat","foCatEu5","foCatEu6")], 1,paste, collapse=".") 
+	
+	#------------------------------------------------------------------------------
+	# space
+	#------------------------------------------------------------------------------
+	ce$space <- apply(ce[,c("area","rect")], 1,paste, collapse=".") 
+	
+	#------------------------------------------------------------------------------
+	# create csDataCons
+	#------------------------------------------------------------------------------
+	cec <- ceDataCons()
+	ce <- ce[,match(names(ce(cec)),names(ce))]
+	new("ceDataCons", ce=ce)
 })
 
 setMethod("ceDataCons", signature("missing"), function(desc="Unknown stock", ...){

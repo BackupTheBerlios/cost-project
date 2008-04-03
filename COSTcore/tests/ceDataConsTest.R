@@ -26,6 +26,8 @@ data(sole)
 # constructor
 checkRun(cec <- ceDataCons())
 checkTrue(is(cec, "ceDataCons"))
+checkRun(cec <- ceDataCons(ceDataVal(sole.ce)))
+checkTrue(is(cec, "ceDataCons"))
 
 finishTest()
 
