@@ -10,7 +10,8 @@
 setGeneric("SummarY", function(object,
                                tab="tr",
                                sizeMax=20,
-                               except=NULL,...){
+                               except=NULL,
+                               ...){
 	standardGeneric("SummarY")}
 )
 
@@ -21,8 +22,11 @@ setGeneric("SummarY", function(object,
 
 proc.SummarY <- function(dat,
                          sizeMax,
-                         except=NULL,...) {   #subprocedure
+                         except=NULL,
+                         indFactor,...) {   #subprocedure
 
+#'indFactor' fields as factors
+sapply(indFactor,function(x) dat[,x] <<- factor(as.character(dat[,x])))
 dat <- dat[,!names(dat)%in%except]
 classes <- sapply(1:ncol(dat),function(x) class(dat[,x]))
 vsum1 <- summary(dat,maxsum=nrow(dat)+2) ; vsum2 <- summary(dat,maxsum=sizeMax)
@@ -58,7 +62,8 @@ setMethod("SummarY", signature(object="csData"), function(object,
                                                           sizeMax=20,
                                                           except=NULL,...){
 eval(parse('',text=paste("dat <- object@",tab,sep="")))
-proc.SummarY(dat,sizeMax,except)                                       
+listFact <- list(tr=1:15,hh=c(1:14,19:29),sl=c(1:13,16),hl=1:15,ca=c(1:20,22:23,25,27:28))
+proc.SummarY(dat,sizeMax,except,listFact[[tab]])                                       
 })
 
 
@@ -69,7 +74,7 @@ setMethod("SummarY", signature(object="clData"), function(object,
                                                           sizeMax=20,
                                                           except=NULL,...){
 dat <- object@cl
-proc.SummarY(dat,sizeMax,except)
+proc.SummarY(dat,sizeMax,except,1:14)
 })
 
 
@@ -80,6 +85,6 @@ setMethod("SummarY", signature(object="ceData"), function(object,
                                                           sizeMax=20,
                                                           except=NULL,...){
 dat <- object@ce
-proc.SummarY(dat,sizeMax,except)
+proc.SummarY(dat,sizeMax,except,1:9)
 })
 

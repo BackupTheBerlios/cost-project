@@ -87,7 +87,6 @@ setGeneric("Delta", function(object,
                                    tempStrata=NULL, #ex: "year","quarter","month"
                                    spaceStrata=NULL, #ex: "area","rect"
                                    techStrata=NULL, #ex: "commCat","foCatEu5"
-                                   elmts=list(tp="all",sp="all",tc="all"),
                                    indSamp=FALSE,
                                    strategy="metier",  #ou "cc"
                                    ...){
@@ -102,14 +101,13 @@ setMethod("Delta", signature(object="csData"),function(object,
                                                              tempStrata=NULL, #ex: "year","quarter","month"
                                                              spaceStrata=NULL, #ex: "area","rect"
                                                              techStrata=NULL, #ex: "commCat","foCatEu5"
-                                                             elmts=list(tp="all",sp="all",tc="all"),
                                                              indSamp=FALSE,
                                                              strategy="metier", #ou "cc"
                                                              ...){
 
 tab <- UE(object,species)
 tabHL <- tab$hlslhh 
-tabHL <- tabHL[!apply(cbind(tabHL[,tempStrata],tabHL[,spaceStrata],tabHL[,techStrata]),1,function(x) any(is.na(x))),]   
+#tabHL <- tabHL[!apply(cbind(tabHL[,tempStrata],tabHL[,spaceStrata],tabHL[,techStrata]),1,function(x) any(is.na(x))),]   
 tabHL$Number <- tabHL$lenNum*(tabHL$wt/tabHL$subSampWt)
 #on rassemble les sous-échantillons des CC pour le calcul des variances
 tb <- unique(tabHL[,c(1:13,17:18,24)]) ; tb <- tb[,-13] #on ôte les sousCC et on agrège
@@ -131,32 +129,38 @@ tabHL$Number <- as.numeric(as.character(tabHL$Number))
 Ntp <- is.null(tempStrata) ; Nsp <- is.null(spaceStrata) ; Ntc <- is.null(techStrata)
 
 if (!Ntp) {
-  if (!"all"%in%elmts$tp) tabHL <- tabHL[tabHL[,tempStrata]%in%elmts$tp,]
   if (all(is.na(tabHL[,tempStrata]))) {tempStrata <- NULL ; Ntp <- TRUE}
 }
 
 if (!Nsp) {
-  if (!"all"%in%elmts$sp) tabHL <- tabHL[tabHL[,spaceStrata]%in%elmts$sp,]
   if (all(is.na(tabHL[,spaceStrata]))) {spaceStrata <- NULL ; Nsp <- TRUE}
 }
 
 if (!Ntc) {
-  if (!"all"%in%elmts$tc) tabHL <- tabHL[tabHL[,techStrata]%in%elmts$tc,]
   if (all(is.na(tabHL[,techStrata]))) {techStrata <- NULL ; Ntc <- TRUE}
 }
 
-#on procède à la même opération que dans 'NBMatrixTL.Int'
-if (!Ntp) tabHL[,tempStrata] <- factor(tabHL[,tempStrata],exclude="NA")
-if (!Nsp) tabHL[,spaceStrata] <- factor(tabHL[,spaceStrata],exclude="NA")
-if (!Ntc) tabHL[,techStrata] <- factor(tabHL[,techStrata],exclude="NA")
+if (!Ntp) tabHL[,tempStrata] <- factor(tabHL[,tempStrata],exclude=c("NA",NA))
+if (!Nsp) tabHL[,spaceStrata] <- factor(tabHL[,spaceStrata],exclude=c("NA",NA))
+if (!Ntc) tabHL[,techStrata] <- factor(tabHL[,techStrata],exclude=c("NA",NA))
 
 
-if (strategy=="cc") {UniteInt <- apply(tabHL[,1:13],1,paste,collapse="")                       #################Correction
-} else {                                                                                             #       
-UniteInt <- apply(tabHL[,1:11],1,paste,collapse="")}                                           ###  
+if (strategy=="cc") {UniteInt <- apply(tabHL[,1:13],1,paste,collapse="::")                       
+} else {                                                                                              
+UniteInt <- apply(tabHL[,1:11],1,paste,collapse="::")}                                            
     
 lev <- levels(factor(UniteInt))
 tabHL$Unite <- factor(UniteInt,levels=lev,labels=1:length(lev))
+
+#afin de retrouver l'échantillon --> on garde trpCode/staNum/spp/cc si strategy=="cc" ou trpCode/staNum/spp si strategy=="metier"
+extract <- function(vec,elmts) unlist(lapply(strsplit(vec,"::"),function(x) x[elmts])) 
+
+if (strategy=="cc") {
+DFsamp <- data.frame(SampNum=(1:length(lev)),trpCode=extract(lev,6),staNum=extract(lev,7),spp=extract(lev,8),commCat=extract(lev,12))
+} else {
+DFsamp <- data.frame(SampNum=(1:length(lev)),trpCode=extract(lev,6),staNum=extract(lev,7),spp=extract(lev,8))
+}
+
 
 lenSp <- c(1,5,10,25) ; names(lenSp) <- c("mm","scm","cm","25mm")
 tabHL$Length <- factor(tabHL$lenCls,levels=seq(min(tabHL$lenCls,na.rm=TRUE),max(tabHL$lenCls,na.rm=TRUE),by=lenSp[as.character(unique(tabHL$lenCode)[1])]))
@@ -179,15 +183,15 @@ eval(parse('',text=paste("WkvTot <- tapply(tabtabHL$wt,list(as.character(tabtabH
 
 TotW <- sum(WkvTot,na.rm=TRUE)
 
-progint <- function(x,ind,tabHL) {      #ind=1 --> delta, ind=2 --> Nk , ind=3 --> Wk
+progint <- function(x,ind,tabHL) {      #ind=1 --> delta , ind=2 --> Nk , ind=3 --> Wk , ind=4 --> DELTA
   tab <- tabHL[x,]
   Djkv <- tapply(tab$Number,list(tab$Length,as.character(tab$Unite)),sum,na.rm=TRUE) ; Djkv[is.na(Djkv)] <- 0
   
-  if (strategy=="cc") {Wkv <- tapply(tab$wt,list(as.character(tab$Unite)),mean)                      #################Correction
-  } else {                                                                                           #
-  tabtab <- cbind(tab[,1:13],tab[,c("wt","Unite")]) ; tabtab <- unique(tabtab)                       #
-  Wkv <- tapply(tabtab$wt,list(as.character(tabtab$Unite)),sum,na.rm=TRUE)                           #
-  }                                                                                                  ###
+  if (strategy=="cc") {Wkv <- tapply(tab$wt,list(as.character(tab$Unite)),mean)                   
+  } else {                                                                                           
+  tabtab <- cbind(tab[,1:13],tab[,c("wt","Unite")]) ; tabtab <- unique(tabtab)                       
+  Wkv <- tapply(tabtab$wt,list(as.character(tabtab$Unite)),sum,na.rm=TRUE)                           
+  }                                                                                                  
   DjkvSum <- apply(Djkv,1,sum,na.rm=TRUE)
   WkvSum <- sum(Wkv,na.rm=TRUE)
   Nk <- length(Wkv) ; Wk <- sum(Wkv,na.rm=TRUE)
@@ -201,6 +205,9 @@ progint <- function(x,ind,tabHL) {      #ind=1 --> delta, ind=2 --> Nk , ind=3 -
   ll <- list(deltaSq,Nk,Wk,DELTA)[[ind]]
   return(ll)
 }
+
+
+if (!indSamp) {
 
 eval(parse('',text=paste("Delta <- tapply(1:nrow(tabHL),list(",
                           paste(c("as.character(tabHL[,tempStrata])"[!Ntp],"as.character(tabHL[,spaceStrata])"[!Nsp],"as.character(tabHL[,techStrata])"[!Ntc]),collapse=",",sep=""),
@@ -216,23 +223,23 @@ eval(parse('',text=paste("NkMatrix <- tapply(1:nrow(tabHL),list(",
 eval(parse('',text=paste("WkMatrix <- tapply(1:nrow(tabHL),list(",
                           paste(c("as.character(tabHL[,tempStrata])"[!Ntp],"as.character(tabHL[,spaceStrata])"[!Nsp],"as.character(tabHL[,techStrata])"[!Ntc]),collapse=",",sep=""),
                           "),function(x) progint(x,3,tabHL))",sep="")))
+
+
+invisible(new("DeltA",Parameters=list(species=species,tempStrata=tempStrata,spaceStrata=spaceStrata,techStrata=techStrata),
+                  OutP=list(DeltaMatrix=DeltaMatrix,NkMatrix=NkMatrix,WkMatrix=WkMatrix)))
+} else {
+
 eval(parse('',text=paste("SampDeltaMat <- do.call(\"rbind\",tapply(1:nrow(tabHL),list(",
                           paste(c("as.character(tabHL[,tempStrata])"[!Ntp],"as.character(tabHL[,spaceStrata])"[!Nsp],"as.character(tabHL[,techStrata])"[!Ntc]),collapse=",",sep=""),
                           "),function(x) progint(x,4,tabHL)))",sep="")))
 
-
-if (!indSamp) {
-invisible(new("DeltA",Parameters=list(species=species,tempStrata=tempStrata,spaceStrata=spaceStrata,techStrata=techStrata,elmts=elmts),
-                  OutP=list(DeltaMatrix=DeltaMatrix,NkMatrix=NkMatrix,WkMatrix=WkMatrix)))
-} else {
-invisible(new("DeltA",Parameters=list(species=species,tempStrata=tempStrata,spaceStrata=spaceStrata,techStrata=techStrata,elmts=elmts),
-                  OutP=list(SampDeltaMat=SampDeltaMat,tab=tabHL)))
+invisible(new("DeltA",Parameters=list(species=species,tempStrata=tempStrata,spaceStrata=spaceStrata,techStrata=techStrata),
+                  OutP=list(SampDeltaMat=SampDeltaMat,tab=tabHL,DFsamp=DFsamp)))
 }
 
 })
 
 
-#x <- Delta(ArpegeSole2006CA,"Solea vulgaris",tempStrata="quarter",techStrata="commCat",indSamp=TRUE,strategy="tpn")  
 
 
 setGeneric("plot.Delta", function(x,
@@ -259,19 +266,25 @@ setMethod("plot.Delta",signature("csData"), function(x,
                                                tempStrata=NULL, #ex: "year","quarter","month"
                                                spaceStrata=NULL, #ex: "area","rect"
                                                techStrata=NULL, #ex: "commCat","foCatEu5"
-                                               elmts=list(tp="all",sp="all",tc="all"),
+                                               elmts=list(tp="all",sp="all",tc="all"),   #restriction à certaines modalités de certaines strates
                                                strategy="metier", 
                                                strat1,strat2="NULL",# pour choisir la stratification de représentation (2 au maximum) entre tempStrata, spaceStrata et techStrata
                                                selection=FALSE,
-                                               show.legend="right",...){  
+                                               show.legend="right",
+                                               shift=FALSE,         #décalage des modalités selon la dimension
+                                               ...){  
  
 
 
 INDSAMP <- Delta(x,species=species,tempStrata=tempStrata,spaceStrata=spaceStrata,techStrata=techStrata,indSamp=TRUE,strategy=strategy)@OutP
-INDLENG <- Delta(x,species=species,tempStrata=tempStrata,spaceStrata=spaceStrata,techStrata=techStrata,indSamp=FALSE,strategy=strategy)@OutP
+#INDLENG <- Delta(x,species=species,tempStrata=tempStrata,spaceStrata=spaceStrata,techStrata=techStrata,indSamp=FALSE,strategy=strategy)@OutP
 
 object <- INDSAMP$SampDeltaMat
-#on renomme 
+#on opère la sélection formulée par le paramètre 'elmts'
+invisible(sapply(names(object)[3:ncol(object)],function(x) {elm <- unlist(elmts[x]) ; if (!"all"%in%elm) object <<- object[as.character(object[,x])%in%elm,]})) 
+
+
+#on renomme                            
 if (ncol(object)>2) names(object)[3:ncol(object)] <- c(tempStrata,spaceStrata,techStrata)   #
 
 
@@ -285,7 +298,7 @@ if (is.null(dots$main)) dots$main <- paste("Delta plot / Species :",paste(specie
 
 FStr <- eval(parse('',text=strat1)) ; SStr <- eval(parse('',text=strat2))
 if (!is.null(SStr))  object2 <- object[order(object[,FStr],object[,SStr]),] else object2 <- object[order(object[,FStr]),]
-object2[,FStr] <- as.factor(object2[,FStr]) ; if (!is.null(SStr)) {object2[,SStr] <- ff <- as.factor(object2[,SStr])}
+object2[,FStr] <- factor(object2[,FStr]) ; if (!is.null(SStr)) {object2[,SStr] <- ff <- factor(object2[,SStr])}
 
 XX <- 1:nrow(object2) ; YY <- object2$delta
 if (!is.null(SStr)) levels(ff) <- rep(dots$p.bg,length=length(levels(ff))) else ff <- dots$p.bg[1]
@@ -296,18 +309,8 @@ indLab <- cumsum(delimit)
 
 
 amp <- max(object2$delta)-min(object2$delta)
-decal <- rep(c(1,-1),length=length(delimit))                                                                                    #displaying process --> maybe not necessary ---------#
-concord <- function(x,vec){                                                                                                                                                          #
-if (length(vec)==1) {return(FALSE)                                                                                                                                                   #
-} else {                                                                                                                                                                             #
-if (x==1) {if ((vec[x]+vec[x+1])<(sum(vec)/6)) {return(TRUE)} else {return(FALSE)}                                                                                                   #
-} else {                                                                                                                                                                             #
-if (x==length(vec)) {if ((vec[x-1]+vec[x])<(sum(vec)/6)) {return(TRUE)} else {return(FALSE)}                                                                                         #
-} else {                                                                                                                                                                             #
-if (!(x%in%c(1,length(vec)))) {if (((vec[x]+vec[x+1])<(sum(vec)/6))|((vec[x-1]+vec[x])<(sum(vec)/6))|((vec[x-1]+vec[x]+vec[x+1])<(sum(vec)/4))) {return(TRUE)} else {return(FALSE)}  #
-} else {return(FALSE)}}}}}                                                                                                                                                           #
-decal[!sapply(1:length(delimit),concord,delimit)] <- 0                                                                                                                               #
-                                                                                                                                                              #----------------------#
+if (shift) decal <- rep(c(1,-1),length=length(delimit)) else decal <- 0                                                                                  
+                                                                                                                    
 print(xyplot(YY~XX,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),scales=list(font=dots$font.axis),
                 key=eval(parse('',text=c("NULL",paste("list(points=list(pch=dots$pch[1],fill=as.character(levels(ff)),cex=dots$p.cex[1],lwd=dots$lwd[1],col=dots$col[1]),",
                 "text=list(levels(object2[,SStr])),title=SStr,cex.title=0.8,font=dots$font.lab,space=show.legend,columns=1,border=TRUE)",sep=""))[c(is.null(SStr),!is.null(SStr))])),
@@ -327,7 +330,7 @@ if (selection) {
 	listOP <- object2$samp[Reponse]
 	#valeurs qui serviront au graphe des échantillons identifiés
 	
-  new("DeltaID",OutP=list(species=species,tabId=INDSAMP$tab[INDSAMP$tab$Unite%in%listOP,,drop=FALSE],
+  new("DeltaID",OutP=list(species=species,sampId=INDSAMP$DFsamp[INDSAMP$DFsamp$SampNum%in%listOP,,drop=FALSE],tabId=INDSAMP$tab[INDSAMP$tab$Unite%in%listOP,,drop=FALSE],
                        tab=INDSAMP$tab)) 
  }
 
@@ -441,7 +444,7 @@ setMethod("plot.LD",signature("csData"), function(x,
                                                   species,
                                                   fraction="LAN",
                                                   trpCode,
-                                                  staNum="all",...){
+                                                  staNum="all",...){      #nouvelle option à rajouter "allSum"
                                                   
 if (length(species)!=1) stop("Only one species!!") ; if (length(trpCode)!=1) stop("Only one trip!!")
 trpCode <- as.character(trpCode) ; staNum <- as.character(staNum) ; if ("all"%in%staNum) staNum <- "all" 
@@ -455,14 +458,19 @@ if (is.null(dots$xlab)) dots$xlab <- "Length" ; if (is.null(dots$ylab)) dots$yla
 if (is.null(dots$main)) dots$main <- paste("Length Distributions by samples for trip",trpCode) 
 
 df <- object[(object$trpCode%in%trpCode)&(object$catchCat%in%fraction)&(object$spp%in%species),]
-if ("all"%in%staNum) staNum <- unique(as.character(df$staNum))
+if (nrow(df)==0) stop("No data for specified trip code and fraction!!")
+if ("all"%in%staNum) {staNum <- unique(as.character(df$staNum))
+} else {                                                          #ajout
+if ("allSum"%in%staNum) df$staNum <- staNum <- "all" }            #<----
+
 df <- df[df$staNum%in%staNum,] ; df$staNum <- factor(df$staNum)
+if (nrow(df)==0) stop("No data for specified station number!!")
 #empty length classes are considered
 df$lenCls <- factor(df$lenCls,levels=seq(min(df$lenCls),max(df$lenCls),by=ste))  
 LD <- tapply(df$lenNum,list(staNum=df$staNum,lenCls=df$lenCls),sum,na.rm=TRUE)
 LD[is.na(LD)] <- 0  ; ll <- dimnames(LD)
 DF <- data.frame(staNum=rep(ll$staNum,ncol(LD)),lenCls=rep(ll$lenCls,each=nrow(LD)),val=as.numeric(LD))
-DF$staNum <- factor(DF$staNum,levels=as.character(sort(as.numeric(levels(DF$staNum)))))
+if (!DF$staNum[1]=="all") DF$staNum <- factor(DF$staNum,levels=as.character(sort(as.numeric(levels(DF$staNum)))))
 
 barchart(val~lenCls|staNum,data=DF,ylim=c(0,max(DF$val)*1.05),scales=list(x=list(rot=dots$rot,cex=dots$cex.axis),
          font=dots$font.axis),main=list(dots$main,font=dots$font.main),
