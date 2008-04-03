@@ -104,7 +104,8 @@ setMethod("Delta", signature(object="csData"),function(object,
                                                              indSamp=FALSE,
                                                              strategy="metier", #ou "cc"
                                                              ...){
-
+#strategy="metier" & techStrata="commCat" incompatibles
+if (strategy=="metier" & techStrata=="commCat") stop("techStrata=\"commCat\" and strategy=\"metier\"!!")
 tab <- UE(object,species)
 tabHL <- tab$hlslhh 
 #tabHL <- tabHL[!apply(cbind(tabHL[,tempStrata],tabHL[,spaceStrata],tabHL[,techStrata]),1,function(x) any(is.na(x))),]   
@@ -274,8 +275,8 @@ setMethod("plot.Delta",signature("csData"), function(x,
                                                shift=FALSE,         #décalage des modalités selon la dimension
                                                ...){  
  
-
-
+stra <- c(tempStrata,spaceStrata,techStrata) ; if (length(stra)==0) stop("No stratification!!")
+if (missing(strat1)) {strat1 <- c("tempStrata","spaceStrata","techStrata")[c(!is.null(tempStrata),!is.null(spaceStrata),!is.null(techStrata))][1] ; strat2 <- "NULL"}
 INDSAMP <- Delta(x,species=species,tempStrata=tempStrata,spaceStrata=spaceStrata,techStrata=techStrata,indSamp=TRUE,strategy=strategy)@OutP
 #INDLENG <- Delta(x,species=species,tempStrata=tempStrata,spaceStrata=spaceStrata,techStrata=techStrata,indSamp=FALSE,strategy=strategy)@OutP
 
@@ -285,14 +286,17 @@ invisible(sapply(names(object)[3:ncol(object)],function(x) {elm <- unlist(elmts[
 
 
 #on renomme                            
-if (ncol(object)>2) names(object)[3:ncol(object)] <- c(tempStrata,spaceStrata,techStrata)   #
+if (ncol(object)>2) {names(object)[3:ncol(object)] <- c(tempStrata,spaceStrata,techStrata)   #
+                     if (any(c("year","semester","quarter","month")%in%names(object))) 
+                                  object[,tempStrata] <- factor(object[,tempStrata],levels=as.character(sort(as.numeric(levels(object[,tempStrata])))))}
 
+                    
 
 data(GraphsPar)                                                                                                                          
 dots <- list(...)
 sapply(names(GP),function(x) if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
 if (is.null(dots$xlab)) dots$xlab <- "Sample number" ; if (is.null(dots$ylab)) dots$ylab <- "Delta values" 
-if (is.null(dots$main)) dots$main <- paste("Delta plot / Species :",paste(species,collapse=", "),
+if (is.null(dots$main)) dots$main <- paste("Delta plot / Species : ",paste(species,collapse=", "),
                                             "\n Primary strata : ",eval(parse('',text=strat1)),sep="") 
 
 
@@ -301,19 +305,19 @@ if (!is.null(SStr))  object2 <- object[order(object[,FStr],object[,SStr]),] else
 object2[,FStr] <- factor(object2[,FStr]) ; if (!is.null(SStr)) {object2[,SStr] <- ff <- factor(object2[,SStr])}
 
 XX <- 1:nrow(object2) ; YY <- object2$delta
-if (!is.null(SStr)) levels(ff) <- rep(dots$p.bg,length=length(levels(ff))) else ff <- dots$p.bg[1]
+if (!is.null(SStr)) levels(ff) <- colo <- rep(dots$p.bg,length=length(levels(ff))) else ff <- dots$p.bg[1]
 
 delimit <- tapply(object2[,FStr],list(object2[,FStr]),length)
 delimit <- delimit[!is.na(delimit)]
 indLab <- cumsum(delimit)
-
+if (!is.null(SStr)) {if (SStr%in%c("quarter","month","year","semester")) IndS <- order(as.numeric(levels(object2[,SStr]))) else IndS <- 1:length(colo)}
 
 amp <- max(object2$delta)-min(object2$delta)
 if (shift) decal <- rep(c(1,-1),length=length(delimit)) else decal <- 0                                                                                  
                                                                                                                     
 print(xyplot(YY~XX,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),scales=list(font=dots$font.axis),
-                key=eval(parse('',text=c("NULL",paste("list(points=list(pch=dots$pch[1],fill=as.character(levels(ff)),cex=dots$p.cex[1],lwd=dots$lwd[1],col=dots$col[1]),",
-                "text=list(levels(object2[,SStr])),title=SStr,cex.title=0.8,font=dots$font.lab,space=show.legend,columns=1,border=TRUE)",sep=""))[c(is.null(SStr),!is.null(SStr))])),
+                key=eval(parse('',text=c("NULL",paste("list(points=list(pch=dots$pch[1],fill=as.character(colo)[IndS],cex=dots$p.cex[1],lwd=dots$lwd[1],col=dots$col[1]),",
+                "text=list(levels(object2[,SStr])[IndS]),title=SStr,cex.title=0.8,font=dots$font.lab,space=show.legend,columns=1,border=TRUE)",sep=""))[c(is.null(SStr),!is.null(SStr))])),
                 panel= function(x,y,...) {
                 panel.xyplot(x,y,pch=dots$pch[1],fill=as.character(ff),cex=dots$p.cex[1],lwd=dots$lwd[1],col=dots$col[1])
                 panel.abline(v=indLab[-length(indLab)]+0.5,lwd=dots$l.lwd[1],lty=dots$lty[1],col=dots$l.col[1])
@@ -330,8 +334,8 @@ if (selection) {
 	listOP <- object2$samp[Reponse]
 	#valeurs qui serviront au graphe des échantillons identifiés
 	
-  new("DeltaID",OutP=list(species=species,sampId=INDSAMP$DFsamp[INDSAMP$DFsamp$SampNum%in%listOP,,drop=FALSE],tabId=INDSAMP$tab[INDSAMP$tab$Unite%in%listOP,,drop=FALSE],
-                       tab=INDSAMP$tab)) 
+  invisible(new("DeltaID",OutP=list(species=species,sampId=INDSAMP$DFsamp[INDSAMP$DFsamp$SampNum%in%listOP,,drop=FALSE],tabId=INDSAMP$tab[INDSAMP$tab$Unite%in%listOP,,drop=FALSE],
+                       tab=INDSAMP$tab))) 
  }
 
 })

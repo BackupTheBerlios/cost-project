@@ -1,9 +1,9 @@
-###############################################################
-##                                                           ##
-## Plots of Volume of Landings/Discards per Fishing Day/Trip ##
-##                                                           ##
-##                      MM 07/02/2008                        ##
-###############################################################
+##################################################################
+##                                                              ##
+## Plots of Volume of Landings/Discards per FO/Fishing Day/Trip ##
+##                                                              ##
+##                      MM 07/02/2008                           ##
+##################################################################
 
 
 setClass("LD.Vol",representation(fraction="character",species="character",Strata="list",VolFO_FDTR="list",MeanFO_FDTR="numeric",
@@ -16,9 +16,9 @@ setClass("LD.Vol",representation(fraction="character",species="character",Strata
 ################################################################################
                      
 
-setGeneric("LD.Volume", function(object,
-                                 fraction="all",
-                                 species="all",
+setGeneric("LD.Volume", function(object,                                   
+                                 species,
+                                 fraction="LAN",
                                  TimeStrat=NULL,
                                  TechStrat=NULL,
                                  SpaceStrat=NULL,...){
@@ -30,47 +30,80 @@ setGeneric("LD.Volume", function(object,
 
 
 setMethod("LD.Volume", signature(object="csData"), function(object,
-                                                            fraction="all",
-                                                            species="all",
+                                                            species,         #une espèce seulement ou "all" si la table SL n'en contient qu'une
+                                                            fraction="LAN",
                                                             TimeStrat=NULL,
                                                             TechStrat=NULL,
                                                             SpaceStrat=NULL,...){  
-                                                                                                                              
-op.sub <- object@hh[object@hh$sampType=="S",]   #only sea sampling data                                                                         
+
+
+                                                          
+op.sub <- object@hh[object@hh$sampType=="S",]   #only sea sampling data    
+                                                                    
 capt.sub <- object@sl[paste(object@sl$trpCode,object@sl$staNum,sep="::")%in%paste(op.sub$trpCode,op.sub$staNum,sep="::"),]  
 
-if (!"all"%in%fraction) capt.sub <- capt.sub[capt.sub$catchCat%in%fraction,]                                                                                                                                              
-if (!"all"%in%species) capt.sub <- capt.sub[capt.sub$spp%in%species,]                                                                                                                                              
+un <- unique(as.character(object@sl$spp)) ; un <- un[!is.na(un)]                                                                    
+if (species=="all") {if (length(un)>1) {warning("Several species in SL table!! Only the first one will be taken into account!")}
+                     species <- un[1]} 
+
+capt.sub <- capt.sub[capt.sub$catchCat%in%fraction,]                                                                                                                                              
+capt.sub <- capt.sub[capt.sub$spp%in%species,]                                                                                                                                              
                                                                                                                                                                   
 op.sub$trpCode <- factor(op.sub$trpCode) ; op.sub$date <- factor(op.sub$date) ; op.sub$staNum <- factor(op.sub$staNum)
 
-#If TimeStrat="quarter" or "month", field must be put in HH
+#If TimeStrat="semester", "quarter" or "month", field must be put in HH
 if (!is.null(TimeStrat)) {
 HHmonth <- as.numeric(sapply(op.sub$date,function(x) strsplit(as.character(x),"-")[[1]][2]))
 if (TimeStrat=="month") op.sub$month <- HHmonth
-if (TimeStrat=="quarter") op.sub$quarter <- floor((HHmonth-0.1)/3)+1 
+if (TimeStrat=="quarter") op.sub$quarter <- ceiling(HHmonth/3)
+if (TimeStrat=="semester") op.sub$semester <- ceiling(HHmonth/6) 
 }
 
+#les champs de stratification dans op.sub sont transformés en facteurs
+if (!is.null(TimeStrat)) op.sub[,TimeStrat] <- factor(op.sub[,TimeStrat])
+if (!is.null(TechStrat)) op.sub[,TechStrat] <- factor(op.sub[,TechStrat])
+if (!is.null(SpaceStrat)) op.sub[,SpaceStrat] <- factor(op.sub[,SpaceStrat])
+ 
+
+
 #Number of sampled fishing days by trip, tech,time,space
-tablEch <- op.sub[op.sub$foVal=="V",]                                                #<------- à modifier avec la nouvelle codification de FF/COST    
-expr1 <- paste(",tablEch$",c(TimeStrat,TechStrat,SpaceStrat),sep="",collapse="") ; if (expr1==",tablEch$") expr1 <- ""                 
+#tablEch <- op.sub[op.sub$foVal=="V",]                                                  
+expr1 <- paste(",tabSamp$",c(TimeStrat,TechStrat,SpaceStrat),sep="",collapse="") ; if (expr1==",tabSamp$") expr1 <- ""                 
 expr2 <- paste(",op.sub$",c(TimeStrat,TechStrat,SpaceStrat),sep="",collapse="") ; if (expr2==",op.sub$") expr2 <- ""                 
 expr3 <- paste(",tabl1$",c(TimeStrat,TechStrat,SpaceStrat),sep="",collapse="") ; if (expr3==",tabl1$") expr3 <- ""                 
 
 
-eval(parse('',text=paste("d_i <- tapply(tablEch$date,list(tablEch$trpCode",expr1,"),function(x) length(unique(x)))",sep="")))                 
-SampTest <- !is.na(d_i)                                                 
-
+#eval(parse('',text=paste("d_i <- tapply(tablEch$date,list(tablEch$trpCode",expr1,"),function(x) length(unique(x)))",sep="")))                 
+#SampTest <- !is.na(d_i)                                                 
+#
 #Number of FOs by fishing day, by trip, by tech,time,space 
 eval(parse('',text=paste("M_ik <- tapply(op.sub$staNum,list(op.sub$trpCode,op.sub$date",expr2,"),function(x) length(unique(x)))",sep="")))
 
 #Number of sampled FOs by fishing day, by trip, by tech,time,space 
-eval(parse('',text=paste("m_ik <- tapply(tablEch$staNum,list(tablEch$trpCode,tablEch$date",expr1,"),function(x) length(unique(x)))",sep="")))          
+#Fo is considered sampled if foVal=="V" and : catchReg=="All"  &&  sppReg=="All"
+#                                             catchReg==fraction && sppReg=="All"
+#                                             catchReg=="All"  &&  sppReg=="Par"  && species in SL table for the FO and the fraction
+#                                             catchReg==fraction  &&  sppReg=="Par"  && species in SL table for the FO and the fraction 
+if (fraction=="LAN") fract <- "Lan" else fract <- "Dis" 
+capt.sub$ind <- 1  
+tabSamp <- merge(op.sub,capt.sub[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","ind")],all.x=TRUE)
+tabSamp$ind[is.na(tabSamp$ind)] <- 0 ; tabSamp$ind2 <- tabSamp$ind   #sampling indicator
+tabSamp$ind2[tabSamp$catReg=="All" & tabSamp$sppReg=="All"] <- 1
+tabSamp$ind2[tabSamp$catReg==fract & tabSamp$sppReg=="All"] <- 1
+tabSamp$ind2[tabSamp$catReg=="All" & tabSamp$sppReg=="Par" & tabSamp$ind==1] <- 1
+tabSamp$ind2[tabSamp$catReg==fract & tabSamp$sppReg=="Par" & tabSamp$ind==1] <- 1
+tabSamp$ind2[tabSamp$foVal!="V"] <- 0
+
+eval(parse('',text=paste("m_ik <- tapply(tabSamp$ind2,list(tabSamp$trpCode,tabSamp$date",expr1,"),sum)",sep="")))          
 
 
-tabl1 <- merge(tablEch,aggregate(capt.sub$wt,list(trpCode=capt.sub$trpCode,staNum=capt.sub$staNum),sum),all.x=TRUE) #essentially to homogenize vectors sizes                
+tabl1 <- merge(tabSamp,aggregate(capt.sub$wt,list(sampType=capt.sub$sampType,landCtry=capt.sub$landCtry,vslFlgCtry=capt.sub$vslFlgCtry,year=capt.sub$year,
+                                                  proj=capt.sub$proj,trpCode=capt.sub$trpCode,staNum=capt.sub$staNum),sum),all.x=TRUE) #essentially to homogenize vectors sizes                
 names(tabl1)[ncol(tabl1)] <- "wt"    
-tabl1$wt[is.na(tabl1$wt)] <- 0             #species not present in fraction of the FO                                    
+tabl1$wt[is.na(tabl1$wt)] <- 0                                                
+  
+#on se refère à la colonne ind2 pour ne garder de tabl1 que ce qui est considéré comme échantillonné  
+tabl1 <- tabl1[tabl1$ind2==1,]  
   
 eval(parse('',text=paste("y_ikj <- tapply(tabl1$wt,list(tabl1$trpCode,tabl1$date",expr3,"),sum,na.rm=TRUE)",sep="")))
   
@@ -156,7 +189,7 @@ eval(parse('',text=paste("xyplot(bb~trp",paste("|",paste(indexStr,collapse="*"),
                          "col=c(rep(dots$col[1],l2),NA",",strip.col[1:l1]"[l1>0],")),text=list(c(LEV,\"\",\"",paste(indexStr,collapse="\",\""),"\")),title=\"",groups,"\",",
                          "cex.title=0.8,space=\"right\",font=dots$font.lab,columns=1,border=TRUE),par.strip.text=list(font=dots$font.lab),",
                          "prepanel=function(x,y,...){x <- x[,drop=TRUE] ; prepanel.default.xyplot(x,y,...)},",
-                         "panel = function(x,y,...){x <- x[,drop=TRUE] ; panel.xyplot(x,y,pch=dots$pch[1],fill=dots$p.bg,cex=dots$p.cex[1],col=dots$col[1],...)})",sep="")))
+                         "panel = function(x,y,...){x <- x[,drop=TRUE] ; panel.xyplot(x,y,pch=dots$pch[1],fill=dots$p.bg","[1]"[l2==0],",cex=dots$p.cex[1],col=dots$col[1],...)})",sep="")))
 }}
 })
 
