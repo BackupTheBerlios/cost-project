@@ -39,7 +39,7 @@ tab$age <- as.numeric(as.character(tab$age))
 #test sur elmts
 if (!all(names(elmts)%in%c("tp","sp","tc"))) stop("'elmts' parameter is not well defined") 
 #grouping ages
-if (!is.null(age.plus)) tab$age[tab$age>=age.plus] <- age.plus
+if (age.plus>=0) tab$age[tab$age>=age.plus] <- age.plus
 newtab <- tab[,c("age","lenCls",tempStrata,spaceStrata,techStrata)] 
 #subsetting
 tpT <- !is.null(tempStrata) ; if (tpT&(!("all"%in%elmts$tp))) newtab <- newtab[as.character(newtab[,tempStrata])%in%elmts$tp,]
