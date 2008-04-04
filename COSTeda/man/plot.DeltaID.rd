@@ -36,7 +36,7 @@ It consists in length distributions of each identified sample, compared with ove
 \examples{
 data(sole)
 #obj <- plot(sole.cs,species="Solea vulgaris",tempStrata="quarter",techStrata="commCat",
-#strat1="techStrata",strat2="tempStrata",selection=TRUE,show.legend="right")
-#plot(obj2)
+#strat1="techStrata",strat2="tempStrata",strategy="cc",selection=TRUE,show.legend="right")
+#plot(obj)
 }
 \keyword{dplot}

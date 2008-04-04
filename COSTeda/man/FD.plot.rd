@@ -10,7 +10,7 @@ Display can be done within time, technical and space stratification, if specifie
 }
 
 \usage{
-FD.plot(x,groups="TechStrat",\dots)
+FD.plot(x,groups=NULL,\dots)
 }
 
 \arguments{
@@ -29,17 +29,12 @@ FD.plot(x,groups="TechStrat",\dots)
 \examples{
 data(sole)
 object <- sole.cs
-#only sea sampling data is kept
-object@tr <- object@tr[object@tr$sampType=="S",]
-object@hh <- object@hh[object@hh$sampType=="S",]
-object@sl <- object@sl[object@sl$sampType=="S",]
-object@hl <- object@hl[object@hl$sampType=="S",]
 
 x <- LD.Volume(object,fraction="LAN",species="Solea vulgaris")
 FD.plot(x)
 
 xx <- LD.Volume(object,fraction="LAN",species="Solea vulgaris",TimeStrat="quarter",TechStrat="gear")
-FD.plot(xx)
+FD.plot(xx,groups="TechStrat")
 }
 
 \keyword{methods}

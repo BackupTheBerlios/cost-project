@@ -24,10 +24,8 @@ exportMethods(
   "FD.boxplot",
   "FO.plot",
   "FO.boxplot",
-  "WL.plot",
-  "ML.plot",
-  "ML.boxplot",
-  "SL.boxplot",
+  "BioPar.plot",
+  "BioPar.boxplot",
   "L.plot.design",
   "SummarY"
 )

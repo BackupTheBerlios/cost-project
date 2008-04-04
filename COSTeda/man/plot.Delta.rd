@@ -8,7 +8,7 @@ Plotting procedure of delta values calculated with a call to \code{Delta} method
 }
 
 \usage{plot.Delta(x,y=NULL,species,tempStrata=NULL,spaceStrata=NULL,techStrata=NULL, 
-        elmts=list(tp="all",sp="all",tc="all"),strategy="metier",strat1,strat2="NULL",selection=FALSE,show.legend="right",\dots)}
+        elmts=list(tp="all",sp="all",tc="all"),strategy="metier",strat1,strat2="NULL",selection=FALSE,show.legend="right",shift=FALSE,\dots)}
 
 \arguments{
   \item{x}{A \emph{csData} object.}
@@ -17,13 +17,14 @@ Plotting procedure of delta values calculated with a call to \code{Delta} method
   \item{tempStrata}{Field specifying time stratification (e.g \code{"quarter"}).}
   \item{spaceStrata}{Field specifying space stratification (e.g \code{"area"}).}
   \item{techStrata}{Field specifying technical stratification (e.g \code{"commCat"}).}
-  \item{elmts}{List of components of stratification. Default value is \code{"all"}.}
-  \item{strategy}{To be chosen between \code{"metier"} and \code{"cc"}.}
-  \item{strat1}{To be chosen between \code{"tempStrata"}, \code{"spaceStrata"} and \code{"techStrata"}. Primary stratification for graphical display.}
-  \item{strat2}{To be chosen between \code{"tempStrata"}, \code{"spaceStrata"} and \code{"techStrata"}. Secondary stratification for graphical display.}   
+  \item{elmts}{List of components of stratification showed on the graph. Default value is \code{"all"} for 'tp', 'sp' and 'tc' slots.}
+  \item{strategy}{To be chosen between \code{"metier"} (default value) and \code{"cc"}.}
+  \item{strat1}{Optionnal. To be chosen between \code{"tempStrata"}, \code{"spaceStrata"} and \code{"techStrata"}. Primary stratification for graphical display.}
+  \item{strat2}{Optionnal. To be chosen between \code{"tempStrata"}, \code{"spaceStrata"} and \code{"techStrata"}. Secondary stratification for graphical display.}   
   \item{selection}{If \code{TRUE}, outliers identification is made, and a \emph{DeltaID} object is returned. 
-  Displayed values during identification process are Sample field from \code{tab} object.}
+  Displayed values during identification process are 'SampNum' field from \code{sampId} returned object.}
   \item{show.legend}{Display the legend (\code{""} means "no legend").}
+  \item{shift}{If \code{TRUE} displayed text is shifted.}
   \item{...}{Further graphical parameters.}
 }
 
@@ -39,7 +40,7 @@ Plotting procedure of delta values calculated with a call to \code{Delta} method
 
 \examples{
 data(sole)
-plot.Delta(sole.cs,species="Solea vulgaris",tempStrata="quarter",techStrata="commCat",strat1="techStrata",strat2="tempStrata",selection=FALSE,show.legend="right")
+plot.Delta(sole.cs,species="Solea vulgaris",tempStrata="quarter",techStrata="commCat",strat1="techStrata",strat2="tempStrata",strategy="cc")
 }
 
 \keyword{dplot}

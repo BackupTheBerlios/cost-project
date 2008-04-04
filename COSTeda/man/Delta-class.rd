@@ -13,14 +13,14 @@
  \tab tempStrata \tab \code{character} \tab Specified time stratification. \cr
  \tab spaceStrata \tab \code{character} \tab Specified space stratification. \cr
  \tab techStrata \tab \code{character} \tab Specified technical stratification. \cr
- \tab elmts \tab \code{character} \tab Fields within stratification. \cr
+ \tab elmts \tab \code{character} \tab List of components within stratification. \cr
 \bold{\code{OutP}} \tab \tab \code{list} \tab Numerical outputs from \code{Delta} method \cr
- \tab DeltaMatrix \tab \code{character} \tab ToDo. \cr
- \tab NkMatrix \tab \code{character} \tab ToDo. \cr
- \tab WkMatrix \tab \code{character} \tab ToDo. \cr
- \tab SampDeltaMat \tab \code{character} \tab ToDo. \cr
- \tab tab \tab \code{character} \tab ToDo. 
- 
+ \tab DeltaMatrix \tab \code{character} \tab Sum of squared delta values of each sample within each strata and length class (only if \code{indSamp=FALSE} in \code{Delta} function call). \cr
+ \tab NkMatrix \tab \code{character} \tab Number of samples within each strata (only if \code{indSamp=FALSE} in \code{Delta} function call). \cr
+ \tab WkMatrix \tab \code{character} \tab Sampled weight within each strata in grams (only if \code{indSamp=FALSE} in \code{Delta} function call). \cr
+ \tab SampDeltaMat \tab \code{character} \tab Data.frame of delta values within each sample (only if \code{indSamp=TRUE} in \code{Delta} function call). \cr
+ \tab tab \tab \code{character} \tab Data.frame resulting from treatment (only if \code{indSamp=TRUE} in \code{Delta} function call). \cr
+ \tab DFsamp \tab \code{character} \tab Informations about each sample (only if \code{indSamp=TRUE} in \code{Delta} function call).
 }
 }
 

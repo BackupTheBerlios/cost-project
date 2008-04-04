@@ -254,6 +254,7 @@ setGeneric("plot.Delta", function(x,
                                   strat1,strat2="NULL",# pour choisir la stratification de représentation (2 au maximum) entre tempStrata, spaceStrata et techStrata
                                   selection=FALSE,
                                   show.legend="right",
+                                  shift=FALSE,         #décalage des modalités selon la dimension
                                   ...){
 	standardGeneric("plot.Delta")}
 )

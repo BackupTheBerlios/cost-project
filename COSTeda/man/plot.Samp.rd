@@ -5,7 +5,7 @@
 \title{Plot "DeltaID" object for a specified sample}
 \description{
 This method plots length distribution of one specified sample, compared with overall relative length distribution.
-}
+}         
 
 \usage{
 plot.Samp(x,SampNum,show.legend="right",\dots)
@@ -30,7 +30,7 @@ plot.Samp(x,SampNum,show.legend="right",\dots)
 \examples{
 data(sole)
 #obj2 <- plot(sole.cs,species="Solea vulgaris",tempStrata="quarter",techStrata="commCat",strat1="techStrata",strat2="tempStrata",selection=TRUE,show.legend="right")
-#"xxx" is the index of an identified sample
+##"xxx" is the index of an identified sample
 #plot.Samp(obj2,"xxx") 
 }
 \keyword{methods}

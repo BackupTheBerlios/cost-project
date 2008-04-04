@@ -20,14 +20,14 @@ setGeneric("WL.plot", function(object,
 
 setMethod("WL.plot", signature(object="csData"), function(object,
                                                           selection=FALSE,...){
+tab <- object@ca 
 
 data(GraphsPar)                                                                                                               
 dots <- list(...)
 sapply(names(GP),function(x) if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
-if (is.null(dots$xlab)) dots$xlab <- paste("Length(",tab$lenCode[1],")",sep="") ; if (is.null(dots$ylab)) dots$ylab <- "Weight(g)" 
-if (is.null(dots$main)) dots$main <- "Scatter plot of individual weight~length" 
+if (is.null(dots$xlab)) dots$xlab <- "Length(mm)" ; if (is.null(dots$ylab)) dots$ylab <- "Weight(g)" 
+if (is.null(dots$main)) dots$main <- "Scatter plot of individual weight at length" 
 
-tab <- object@ca
 #on recode les classes de tailles pour combler les classes manquantes
 lenC <- c(1,5,10,25) ; names(lenC) <- c("mm","scm","cm","25mm")
 tab$lenCls <- factor(tab$lenCls,levels=seq(min(tab$lenCls),max(tab$lenCls),by=lenC[as.character(tab$lenCode[1])]))
@@ -36,7 +36,7 @@ if (selection){
 
 xyplot(indWt~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
       ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],col=dots$col[1],cex=dots$p.cex[1],fill=dots$bg[1],lwd=dots$p.lwd[1],
-      scales=list(font=dots$font.axis),drop.unused.levels=FALSE)
+      scales=list(font=dots$font.axis,x=list(rot=dots$rot[1])),drop.unused.levels=FALSE)
 trellis.focus("panel",1,1)
 Reponse <- panel.identify()
 id.tab <- tab[Reponse,] 
@@ -47,7 +47,7 @@ invisible(list(l=Reponse,id.tab=tab[tabOcc%in%idOcc,]))
 
 xyplot(indWt~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
        ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],col=dots$col[1],cex=dots$p.cex[1],fill=dots$p.bg[1],lwd=dots$p.lwd[1],
-       scales=list(font=dots$font.axis),drop.unused.levels=FALSE)
+       scales=list(font=dots$font.axis,x=list(rot=dots$rot[1])),drop.unused.levels=FALSE)
 }
 })
 
@@ -69,14 +69,14 @@ setGeneric("ML.plot", function(object,
 setMethod("ML.plot", signature(object="csData"), function(object,
                                                           selection=FALSE,
                                                           ...){
+tab <- object@ca 
 
 data(GraphsPar)                                                                                                                  
 dots <- list(...) 
 sapply(names(GP),function(x) if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
-if (is.null(dots$xlab)) dots$xlab <- paste("Length(",tab$lenCode[1],")",sep="") ; if (is.null(dots$ylab)) dots$ylab <- "Maturity"
-if (is.null(dots$main)) dots$main <- "Scatter plot of individual maturity~length"
+if (is.null(dots$xlab)) dots$xlab <- "Length(mm)" ; if (is.null(dots$ylab)) dots$ylab <- "Maturity"
+if (is.null(dots$main)) dots$main <- "Scatter plot of individual maturity at length"
  
-tab <- object@ca
 tab$matStage <- factor(tab$matStage)
 #on recode les classes de tailles pour combler les classes manquantes
 lenC <- c(1,5,10,25) ; names(lenC) <- c("mm","scm","cm","25mm")
@@ -87,7 +87,7 @@ if (selection){
 
 xyplot(matStage~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
       ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],col=dots$col[1],cex=dots$p.cex[1],fill=dots$bg[1],lwd=dots$p.lwd[1],
-      scales=list(font=dots$font.axis),drop.unused.levels=FALSE)
+      scales=list(font=dots$font.axis,x=list(rot=dots$rot[1])),drop.unused.levels=FALSE)
 trellis.focus("panel",1,1)
 Reponse <- panel.identify()
 id.tab <- tab[Reponse,] 
@@ -98,7 +98,7 @@ return(list(l=Reponse,id.tab=tab[tabOcc%in%idOcc,]))
 
 xyplot(matStage~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
        ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],col=dots$col[1],cex=dots$p.cex[1],fill=dots$p.bg[1],lwd=dots$p.lwd[1],
-       scales=list(font=dots$font.axis),drop.unused.levels=FALSE)
+       scales=list(font=dots$font.axis,x=list(rot=dots$rot[1])),drop.unused.levels=FALSE)
 }
 })
 
@@ -121,13 +121,14 @@ setMethod("SL.plot", signature(object="csData"), function(object,
                                                           selection=FALSE,
                                                           ...){
 
+tab <- object@ca 
+
 data(GraphsPar)                                                                                                                  
 dots <- list(...) 
 sapply(names(GP),function(x) if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
-if (is.null(dots$xlab)) dots$xlab <- paste("Length(",tab$lenCode[1],")",sep="") ; if (is.null(dots$ylab)) dots$ylab <- "Sex"
-if (is.null(dots$main)) dots$main <- "Scatter plot of individual sex~length"
+if (is.null(dots$xlab)) dots$xlab <- "Length(mm)" ; if (is.null(dots$ylab)) dots$ylab <- "Sex"
+if (is.null(dots$main)) dots$main <- "Scatter plot of individual sex at length"
  
-tab <- object@ca
 tab$sex <- factor(as.character(tab$sex),exclude="U")
 #on recode les classes de tailles pour combler les classes manquantes
 lenC <- c(1,5,10,25) ; names(lenC) <- c("mm","scm","cm","25mm")
@@ -137,7 +138,7 @@ if (selection){
 
 xyplot(sex~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
       ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],col=dots$col[1],cex=dots$p.cex[1],fill=dots$bg[1],lwd=dots$p.lwd[1],
-      scales=list(font=dots$font.axis),drop.unused.levels=FALSE)
+      scales=list(font=dots$font.axis,x=list(rot=dots$rot[1])),drop.unused.levels=FALSE)
 trellis.focus("panel",1,1)
 Reponse <- panel.identify()
 id.tab <- tab[Reponse,] 
@@ -148,7 +149,7 @@ return(list(l=Reponse,id.tab=tab[tabOcc%in%idOcc,]))
 
 xyplot(sex~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
        ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],col=dots$col[1],cex=dots$p.cex[1],fill=dots$p.bg[1],lwd=dots$p.lwd[1],
-       scales=list(font=dots$font.axis),drop.unused.levels=FALSE)
+       scales=list(font=dots$font.axis,x=list(rot=dots$rot[1])),drop.unused.levels=FALSE)
 }
 })
 
@@ -168,19 +169,20 @@ setGeneric("WL.boxplot", function(object,...){
 
 setMethod("WL.boxplot", signature(object="csData"), function(object,...){
 
+tab <- object@ca 
+
 data(GraphsPar)                                                                                                           
 dots <- list(...) ; if (is.null(dots$pch)) dots$pch <- 20
 sapply(names(GP),function(x) if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
-if (is.null(dots$xlab)) dots$xlab <- paste("Length(",tab$lenCode[1],")",sep="") ; if (is.null(dots$ylab)) dots$ylab <- "Weight(g)"
-if (is.null(dots$main)) dots$main <- "Boxplot of individual weight~length"
+if (is.null(dots$xlab)) dots$xlab <- "Length(mm)" ; if (is.null(dots$ylab)) dots$ylab <- "Weight(g)"
+if (is.null(dots$main)) dots$main <- "Boxplot of individual weight at length"
 
-tab <- object@ca 
 #on recode les classes de tailles pour combler les classes manquantes
 lenC <- c(1,5,10,25) ; names(lenC) <- c("mm","scm","cm","25mm")
 tab$lenCls <- factor(tab$lenCls,levels=seq(min(tab$lenCls),max(tab$lenCls),by=lenC[as.character(tab$lenCode[1])]))
 
 bwplot(indWt~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
-       ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],cex=1.6,fill=dots$p.bg[1],scales=list(font=dots$font.axis),
+       ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],cex=1.6,fill=dots$p.bg[1],scales=list(font=dots$font.axis,x=list(rot=dots$rot[1])),
        par.settings=list(box.rectangle=list(col=dots$col[1]),box.umbrella=list(col=dots$col[1],lty=dots$lty[1]),
        plot.symbol=list(col=dots$col[1])),drop.unused.levels=FALSE)
 })
@@ -203,20 +205,21 @@ setGeneric("ML.boxplot", function(object,...){
 
 setMethod("ML.boxplot", signature(object="csData"), function(object,...){
 
+tab <- object@ca
+
 data(GraphsPar)                                                                                                           
 dots <- list(...) ; if (is.null(dots$pch)) dots$pch <- 20
 sapply(names(GP),function(x) if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
-if (is.null(dots$xlab)) dots$xlab <- paste("Length(",tab$lenCode[1],")",sep="") ; if (is.null(dots$ylab)) dots$ylab <- "Maturity"
-if (is.null(dots$main)) dots$main <- "Boxplot of individual maturity~length"
+if (is.null(dots$xlab)) dots$xlab <- "Length(mm)" ; if (is.null(dots$ylab)) dots$ylab <- "Maturity"
+if (is.null(dots$main)) dots$main <- "Boxplot of individual maturity at length"
 
-tab <- object@ca
 tab$matStage <- factor(tab$matStage)
 #on recode les classes de tailles pour combler les classes manquantes
 lenC <- c(1,5,10,25) ; names(lenC) <- c("mm","scm","cm","25mm")
 tab$lenCls <- factor(tab$lenCls,levels=seq(min(tab$lenCls),max(tab$lenCls),by=lenC[as.character(tab$lenCode[1])]))
 
 bwplot(matStage~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
-       ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],cex=2,fill=dots$p.bg[1],scales=list(font=dots$font.axis),
+       ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],cex=2,fill=dots$p.bg[1],scales=list(font=dots$font.axis,x=list(rot=dots$rot[1])),
        par.settings=list(box.rectangle=list(col=dots$col[1]),box.umbrella=list(col=dots$col[1],lty=dots$lty[1]),
        plot.symbol=list(col=dots$col[1])),drop.unused.levels=FALSE)
 })
@@ -237,20 +240,21 @@ setGeneric("SL.boxplot", function(object,...){
 
 setMethod("SL.boxplot", signature(object="csData"), function(object,main="",xlab="Length",ylab="Sex",...){
 
+tab <- object@ca
+
 data(GraphsPar)                                                                                                                  
 dots <- list(...) ; if (is.null(dots$pch)) dots$pch <- 20
 sapply(names(GP),function(x) if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
-if (is.null(dots$xlab)) dots$xlab <- paste("Length(",tab$lenCode[1],")",sep="") ; if (is.null(dots$ylab)) dots$ylab <- "Sex"
-if (is.null(dots$main)) dots$main <- "Boxplot of individual sex~length"
+if (is.null(dots$xlab)) dots$xlab <- "Length(mm)" ; if (is.null(dots$ylab)) dots$ylab <- "Sex"
+if (is.null(dots$main)) dots$main <- "Boxplot of individual sex at length"
 
-tab <- object@ca
 tab$sex <- factor(as.character(tab$sex),exclude="U")
 #on recode les classes de tailles pour combler les classes manquantes
 lenC <- c(1,5,10,25) ; names(lenC) <- c("mm","scm","cm","25mm")
 tab$lenCls <- factor(tab$lenCls,levels=seq(min(tab$lenCls),max(tab$lenCls),by=lenC[as.character(tab$lenCode[1])]))
 
 bwplot(sex~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
-       ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],cex=2,fill=dots$p.bg[1],scales=list(font=dots$font.axis),
+       ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],cex=2,fill=dots$p.bg[1],scales=list(font=dots$font.axis,x=list(rot=dots$rot[1])),
        par.settings=list(box.rectangle=list(col=dots$col[1]),box.umbrella=list(col=dots$col[1],lty=dots$lty[1]),
        plot.symbol=list(col=dots$col[1])),drop.unused.levels=FALSE)
 })

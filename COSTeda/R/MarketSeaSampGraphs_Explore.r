@@ -130,13 +130,13 @@ invisible(new("LD.Vol",fraction=fraction,species=species,Strata=list(TimeStrat=T
 
 
 setGeneric("FD.plot", function(x,
-                               groups="TechStrat",...){
+                               groups=NULL,...){
 	standardGeneric("FD.plot")
 })
 
 
 setMethod("FD.plot", signature(x="LD.Vol"), function(x,
-                                                     groups="TechStrat",...){       
+                                                     groups=NULL,...){       
 
 stratas <- c("TimeStrat","TechStrat","SpaceStrat")
 TimeStrat <- x@Strata$TimeStrat ; TechStrat <- x@Strata$TechStrat ; SpaceStrat <- x@Strata$SpaceStrat 

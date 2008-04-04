@@ -18,7 +18,7 @@ L.plot.design(object,\dots)
 
 \author{Mathieu Merzereaud}
 
-\seealso{\code{\link{WL.plot}}, \code{\link{ML.plot}}, \code{\link{ML.boxplot}}, \code{\link{SL.boxplot}}
+\seealso{\code{\link{BioPar.plot}}, \code{\link{BioPar.boxplot}}
 }
 
 \examples{

@@ -6,25 +6,24 @@
 \description{
 This method creates an object of class \emph{LD.Vol} containing volume informations about sampled and raised catch,
 for a given species in a specified catch category. It requires a \emph{csData} object built from \pkg{COSTcore} package.
+Only sea sampling data is computed.
 }
 
 \usage{
-LD.Volume(object,fraction="all",species="all",TimeStrat=NULL,TechStrat=NULL,
+LD.Volume(object,species,fraction="LAN",TimeStrat=NULL,TechStrat=NULL,
          SpaceStrat=NULL,\dots)
 }
 
 \arguments{
   \item{object}{A \emph{csData} object with sea-sampling information (\emph{tr}, \emph{hh} and \emph{sl} required).}
-  \item{fraction}{Field specifying catch category (to be chosen between \code{"LAN"}, \code{"DIS"} and \code{"all"}). See Details.}
-  \item{species}{Field specifying species (e.g \code{"SOL"}). See Details.}
+  \item{species}{Field specifying species (e.g \code{"Solea vulgaris"}). See Details.}
+  \item{fraction}{Field specifying catch category (to be chosen between \code{"LAN"} and \code{"DIS"}.). See Details.}
   \item{TimeStrat}{
-  Specified time stratification (to be chosen between \code{"year"}, \code{"quarter"}, \code{"month"}
-  and \code{NULL}). See Details.}
+  Specified time stratification (to be chosen between \code{"year"}, \code{"quarter"}, \code{"month"}, \code{NULL},...). See Details.}
   \item{TechStrat}{
-  Specified technical stratification (to be chosen between \code{"gear"}, \code{"foCatNat"}, \code{"foCatEu5"},
-  \code{"foCatEu6"} and \code{NULL}). See Details.}
+  Specified technical stratification (to be chosen between \code{"gear"}, \code{"foCatNat"}, \code{"foCatEu5"}, \code{NULL},...). See Details.}
   \item{SpaceStrat}{
-  Specified space stratification (to be chosen between \code{"area"}, \code{"rect"} and \code{NULL}). See Details.}
+  Specified space stratification (to be chosen between \code{"area"}, \code{"rect"}, \code{NULL},...). See Details.}
   \item{...}{Further arguments.}
 }
 
@@ -40,11 +39,6 @@ LD.Volume(object,fraction="all",species="all",TimeStrat=NULL,TechStrat=NULL,
 \examples{
 data(sole)
 object <- sole.cs
-#only sea sampling data is kept
-object@tr <- object@tr[object@tr$sampType=="S",]
-object@hh <- object@hh[object@hh$sampType=="S",]
-object@sl <- object@sl[object@sl$sampType=="S",]
-object@hl <- object@hl[object@hl$sampType=="S",]
 
 x <- LD.Volume(object,fraction="LAN",species="Solea vulgaris")
 }

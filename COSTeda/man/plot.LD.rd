@@ -13,10 +13,10 @@ plot.LD(x,species,fraction="LAN",trpCode,staNum="all",\dots)
 
 \arguments{
   \item{x}{A \emph{csData} object with \emph{hl} informations.}
-  \item{species}{Field specifying species (e.g \code{"SOL"}). See Details.}
+  \item{species}{Field specifying species (e.g \code{"SOL"}). See Details.}                                                                                                                         
   \item{fraction}{Field specifying catch category (e.g \code{"LAN"}). See Details.}
   \item{trpCode}{Character specifying trip code. See Details.}
-  \item{staNum}{Character vector specifying sample(s) (or FOs). See Details.}
+  \item{staNum}{Character vector specifying sample(s) (or FOs). \code{"all"} results in displaying all samples of the specified trip, and \code{"allSum"} adds them up.}
   \item{...}{Further graphical arguments.}
 }
 
