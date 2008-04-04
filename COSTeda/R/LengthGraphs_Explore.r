@@ -105,7 +105,7 @@ setMethod("Delta", signature(object="csData"),function(object,
                                                              strategy="metier", #ou "cc"
                                                              ...){
 #strategy="metier" & techStrata="commCat" incompatibles
-if (strategy=="metier" & techStrata=="commCat") stop("techStrata=\"commCat\" and strategy=\"metier\"!!")
+if (!is.null(techStrata)) {if (strategy=="metier" & techStrata=="commCat") stop("techStrata=\"commCat\" and strategy=\"metier\"!!") }
 tab <- UE(object,species)
 tabHL <- tab$hlslhh 
 #tabHL <- tabHL[!apply(cbind(tabHL[,tempStrata],tabHL[,spaceStrata],tabHL[,techStrata]),1,function(x) any(is.na(x))),]   
@@ -302,27 +302,26 @@ if (is.null(dots$main)) dots$main <- paste("Delta plot / Species : ",paste(speci
 
 FStr <- eval(parse('',text=strat1)) ; SStr <- eval(parse('',text=strat2))
 if (!is.null(SStr))  object2 <- object[order(object[,FStr],object[,SStr]),] else object2 <- object[order(object[,FStr]),]
-object2[,FStr] <- factor(object2[,FStr]) ; if (!is.null(SStr)) {object2[,SStr] <- ff <- factor(object2[,SStr])}
 
 XX <- 1:nrow(object2) ; YY <- object2$delta
-if (!is.null(SStr)) levels(ff) <- colo <- rep(dots$p.bg,length=length(levels(ff))) else ff <- dots$p.bg[1]
+
+if (!is.null(SStr)) ff <- factor(object2[,SStr],levels=levels(object2[,SStr]),labels=rep(dots$p.bg,length=length(levels(object2[,SStr])))) else ff <- dots$p.bg[1]
 
 delimit <- tapply(object2[,FStr],list(object2[,FStr]),length)
 delimit <- delimit[!is.na(delimit)]
 indLab <- cumsum(delimit)
-if (!is.null(SStr)) {if (SStr%in%c("quarter","month","year","semester")) IndS <- order(as.numeric(levels(object2[,SStr]))) else IndS <- 1:length(colo)}
 
 amp <- max(object2$delta)-min(object2$delta)
 if (shift) decal <- rep(c(1,-1),length=length(delimit)) else decal <- 0                                                                                  
                                                                                                                     
 print(xyplot(YY~XX,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),scales=list(font=dots$font.axis),
-                key=eval(parse('',text=c("NULL",paste("list(points=list(pch=dots$pch[1],fill=as.character(colo)[IndS],cex=dots$p.cex[1],lwd=dots$lwd[1],col=dots$col[1]),",
-                "text=list(levels(object2[,SStr])[IndS]),title=SStr,cex.title=0.8,font=dots$font.lab,space=show.legend,columns=1,border=TRUE)",sep=""))[c(is.null(SStr),!is.null(SStr))])),
+                key=eval(parse('',text=c("NULL",paste("list(points=list(pch=dots$pch[1],fill=levels(ff),cex=dots$p.cex[1],lwd=dots$lwd[1],col=dots$col[1]),",
+                "text=list(levels(object2[,SStr])),title=SStr,cex.title=0.8,font=dots$font.lab,space=show.legend,columns=1,border=TRUE)",sep=""))[c(is.null(SStr),!is.null(SStr))])),
                 panel= function(x,y,...) {
                 panel.xyplot(x,y,pch=dots$pch[1],fill=as.character(ff),cex=dots$p.cex[1],lwd=dots$lwd[1],col=dots$col[1])
                 panel.abline(v=indLab[-length(indLab)]+0.5,lwd=dots$l.lwd[1],lty=dots$lty[1],col=dots$l.col[1])
                 panel.abline(h=0,lwd=dots$l.lwd[1],lty=dots$lty[1],col=dots$l.col[1])
-                panel.text(0.5+indLab-delimit/2,min(object2$delta)+amp*0.03+amp*0.04*decal,names(indLab),col="black",font=4)}        
+                panel.text(0.5+indLab-delimit/2,min(object2$delta)+amp*0.03+amp*0.04*decal,names(indLab),col="black",font=4,cex=dots$cex.sub[1])}        
 ))
 
  
