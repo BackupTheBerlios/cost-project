@@ -38,21 +38,21 @@ setGeneric("createSUid", function(object, ...){
 
 setMethod("createSUid", "csDataVal", function(object, ...){
 
-	tr <- tr(sole.cs)
+	tr <- tr(object)
 	tr$PSUid <- 1:nrow(tr)
 	tr <- tr[,c(ncol(tr),1:(ncol(tr)-1))]
-	hh <- hh(sole.cs)
+	hh <- hh(object)
 	hh$SSUid <- 1:nrow(hh)
 	hh <- merge(hh, tr[,1:7], sort=FALSE)
 	hh <- hh[,c(ncol(hh), ncol(hh)-1,1:(ncol(hh)-2))]
-	sl <- sl(sole.cs)
+	sl <- sl(object)
 	sl$TSUid <- 1:nrow(sl)
 	sl <- merge(sl, hh[,1:9], sort=FALSE)
 	sl <- sl[,c(ncol(sl)-1, ncol(sl), ncol(sl)-2,1:(ncol(sl)-3))]
-	hl <- hl(sole.cs)
+	hl <- hl(object)
 	hl <- merge(hl, sl[,1:16], sort=FALSE)
 	hl <- hl[,c((ncol(sl)-2):ncol(sl), 1:(ncol(sl)-3))]
-	ca <- ca(sole.cs)
+	ca <- ca(object)
 	ca <- merge(ca, tr[,1:7])
 	ca <- merge(ca, hh[,1:9], sort=FALSE, all.x=TRUE)
 	ca2u <- ca$SSUid
