@@ -35,7 +35,7 @@ tab$lenCls <- factor(tab$lenCls,levels=seq(min(tab$lenCls),max(tab$lenCls),by=le
 if (selection){
 
 print(xyplot(indWt~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
-      ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],col=dots$col[1],cex=dots$p.cex[1],fill=dots$bg[1],lwd=dots$p.lwd[1],
+      ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],col=dots$col[1],cex=dots$p.cex[1],fill=dots$p.bg[1],lwd=dots$p.lwd[1],
       scales=list(font=dots$font.axis,x=list(rot=dots$rot[1])),drop.unused.levels=FALSE))
 trellis.focus("panel",1,1)
 Reponse <- panel.identify()
@@ -86,7 +86,7 @@ tab$lenCls <- factor(tab$lenCls,levels=seq(min(tab$lenCls),max(tab$lenCls),by=le
 if (selection){
 
 print(xyplot(matStage~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
-      ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],col=dots$col[1],cex=dots$p.cex[1],fill=dots$bg[1],lwd=dots$p.lwd[1],
+      ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],col=dots$col[1],cex=dots$p.cex[1],fill=dots$p.bg[1],lwd=dots$p.lwd[1],
       scales=list(font=dots$font.axis,x=list(rot=dots$rot[1])),drop.unused.levels=FALSE))
 trellis.focus("panel",1,1)
 Reponse <- panel.identify()
@@ -137,7 +137,7 @@ tab$lenCls <- factor(tab$lenCls,levels=seq(min(tab$lenCls),max(tab$lenCls),by=le
 if (selection){
 
 print(xyplot(sex~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
-      ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],col=dots$col[1],cex=dots$p.cex[1],fill=dots$bg[1],lwd=dots$p.lwd[1],
+      ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],col=dots$col[1],cex=dots$p.cex[1],fill=dots$p.bg[1],lwd=dots$p.lwd[1],
       scales=list(font=dots$font.axis,x=list(rot=dots$rot[1])),drop.unused.levels=FALSE))
 trellis.focus("panel",1,1)
 Reponse <- panel.identify()
