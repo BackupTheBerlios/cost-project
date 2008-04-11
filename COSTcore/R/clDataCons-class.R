@@ -63,41 +63,84 @@ setClass("clDataCons",
 #====================================================================
 # Class constructor
 #====================================================================
-setGeneric("clDataCons", function(object, ...){
+setGeneric("clDataCons", function(object,objStrat,...){
 	standardGeneric("clDataCons")
 	}
 )
 
-setMethod("clDataCons", signature("clDataVal"), function(object, ...){
+#setMethod("clDataCons", signature("clDataVal"), function(object, ...){
+#
+#	cl <- cl(object)
+#
+#	#------------------------------------------------------------------------------
+#	# time
+#	#------------------------------------------------------------------------------
+#	cl$time <- paste(cl$year, paste("Q", cl$quarter, sep=""), sep=".")
+#
+#	#------------------------------------------------------------------------------
+#	# tech
+#	#------------------------------------------------------------------------------
+#	cl$technical <- apply(cl[,c("foCatNat","foCatEu5","foCatEu6")], 1,paste, collapse=".") 
+#	
+#	#------------------------------------------------------------------------------
+#	# space
+#	#------------------------------------------------------------------------------
+#	cl$space <- apply(cl[,c("area","rect")], 1,paste, collapse=".") 
+#	
+#	#------------------------------------------------------------------------------
+#	# create csDataCons
+#	#------------------------------------------------------------------------------
+#	clc <- clDataCons()
+#	cl <- cl[,match(names(cl(clc)),names(cl))]
+#	new("clDataCons", cl=cl)
+#})
+#
+#setMethod("clDataCons", signature("missing"), function(desc="Unknown stock", ...){
+#	new("clDataCons", desc=desc)
+#})
 
-	cl <- cl(object)
 
-	#------------------------------------------------------------------------------
-	# time
-	#------------------------------------------------------------------------------
-	cl$time <- paste(cl$year, paste("Q", cl$quarter, sep=""), sep=".")
+setMethod("clDataCons", signature("clDataVal","StratIni"), function(object,objStrat,desc="Unknown stock",
+                                                         TPrec=NULL,SPrec=NULL,TCrec=NULL,...){  #ex: TPrec=list(from=c("1","2","3","4"),to=c("5","5","6","6"))
 
-	#------------------------------------------------------------------------------
-	# tech
-	#------------------------------------------------------------------------------
-	cl$technical <- apply(cl[,c("foCatNat","foCatEu5","foCatEu6")], 1,paste, collapse=".") 
+tempStrata <- objStrat@tempStrata ; spaceStrata <- objStrat@spaceStrata ; techStrata <- objStrat@techStrata
+CL <- object@cl 
+CL$semester <- ceiling(CL$quarter/2)      
+if (is.null(tempStrata)) {CL$time <- NA ; TPrec <- NULL} else CL$time <- CL[,tempStrata]     
+if (is.null(spaceStrata)) {CL$space <- NA ; SPrec <- NULL} else CL$space <- CL[,spaceStrata]
+if (is.null(techStrata)) {CL$technical <- NA ; TCrec <- NULL} else CL$technical <- CL[,techStrata]
+
+#on recode si besoin est
+if (!is.null(TPrec)) {Typ <- class(CL$time) ; CL$time <- factor(CL$time) ; Lev <- levels(CL$time)[!levels(CL$time)%in%TPrec$from]
+                      CL$time <- factor(CL$time,levels=c(Lev,TPrec$from),labels=c(Lev,TPrec$to)) ; eval(parse('',text=paste("CL$time <- as.",Typ,"(as.character(CL$time))",sep="")))}
+if (!is.null(SPrec)) {Typ <- class(CL$space) ; CL$space <- factor(CL$space) ; Lev <- levels(CL$space)[!levels(CL$space)%in%SPrec$from]
+                      CL$space <- factor(CL$space,levels=c(Lev,SPrec$from),labels=c(Lev,SPrec$to)) ; eval(parse('',text=paste("CL$space <- as.",Typ,"(as.character(CL$space))",sep="")))}
+if (!is.null(TCrec)) {Typ <- class(CL$technical) ; CL$technical <- factor(CL$technical) ; Lev <- levels(CL$technical)[!levels(CL$technical)%in%TCrec$from]
+                      CL$technical <- factor(CL$technical,levels=c(Lev,TCrec$from),labels=c(Lev,TCrec$to)) ; eval(parse('',text=paste("CL$technical <- as.",Typ,"(as.character(CL$technical))",sep="")))}
+                        
+
+csc <- new("clDataCons")
+	cl <- CL[,match(names(csc@cl),names(CL))] ; rownames(cl) <- 1:nrow(cl)  
+	new("clDataCons", desc=desc,cl=coerceCons(cl,csc@cl))
 	
-	#------------------------------------------------------------------------------
-	# space
-	#------------------------------------------------------------------------------
-	cl$space <- apply(cl[,c("area","rect")], 1,paste, collapse=".") 
+})
 	
-	#------------------------------------------------------------------------------
-	# create csDataCons
-	#------------------------------------------------------------------------------
-	clc <- clDataCons()
-	cl <- cl[,match(names(cl(clc)),names(cl))]
-	new("clDataCons", cl=cl)
+
+setMethod("clDataCons", signature("clDataVal","missing"), function(object,desc="Unknown stock", ...){
+
+	clDataCons(object,StratIni(),desc=desc,...)
 })
 
-setMethod("clDataCons", signature("missing"), function(desc="Unknown stock", ...){
+setMethod("clDataCons", signature("missing","missing"), function(desc="Unknown stock", ...){
+
 	new("clDataCons", desc=desc)
-})
+})	
+
+
+
+
+
+
 
 #====================================================================
 # Accessor functions

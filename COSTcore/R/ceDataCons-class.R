@@ -56,44 +56,161 @@ setClass("ceDataCons",
 	validity=valcecData
 )
 
-#====================================================================
-# Class constructor
-#====================================================================
-setGeneric("ceDataCons", function(object, ...){
-	standardGeneric("ceDataCons")
+
+
+
+setGeneric("coerceCons", function(object, refObject, ...){
+	standardGeneric("coerceCons")
 	}
 )
 
-setMethod("ceDataCons", signature("ceDataVal"), function(object, ...){
+setMethod("coerceCons", signature("data.frame", "data.frame"), function(object, refObject, ...){
 
-	ce <- ce(object)
+	if(ncol(object)!=ncol(refObject)) stop("Both objects must have the same number of columns.\n")
 
-	#------------------------------------------------------------------------------
-	# time
-	#------------------------------------------------------------------------------
-	ce$time <- paste(ce$year, paste("Q", ce$quarter, sep=""), sep=".")
-
-	#------------------------------------------------------------------------------
-	# tech
-	#------------------------------------------------------------------------------
-	ce$technical <- apply(ce[,c("foCatNat","foCatEu5","foCatEu6")], 1,paste, collapse=".") 
-	
-	#------------------------------------------------------------------------------
-	# space
-	#------------------------------------------------------------------------------
-	ce$space <- apply(ce[,c("area","rect")], 1,paste, collapse=".") 
-	
-	#------------------------------------------------------------------------------
-	# create csDataCons
-	#------------------------------------------------------------------------------
-	cec <- ceDataCons()
-	ce <- ce[,match(names(ce(cec)),names(ce))]
-	new("ceDataCons", ce=ce)
+	n <- ncol(object)
+	for(i in 1:n){
+		cls <- class(refObject[,i])
+		v <- as.character(object[,i])
+		eval(parse('',text=paste("v <- as.",cls,"(v)",sep="")))
+		object[,i] <- v
+	}
+	object	
 })
 
-setMethod("ceDataCons", signature("missing"), function(desc="Unknown stock", ...){
+
+
+#############
+# "Stratif" #   =stratification definition for Cons objects creation
+#====================================================================
+# Class definition
+#====================================================================
+
+setClassUnion("NLchar",c("character","NULL"))
+setClass("StratIni",representation(tempStrata="NLchar",spaceStrata="NLchar",techStrata="NLchar",sorting="NLchar"),
+	                 prototype(tempStrata=NULL,spaceStrata=NULL,techStrata=NULL,sorting=NULL))		
+
+#====================================================================
+# Class constructor
+#====================================================================
+
+StratIni <- function(tempStrata=NULL,spaceStrata=NULL,techStrata=NULL,sorting=NULL) {                #sorting="catchCat" ou "commCat" ou "subSampcat"
+new("StratIni",tempStrata=tempStrata,spaceStrata=spaceStrata,techStrata=techStrata,sorting=sorting)
+}
+
+
+
+
+
+
+#Aggregation tool
+SpeedAgreg2 <- function(X,BY,FUN,...){
+FactCar <- sapply(BY,as.character)
+val <- apply(FactCar,1,function(x) paste(x,collapse="::"))
+valAg <- aggregate(X,list(val=val),FUN,...)
+tab <- as.data.frame(matrix(unlist(strsplit(as.character(valAg$val),"::")),ncol=length(BY),byrow=TRUE))
+tab.ag <- data.frame(tab,valAg[,-1])
+namBY <- names(BY) ; namX <- names(X)
+if (is.null(namBY)) namBY <- rep("",length(BY)) ; if (is.null(namX)) namX <- rep("",length(X))
+namBY[namBY==""] <- paste("c.",1:sum(namBY==""),sep="") ; namX[namX==""] <- paste("v.",1:sum(namX==""),sep="")
+names(tab.ag) <- c(namBY,namX)
+return(tab.ag)}
+
+
+
+
+
+
+
+
+
+##====================================================================
+## Class constructor
+##====================================================================
+#setGeneric("ceDataCons", function(object, ...){
+#	standardGeneric("ceDataCons")
+#	}
+#)
+#
+#setMethod("ceDataCons", signature("ceDataVal"), function(object, ...){
+#
+#	ce <- ce(object)
+#
+#	#------------------------------------------------------------------------------
+#	# time
+#	#------------------------------------------------------------------------------
+#	ce$time <- paste(ce$year, paste("Q", ce$quarter, sep=""), sep=".")
+#
+#	#------------------------------------------------------------------------------
+#	# tech
+#	#------------------------------------------------------------------------------
+#	ce$technical <- apply(ce[,c("foCatNat","foCatEu5","foCatEu6")], 1,paste, collapse=".") 
+#	
+#	#------------------------------------------------------------------------------
+#	# space
+#	#------------------------------------------------------------------------------
+#	ce$space <- apply(ce[,c("area","rect")], 1,paste, collapse=".") 
+#	
+#	#------------------------------------------------------------------------------
+#	# create csDataCons
+#	#------------------------------------------------------------------------------
+#	cec <- ceDataCons()
+#	ce <- ce[,match(names(ce(cec)),names(ce))]
+#	new("ceDataCons", ce=ce)
+#})
+#
+#setMethod("ceDataCons", signature("missing"), function(desc="Unknown stock", ...){
+#	new("ceDataCons", desc=desc)
+#})
+
+
+setGeneric("ceDataCons", function(object,objStrat,...){
+	standardGeneric("ceDataCons")
+	}
+)
+		
+
+setMethod("ceDataCons", signature("ceDataVal","StratIni"), function(object,objStrat,desc="Unknown stock",
+                                                         TPrec=NULL,SPrec=NULL,TCrec=NULL,...){  #ex: TPrec=list(from=c("1","2","3","4"),to=c("5","5","6","6"))
+
+tempStrata <- objStrat@tempStrata ; spaceStrata <- objStrat@spaceStrata ; techStrata <- objStrat@techStrata
+if (techStrata=="commCat") stop("effort object do not match with market category sampling strategy")
+CE <- object@ce 
+CE$semester <- ceiling(CE$quarter/2)      
+if (is.null(tempStrata)) {CE$time <- NA ; TPrec <- NULL} else CE$time <- CE[,tempStrata]     
+if (is.null(spaceStrata)) {CE$space <- NA ; SPrec <- NULL} else CE$space <- CE[,spaceStrata]
+if (is.null(techStrata)) {CE$technical <- NA ; TCrec <- NULL} else CE$technical <- CE[,techStrata]
+
+#on recode si besoin est
+if (!is.null(TPrec)) {Typ <- class(CE$time) ; CE$time <- factor(CE$time) ; Lev <- levels(CE$time)[!levels(CE$time)%in%TPrec$from]
+                      CE$time <- factor(CE$time,levels=c(Lev,TPrec$from),labels=c(Lev,TPrec$to)) ; eval(parse('',text=paste("CE$time <- as.",Typ,"(as.character(CE$time))",sep="")))}
+if (!is.null(SPrec)) {Typ <- class(CE$space) ; CE$space <- factor(CE$space) ; Lev <- levels(CE$space)[!levels(CE$space)%in%SPrec$from]
+                      CE$space <- factor(CE$space,levels=c(Lev,SPrec$from),labels=c(Lev,SPrec$to)) ; eval(parse('',text=paste("CE$space <- as.",Typ,"(as.character(CE$space))",sep="")))}
+if (!is.null(TCrec)) {Typ <- class(CE$technical) ; CE$technical <- factor(CE$technical) ; Lev <- levels(CE$technical)[!levels(CE$technical)%in%TCrec$from]
+                      CE$technical <- factor(CE$technical,levels=c(Lev,TCrec$from),labels=c(Lev,TCrec$to)) ; eval(parse('',text=paste("CE$technical <- as.",Typ,"(as.character(CE$technical))",sep="")))}
+                        
+
+csc <- new("ceDataCons")
+	ce <- CE[,match(names(csc@ce),names(CE))] ; rownames(ce) <- 1:nrow(ce)  
+new("ceDataCons",desc=desc,ce=coerceCons(ce,csc@ce))
+	
+})
+
+
+
+setMethod("ceDataCons", signature("ceDataVal","missing"), function(object,desc="Unknown stock", ...){
+
+	ceDataCons(object,StratIni(),desc=desc,...)
+})
+
+setMethod("ceDataCons", signature("missing","missing"), function(desc="Unknown stock", ...){
+
 	new("ceDataCons", desc=desc)
-})
+})	
+
+
+
+
 
 #====================================================================
 # Accessor functions
