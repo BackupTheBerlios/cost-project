@@ -382,7 +382,7 @@ tr <- tr2
 if (cc) SL$technical <- SL$commCat
 sl <- merge(SL,HH[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","time","space","technical","PSUid","SSUid")],sort=FALSE,all.x=TRUE)
 if (is.null(sorting)) {fields <- NULL
-} else{
+} else {
 sorti <- c(2,4,5) ; names(sorti) <- c("catchCat","commCat","subSampcat") ; fields <- c("catchCat","landCat","commCatScl","commCat","subSampcat")[1:sorti[sorting]]}
 tsuid <- apply(sl[,c("PSUid","SSUid",fields,"proj","trpCode","time","space","technical")],1,paste,collapse="::")
 pss <- apply(sl[,c("PSUid","SSUid")],1,paste,collapse="::")
@@ -397,8 +397,9 @@ Sl <- SpeedAgreg2(list(wt=sl$wt,subSampWt=sl$subSampWt),list(sampType=sl$sampTyp
 SLl <- Sl[order(as.numeric(as.character(Sl$PSUid)),as.numeric(as.character(Sl$SSUid)),as.numeric(as.character(Sl$TSUid))),]
 
 #HL table
+if (cc) HL$technical <- HL$commCat
 if (is.null(sorting)) HL$sort <- NA else HL$sort <- apply(HL[,fields],1,paste,collapse="-")
-hl <- merge(HL,SLl[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","spp","sort","time","space","technical","PSUid","SSUid","TSUid")],sort=FALSE,all.x=TRUE)
+hl2 <- merge(HL,SLl[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","spp","sort","time","space","technical","PSUid","SSUid","TSUid")],sort=FALSE,all.x=TRUE)
 Hl <- SpeedAgreg2(list(lenNum=hl$lenNum),list(sampType=hl$sampType,landCtry=hl$landCtry,vslFlgCtry=hl$vslFlgCtry,year=hl$year,proj=hl$proj,trpCode=hl$trpCode,
                                                              staNum=hl$staNum,spp=hl$spp,sex=hl$sex,lenCls=hl$lenCls,time=hl$time,space=hl$space,technical=hl$technical,sort=hl$sort,
                                                              PSUid=hl$PSUid,SSUid=hl$SSUid,TSUid=hl$TSUid),sum,na.rm=TRUE)
