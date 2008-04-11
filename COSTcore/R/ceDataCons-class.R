@@ -181,7 +181,7 @@ if (is.null(tempStrata)) {CE$time <- NA ; TPrec <- NULL} else CE$time <- CE[,tem
 if (is.null(spaceStrata)) {CE$space <- NA ; SPrec <- NULL} else CE$space <- CE[,spaceStrata]
 if (is.null(techStrata)) {CE$technical <- NA ; TCrec <- NULL} else CE$technical <- CE[,techStrata]
 
-#on recode si besoin est
+#recoding
 if (!is.null(TPrec)) {Typ <- class(CE$time) ; CE$time <- factor(CE$time) ; Lev <- levels(CE$time)[!levels(CE$time)%in%TPrec$from]
                       CE$time <- factor(CE$time,levels=c(Lev,TPrec$from),labels=c(Lev,TPrec$to)) ; eval(parse('',text=paste("CE$time <- as.",Typ,"(as.character(CE$time))",sep="")))}
 if (!is.null(SPrec)) {Typ <- class(CE$space) ; CE$space <- factor(CE$space) ; Lev <- levels(CE$space)[!levels(CE$space)%in%SPrec$from]

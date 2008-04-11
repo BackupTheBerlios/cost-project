@@ -110,7 +110,7 @@ if (is.null(tempStrata)) {CL$time <- NA ; TPrec <- NULL} else CL$time <- CL[,tem
 if (is.null(spaceStrata)) {CL$space <- NA ; SPrec <- NULL} else CL$space <- CL[,spaceStrata]
 if (is.null(techStrata)) {CL$technical <- NA ; TCrec <- NULL} else CL$technical <- CL[,techStrata]
 
-#on recode si besoin est
+#recoding
 if (!is.null(TPrec)) {Typ <- class(CL$time) ; CL$time <- factor(CL$time) ; Lev <- levels(CL$time)[!levels(CL$time)%in%TPrec$from]
                       CL$time <- factor(CL$time,levels=c(Lev,TPrec$from),labels=c(Lev,TPrec$to)) ; eval(parse('',text=paste("CL$time <- as.",Typ,"(as.character(CL$time))",sep="")))}
 if (!is.null(SPrec)) {Typ <- class(CL$space) ; CL$space <- factor(CL$space) ; Lev <- levels(CL$space)[!levels(CL$space)%in%SPrec$from]
