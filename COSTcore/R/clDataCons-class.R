@@ -100,36 +100,77 @@ setGeneric("clDataCons", function(object,objStrat,...){
 #})
 
 
-setMethod("clDataCons", signature("clDataVal","StratIni"), function(object,objStrat,desc="Unknown stock",
-                                                         TPrec=NULL,SPrec=NULL,TCrec=NULL,...){  #ex: TPrec=list(from=c("1","2","3","4"),to=c("5","5","6","6"))
+setMethod("clDataCons", signature("clDataVal","strIni"), function(object,objStrat,desc="Unknown stock",
+                                                         tpRec=NULL,spRec=NULL,tcRec=NULL,...){  #ex: tpRec=list(from=c("1","2","3","4"),to=c("5","5","6","6"))
 
-tempStrata <- objStrat@tempStrata ; spaceStrata <- objStrat@spaceStrata ; techStrata <- objStrat@techStrata
+tempStrata <- objStrat@tempStrata
+spaceStrata <- objStrat@spaceStrata 
+techStrata <- objStrat@techStrata
+
 CL <- object@cl 
 CL$semester <- ceiling(CL$quarter/2)      
-if (is.null(tempStrata)) {CL$time <- NA ; TPrec <- NULL} else CL$time <- CL[,tempStrata]     
-if (is.null(spaceStrata)) {CL$space <- NA ; SPrec <- NULL} else CL$space <- CL[,spaceStrata]
-if (is.null(techStrata)) {CL$technical <- NA ; TCrec <- NULL} else CL$technical <- CL[,techStrata]
+
+if (is.null(tempStrata)) {
+  CL$time <- NA
+  tpRec <- NULL} 
+else 
+  CL$time <- CL[,tempStrata]    
+   
+if (is.null(spaceStrata)) {
+  CL$space <- NA 
+  spRec <- NULL} 
+else 
+  CL$space <- CL[,spaceStrata]
+
+if (is.null(techStrata)) {
+  CL$technical <- NA 
+  tcRec <- NULL}
+else 
+  CL$technical <- CL[,techStrata]
+
 
 #recoding
-if (!is.null(TPrec)) {Typ <- class(CL$time) ; CL$time <- factor(CL$time) ; Lev <- levels(CL$time)[!levels(CL$time)%in%TPrec$from]
-                      CL$time <- factor(CL$time,levels=c(Lev,TPrec$from),labels=c(Lev,TPrec$to)) ; eval(parse('',text=paste("CL$time <- as.",Typ,"(as.character(CL$time))",sep="")))}
-if (!is.null(SPrec)) {Typ <- class(CL$space) ; CL$space <- factor(CL$space) ; Lev <- levels(CL$space)[!levels(CL$space)%in%SPrec$from]
-                      CL$space <- factor(CL$space,levels=c(Lev,SPrec$from),labels=c(Lev,SPrec$to)) ; eval(parse('',text=paste("CL$space <- as.",Typ,"(as.character(CL$space))",sep="")))}
-if (!is.null(TCrec)) {Typ <- class(CL$technical) ; CL$technical <- factor(CL$technical) ; Lev <- levels(CL$technical)[!levels(CL$technical)%in%TCrec$from]
-                      CL$technical <- factor(CL$technical,levels=c(Lev,TCrec$from),labels=c(Lev,TCrec$to)) ; eval(parse('',text=paste("CL$technical <- as.",Typ,"(as.character(CL$technical))",sep="")))}
+if (!is.null(tpRec)) {
+  Typ <- class(CL$time)
+  CL$time <- factor(CL$time)
+  Lev <- levels(CL$time)[!levels(CL$time)%in%tpRec$from]
+  CL$time <- factor(CL$time,levels=c(Lev,tpRec$from),labels=c(Lev,tpRec$to))
+  eval(parse('',text=paste("CL$time <- as.",Typ,"(as.character(CL$time))",sep="")))}
+  
+if (!is.null(spRec)) {
+  Typ <- class(CL$space)
+  CL$space <- factor(CL$space)
+  Lev <- levels(CL$space)[!levels(CL$space)%in%spRec$from]
+  CL$space <- factor(CL$space,levels=c(Lev,spRec$from),labels=c(Lev,spRec$to))
+  eval(parse('',text=paste("CL$space <- as.",Typ,"(as.character(CL$space))",sep="")))}
+  
+if (!is.null(tcRec)) {
+  Typ <- class(CL$technical)
+  CL$technical <- factor(CL$technical)
+  Lev <- levels(CL$technical)[!levels(CL$technical)%in%tcRec$from]
+  CL$technical <- factor(CL$technical,levels=c(Lev,tcRec$from),labels=c(Lev,tcRec$to))
+  eval(parse('',text=paste("CL$technical <- as.",Typ,"(as.character(CL$technical))",sep="")))}
                         
 
 csc <- new("clDataCons")
-	cl <- CL[,match(names(csc@cl),names(CL))] ; rownames(cl) <- 1:nrow(cl)  
-	new("clDataCons", desc=desc,cl=coerceCons(cl,csc@cl))
-	
+cl <- CL[,match(names(csc@cl),names(CL))]
+rownames(cl) <- 1:nrow(cl)  
+new("clDataCons", desc=desc,cl=coerceCons(cl,csc@cl))
 })
 	
+
+
+
+
 
 setMethod("clDataCons", signature("clDataVal","missing"), function(object,desc="Unknown stock", ...){
 
-	clDataCons(object,StratIni(),desc=desc,...)
+	clDataCons(object,strIni(),desc=desc,...)
 })
+
+
+
+
 
 setMethod("clDataCons", signature("missing","missing"), function(desc="Unknown stock", ...){
 

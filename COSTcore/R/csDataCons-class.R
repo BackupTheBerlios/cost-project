@@ -321,42 +321,83 @@ setClass("csDataCons",
 #	new("csDataCons", desc=desc)
 #})
 #
+
 setGeneric("csDataCons", function(object,objStrat,...){
 	standardGeneric("csDataCons")
-	}
-)
+})
 
 
-setMethod("csDataCons", signature("csDataVal","StratIni"), function(object,objStrat,desc="Unknown stock",  
-                                                         TPrec=NULL,SPrec=NULL,TCrec=NULL,...){  #ex: TPrec=list(from=c("1","2","3","4"),to=c("5","5","6","6"))
-tempStrata <- objStrat@tempStrata ; spaceStrata <- objStrat@spaceStrata ; techStrata <- objStrat@techStrata ; sorting <- objStrat@sorting
-#
-TR <- object@tr ; HH <- object@hh ; SL <- object@sl ; HL <- object@hl ; CA <- object@ca
+setMethod("csDataCons", signature("csDataVal","strIni"), function(object,objStrat,desc="Unknown stock",  
+                                                         tpRec=NULL,spRec=NULL,tcRec=NULL,...){  #ex: tpRec=list(from=c("1","2","3","4"),to=c("5","5","6","6"))
+
+tempStrata <- objStrat@tempStrata 
+spaceStrata <- objStrat@spaceStrata 
+techStrata <- objStrat@techStrata 
+sorting <- objStrat@sorting
+
+
+TR <- object@tr 
+HH <- object@hh 
+SL <- object@sl
+HL <- object@hl 
+CA <- object@ca
+
 #if techStrata="commCat" --> indicator cc
 cc <- FALSE
-if (!is.null(techStrata)) {if (techStrata=="commCat") cc <- TRUE}
+if (!is.null(techStrata)) {
+  if (techStrata=="commCat") cc <- TRUE}
 
 if (cc) {
-HH$ind <- 1:nrow(HH)
-HH <- merge(HH,unique(SL[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","commCat")]),sort=FALSE,all=TRUE)
+  HH$ind <- 1:nrow(HH)
+  HH <- merge(HH,unique(SL[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","commCat")]),sort=FALSE,all=TRUE)
 #order
-HH <- HH[order(HH$ind),]
-}
+  HH <- HH[order(HH$ind),]}
+
 
 HH$month <- sapply(HH$date,function(x) as.numeric(strsplit(x,"-")[[1]][2]))
 HH$quarter <- ceiling(HH$month/3)
 HH$semester <- ceiling(HH$month/6)      
-if (is.null(tempStrata)) {HH$time <- NA ; TPrec <- NULL} else HH$time <- HH[,tempStrata]     
-if (is.null(spaceStrata)) {HH$space <- NA ; SPrec <- NULL} else HH$space <- HH[,spaceStrata]
-if (is.null(techStrata)) {HH$technical <- NA ; TCrec <- NULL} else HH$technical <- HH[,techStrata]
+
+if (is.null(tempStrata)) {
+  HH$time <- NA 
+  tpRec <- NULL} 
+else 
+  HH$time <- HH[,tempStrata]  
+     
+if (is.null(spaceStrata)) {
+  HH$space <- NA 
+  spRec <- NULL} 
+else 
+  HH$space <- HH[,spaceStrata]
+  
+if (is.null(techStrata)) {
+  HH$technical <- NA 
+  tcRec <- NULL} 
+else 
+  HH$technical <- HH[,techStrata]
+
 
 #recoding process
-if (!is.null(TPrec)) {Typ <- class(HH$time) ; HH$time <- factor(HH$time) ; Lev <- levels(HH$time)[!levels(HH$time)%in%TPrec$from]
-                      HH$time <- factor(HH$time,levels=c(Lev,TPrec$from),labels=c(Lev,TPrec$to)) ; eval(parse('',text=paste("HH$time <- as.",Typ,"(as.character(HH$time))",sep="")))}
-if (!is.null(SPrec)) {Typ <- class(HH$space) ; HH$space <- factor(HH$space) ; Lev <- levels(HH$space)[!levels(HH$space)%in%SPrec$from]
-                      HH$space <- factor(HH$space,levels=c(Lev,SPrec$from),labels=c(Lev,SPrec$to)) ; eval(parse('',text=paste("HH$space <- as.",Typ,"(as.character(HH$space))",sep="")))}
-if (!is.null(TCrec)) {Typ <- class(HH$technical) ; HH$technical <- factor(HH$technical) ; Lev <- levels(HH$technical)[!levels(HH$technical)%in%TCrec$from]
-                      HH$technical <- factor(HH$technical,levels=c(Lev,TCrec$from),labels=c(Lev,TCrec$to)) ; eval(parse('',text=paste("HH$technical <- as.",Typ,"(as.character(HH$technical))",sep="")))}
+if (!is.null(tpRec)) {
+  Typ <- class(HH$time) 
+  HH$time <- factor(HH$time) 
+  Lev <- levels(HH$time)[!levels(HH$time)%in%tpRec$from]
+  HH$time <- factor(HH$time,levels=c(Lev,tpRec$from),labels=c(Lev,tpRec$to))
+  eval(parse('',text=paste("HH$time <- as.",Typ,"(as.character(HH$time))",sep="")))}
+  
+if (!is.null(spRec)) {
+  Typ <- class(HH$space) 
+  HH$space <- factor(HH$space) 
+  Lev <- levels(HH$space)[!levels(HH$space)%in%spRec$from]
+  HH$space <- factor(HH$space,levels=c(Lev,spRec$from),labels=c(Lev,spRec$to)) 
+  eval(parse('',text=paste("HH$space <- as.",Typ,"(as.character(HH$space))",sep="")))}
+  
+if (!is.null(tcRec)) {
+  Typ <- class(HH$technical) 
+  HH$technical <- factor(HH$technical)
+  Lev <- levels(HH$technical)[!levels(HH$technical)%in%tcRec$from]
+  HH$technical <- factor(HH$technical,levels=c(Lev,tcRec$from),labels=c(Lev,tcRec$to))
+  eval(parse('',text=paste("HH$technical <- as.",Typ,"(as.character(HH$technical))",sep="")))}
                         
 
 #PSUid is identified by a trip, a time, space and technical strata
@@ -365,72 +406,122 @@ HH$PSUid <- factor(psuid,levels=unique(psuid),labels=1:length(unique(psuid)))
 #SSUid
 HH$SSUid <- as.numeric(unlist(tapply(HH$PSUid,list(HH$PSUid),function(x) 1:length(x))))
 
+
+
+
 #TR table
 tr <- merge(TR,unique(HH[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","PSUid","time","space","technical")]),sort=FALSE,all=TRUE)
 #tr$foNum & tr$daysAtSea calculation
 #only information corresponding to aggLev="H" in HH is concerned 
 HHh <- HH[HH$aggLev=="H",]
 #object to be inserted in tr...
-tab <- SpeedAgreg2(list(nOP=HHh$staNum,nDay=HHh$date),list(PSUid=HHh$PSUid),function(x) length(unique(x))) 
+tab <- spdAgreg(list(nOP=HHh$staNum,nDay=HHh$date),list(PSUid=HHh$PSUid),function(x) length(unique(x))) 
 tab <- tab[order(as.numeric(as.character(tab$PSUid))),]
 #insert & substitute
 tr2 <- merge(tr,tab,sort=FALSE,all.x=TRUE)
-tr2$foNum[!is.na(tr2$nOP)] <- tr2$nOP[!is.na(tr2$nOP)] ; tr2$daysAtSea[!is.na(tr2$nDay)] <- tr2$nDay[!is.na(tr2$nDay)]
+tr2$foNum[!is.na(tr2$nOP)] <- tr2$nOP[!is.na(tr2$nOP)]
+tr2$daysAtSea[!is.na(tr2$nDay)] <- tr2$nDay[!is.na(tr2$nDay)]
 tr <- tr2
+
+
+
 
 #SL table
 if (cc) SL$technical <- SL$commCat
 sl <- merge(SL,HH[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","time","space","technical","PSUid","SSUid")],sort=FALSE,all.x=TRUE)
-if (is.null(sorting)) {fields <- NULL
+
+if (is.null(sorting)) {
+  fields <- NULL
 } else {
-sorti <- c(2,4,5) ; names(sorti) <- c("catchCat","commCat","subSampcat") ; fields <- c("catchCat","landCat","commCatScl","commCat","subSampcat")[1:sorti[sorting]]}
+  sorti <- c(2,4,5)
+  names(sorti) <- c("catchCat","commCat","subSampcat")
+  fields <- c("catchCat","landCat","commCatScl","commCat","subSampcat")[1:sorti[sorting]]}
+  
 tsuid <- apply(sl[,c("PSUid","SSUid",fields,"proj","trpCode","time","space","technical")],1,paste,collapse="::")
 pss <- apply(sl[,c("PSUid","SSUid")],1,paste,collapse="::")
 TS <- tapply(tsuid,list(pss),function(x) as.character(factor(x,levels=unique(x),labels=1:length(unique(x))))) 
 sl$TSUid <- factor(unlist(TS[unique(pss)]))
 #sampled and measured weights are aggregated
-if (is.null(sorting)) sl$sort <- NA else sl$sort <- apply(sl[,fields],1,paste,collapse="-")
-Sl <- SpeedAgreg2(list(wt=sl$wt,subSampWt=sl$subSampWt),list(sampType=sl$sampType,landCtry=sl$landCtry,vslFlgCtry=sl$vslFlgCtry,year=sl$year,proj=sl$proj,trpCode=sl$trpCode,
+if (is.null(sorting)) 
+  sl$sort <- NA 
+else 
+  sl$sort <- apply(sl[,fields],1,paste,collapse="-")
+Sl <- spdAgreg(list(wt=sl$wt,subSampWt=sl$subSampWt),list(sampType=sl$sampType,landCtry=sl$landCtry,vslFlgCtry=sl$vslFlgCtry,year=sl$year,proj=sl$proj,trpCode=sl$trpCode,
                                                              staNum=sl$staNum,spp=sl$spp,lenCode=sl$lenCode,time=sl$time,space=sl$space,technical=sl$technical,sort=sl$sort,PSUid=sl$PSUid,
                                                              SSUid=sl$SSUid,TSUid=sl$TSUid),sum,na.rm=TRUE)
 #order
 SLl <- Sl[order(as.numeric(as.character(Sl$PSUid)),as.numeric(as.character(Sl$SSUid)),as.numeric(as.character(Sl$TSUid))),]
 
+
+
+
 #HL table
 if (cc) HL$technical <- HL$commCat  
-if (is.null(sorting)) HL$sort <- NA else HL$sort <- apply(HL[,fields],1,paste,collapse="-")
+if (is.null(sorting)) 
+  HL$sort <- NA 
+else 
+  HL$sort <- apply(HL[,fields],1,paste,collapse="-")
 hl <- merge(HL,SLl[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","spp","sort","time","space","technical","PSUid","SSUid","TSUid")],sort=FALSE,all.x=TRUE)
-Hl <- SpeedAgreg2(list(lenNum=hl$lenNum),list(sampType=hl$sampType,landCtry=hl$landCtry,vslFlgCtry=hl$vslFlgCtry,year=hl$year,proj=hl$proj,trpCode=hl$trpCode,
+Hl <- spdAgreg(list(lenNum=hl$lenNum),list(sampType=hl$sampType,landCtry=hl$landCtry,vslFlgCtry=hl$vslFlgCtry,year=hl$year,proj=hl$proj,trpCode=hl$trpCode,
                                                              staNum=hl$staNum,spp=hl$spp,sex=hl$sex,lenCls=hl$lenCls,time=hl$time,space=hl$space,technical=hl$technical,sort=hl$sort,
                                                              PSUid=hl$PSUid,SSUid=hl$SSUid,TSUid=hl$TSUid),sum,na.rm=TRUE)
 #order
 HLl <- Hl[order(as.numeric(as.character(Hl$PSUid)),as.numeric(as.character(Hl$SSUid)),as.numeric(as.character(Hl$TSUid))),]
 
+
+
+
 #CA table
-  #linked to HH
+  #part linked to HH
 if (cc) CA$technical <- CA$commCat
 ca <- merge(CA,HH[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","time","space","technical","PSUid","SSUid")],sort=FALSE,all.x=TRUE)
-  #not linked to HH
-ca2 <- ca[is.na(ca$PSUid),] ; ca <- ca[!is.na(ca$PSUid),]
+  #part not linked to HH
+ca2 <- ca[is.na(ca$PSUid),]
+ca <- ca[!is.na(ca$PSUid),]
 #strata fields must be created
 ca2$semester <- ceiling(ca2$quarter/2)
-if (is.null(tempStrata)) ca2$time <- NA else ca2$time <- ca2[,tempStrata]
-if (is.null(spaceStrata)) ca2$space <- NA else ca2$space <- ca2[,spaceStrata]
-if (is.null(techStrata)) ca2$technical <- NA else {if (!techStrata%in%names(ca2)) ca2$technical <- NA else ca2$technical <- ca2[,techStrata]}
+
+if (is.null(tempStrata)) 
+  ca2$time <- NA 
+else 
+  ca2$time <- ca2[,tempStrata]
+  
+if (is.null(spaceStrata)) 
+  ca2$space <- NA 
+else 
+  ca2$space <- ca2[,spaceStrata]
+  
+if (is.null(techStrata)) 
+  ca2$technical <- NA 
+else {
+  if (!techStrata%in%names(ca2)) 
+    ca2$technical <- NA 
+  else 
+    ca2$technical <- ca2[,techStrata]}
+    
 deb <- max(as.numeric(as.character(HH$PSUid)),na.rm=TRUE)
 psuid2 <- apply(ca2[,c("sampType","landCtry","vslFlgCtry","proj","trpCode","time","space","technical")],1,paste,collapse="::")
 ca2$PSUid <- ca2$psuid <- factor(psuid2,levels=unique(psuid2),labels=(1:length(unique(psuid2)))+deb)
-ca2$TIME <- ca2$time ; ca2$SPACE <- ca2$space ; ca2$TECHNICAL <- ca2$technical  
+ca2$TIME <- ca2$time
+ca2$SPACE <- ca2$space
+ca2$TECHNICAL <- ca2$technical  
+
 #insert PSUid in tr
 neotr <- merge(tr,unique(ca2[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","psuid","TIME","SPACE","TECHNICAL")]),sort=FALSE,all.x=TRUE)
-neotr$PSUid <- as.character(neotr$PSUid) ; neotr$psuid <- as.character(neotr$psuid)
-neotr$PSUid[!is.na(neotr$psuid)] <- neotr$psuid[!is.na(neotr$psuid)] ; neotr$time[!is.na(neotr$TIME)] <- neotr$TIME[!is.na(neotr$TIME)]
-neotr$space[!is.na(neotr$SPACE)] <- neotr$SPACE[!is.na(neotr$SPACE)] ; neotr$technical[!is.na(neotr$TECHNICAL)] <- neotr$TECHNICAL[!is.na(neotr$TECHNICAL)]
+neotr$PSUid <- as.character(neotr$PSUid)
+neotr$psuid <- as.character(neotr$psuid)
+neotr$PSUid[!is.na(neotr$psuid)] <- neotr$psuid[!is.na(neotr$psuid)]
+neotr$time[!is.na(neotr$TIME)] <- neotr$TIME[!is.na(neotr$TIME)]
+neotr$space[!is.na(neotr$SPACE)] <- neotr$SPACE[!is.na(neotr$SPACE)]
+neotr$technical[!is.na(neotr$TECHNICAL)] <- neotr$TECHNICAL[!is.na(neotr$TECHNICAL)]
 #order
 neotr <- neotr[order(as.numeric(as.character(neotr$PSUid))),]
 
 neoca <- rbind(ca,ca2[,-(c(-1,0)+ncol(ca2))])
-if (is.null(sorting)) neoca$sort <- NA else neoca$sort<- apply(neoca[,fields],1,paste,collapse="-")
+if (is.null(sorting)) 
+  neoca$sort <- NA 
+else 
+  neoca$sort<- apply(neoca[,fields],1,paste,collapse="-")
 
 csc <- new("csDataCons")
 	tr <- neotr[,match(names(tr(csc)),names(neotr))] ; rownames(tr) <- 1:nrow(tr)
@@ -441,9 +532,13 @@ csc <- new("csDataCons")
 new("csDataCons",desc=desc,tr=coerceCons(tr,csc@tr),hh=coerceCons(hh,csc@hh),sl=coerceCons(sl,csc@sl),hl=coerceCons(hl,csc@hl),ca=coerceCons(ca,csc@ca))
 })
 
+
+
+
+
 setMethod("csDataCons", signature("csDataVal","missing"), function(object,desc="Unknown stock", ...){
 
-	csDataCons(object,StratIni(),desc=desc,...)
+	csDataCons(object,strIni(),desc=desc,...)
 })
 
 setMethod("csDataCons", signature("missing","missing"), function(desc="Unknown stock", ...){

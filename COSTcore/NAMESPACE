@@ -10,7 +10,7 @@ export(
 	"setCon",
 	"startTest",
 	"tagTest",
-	"StratIni"
+	"strIni"
 )
 exportClasses(
 	"ceData",
@@ -22,7 +22,7 @@ exportClasses(
 	"csData",
 	"csDataVal",
 	"csDataCons",
-	"StratIni"
+	"strIni"
 )
 exportMethods(
 	"checkNms",
