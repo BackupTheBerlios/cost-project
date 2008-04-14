@@ -86,16 +86,42 @@ setMethod("coerceCons", signature("data.frame", "data.frame"), function(object, 
 # Class definition
 #====================================================================
 
-setClassUnion("NLchar",c("character","NULL"))
-setClass("strIni",representation(tempStrata="NLchar",spaceStrata="NLchar",techStrata="NLchar",sorting="NLchar"),
-	                 prototype(tempStrata=NULL,spaceStrata=NULL,techStrata=NULL,sorting=NULL))		
+setClassUnion("nlChar", c("character", "NULL"))
+setClassUnion("nlList", c("list", "NULL"))
+
+setClass("strIni",representation(tempStrata="nlChar",
+                                 spaceStrata="nlChar",
+                                 techStrata="nlChar",
+                                 sorting="nlChar",
+                                 tpRec="nlList",
+                                 spRec="nlList",
+                                 tcRec="nlList"),
+	                 prototype(tempStrata=NULL,
+                             spaceStrata=NULL,
+                             techStrata=NULL,
+                             sorting=NULL,
+                             tpRec=NULL,
+                             spRec=NULL,
+                             tcRec=NULL))		
 
 #====================================================================
 # Class constructor
 #====================================================================
 
-strIni <- function(tempStrata=NULL,spaceStrata=NULL,techStrata=NULL,sorting=NULL) {                #sorting="catchCat" or "commCat" or "subSampcat"
-new("strIni",tempStrata=tempStrata,spaceStrata=spaceStrata,techStrata=techStrata,sorting=sorting)
+strIni <- function(tempStrata=NULL,
+                   spaceStrata=NULL,
+                   techStrata=NULL,
+                   sorting=NULL,   #sorting="catchCat" or "commCat" or "subSampcat"
+                   tpRec=NULL,     #ex: tpRec=list(from=c("1","2","3","4"),to=c("5","5","6","6"))
+                   spRec=NULL,
+                   tcRec=NULL) {   
+new("strIni",tempStrata=tempStrata,
+             spaceStrata=spaceStrata,
+             techStrata=techStrata,
+             sorting=sorting,
+             tpRec=tpRec,
+             spRec=spRec,
+             tcRec=tcRec)                      
 }
 
 
@@ -170,12 +196,17 @@ setGeneric("ceDataCons", function(object,objStrat,...){
 )
 		
 
-setMethod("ceDataCons", signature("ceDataVal","strIni"), function(object,objStrat,desc="Unknown stock",
-                                                         tpRec=NULL,spRec=NULL,tcRec=NULL,...){  #ex: tpRec=list(from=c("1","2","3","4"),to=c("5","5","6","6"))
+setMethod("ceDataCons", signature("ceDataVal","strIni"), function(object,
+                                                                  objStrat,
+                                                                  desc="Unknown stock",
+                                                                  ...){  
 
 tempStrata <- objStrat@tempStrata
 spaceStrata <- objStrat@spaceStrata
 techStrata <- objStrat@techStrata
+tpRec <- objStrat@tpRec
+spRec <- objStrat@spRec
+tcRec <- objStrat@tcRec
 
 if (techStrata=="commCat") stop("effort object do not match with market category sampling strategy")
 

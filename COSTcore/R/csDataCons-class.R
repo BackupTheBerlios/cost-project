@@ -327,13 +327,18 @@ setGeneric("csDataCons", function(object,objStrat,...){
 })
 
 
-setMethod("csDataCons", signature("csDataVal","strIni"), function(object,objStrat,desc="Unknown stock",  
-                                                         tpRec=NULL,spRec=NULL,tcRec=NULL,...){  #ex: tpRec=list(from=c("1","2","3","4"),to=c("5","5","6","6"))
+setMethod("csDataCons", signature("csDataVal","strIni"), function(object,
+                                                                  objStrat,
+                                                                  desc="Unknown stock",  
+                                                                  ...){  
 
 tempStrata <- objStrat@tempStrata 
 spaceStrata <- objStrat@spaceStrata 
 techStrata <- objStrat@techStrata 
 sorting <- objStrat@sorting
+tpRec <- objStrat@tpRec
+spRec <- objStrat@spRec
+tcRec <- objStrat@tcRec
 
 
 TR <- object@tr 

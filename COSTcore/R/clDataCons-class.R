@@ -100,12 +100,17 @@ setGeneric("clDataCons", function(object,objStrat,...){
 #})
 
 
-setMethod("clDataCons", signature("clDataVal","strIni"), function(object,objStrat,desc="Unknown stock",
-                                                         tpRec=NULL,spRec=NULL,tcRec=NULL,...){  #ex: tpRec=list(from=c("1","2","3","4"),to=c("5","5","6","6"))
+setMethod("clDataCons", signature("clDataVal","strIni"), function(object,
+                                                                  objStrat,
+                                                                  desc="Unknown stock",
+                                                                  ...){  
 
 tempStrata <- objStrat@tempStrata
 spaceStrata <- objStrat@spaceStrata 
 techStrata <- objStrat@techStrata
+tpRec <- objStrat@tpRec
+spRec <- objStrat@spRec
+tcRec <- objStrat@tcRec
 
 CL <- object@cl 
 CL$semester <- ceiling(CL$quarter/2)      
