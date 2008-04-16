@@ -5,27 +5,29 @@ importClassesFrom("COSTcore")
 importFrom("COSTcore")
 
 exportClasses(
-	"ALmult",
-	"DeltA",
-	"DeltaID",
-	"LD.Vol"
+	"ageLenMult",
+	"dltCls",
+	"dltId",
+	"landisVol"
 )
 
 exportMethods(
-	"AL.multi",
+	"ageLenMultinom",
+	"plot.ageLenMult",
 	"plot",
-	"plot.Samp",
-	"plot.Delta",
-	"Delta",
-	"plot.LD",
-  "SampComp.plot",
-  "LD.Volume",
-  "FD.plot",
-  "FD.boxplot",
-  "FO.plot",
-  "FO.boxplot",
-  "BioPar.plot",
-  "BioPar.boxplot",
-  "L.plot.design",
-  "SummarY"
+	"dltPlot",
+	"smpPlot",
+	"lenDisPlot",
+  "biasPlot",
+  "landisVolume",
+  "fdPlot",
+  "fdBoxplot",
+  "foPlot",
+  "foBoxplot",
+  "bioPar.plot",
+  "bioPar.boxplot",
+  "csPlot.design",
+  "cstSummary",
+  "disInfo",
+  "dltCalc"
 )

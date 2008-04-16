@@ -1,6 +1,6 @@
-\name{plot.LD,csData-method}
-\alias{plot.LD}
-\alias{plot.LD,csData-method}
+\name{lenDisPlot,csData-method}
+\alias{lenDisPlot}
+\alias{lenDisPlot,csData-method}
 \docType{methods}
 \title{Plot of length distribution for a specified trip}
 \description{
@@ -8,14 +8,14 @@ This method plots from a \emph{csData} object the length distribution of one or 
 }
 
 \usage{
-plot.LD(x,species,fraction="LAN",trpCode,staNum="all",\dots)
+lenDisPlot(x,trpCode,species,fraction="LAN",staNum="all",\dots)
 }
 
 \arguments{
   \item{x}{A \emph{csData} object with \emph{hl} informations.}
-  \item{species}{Field specifying species (e.g \code{"SOL"}). See Details.}                                                                                                                         
-  \item{fraction}{Field specifying catch category (e.g \code{"LAN"}). See Details.}
-  \item{trpCode}{Character specifying trip code. See Details.}
+  \item{trpCode}{Character specifying trip code.}
+  \item{species}{Field specifying species (e.g \code{"Solea vulgaris"}).}                                                                                                                         
+  \item{fraction}{Field specifying catch category (e.g \code{"LAN"}).}
   \item{staNum}{Character vector specifying sample(s) (or FOs). \code{"all"} results in displaying all samples of the specified trip, and \code{"allSum"} adds them up.}
   \item{...}{Further graphical arguments.}
 }
@@ -29,11 +29,11 @@ plot.LD(x,species,fraction="LAN",trpCode,staNum="all",\dots)
 
 \author{Mathieu Merzereaud}
 
-\seealso{\code{\link{DeltaID}}, \code{\link{DeltA-class}}, \code{\link{plot.Delta}}, \code{\link{plot.DeltaID}}, \code{\link{Delta}}, \code{\link{plot.Samp}}
+\seealso{\code{\link{dltCls}}, \code{\link{dltId}}, \code{\link{dltCalc}}, \code{\link{dltPlot}}, \code{\link{plot.dltId}}, \code{\link{smpPlot}}
 }
 
 \examples{
 data(sole)
-plot.LD(sole.cs,"Solea vulgaris","DIS","DIL1197")
+lenDisPlot(sole.cs,"DIL1197","Solea vulgaris","DIS")
 }
 \keyword{methods}

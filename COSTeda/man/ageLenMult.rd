@@ -1,29 +1,29 @@
-\name{ALmult-class}
+\name{ageLenMult-class}
 \docType{class}
-\alias{ALmult}
-\alias{ALmult-class}
-\title{Class "ALmult"}
-\description{This class contains all informations from the age-at-length multinomial analysis method \emph{AL.multi}}
+\alias{ageLenMult}
+\alias{ageLenMult-class}
+\title{Class "ageLenMult"}
+\description{This class contains all informations produced by \emph{ageLenMultinom} method}
 
 \section{Slots}{
 \tabular{lrll}{
 \bold{slot} \tab  \tab \bold{class} \tab \bold{description} \cr
-\bold{\code{obj.multi}} \tab \tab \code{list} \tab informations from multinomial modelisation of \cr 
+\bold{\code{objMult}} \tab \tab \code{list} \tab informations from multinomial modelisation of \cr 
                                     \tab \tab \tab age-at-length data \cr
- \tab tempStrata \tab \code{character} \tab time stratification field \cr
+ \tab timeStrata \tab \code{character} \tab time stratification field \cr
  \tab spaceStrata \tab \code{character} \tab space stratification field \cr
  \tab techStrata \tab \code{character} \tab technical stratification field \cr
  \tab grps \tab \code{character} \tab grouping field \cr
- \tab Mm \tab \code{multinomial} \tab a \pkg{nnet} object resulting from \emph{multinom} procedure \cr
+ \tab Mm \tab \code{multinomial} \tab a \pkg{nnet} package object resulting from \emph{multinom} procedure \cr
  \tab dat \tab \code{data.frame} \tab Age-at-Length data for specified stratification 
 }
 }
 
 \section{Methods}{
-  \describe{
-    \item{plot}{\code{signature(x = "ALmult")}: graphical display of \emph{ALmult} object informations.}
-	 }
-}
+\describe{
+	\item{plot}{\code{signature("ageLenMult")}: plotting procedure of an object of class \emph{ageLenMult}.}
+}}
+
 
 
 \references{Gerritsen, H.D., McGrath, D., and Lordan, C. (2006)
@@ -32,10 +32,10 @@ differences within a single stock of haddock (Melanogrammus aeglefinus)}. ICES J
 }
 
 \author{Mathieu Merzereaud}
-\seealso{\code{\link{AL.multi}}, \code{\link{plot.ALmult}}}
+\seealso{\code{\link{ageLenMultinom}}, \code{\link{plot.ageLenMult}}}
 
 \examples{
-showClass("ALmult")
+showClass("ageLenMult")
 }
 \keyword{classes}
 
