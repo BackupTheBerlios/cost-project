@@ -1,6 +1,7 @@
-\name{plot,ageLenMult-method}
+\name{plot.ageLenMult}
 \docType{methods}
 \alias{plot,ageLenMult-method}
+\alias{plot.ageLenMult,ageLenMult-method}
 \alias{plot.ageLenMult}
 \title{Plot "ageLenMult" object}
 \description{
