@@ -182,7 +182,8 @@ eval(parse('',text=paste("xyplot(value~Length|",paste(c("Age",declStr),collapse=
   
        
        
-setGeneric("plot.ageLenMult", function(x, 
+setGeneric("plot.ageLenMult", function(x,
+                                       y=NULL, 
                                        show.legend="right", 
                                        ...){
 	standardGeneric("plot.ageLenMult")}
@@ -190,7 +191,8 @@ setGeneric("plot.ageLenMult", function(x,
 
 
 
-setMethod("plot.ageLenMult",signature(x="ageLenMult"), function(x, 
+setMethod("plot.ageLenMult",signature(x="ageLenMult"), function(x,
+                                                                y=NULL, 
                                                                 show.legend="right",
                                                                 ...){
 plot(x=x,show.legend=show.legend,...)

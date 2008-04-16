@@ -7,7 +7,8 @@
 This method plots the output of \emph{ageLenMultinom} procedure as an object of class \emph{ageLenMult}.
 }
 
-\usage{\S4method{plot}{ageLenMult}(x,y=NULL,show.legend="right",\dots)}
+\usage{
+\S4method{plot}{ageLenMult}(x,y=NULL,show.legend="right",\dots)}
 
 \arguments{
   \item{x}{An \emph{ageLenMult} object created by \emph{ageLenMultinom} procedure.}
