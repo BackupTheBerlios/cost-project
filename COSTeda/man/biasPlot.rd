@@ -13,8 +13,10 @@ Calculation can be done within time, technical and/or space stratification.
 }
 
 \usage{
-\S4method{biasPlot}{csDataVal,clDataVal}(samObj,popObj=clDataVal(),samFld="lenNum",popFld="landWt",timeStrata="quarter",spaceStrata="area",techStrata="commCat",show="all",\dots)
-\S4method{biasPlot}{csDataVal,ceDataVal}(samObj,popObj=ceDataVal(),samFld="lenNum",popFld="trpNum",timeStrata="quarter",spaceStrata="area",techStrata="foCatEu5",show="all",\dots)
+\S4method{biasPlot}{csDataVal,clDataVal}(samObj,popObj=clDataVal(),samFld="lenNum",popFld="landWt",
+timeStrata="quarter",spaceStrata="area",techStrata="commCat",show="all",\dots)
+\S4method{biasPlot}{csDataVal,ceDataVal}(samObj,popObj=ceDataVal(),samFld="lenNum",popFld="trpNum",
+timeStrata="quarter",spaceStrata="area",techStrata="foCatEu5",show="all",\dots)
 \S4method{biasPlot}{csDataCons,clDataCons}(samObj,popObj,samFld="lenNum",popFld="landWt",show="all",\dots)
 \S4method{biasPlot}{csDataCons,ceDataCons}(samObj,popObj,samFld="lenNum",popFld="trpNum",show="all",\dots)
 }
@@ -30,7 +32,7 @@ Calculation can be done within time, technical and/or space stratification.
   Field specifying space stratification (e.g \code{"area"}, \code{"rect"}, \code{NULL},...). Only for 'validated' objects.}
   \item{techStrata}{
   Field specifying technical stratification (e.g \code{"commCat"} for \emph{clDataVal/clDataCons}, \code{"foCatNat"},
-  \code{,"foCatEu5"}, \code{,"foCatEu6"}, \code{NULL},...). Only for 'validated' objects.}
+  \code{"foCatEu5"}, \code{"foCatEu6"}, \code{NULL},...). Only for 'validated' objects.}
   \item{show}{Character vector specifying which part to plot (to be chosen between \code{"all"}, i.e samp+pop, \code{"samp"} or \code{"pop"})}
   \item{...}{Further graphical arguments.}
 }
@@ -43,7 +45,8 @@ Calculation can be done within time, technical and/or space stratification.
 data(sole)
 val.cs <- csDataVal(sole.cs)
 val.cl <- clDataVal(sole.cl)
-biasPlot(val.cs,val.cl,samFld="lenNum",popFld="landWt",timeStrata="quarter",spaceStrata="area",techStrata="commCat")
+biasPlot(val.cs,val.cl,samFld="lenNum",popFld="landWt",timeStrata="quarter",
+         spaceStrata="area",techStrata="commCat")
 }
 
 \keyword{methods}

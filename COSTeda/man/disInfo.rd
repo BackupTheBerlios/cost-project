@@ -58,15 +58,23 @@ sole.cs.val <- csDataVal(sole.cs)
 ##Change path before run
 
 #Path <- "C:/draft.txt"
-#disInfo(sole.cs.val,Path,"lenNum","lenCls",sum,na.rm=TRUE,title="Measured numbers at length",append=FALSE)
-#disInfo(sole.cs.val,Path,"wt",c("quarter","gear"),sum,na.rm=TRUE,title="Total sampled weights by quarter and gear")
-#disInfo(sole.cs.val,Path,"wt","gear",sum,na.rm=TRUE,title="Total sampled weights by gear")
-#disInfo(sole.cs.val,Path,"subSampWt",c("quarter","gear","area"),sum,na.rm=TRUE,title="Measured weights by quarter, gear and area")
-#disInfo(sole.cs.val,Path,c("trpCode","staNum"),c("quarter"),function(x) length(unique(x)),title="Total FO numbers of sampled trips by quarter")
-#disInfo(sole.cs.val,Path,c("trpCode","staNum","landCat"),c("quarter"),function(x) length(unique(x)),title="Sampled FO numbers by quarter")
-#disInfo(sole.cs.val,Path,"lenNum",c("quarter","commCat"),sum,na.rm=TRUE,title="Number of measured fish by quarter and commercial category")
+#disInfo(sole.cs.val,Path,"lenNum","lenCls",sum,na.rm=TRUE,
+#        title="Measured numbers at length",append=FALSE)
+#disInfo(sole.cs.val,Path,"wt",c("quarter","gear"),sum,na.rm=TRUE,
+#        title="Total sampled weights by quarter and gear")
+#disInfo(sole.cs.val,Path,"wt","gear",sum,na.rm=TRUE,
+#        title="Total sampled weights by gear")
+#disInfo(sole.cs.val,Path,"subSampWt",c("quarter","gear","area"),sum,na.rm=TRUE,
+#        title="Measured weights by quarter, gear and area")
+#disInfo(sole.cs.val,Path,c("trpCode","staNum"),c("quarter"),
+#        function(x) length(unique(x)),title="Total FO numbers of sampled trips by quarter")
+#disInfo(sole.cs.val,Path,c("trpCode","staNum","landCat"),c("quarter"),
+#        function(x) length(unique(x)),title="Sampled FO numbers by quarter")
+#disInfo(sole.cs.val,Path,"lenNum",c("quarter","commCat"),sum,na.rm=TRUE,
+#        title="Number of measured fish by quarter and commercial category")
 ##information from CA table
-#disInfo(sole.cs.val,Path,"indWt",c("quarter","sex"),mean,na.rm=TRUE,biopar=TRUE,title="Mean individual weight by quarter and sex")
+#disInfo(sole.cs.val,Path,"indWt",c("quarter","sex"),mean,na.rm=TRUE,biopar=TRUE,
+#        title="Mean individual weight by quarter and sex")
 }
 
 \keyword{manip}

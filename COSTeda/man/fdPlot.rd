@@ -32,7 +32,8 @@ data(sole)
 x <- landisVolume(sole.cs,species="Solea vulgaris",fraction="LAN")
 fdPlot(x)
 
-xx <- landisVolume(sole.cs,species="Solea vulgaris",fraction="LAN",timeStrata="quarter",techStrata="gear")
+xx <- landisVolume(sole.cs,species="Solea vulgaris",fraction="LAN",
+                   timeStrata="quarter",techStrata="gear")
 fdPlot(xx,groups="techStrata")
 }
 
