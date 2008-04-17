@@ -446,11 +446,11 @@ df <- data.frame(x1=as.numeric(rep(colnames(VecSomme),each=nrow(VecSomme))),
                  Ech=as.vector(VecMesId),
                  Exp=as.vector(VecSomme))     
 
-xyplot(Ech+Exp~x1|y1 ,data=df,type=c("h","l"),lty=rep(dots$lty,length=2),par.strip.text=list(font=dots$font.lab),
-       col=rep(dots$col,length=2),lwd=rep(dots$lwd,length=2),distribute.type=TRUE,scales=list(font=dots$font.axis,x=list(rot=90)),
-       key=list(lines=list(lty=rep(dots$lty,length=2),col=rep(dots$col,length=2),lwd=rep(dots$lwd,length=2)),text=list(c("Sampled","Overall")),
-       font=dots$font.lab,space=show.legend,columns=1,border=TRUE),
-       main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab))
+print(xyplot(Ech+Exp~x1|y1 ,data=df,type=c("h","l"),lty=rep(dots$lty,length=2),par.strip.text=list(font=dots$font.lab),
+             col=rep(dots$col,length=2),lwd=rep(dots$lwd,length=2),distribute.type=TRUE,scales=list(font=dots$font.axis,x=list(rot=90)),
+             key=list(lines=list(lty=rep(dots$lty,length=2),col=rep(dots$col,length=2),lwd=rep(dots$lwd,length=2)),text=list(c("Sampled","Overall")),
+             font=dots$font.lab,space=show.legend,columns=1,border=TRUE),
+             main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab)))
 
 invisible(df)
 })
@@ -509,11 +509,11 @@ df <- data.frame(x1=as.numeric(colnames(VecSomme)),
                  Ech=as.vector(VecMesId),
                  Exp=as.vector(VecSomme))         
 
-xyplot(Ech+Exp~x1,data=df,type=c("h","l"),lty=rep(dots$lty,length=2),par.strip.text=list(font=dots$font.lab),col=rep(dots$col,length=2),
-       lwd=rep(dots$lwd,length=2),distribute.type=TRUE,scales=list(font=dots$font.axis,x=list(rot=90)),
-       key=list(lines=list(lty=rep(dots$lty,length=2),col=rep(dots$col,length=2),lwd=rep(dots$lwd,length=2)),text=list(c("Sampled","Overall")),
-       font=dots$font.lab,space=show.legend,columns=1,border=TRUE),main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
-       ylab=list(dots$ylab,font=dots$font.lab))
+print(xyplot(Ech+Exp~x1,data=df,type=c("h","l"),lty=rep(dots$lty,length=2),par.strip.text=list(font=dots$font.lab),col=rep(dots$col,length=2),
+             lwd=rep(dots$lwd,length=2),distribute.type=TRUE,scales=list(font=dots$font.axis,x=list(rot=90)),
+             key=list(lines=list(lty=rep(dots$lty,length=2),col=rep(dots$col,length=2),lwd=rep(dots$lwd,length=2)),text=list(c("Sampled","Overall")),
+             font=dots$font.lab,space=show.legend,columns=1,border=TRUE),main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
+             ylab=list(dots$ylab,font=dots$font.lab)))
 
 invisible(df)
 })
@@ -597,10 +597,10 @@ DF <- data.frame(staNum=rep(ll$staNum,ncol(LD)),
                  
 if (!DF$staNum[1]=="all") DF$staNum <- factor(DF$staNum,levels=as.character(sort(as.numeric(levels(DF$staNum)))))
 
-barchart(val~lenCls|staNum,data=DF,ylim=c(0,max(DF$val)*1.05),scales=list(x=list(rot=dots$rot,cex=dots$cex.axis),
-         font=dots$font.axis),main=list(dots$main,font=dots$font.main),
-         xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),
-         par.strip.text=list(font=dots$font.lab),col=dots$p.bg,fill=dots$p.bg)  
+print(barchart(val~lenCls|staNum,data=DF,ylim=c(0,max(DF$val)*1.05),scales=list(x=list(rot=dots$rot,cex=dots$cex.axis),
+               font=dots$font.axis),main=list(dots$main,font=dots$font.main),
+               xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),
+               par.strip.text=list(font=dots$font.lab),col=dots$p.bg,fill=dots$p.bg))  
 
 invisible(DF)
 })

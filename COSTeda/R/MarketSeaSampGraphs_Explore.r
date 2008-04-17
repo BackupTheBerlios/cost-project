@@ -183,7 +183,7 @@ sapply(names(GP),function(x)
 if (is.null(dots$xlab)) 
   dots$xlab <- "Trip Code" 
 if (is.null(dots$ylab)) 
-  dots$ylab <- "Weight (Kg)" 
+  dots$ylab <- "Weight (g)" 
 
 
 if (all(is.null(timeStrata),is.null(techStrata),is.null(spaceStrata))) {
@@ -260,7 +260,7 @@ sapply(names(GP),function(x)
 if (is.null(dots$xlab)) 
   dots$xlab <- "Trip Code" 
 if (is.null(dots$ylab)) 
-  dots$ylab <- "Weight (Kg)" 
+  dots$ylab <- "Weight (g)" 
 if (is.null(dots$main)) 
   dots$main <- paste("Weight by Fishing Day for each Trip\nSpecies :",
                      paste(x@species,collapse=", "),"    Fraction :",paste(x@fraction,collapse=", "))
@@ -301,7 +301,7 @@ sapply(names(GP),function(x)
 if (is.null(dots$xlab)) 
   dots$xlab <- "Fishing day" 
 if (is.null(dots$ylab)) 
-  dots$ylab <- "Weight (Kg)" 
+  dots$ylab <- "Weight (g)" 
 if (is.null(dots$main)) 
   dots$main <- paste("Mean Weight by FO for each Fishing day and Trip\nSpecies :",
                      paste(x@species,collapse=", "),"    Fraction :",paste(x@fraction,collapse=", "))
@@ -340,7 +340,7 @@ sapply(names(GP),function(x)
 if (is.null(dots$xlab)) 
   dots$xlab <- "Fishing day"
 if (is.null(dots$ylab)) 
-  dots$ylab <- "Weight (Kg)" 
+  dots$ylab <- "Weight (g)" 
 if (is.null(dots$main)) 
   dots$main <- paste("Weight by Fishing Operation for each Fishing day and Trip\nSpecies :",
                      paste(x@species,collapse=", "),"    Fraction :",paste(x@fraction,collapse=", "))

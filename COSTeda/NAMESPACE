@@ -14,7 +14,7 @@ exportClasses(
 exportMethods(
 	"ageLenMultinom",
 	"plot.ageLenMult",
-	"plot",
+  "plot",
 	"dltPlot",
 	"smpPlot",
 	"lenDisPlot",
