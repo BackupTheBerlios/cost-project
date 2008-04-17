@@ -86,36 +86,33 @@ setMethod("coerceCons", signature("data.frame", "data.frame"), function(object, 
 # Class definition
 #====================================================================
 
-setClassUnion("nlChar", c("character", "NULL"))
-setClassUnion("nlList", c("list", "NULL"))
-
-setClass("strIni",representation(tempStrata="nlChar",
-                                 spaceStrata="nlChar",
-                                 techStrata="nlChar",
-                                 sorting="nlChar",
-                                 tpRec="nlList",
-                                 spRec="nlList",
-                                 tcRec="nlList"),
-	                 prototype(tempStrata=NULL,
-                             spaceStrata=NULL,
-                             techStrata=NULL,
-                             sorting=NULL,
-                             tpRec=NULL,
-                             spRec=NULL,
-                             tcRec=NULL))		
+setClass("strIni",representation(timeStrata="character",
+                                 spaceStrata="character",
+                                 techStrata="character",
+                                 sorting="character",
+                                 tpRec="list",
+                                 spRec="list",
+                                 tcRec="list"),
+                    prototype(timeStrata=as.character(NA),
+                              spaceStrata=as.character(NA),
+                              techStrata=as.character(NA),
+                              sorting=as.character(NA),
+                              tpRec=as.list(NA),
+                              spRec=as.list(NA),
+                              tcRec=as.list(NA)))		
 
 #====================================================================
 # Class constructor
 #====================================================================
 
-strIni <- function(tempStrata=NULL,
-                   spaceStrata=NULL,
-                   techStrata=NULL,
-                   sorting=NULL,   #sorting="catchCat" or "commCat" or "subSampcat"
-                   tpRec=NULL,     #ex: tpRec=list(from=c("1","2","3","4"),to=c("5","5","6","6"))
-                   spRec=NULL,
-                   tcRec=NULL) {   
-new("strIni",tempStrata=tempStrata,
+strIni <- function(timeStrata=as.character(NA),
+                   spaceStrata=as.character(NA),
+                   techStrata=as.character(NA),
+                   sorting=as.character(NA),      #sorting="catchCat" or "commCat" or "subSampcat"
+                   tpRec=as.list(NA),             #ex: tpRec=list(from=c("1","2","3","4"),to=c("5","5","6","6"))
+                   spRec=as.list(NA),
+                   tcRec=as.list(NA)){   
+new("strIni",timeStrata=timeStrata,
              spaceStrata=spaceStrata,
              techStrata=techStrata,
              sorting=sorting,
@@ -201,52 +198,51 @@ setMethod("ceDataCons", signature("ceDataVal","strIni"), function(object,
                                                                   desc="Unknown stock",
                                                                   ...){  
 
-tempStrata <- objStrat@tempStrata
+tempStrata <- objStrat@timeStrata
 spaceStrata <- objStrat@spaceStrata
 techStrata <- objStrat@techStrata
 tpRec <- objStrat@tpRec
 spRec <- objStrat@spRec
 tcRec <- objStrat@tcRec
 
-if (techStrata=="commCat") stop("effort object do not match with market category sampling strategy")
-
 CE <- object@ce 
 CE$semester <- ceiling(CE$quarter/2)      
 
-if (is.null(tempStrata)) {
+if (is.na(timeStrata)) {
   CE$time <- NA 
-  tpRec <- NULL}
+  tpRec <- as.list(NA)}
 else 
-  CE$time <- CE[,tempStrata] 
+  CE$time <- CE[,timeStrata] 
       
-if (is.null(spaceStrata)) {
+if (is.na(spaceStrata)) {
   CE$space <- NA 
-  spRec <- NULL} 
+  spRec <- as.list(NA)} 
 else 
   CE$space <- CE[,spaceStrata]
 
-if (is.null(techStrata)) {
+if (is.na(techStrata)) {
   CE$technical <- NA 
-  tcRec <- NULL} 
-else 
-  CE$technical <- CE[,techStrata]
+  tcRec <- as.list(NA) 
+} else {
+  if (techStrata=="commCat") stop("effort object do not match with market category sampling strategy")
+  CE$technical <- CE[,techStrata]}
 
 #recoding
-if (!is.null(tpRec)) {
+if (!is.na(tpRec)) {
   Typ <- class(CE$time)
   CE$time <- factor(CE$time)
   Lev <- levels(CE$time)[!levels(CE$time)%in%tpRec$from]
   CE$time <- factor(CE$time,levels=c(Lev,tpRec$from),labels=c(Lev,tpRec$to))
   eval(parse('',text=paste("CE$time <- as.",Typ,"(as.character(CE$time))",sep="")))}
   
-if (!is.null(spRec)) {
+if (!is.na(spRec)) {
   Typ <- class(CE$space) 
   CE$space <- factor(CE$space)
   Lev <- levels(CE$space)[!levels(CE$space)%in%spRec$from]
   CE$space <- factor(CE$space,levels=c(Lev,spRec$from),labels=c(Lev,spRec$to))
   eval(parse('',text=paste("CE$space <- as.",Typ,"(as.character(CE$space))",sep="")))}
   
-if (!is.null(tcRec)) {
+if (!is.na(tcRec)) {
   Typ <- class(CE$technical)
   CE$technical <- factor(CE$technical)
   Lev <- levels(CE$technical)[!levels(CE$technical)%in%tcRec$from]
