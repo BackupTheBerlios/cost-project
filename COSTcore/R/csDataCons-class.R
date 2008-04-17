@@ -383,21 +383,21 @@ else
 
 
 #recoding process
-if (!is.na(tpRec)) {
+if (!is.na(tpRec[1])) {
   Typ <- class(HH$time) 
   HH$time <- factor(HH$time) 
   Lev <- levels(HH$time)[!levels(HH$time)%in%tpRec$from]
   HH$time <- factor(HH$time,levels=c(Lev,tpRec$from),labels=c(Lev,tpRec$to))
   eval(parse('',text=paste("HH$time <- as.",Typ,"(as.character(HH$time))",sep="")))}
   
-if (!is.na(spRec)) {
+if (!is.na(spRec[1])) {
   Typ <- class(HH$space) 
   HH$space <- factor(HH$space) 
   Lev <- levels(HH$space)[!levels(HH$space)%in%spRec$from]
   HH$space <- factor(HH$space,levels=c(Lev,spRec$from),labels=c(Lev,spRec$to)) 
   eval(parse('',text=paste("HH$space <- as.",Typ,"(as.character(HH$space))",sep="")))}
   
-if (!is.na(tcRec)) {
+if (!is.na(tcRec[1])) {
   Typ <- class(HH$technical) 
   HH$technical <- factor(HH$technical)
   Lev <- levels(HH$technical)[!levels(HH$technical)%in%tcRec$from]

@@ -228,21 +228,21 @@ if (is.na(techStrata)) {
   CE$technical <- CE[,techStrata]}
 
 #recoding
-if (!is.na(tpRec)) {
+if (!is.na(tpRec[1])) {
   Typ <- class(CE$time)
   CE$time <- factor(CE$time)
   Lev <- levels(CE$time)[!levels(CE$time)%in%tpRec$from]
   CE$time <- factor(CE$time,levels=c(Lev,tpRec$from),labels=c(Lev,tpRec$to))
   eval(parse('',text=paste("CE$time <- as.",Typ,"(as.character(CE$time))",sep="")))}
   
-if (!is.na(spRec)) {
+if (!is.na(spRec[1])) {
   Typ <- class(CE$space) 
   CE$space <- factor(CE$space)
   Lev <- levels(CE$space)[!levels(CE$space)%in%spRec$from]
   CE$space <- factor(CE$space,levels=c(Lev,spRec$from),labels=c(Lev,spRec$to))
   eval(parse('',text=paste("CE$space <- as.",Typ,"(as.character(CE$space))",sep="")))}
   
-if (!is.na(tcRec)) {
+if (!is.na(tcRec[1])) {
   Typ <- class(CE$technical)
   CE$technical <- factor(CE$technical)
   Lev <- levels(CE$technical)[!levels(CE$technical)%in%tcRec$from]

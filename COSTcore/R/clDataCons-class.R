@@ -135,21 +135,21 @@ else
 
 
 #recoding
-if (!is.na(tpRec)) {
+if (!is.na(tpRec[1])) {
   Typ <- class(CL$time)
   CL$time <- factor(CL$time)
   Lev <- levels(CL$time)[!levels(CL$time)%in%tpRec$from]
   CL$time <- factor(CL$time,levels=c(Lev,tpRec$from),labels=c(Lev,tpRec$to))
   eval(parse('',text=paste("CL$time <- as.",Typ,"(as.character(CL$time))",sep="")))}
   
-if (!is.na(spRec)) {
+if (!is.na(spRec[1])) {
   Typ <- class(CL$space)
   CL$space <- factor(CL$space)
   Lev <- levels(CL$space)[!levels(CL$space)%in%spRec$from]
   CL$space <- factor(CL$space,levels=c(Lev,spRec$from),labels=c(Lev,spRec$to))
   eval(parse('',text=paste("CL$space <- as.",Typ,"(as.character(CL$space))",sep="")))}
   
-if (!is.na(tcRec)) {
+if (!is.na(tcRec[1])) {
   Typ <- class(CL$technical)
   CL$technical <- factor(CL$technical)
   Lev <- levels(CL$technical)[!levels(CL$technical)%in%tcRec$from]
