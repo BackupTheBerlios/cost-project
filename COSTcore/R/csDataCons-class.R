@@ -332,7 +332,7 @@ setMethod("csDataCons", signature("csDataVal","strIni"), function(object,
                                                                   desc="Unknown stock",  
                                                                   ...){  
 
-tempStrata <- objStrat@tempStrata 
+timeStrata <- objStrat@timeStrata 
 spaceStrata <- objStrat@spaceStrata 
 techStrata <- objStrat@techStrata 
 sorting <- objStrat@sorting
@@ -349,7 +349,7 @@ CA <- object@ca
 
 #if techStrata="commCat" --> indicator cc
 cc <- FALSE
-if (!is.null(techStrata)) {
+if (!is.na(techStrata)) {
   if (techStrata=="commCat") cc <- TRUE}
 
 if (cc) {
@@ -363,41 +363,41 @@ HH$month <- sapply(HH$date,function(x) as.numeric(strsplit(x,"-")[[1]][2]))
 HH$quarter <- ceiling(HH$month/3)
 HH$semester <- ceiling(HH$month/6)      
 
-if (is.null(tempStrata)) {
+if (is.na(timeStrata)) {
   HH$time <- NA 
-  tpRec <- NULL} 
+  tpRec <- as.list(NA)} 
 else 
-  HH$time <- HH[,tempStrata]  
+  HH$time <- HH[,timeStrata]  
      
-if (is.null(spaceStrata)) {
+if (is.na(spaceStrata)) {
   HH$space <- NA 
-  spRec <- NULL} 
+  spRec <- as.list(NA)} 
 else 
   HH$space <- HH[,spaceStrata]
   
-if (is.null(techStrata)) {
+if (is.na(techStrata)) {
   HH$technical <- NA 
-  tcRec <- NULL} 
+  tcRec <- as.list(NA)} 
 else 
   HH$technical <- HH[,techStrata]
 
 
 #recoding process
-if (!is.null(tpRec)) {
+if (!is.na(tpRec)) {
   Typ <- class(HH$time) 
   HH$time <- factor(HH$time) 
   Lev <- levels(HH$time)[!levels(HH$time)%in%tpRec$from]
   HH$time <- factor(HH$time,levels=c(Lev,tpRec$from),labels=c(Lev,tpRec$to))
   eval(parse('',text=paste("HH$time <- as.",Typ,"(as.character(HH$time))",sep="")))}
   
-if (!is.null(spRec)) {
+if (!is.na(spRec)) {
   Typ <- class(HH$space) 
   HH$space <- factor(HH$space) 
   Lev <- levels(HH$space)[!levels(HH$space)%in%spRec$from]
   HH$space <- factor(HH$space,levels=c(Lev,spRec$from),labels=c(Lev,spRec$to)) 
   eval(parse('',text=paste("HH$space <- as.",Typ,"(as.character(HH$space))",sep="")))}
   
-if (!is.null(tcRec)) {
+if (!is.na(tcRec)) {
   Typ <- class(HH$technical) 
   HH$technical <- factor(HH$technical)
   Lev <- levels(HH$technical)[!levels(HH$technical)%in%tcRec$from]
@@ -406,7 +406,7 @@ if (!is.null(tcRec)) {
                         
 
 #PSUid is identified by a trip, a time, space and technical strata
-psuid <- apply(HH[,c("sampType","landCtry","vslFlgCtry","proj","trpCode","time","space","technical")],1,paste,collapse="::")
+psuid <- apply(HH[,c("sampType","landCtry","vslFlgCtry","proj","trpCode","time","space","technical")],1,paste,collapse=":-:")     #delim modified
 HH$PSUid <- factor(psuid,levels=unique(psuid),labels=1:length(unique(psuid)))
 #SSUid
 HH$SSUid <- as.numeric(unlist(tapply(HH$PSUid,list(HH$PSUid),function(x) 1:length(x))))
@@ -435,19 +435,19 @@ tr <- tr2
 if (cc) SL$technical <- SL$commCat
 sl <- merge(SL,HH[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","time","space","technical","PSUid","SSUid")],sort=FALSE,all.x=TRUE)
 
-if (is.null(sorting)) {
+if (is.na(sorting)) {
   fields <- NULL
 } else {
   sorti <- c(2,4,5)
   names(sorti) <- c("catchCat","commCat","subSampcat")
   fields <- c("catchCat","landCat","commCatScl","commCat","subSampcat")[1:sorti[sorting]]}
   
-tsuid <- apply(sl[,c("PSUid","SSUid",fields,"proj","trpCode","time","space","technical")],1,paste,collapse="::")
-pss <- apply(sl[,c("PSUid","SSUid")],1,paste,collapse="::")
+tsuid <- apply(sl[,c("PSUid","SSUid",fields,"proj","trpCode","time","space","technical")],1,paste,collapse=":-:")       #delim modified
+pss <- apply(sl[,c("PSUid","SSUid")],1,paste,collapse=":-:")                                                            #delim modified
 TS <- tapply(tsuid,list(pss),function(x) as.character(factor(x,levels=unique(x),labels=1:length(unique(x))))) 
 sl$TSUid <- factor(unlist(TS[unique(pss)]))
 #sampled and measured weights are aggregated
-if (is.null(sorting)) 
+if (is.na(sorting)) 
   sl$sort <- NA 
 else 
   sl$sort <- apply(sl[,fields],1,paste,collapse="-")
@@ -462,7 +462,7 @@ SLl <- Sl[order(as.numeric(as.character(Sl$PSUid)),as.numeric(as.character(Sl$SS
 
 #HL table
 if (cc) HL$technical <- HL$commCat  
-if (is.null(sorting)) 
+if (is.na(sorting)) 
   HL$sort <- NA 
 else 
   HL$sort <- apply(HL[,fields],1,paste,collapse="-")
@@ -486,17 +486,17 @@ ca <- ca[!is.na(ca$PSUid),]
 #strata fields must be created
 ca2$semester <- ceiling(ca2$quarter/2)
 
-if (is.null(tempStrata)) 
+if (is.na(timeStrata)) 
   ca2$time <- NA 
 else 
-  ca2$time <- ca2[,tempStrata]
+  ca2$time <- ca2[,timeStrata]
   
-if (is.null(spaceStrata)) 
+if (is.na(spaceStrata)) 
   ca2$space <- NA 
 else 
   ca2$space <- ca2[,spaceStrata]
   
-if (is.null(techStrata)) 
+if (is.na(techStrata)) 
   ca2$technical <- NA 
 else {
   if (!techStrata%in%names(ca2)) 
@@ -523,7 +523,7 @@ neotr$technical[!is.na(neotr$TECHNICAL)] <- neotr$TECHNICAL[!is.na(neotr$TECHNIC
 neotr <- neotr[order(as.numeric(as.character(neotr$PSUid))),]
 
 neoca <- rbind(ca,ca2[,-(c(-1,0)+ncol(ca2))])
-if (is.null(sorting)) 
+if (is.na(sorting)) 
   neoca$sort <- NA 
 else 
   neoca$sort<- apply(neoca[,fields],1,paste,collapse="-")

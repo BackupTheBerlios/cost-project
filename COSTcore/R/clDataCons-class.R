@@ -105,7 +105,7 @@ setMethod("clDataCons", signature("clDataVal","strIni"), function(object,
                                                                   desc="Unknown stock",
                                                                   ...){  
 
-tempStrata <- objStrat@tempStrata
+timeStrata <- objStrat@timeStrata
 spaceStrata <- objStrat@spaceStrata 
 techStrata <- objStrat@techStrata
 tpRec <- objStrat@tpRec
@@ -115,41 +115,41 @@ tcRec <- objStrat@tcRec
 CL <- object@cl 
 CL$semester <- ceiling(CL$quarter/2)      
 
-if (is.null(tempStrata)) {
+if (is.na(timeStrata)) {
   CL$time <- NA
-  tpRec <- NULL} 
+  tpRec <- as.list(NA)} 
 else 
-  CL$time <- CL[,tempStrata]    
+  CL$time <- CL[,timeStrata]    
    
-if (is.null(spaceStrata)) {
+if (is.na(spaceStrata)) {
   CL$space <- NA 
-  spRec <- NULL} 
+  spRec <- as.list(NA)} 
 else 
   CL$space <- CL[,spaceStrata]
 
-if (is.null(techStrata)) {
+if (is.na(techStrata)) {
   CL$technical <- NA 
-  tcRec <- NULL}
+  tcRec <- as.list(NA)}
 else 
   CL$technical <- CL[,techStrata]
 
 
 #recoding
-if (!is.null(tpRec)) {
+if (!is.na(tpRec)) {
   Typ <- class(CL$time)
   CL$time <- factor(CL$time)
   Lev <- levels(CL$time)[!levels(CL$time)%in%tpRec$from]
   CL$time <- factor(CL$time,levels=c(Lev,tpRec$from),labels=c(Lev,tpRec$to))
   eval(parse('',text=paste("CL$time <- as.",Typ,"(as.character(CL$time))",sep="")))}
   
-if (!is.null(spRec)) {
+if (!is.na(spRec)) {
   Typ <- class(CL$space)
   CL$space <- factor(CL$space)
   Lev <- levels(CL$space)[!levels(CL$space)%in%spRec$from]
   CL$space <- factor(CL$space,levels=c(Lev,spRec$from),labels=c(Lev,spRec$to))
   eval(parse('',text=paste("CL$space <- as.",Typ,"(as.character(CL$space))",sep="")))}
   
-if (!is.null(tcRec)) {
+if (!is.na(tcRec)) {
   Typ <- class(CL$technical)
   CL$technical <- factor(CL$technical)
   Lev <- levels(CL$technical)[!levels(CL$technical)%in%tcRec$from]

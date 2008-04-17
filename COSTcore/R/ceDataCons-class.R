@@ -198,7 +198,7 @@ setMethod("ceDataCons", signature("ceDataVal","strIni"), function(object,
                                                                   desc="Unknown stock",
                                                                   ...){  
 
-tempStrata <- objStrat@timeStrata
+timeStrata <- objStrat@timeStrata
 spaceStrata <- objStrat@spaceStrata
 techStrata <- objStrat@techStrata
 tpRec <- objStrat@tpRec
