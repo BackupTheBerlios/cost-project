@@ -4,6 +4,9 @@
 \alias{ceDataCons-class}
 \alias{ceDataCons-methods}
 \alias{ceDataCons,ceDataVal-method}
+\alias{ceDataCons,ceDataVal,strIni-method}
+\alias{ceDataCons,ceDataVal,missing-method}
+\alias{ceDataCons,missing,missing-method}
 \alias{ceDataCons,missing-method}
 \title{Class "ceDataCons"}
 \description{The ceDataCons-class is similar to \link{ceDataVal} but stores consolidated commercial effort data, i.e. that which is aggregated over spatial, temporal and technical (e.g. gear type) strata.  The expectation is that this post-stratified data will be the basis for the application of statistical methods.}

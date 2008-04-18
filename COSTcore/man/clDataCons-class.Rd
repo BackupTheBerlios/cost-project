@@ -4,6 +4,9 @@
 \alias{clDataCons-class}
 \alias{clDataCons-methods}
 \alias{clDataCons,clDataVal-method}
+\alias{clDataCons,clDataVal,strIni-method}
+\alias{clDataCons,clDataVal,missing-method}
+\alias{clDataCons,missing,missing-method}
 \alias{clDataCons,missing-method}
 \title{Class "clDataCons"}
 \description{The clDataCons-class is similar to \link{clDataVal} but stores consolidated commercial landings data, i.e. that which is aggregated over spatial, temporal and technical (e.g. gear type) strata.  The expectation is that this post-stratified data will be the basis for the application of statistical methods.}

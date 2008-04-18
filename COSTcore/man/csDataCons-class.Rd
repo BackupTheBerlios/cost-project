@@ -4,6 +4,9 @@
 \alias{csDataCons-class}
 \alias{csDataCons-methods}
 \alias{csDataCons,csDataVal-method}
+\alias{csDataCons,csDataVal,strIni-method}
+\alias{csDataCons,csDataVal,missing-method}
+\alias{csDataCons,missing,missing-method}
 \alias{csDataCons,missing-method}
 \title{Class "csDataCons"}
 \description{The csDataCons-class is similar to \link{csDataVal} but stores consolidated commercial sampling data, i.e. that which is aggregated over spatial, temporal and technical (e.g. gear type) strata.  The expectation is that this post-stratified data will be the basis for the application of statistical methods.}
@@ -18,6 +21,7 @@ The creator function "csDataCons" can be called to create objects from this clas
 \bold{\code{tr}} \tab \tab \code{data.frame} \tab  trip information \cr
  \tab PSUid \tab \code{numeric} \tab primary sampling unit id \cr
  \tab time \tab \code{factor} \tab time strata \cr
+ \tab space \tab \code{factor} \tab space strata \cr
  \tab technical \tab \code{factor} \tab technical strata \cr
  \tab sampType \tab \code{factor} \tab sampling type \cr
  \tab landCtry \tab \code{factor} \tab landing country \cr
