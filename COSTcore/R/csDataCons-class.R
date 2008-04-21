@@ -408,6 +408,7 @@ if (!is.na(tcRec[1])) {
 #PSUid is identified by a trip, a time, space and technical strata
 psuid <- apply(HH[,c("sampType","landCtry","vslFlgCtry","proj","trpCode","time","space","technical")],1,paste,collapse=":-:")     #delim modified
 HH$PSUid <- factor(psuid,levels=unique(psuid),labels=1:length(unique(psuid)))
+HH <- HH[order(as.numeric(as.character(HH$PSUid))),]                                                                              # <-- added  21/04 15:11
 #SSUid
 HH$SSUid <- as.numeric(unlist(tapply(HH$PSUid,list(HH$PSUid),function(x) 1:length(x))))
 
