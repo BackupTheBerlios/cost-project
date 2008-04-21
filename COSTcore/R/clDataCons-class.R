@@ -117,21 +117,21 @@ CL$semester <- ceiling(CL$quarter/2)
 
 if (is.na(timeStrata)) {
   CL$time <- NA
-  tpRec <- as.list(NA)} 
-else 
-  CL$time <- CL[,timeStrata]    
+  tpRec <- as.list(NA)
+} else {
+  CL$time <- CL[,timeStrata]}    
    
 if (is.na(spaceStrata)) {
   CL$space <- NA 
-  spRec <- as.list(NA)} 
-else 
-  CL$space <- CL[,spaceStrata]
+  spRec <- as.list(NA)
+} else {
+  CL$space <- CL[,spaceStrata]}
 
 if (is.na(techStrata)) {
   CL$technical <- NA 
-  tcRec <- as.list(NA)}
-else 
-  CL$technical <- CL[,techStrata]
+  tcRec <- as.list(NA)
+} else {
+  CL$technical <- CL[,techStrata]}
 
 
 #recoding

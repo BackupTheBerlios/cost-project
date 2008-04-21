@@ -365,21 +365,21 @@ HH$semester <- ceiling(HH$month/6)
 
 if (is.na(timeStrata)) {
   HH$time <- NA 
-  tpRec <- as.list(NA)} 
-else 
-  HH$time <- HH[,timeStrata]  
+  tpRec <- as.list(NA)
+} else {
+  HH$time <- HH[,timeStrata]}  
      
 if (is.na(spaceStrata)) {
   HH$space <- NA 
-  spRec <- as.list(NA)} 
-else 
-  HH$space <- HH[,spaceStrata]
+  spRec <- as.list(NA)
+} else {
+  HH$space <- HH[,spaceStrata]}
   
 if (is.na(techStrata)) {
   HH$technical <- NA 
-  tcRec <- as.list(NA)} 
-else 
-  HH$technical <- HH[,techStrata]
+  tcRec <- as.list(NA)
+} else {
+  HH$technical <- HH[,techStrata]}
 
 
 #recoding process
@@ -442,36 +442,26 @@ if (is.na(sorting)) {
   names(sorti) <- c("catchCat","commCat","subSampcat")
   fields <- c("catchCat","landCat","commCatScl","commCat","subSampcat")[1:sorti[sorting]]}
   
-tsuid <- apply(sl[,c("PSUid","SSUid",fields,"proj","trpCode","time","space","technical")],1,paste,collapse=":-:")       #delim modified
+#tsuid <- apply(sl[,c("PSUid","SSUid",fields,"proj","trpCode","time","space","technical")],1,paste,collapse=":-:")       #delim modified
+tsuid <- apply(sl[,c("PSUid","SSUid","catchCat","landCat","commCatScl","commCat","proj","trpCode","time","space","technical")],1,paste,collapse=":-:")       #delim modified
 pss <- apply(sl[,c("PSUid","SSUid")],1,paste,collapse=":-:")                                                            #delim modified
 TS <- tapply(tsuid,list(pss),function(x) as.character(factor(x,levels=unique(x),labels=1:length(unique(x))))) 
 sl$TSUid <- factor(unlist(TS[unique(pss)]))
 #sampled and measured weights are aggregated
-if (is.na(sorting)) 
+if (is.na(sorting)) {
   sl$sort <- NA 
-else 
-  sl$sort <- apply(sl[,fields],1,paste,collapse="-")
-Sl <- spdAgreg(list(wt=sl$wt,subSampWt=sl$subSampWt),list(sampType=sl$sampType,landCtry=sl$landCtry,vslFlgCtry=sl$vslFlgCtry,year=sl$year,proj=sl$proj,trpCode=sl$trpCode,
-                                                             staNum=sl$staNum,spp=sl$spp,lenCode=sl$lenCode,time=sl$time,space=sl$space,technical=sl$technical,sort=sl$sort,PSUid=sl$PSUid,
-                                                             SSUid=sl$SSUid,TSUid=sl$TSUid),sum,na.rm=TRUE)
+} else {
+  sl$sort <- apply(sl[,fields],1,paste,collapse="-")}
+
 #order
-SLl <- Sl[order(as.numeric(as.character(Sl$PSUid)),as.numeric(as.character(Sl$SSUid)),as.numeric(as.character(Sl$TSUid))),]
+SLl <- sl[order(as.numeric(as.character(sl$PSUid)),as.numeric(as.character(sl$SSUid)),as.numeric(as.character(sl$TSUid))),]
 
 
+hl <- merge(HL,SLl[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","spp","catchCat","landCat",
+                      "commCatScl","commCat","subSampCat","sort","time","space","technical","PSUid","SSUid","TSUid")],sort=FALSE,all.x=TRUE)
 
-
-#HL table
-if (cc) HL$technical <- HL$commCat  
-if (is.na(sorting)) 
-  HL$sort <- NA 
-else 
-  HL$sort <- apply(HL[,fields],1,paste,collapse="-")
-hl <- merge(HL,SLl[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","spp","sort","time","space","technical","PSUid","SSUid","TSUid")],sort=FALSE,all.x=TRUE)
-Hl <- spdAgreg(list(lenNum=hl$lenNum),list(sampType=hl$sampType,landCtry=hl$landCtry,vslFlgCtry=hl$vslFlgCtry,year=hl$year,proj=hl$proj,trpCode=hl$trpCode,
-                                                             staNum=hl$staNum,spp=hl$spp,sex=hl$sex,lenCls=hl$lenCls,time=hl$time,space=hl$space,technical=hl$technical,sort=hl$sort,
-                                                             PSUid=hl$PSUid,SSUid=hl$SSUid,TSUid=hl$TSUid),sum,na.rm=TRUE)
 #order
-HLl <- Hl[order(as.numeric(as.character(Hl$PSUid)),as.numeric(as.character(Hl$SSUid)),as.numeric(as.character(Hl$TSUid))),]
+HLl <- hl[order(as.numeric(as.character(hl$PSUid)),as.numeric(as.character(hl$SSUid)),as.numeric(as.character(hl$TSUid))),]
 
 
 
@@ -486,23 +476,23 @@ ca <- ca[!is.na(ca$PSUid),]
 #strata fields must be created
 ca2$semester <- ceiling(ca2$quarter/2)
 
-if (is.na(timeStrata)) 
+if (is.na(timeStrata)) {
   ca2$time <- NA 
-else 
-  ca2$time <- ca2[,timeStrata]
+} else {
+  ca2$time <- ca2[,timeStrata]}
   
-if (is.na(spaceStrata)) 
+if (is.na(spaceStrata)){ 
   ca2$space <- NA 
-else 
-  ca2$space <- ca2[,spaceStrata]
+} else {
+  ca2$space <- ca2[,spaceStrata]}
   
-if (is.na(techStrata)) 
+if (is.na(techStrata)){ 
   ca2$technical <- NA 
-else {
-  if (!techStrata%in%names(ca2)) 
+} else {
+  if (!techStrata%in%names(ca2)){ 
     ca2$technical <- NA 
-  else 
-    ca2$technical <- ca2[,techStrata]}
+  } else {
+    ca2$technical <- ca2[,techStrata]}}
     
 deb <- max(as.numeric(as.character(HH$PSUid)),na.rm=TRUE)
 psuid2 <- apply(ca2[,c("sampType","landCtry","vslFlgCtry","proj","trpCode","time","space","technical")],1,paste,collapse="::")
@@ -523,10 +513,10 @@ neotr$technical[!is.na(neotr$TECHNICAL)] <- neotr$TECHNICAL[!is.na(neotr$TECHNIC
 neotr <- neotr[order(as.numeric(as.character(neotr$PSUid))),]
 
 neoca <- rbind(ca,ca2[,-(c(-1,0)+ncol(ca2))])
-if (is.na(sorting)) 
+if (is.na(sorting)){ 
   neoca$sort <- NA 
-else 
-  neoca$sort<- apply(neoca[,fields],1,paste,collapse="-")
+} else {
+  neoca$sort<- apply(neoca[,fields],1,paste,collapse="-")}
 
 csc <- new("csDataCons")
 	tr <- neotr[,match(names(tr(csc)),names(neotr))] ; rownames(tr) <- 1:nrow(tr)

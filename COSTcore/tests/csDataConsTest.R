@@ -26,6 +26,10 @@ data(sole)
 # constructor
 checkRun(csc <- csDataCons(csDataVal(sole.cs)))
 checkTrue(is(csc, "csDataCons"))
+#test on dimensions
+checkTrue(nrow(sl(sole.cs))==nrow(sl(csc)))
+checkTrue(nrow(hl(sole.cs))==nrow(hl(csc)))
+checkTrue(nrow(ca(sole.cs))==nrow(ca(csc)))
 
 finishTest()
 

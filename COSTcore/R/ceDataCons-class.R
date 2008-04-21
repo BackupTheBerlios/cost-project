@@ -210,15 +210,15 @@ CE$semester <- ceiling(CE$quarter/2)
 
 if (is.na(timeStrata)) {
   CE$time <- NA 
-  tpRec <- as.list(NA)}
-else 
-  CE$time <- CE[,timeStrata] 
+  tpRec <- as.list(NA)
+} else {
+  CE$time <- CE[,timeStrata]} 
       
 if (is.na(spaceStrata)) {
   CE$space <- NA 
-  spRec <- as.list(NA)} 
-else 
-  CE$space <- CE[,spaceStrata]
+  spRec <- as.list(NA)
+} else {
+  CE$space <- CE[,spaceStrata]}
 
 if (is.na(techStrata)) {
   CE$technical <- NA 
