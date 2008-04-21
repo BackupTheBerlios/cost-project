@@ -513,6 +513,7 @@ neotr$technical[!is.na(neotr$TECHNICAL)] <- neotr$TECHNICAL[!is.na(neotr$TECHNIC
 neotr <- neotr[order(as.numeric(as.character(neotr$PSUid))),]
 
 neoca <- rbind(ca,ca2[,-(c(-1,0)+ncol(ca2))])
+neoca$subSampCat <- NA
 if (is.na(sorting)){ 
   neoca$sort <- NA 
 } else {
