@@ -439,8 +439,8 @@ if (is.na(sorting)) {
   fields <- NULL
 } else {
   sorti <- c(2,4,5)
-  names(sorti) <- c("catchCat","commCat","subSampcat")
-  fields <- c("catchCat","landCat","commCatScl","commCat","subSampcat")[1:sorti[sorting]]}
+  names(sorti) <- c("catchCat","commCat","subSampCat")
+  fields <- c("catchCat","landCat","commCatScl","commCat","subSampCat")[1:sorti[sorting]]}
   
 #tsuid <- apply(sl[,c("PSUid","SSUid",fields,"proj","trpCode","time","space","technical")],1,paste,collapse=":-:")       #delim modified
 tsuid <- apply(sl[,c("PSUid","SSUid","catchCat","landCat","commCatScl","commCat","proj","trpCode","time","space","technical")],1,paste,collapse=":-:")       #delim modified
