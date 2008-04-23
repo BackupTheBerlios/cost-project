@@ -58,6 +58,10 @@ setClass("ceDataCons",
 
 
 
+#====================================================================
+# Convert columns of a data.frame with respect to 'refObject' format
+#====================================================================
+
 
 setGeneric("coerceCons", function(object, refObject, ...){
 	standardGeneric("coerceCons")
@@ -89,14 +93,12 @@ setMethod("coerceCons", signature("data.frame", "data.frame"), function(object, 
 setClass("strIni",representation(timeStrata="character",
                                  spaceStrata="character",
                                  techStrata="character",
-                                 sorting="character",
                                  tpRec="list",
                                  spRec="list",
                                  tcRec="list"),
                     prototype(timeStrata=as.character(NA),
                               spaceStrata=as.character(NA),
                               techStrata=as.character(NA),
-                              sorting=as.character(NA),
                               tpRec=as.list(NA),
                               spRec=as.list(NA),
                               tcRec=as.list(NA)))		
@@ -108,39 +110,16 @@ setClass("strIni",representation(timeStrata="character",
 strIni <- function(timeStrata=as.character(NA),
                    spaceStrata=as.character(NA),
                    techStrata=as.character(NA),
-                   sorting=as.character(NA),      #sorting="catchCat" or "commCat" or "subSampcat"
                    tpRec=as.list(NA),             #ex: tpRec=list(from=c("1","2","3","4"),to=c("5","5","6","6"))
                    spRec=as.list(NA),
                    tcRec=as.list(NA)){   
 new("strIni",timeStrata=timeStrata,
              spaceStrata=spaceStrata,
              techStrata=techStrata,
-             sorting=sorting,
              tpRec=tpRec,
              spRec=spRec,
              tcRec=tcRec)                      
 }
-
-
-
-
-
-
-#Aggregation tool --> faster than 'aggregate'
-spdAgreg <- function(X,BY,FUN,...){
-FactCar <- sapply(BY,as.character)
-val <- apply(FactCar,1,function(x) paste(x,collapse="::"))
-valAg <- aggregate(X,list(val=val),FUN,...)
-tab <- as.data.frame(matrix(unlist(strsplit(as.character(valAg$val),"::")),ncol=length(BY),byrow=TRUE))
-tab.ag <- data.frame(tab,valAg[,-1])
-namBY <- names(BY) ; namX <- names(X)
-if (is.null(namBY)) namBY <- rep("",length(BY)) ; if (is.null(namX)) namX <- rep("",length(X))
-namBY[namBY==""] <- paste("c.",1:sum(namBY==""),sep="") ; namX[namX==""] <- paste("v.",1:sum(namX==""),sep="")
-names(tab.ag) <- c(namBY,namX)
-return(tab.ag)}
-
-
-
 
 
 
@@ -208,6 +187,10 @@ tcRec <- objStrat@tcRec
 CE <- object@ce 
 CE$semester <- ceiling(CE$quarter/2)      
 
+#-------------------------------------------------------------------------------
+# Creation of the 3 stratification fields in ce
+#-------------------------------------------------------------------------------
+
 if (is.na(timeStrata)) {
   CE$time <- NA 
   tpRec <- as.list(NA)
@@ -227,7 +210,9 @@ if (is.na(techStrata)) {
   if (techStrata=="commCat") stop("effort object do not match with market category sampling strategy")
   CE$technical <- CE[,techStrata]}
 
-#recoding
+#-------------------------------------------------------------------------------
+# Recoding the 3 new stratification fields following user post-stratification          <<<- there's surely a more simple way to do this
+#-------------------------------------------------------------------------------
 if (!is.na(tpRec[1])) {
   Typ <- class(CE$time)
   CE$time <- factor(CE$time)
@@ -249,6 +234,9 @@ if (!is.na(tcRec[1])) {
   CE$technical <- factor(CE$technical,levels=c(Lev,tcRec$from),labels=c(Lev,tcRec$to))
   eval(parse('',text=paste("CE$technical <- as.",Typ,"(as.character(CE$technical))",sep="")))}
                         
+#-------------------------------------------------------------------------------
+# Finally, creation of 'ceDataCons' object and use of 'coerceCons' function to convert columns
+#-------------------------------------------------------------------------------
 
 csc <- new("ceDataCons")
 ce <- CE[,match(names(csc@ce),names(CE))]

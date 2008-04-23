@@ -115,6 +115,10 @@ tcRec <- objStrat@tcRec
 CL <- object@cl 
 CL$semester <- ceiling(CL$quarter/2)      
 
+#-------------------------------------------------------------------------------
+# Creation of the 3 stratification fields in cl
+#-------------------------------------------------------------------------------
+
 if (is.na(timeStrata)) {
   CL$time <- NA
   tpRec <- as.list(NA)
@@ -134,7 +138,10 @@ if (is.na(techStrata)) {
   CL$technical <- CL[,techStrata]}
 
 
-#recoding
+#-------------------------------------------------------------------------------
+# Recoding the 3 new stratification fields following user post-stratification          <<<- there's surely a more simple way to do this
+#-------------------------------------------------------------------------------
+
 if (!is.na(tpRec[1])) {
   Typ <- class(CL$time)
   CL$time <- factor(CL$time)
@@ -156,6 +163,9 @@ if (!is.na(tcRec[1])) {
   CL$technical <- factor(CL$technical,levels=c(Lev,tcRec$from),labels=c(Lev,tcRec$to))
   eval(parse('',text=paste("CL$technical <- as.",Typ,"(as.character(CL$technical))",sep="")))}
                         
+#-------------------------------------------------------------------------------
+# Finally, creation of 'clDataCons' object and use of 'coerceCons' function to convert columns
+#-------------------------------------------------------------------------------
 
 csc <- new("clDataCons")
 cl <- CL[,match(names(csc@cl),names(CL))]
