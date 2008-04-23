@@ -4,6 +4,20 @@ importClassesFrom("COSTcore")
 
 importFrom("COSTcore")
 
+export(
+  "check.fields",
+  "convert.statsq.lat.lon",
+  "convert.icesarea.statsq",
+  "convert.icesarea.lat.lon",
+  "ices.division.lines",
+  "ices.division.names",
+  "is.statsq",
+  "landmass.polygons",
+  "mergecsData",
+  "space.plot",
+  "strata.space.plot"
+)
+
 exportClasses(
 	"ageLenMult",
 	"dltCls",

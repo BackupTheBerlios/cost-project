@@ -1,0 +1,34 @@
+\name{cod2004cl}
+\alias{cod2004cl}
+\docType{data}
+\title{Cod 2004 commercial landings data}
+\description{
+  Cod 2004 commercial landings data in the COST data exchange format.
+}
+\usage{data(cod2004cl)}
+\format{
+Formal class 'clData' [package "COSTcore"] with 2 slots: 
+\cr@desc: description
+\cr@ce: data frame of 2601 observations of 19 variables  
+\cr see clData for details of the variables  
+
+}
+\details{
+Commercial landings data from vessels landing cod into Scottish ports during 2004,  
+aggregated by month, ICES statistical rectangle, ICES area and gear type.  
+Compiled from fisheries information network (FIN) data.  
+%  ~~ If necessary, more details than the __description__ above ~~
+}
+\section{Warning }{This is a test data set only and should not to be used or cited without prior permission.}
+\source{
+  FRS Marine Laboratory, Aberdeen, Scotland. 
+}
+
+%\references{
+%  ~~ possibly secondary sources and usages ~~
+%}
+\examples{
+data(cod2004cl)
+%## maybe str(cod2004cl) ; plot(cod2004cl) ...
+}
+\keyword{datasets}
