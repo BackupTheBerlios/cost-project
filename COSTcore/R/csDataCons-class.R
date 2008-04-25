@@ -339,11 +339,8 @@ tpRec <- objStrat@tpRec                        #
 spRec <- objStrat@spRec                        #
 tcRec <- objStrat@tcRec                        #
                                                #
-TR <- object@tr                                #
-HH <- object@hh                                #
-SL <- object@sl                                #
-HL <- object@hl                                #
-CA <- object@ca                                ####
+HH <- object@hh                                ####
+
 
 #-------------------------------------------------------------------------------
 # Addition of fields in HH
@@ -358,7 +355,7 @@ CA <- object@ca                                ####
 cc <- is.na(techStrata)==FALSE & techStrata=="commCat"
 if (cc) {
   HH$ind <- 1:nrow(HH)
-  HH <- merge(HH,unique(SL[,c("sampType",
+  HH <- merge(HH,unique(object@sl[,c("sampType",
                               "landCtry",
                               "vslFlgCtry",
                               "year",
@@ -376,8 +373,8 @@ if (cc) {
 vsl <- is.na(techStrata)==FALSE & techStrata%in%c("vslPwr","vslSize","vslLen","vslType")
 if (vsl) { 
   indHh <- apply(HH[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode")],1,paste,collapse=":-:") 
-  indTr <- apply(TR[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode")],1,paste,collapse=":-:") 
-  HH[,techStrata] <- TR[match(indHh,indTr),techStrata]
+  indTr <- apply(object@tr[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode")],1,paste,collapse=":-:") 
+  HH[,techStrata] <- object@tr[match(indHh,indTr),techStrata]
 }
 
     #---------------------------------------------------------------------------
@@ -462,7 +459,7 @@ HH$SSUid <- unlist(tapply(HH$PSUid,list(HH$PSUid),function(x) 1:length(x)))
 ccInd <- NULL 
 if (cc) ccInd <- "commCat"
 
-sl <- merge(SL,HH[,c("sampType",
+sl <- merge(object@sl,HH[,c("sampType",
                      "landCtry",
                      "vslFlgCtry",
                      "year",
@@ -516,7 +513,7 @@ sl$TSUid <- unlist(tapply(ccat,list(PSSUid),tsuidFun))
     #---------------------------------------------------------------------------
 
 
-hl <- merge(HL,sl[,c("sampType",
+hl <- merge(object@hl,sl[,c("sampType",
                      "landCtry",
                      "vslFlgCtry",
                      "year",
@@ -550,7 +547,7 @@ hl <- hl[order(hl$PSUid,hl$SSUid,hl$TSUid),]
 
 #if tech strata = commercial cat, merge between hh and ca must also be applied within 'commCat' field --> use of ccInd
 #presence of NAs will mean that information is only linked to tr table 
-ca <- merge(CA,HH[,c("sampType",
+ca <- merge(object@ca,HH[,c("sampType",
                      "landCtry",
                      "vslFlgCtry",
                      "year",
@@ -597,8 +594,8 @@ if (cc) ca$technical[index] <- ca[index,"commCat"]
   #if tech strata = vslPwr, vslSize, vslLen or vslType, this information stored in tr must be written in ca
 if (vsl) { 
   indCa <- apply(ca[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode")],1,paste,collapse=":-:") 
-  indTr <- apply(TR[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode")],1,paste,collapse=":-:") 
-  ca$technical <- TR[match(indCa,indTr),techStrata]
+  indTr <- apply(object@tr[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode")],1,paste,collapse=":-:") 
+  ca$technical <- object@tr[match(indCa,indTr),techStrata]
 }
 if (!is.na(spaceStrata)) {
   if (!is.na(tcRec[1])) ca <- recFun(ca,"technical",tcRec)
@@ -633,7 +630,7 @@ ca$sort <- apply(ca[,fields],1,paste,collapse="-")
     # merge TR and HH by the keyfields to include PSUid, time, space and technical fields in TR
     #---------------------------------------------------------------------------
 
-tr <- merge(TR,unique(HH[,c("sampType",
+tr <- merge(object@tr,unique(HH[,c("sampType",
                             "landCtry",
                             "vslFlgCtry",
                             "year",
