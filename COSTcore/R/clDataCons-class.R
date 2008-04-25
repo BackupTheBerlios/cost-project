@@ -105,67 +105,78 @@ setMethod("clDataCons", signature("clDataVal","strIni"), function(object,
                                                                   desc="Unknown stock",
                                                                   ...){  
 
-timeStrata <- objStrat@timeStrata
-spaceStrata <- objStrat@spaceStrata 
-techStrata <- objStrat@techStrata
-tpRec <- objStrat@tpRec
-spRec <- objStrat@spRec
-tcRec <- objStrat@tcRec
-
-CL <- object@cl 
+timeStrata <- objStrat@timeStrata                 # <<<- to make the code clearer, but maybe it's not the thing to do
+spaceStrata <- objStrat@spaceStrata               #
+techStrata <- objStrat@techStrata                 #
+tpRec <- objStrat@tpRec                           #
+spRec <- objStrat@spRec                           #
+tcRec <- objStrat@tcRec                           #
+                                                  #
+CL <- object@cl                                   ####
 CL$semester <- ceiling(CL$quarter/2)      
 
 #-------------------------------------------------------------------------------
-# Creation of the 3 stratification fields in cl
+# Addition of fields
 #-------------------------------------------------------------------------------
+
+    #---------------------------------------------------------------------------
+    # based on the user specification and the post-stratification specified in the strIni object
+    #---------------------------------------------------------------------------
+
+#recoding procedure
+recFun <- function(df,field,rec) {                  # <<<- there's surely a more simple way to do this
+  Typ <- class(df[,field]) 
+  fc <- factor(df[,field]) 
+  Lev <- levels(fc)[!levels(fc)%in%rec$from]
+  df[,field] <- factor(fc,levels=c(Lev,rec$from),labels=c(Lev,rec$to))
+  eval(parse('',text=paste("df[,field] <- as.",Typ,"(as.character(df[,field]))",sep="")))
+  return(df)
+}
+  
+        #-------
+        # Time stratification
+        #-------
 
 if (is.na(timeStrata)) {
   CL$time <- NA
   tpRec <- as.list(NA)
 } else {
   CL$time <- CL[,timeStrata]}    
+
+if (!is.na(tpRec[1])) CL <- recFun(CL,"time",tpRec)    
    
+        #-------
+        # Space stratification
+        #-------
+
 if (is.na(spaceStrata)) {
-  CL$space <- NA 
+  CL$space <- NA
   spRec <- as.list(NA)
 } else {
-  CL$space <- CL[,spaceStrata]}
+  CL$space <- CL[,spaceStrata]}    
+
+if (!is.na(spRec[1])) CL <- recFun(CL,"space",spRec)    
+        
+        #-------
+        # Technical stratification
+        #-------
 
 if (is.na(techStrata)) {
-  CL$technical <- NA 
+  CL$technical <- NA
   tcRec <- as.list(NA)
 } else {
-  CL$technical <- CL[,techStrata]}
+  CL$technical <- CL[,techStrata]}    
 
+if (!is.na(tcRec[1])) CL <- recFun(CL,"technical",tcRec)    
+   
+              
+#-------------------------------------------------------------------------------
+# Creation of the CONSOLIDATED object
+#-------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
-# Recoding the 3 new stratification fields following user post-stratification          <<<- there's surely a more simple way to do this
-#-------------------------------------------------------------------------------
-
-if (!is.na(tpRec[1])) {
-  Typ <- class(CL$time)
-  CL$time <- factor(CL$time)
-  Lev <- levels(CL$time)[!levels(CL$time)%in%tpRec$from]
-  CL$time <- factor(CL$time,levels=c(Lev,tpRec$from),labels=c(Lev,tpRec$to))
-  eval(parse('',text=paste("CL$time <- as.",Typ,"(as.character(CL$time))",sep="")))}
-  
-if (!is.na(spRec[1])) {
-  Typ <- class(CL$space)
-  CL$space <- factor(CL$space)
-  Lev <- levels(CL$space)[!levels(CL$space)%in%spRec$from]
-  CL$space <- factor(CL$space,levels=c(Lev,spRec$from),labels=c(Lev,spRec$to))
-  eval(parse('',text=paste("CL$space <- as.",Typ,"(as.character(CL$space))",sep="")))}
-  
-if (!is.na(tcRec[1])) {
-  Typ <- class(CL$technical)
-  CL$technical <- factor(CL$technical)
-  Lev <- levels(CL$technical)[!levels(CL$technical)%in%tcRec$from]
-  CL$technical <- factor(CL$technical,levels=c(Lev,tcRec$from),labels=c(Lev,tcRec$to))
-  eval(parse('',text=paste("CL$technical <- as.",Typ,"(as.character(CL$technical))",sep="")))}
-                        
-#-------------------------------------------------------------------------------
-# Finally, creation of 'clDataCons' object and use of 'coerceCons' function to convert columns
-#-------------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
+    # selection of the appropriate fields (selection of the new stratification fields instead of the original)
+    #---------------------------------------------------------------------------
 
 csc <- new("clDataCons")
 cl <- CL[,match(names(csc@cl),names(CL))]

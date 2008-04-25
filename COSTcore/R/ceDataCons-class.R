@@ -113,6 +113,10 @@ strIni <- function(timeStrata=as.character(NA),
                    tpRec=as.list(NA),             #ex: tpRec=list(from=c("1","2","3","4"),to=c("5","5","6","6"))
                    spRec=as.list(NA),
                    tcRec=as.list(NA)){   
+
+if (is.na(techStrata)==FALSE & techStrata%in%c("vslLen","vslPwr","vslSize")) 
+  warning(paste("Check that original '",techStrata,"' field in 'tr' table has been categorized into a moderate number of levels. (see 'cut' function)",sep="")   
+
 new("strIni",timeStrata=timeStrata,
              spaceStrata=spaceStrata,
              techStrata=techStrata,
@@ -177,19 +181,37 @@ setMethod("ceDataCons", signature("ceDataVal","strIni"), function(object,
                                                                   desc="Unknown stock",
                                                                   ...){  
 
-timeStrata <- objStrat@timeStrata
-spaceStrata <- objStrat@spaceStrata
-techStrata <- objStrat@techStrata
-tpRec <- objStrat@tpRec
-spRec <- objStrat@spRec
-tcRec <- objStrat@tcRec
-
-CE <- object@ce 
+timeStrata <- objStrat@timeStrata                # <<<- to make the code clearer, but maybe it's not the thing to do
+spaceStrata <- objStrat@spaceStrata              #
+techStrata <- objStrat@techStrata                #
+tpRec <- objStrat@tpRec                          #
+spRec <- objStrat@spRec                          #
+tcRec <- objStrat@tcRec                          #
+                                                 #
+CE <- object@ce                                  #####
 CE$semester <- ceiling(CE$quarter/2)      
 
 #-------------------------------------------------------------------------------
-# Creation of the 3 stratification fields in ce
+# Addition of fields
 #-------------------------------------------------------------------------------
+
+    #---------------------------------------------------------------------------
+    # based on the user specification and the post-stratification specified in the strIni object
+    #---------------------------------------------------------------------------
+
+#recoding procedure
+recFun <- function(df,field,rec) {                  # <<<- there's surely a more simple way to do this
+  Typ <- class(df[,field]) 
+  fc <- factor(df[,field]) 
+  Lev <- levels(fc)[!levels(fc)%in%rec$from]
+  df[,field] <- factor(fc,levels=c(Lev,rec$from),labels=c(Lev,rec$to))
+  eval(parse('',text=paste("df[,field] <- as.",Typ,"(as.character(df[,field]))",sep="")))
+  return(df)
+}
+  
+        #-------
+        # Time stratification
+        #-------
 
 if (is.na(timeStrata)) {
   CE$time <- NA 
@@ -197,46 +219,41 @@ if (is.na(timeStrata)) {
 } else {
   CE$time <- CE[,timeStrata]} 
       
+if (!is.na(tpRec[1])) CE <- recFun(CE,"time",tpRec)      
+
+        #-------
+        # Space stratification
+        #-------
+
 if (is.na(spaceStrata)) {
   CE$space <- NA 
   spRec <- as.list(NA)
 } else {
-  CE$space <- CE[,spaceStrata]}
+  CE$space <- CE[,spaceStrata]} 
+      
+if (!is.na(spRec[1])) CE <- recFun(CE,"space",spRec)      
+
+        #-------
+        # Technical stratification
+        #-------
 
 if (is.na(techStrata)) {
   CE$technical <- NA 
-  tcRec <- as.list(NA) 
+  tcRec <- as.list(NA)
 } else {
   if (techStrata=="commCat") stop("effort object do not match with market category sampling strategy")
-  CE$technical <- CE[,techStrata]}
+  CE$technical <- CE[,techStrata]} 
+      
+if (!is.na(tcRec[1])) CE <- recFun(CE,"technical",tcRec)      
 
+ 
 #-------------------------------------------------------------------------------
-# Recoding the 3 new stratification fields following user post-stratification          <<<- there's surely a more simple way to do this
+# Creation of the CONSOLIDATED object
 #-------------------------------------------------------------------------------
-if (!is.na(tpRec[1])) {
-  Typ <- class(CE$time)
-  CE$time <- factor(CE$time)
-  Lev <- levels(CE$time)[!levels(CE$time)%in%tpRec$from]
-  CE$time <- factor(CE$time,levels=c(Lev,tpRec$from),labels=c(Lev,tpRec$to))
-  eval(parse('',text=paste("CE$time <- as.",Typ,"(as.character(CE$time))",sep="")))}
-  
-if (!is.na(spRec[1])) {
-  Typ <- class(CE$space) 
-  CE$space <- factor(CE$space)
-  Lev <- levels(CE$space)[!levels(CE$space)%in%spRec$from]
-  CE$space <- factor(CE$space,levels=c(Lev,spRec$from),labels=c(Lev,spRec$to))
-  eval(parse('',text=paste("CE$space <- as.",Typ,"(as.character(CE$space))",sep="")))}
-  
-if (!is.na(tcRec[1])) {
-  Typ <- class(CE$technical)
-  CE$technical <- factor(CE$technical)
-  Lev <- levels(CE$technical)[!levels(CE$technical)%in%tcRec$from]
-  CE$technical <- factor(CE$technical,levels=c(Lev,tcRec$from),labels=c(Lev,tcRec$to))
-  eval(parse('',text=paste("CE$technical <- as.",Typ,"(as.character(CE$technical))",sep="")))}
-                        
-#-------------------------------------------------------------------------------
-# Finally, creation of 'ceDataCons' object and use of 'coerceCons' function to convert columns
-#-------------------------------------------------------------------------------
+
+    #---------------------------------------------------------------------------
+    # selection of the appropriate fields (selection of the new stratification fields instead of the original)
+    #---------------------------------------------------------------------------
 
 csc <- new("ceDataCons")
 ce <- CE[,match(names(csc@ce),names(CE))]
