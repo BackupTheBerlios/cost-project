@@ -115,7 +115,7 @@ strIni <- function(timeStrata=as.character(NA),
                    tcRec=as.list(NA)){   
 
 if (is.na(techStrata)==FALSE & techStrata%in%c("vslLen","vslPwr","vslSize")) 
-  warning(paste("Check that original '",techStrata,"' field in 'tr' table has been categorized into a moderate number of levels. (see 'cut' function)",sep="")   
+  warning(paste("Check that original '",techStrata,"' field in 'tr' table has been categorized into a moderate number of levels. (see 'cut' function)",sep=""))   
 
 new("strIni",timeStrata=timeStrata,
              spaceStrata=spaceStrata,
