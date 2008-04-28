@@ -400,7 +400,7 @@ month <- sapply(HH$date,function(x) as.numeric(strsplit(x,"-")[[1]][2]))
 time.DF <- data.frame(month = month, quarter = ceiling(month/3), semester = ceiling(month/6),year=HH$year)
 
 if (is.na(timeStrata)) {
-  HH$time <- NA 
+  HH$time <- "all" 
   tpRec <- as.list(NA)
 } else {
   HH$time <- time.DF[,timeStrata]}  
@@ -412,7 +412,7 @@ if (!is.na(tpRec[1])) HH <- recFun(HH,"time",tpRec)
         #-------
        
 if (is.na(spaceStrata)) {
-  HH$space <- NA 
+  HH$space <- "all" 
   spRec <- as.list(NA)
 } else {
   HH$space <- HH[,spaceStrata]}
@@ -424,7 +424,7 @@ if (!is.na(spRec[1])) HH <- recFun(HH,"space",spRec)
         #-------
     
 if (is.na(techStrata)) {
-  HH$technical <- NA 
+  HH$technical <- "all" 
   tcRec <- as.list(NA)
 } else {
   HH$technical <- HH[,techStrata]}
@@ -580,13 +580,15 @@ ca$semester <- ceiling(ca$quarter/2)
 if (!is.na(timeStrata)) {
   ca$time[index] <- ca[index,timeStrata]
   if (!is.na(tpRec[1])) ca <- recFun(ca,"time",tpRec)
-}
+} else {
+  ca$time <- "all"}
 
 #SPACE
 if (!is.na(spaceStrata)) {
   ca$space[index] <- ca[index,spaceStrata]
   if (!is.na(spRec[1])) ca <- recFun(ca,"space",spRec)
-}
+} else {
+  ca$space <- "all"}
 
 #TECHNICAL : technical case is a bit different 
   #if tech strata = commercial cat...
@@ -599,7 +601,8 @@ if (vsl) {
 }
 if (!is.na(spaceStrata)) {
   if (!is.na(tcRec[1])) ca <- recFun(ca,"technical",tcRec)
-}
+} else {
+  ca$technical <- "all"}
      
         #------- 
         # creation of new values of PSUid

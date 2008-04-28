@@ -214,7 +214,7 @@ recFun <- function(df,field,rec) {                  # <<<- there's surely a more
         #-------
 
 if (is.na(timeStrata)) {
-  CE$time <- NA 
+  CE$time <- "all" 
   tpRec <- as.list(NA)
 } else {
   CE$time <- CE[,timeStrata]} 
@@ -226,7 +226,7 @@ if (!is.na(tpRec[1])) CE <- recFun(CE,"time",tpRec)
         #-------
 
 if (is.na(spaceStrata)) {
-  CE$space <- NA 
+  CE$space <- "all" 
   spRec <- as.list(NA)
 } else {
   CE$space <- CE[,spaceStrata]} 
@@ -238,7 +238,7 @@ if (!is.na(spRec[1])) CE <- recFun(CE,"space",spRec)
         #-------
 
 if (is.na(techStrata)) {
-  CE$technical <- NA 
+  CE$technical <- "all" 
   tcRec <- as.list(NA)
 } else {
   if (techStrata=="commCat") stop("effort object do not match with market category sampling strategy")

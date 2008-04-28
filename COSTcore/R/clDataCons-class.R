@@ -138,7 +138,7 @@ recFun <- function(df,field,rec) {                  # <<<- there's surely a more
         #-------
 
 if (is.na(timeStrata)) {
-  CL$time <- NA
+  CL$time <- "all"
   tpRec <- as.list(NA)
 } else {
   CL$time <- CL[,timeStrata]}    
@@ -150,7 +150,7 @@ if (!is.na(tpRec[1])) CL <- recFun(CL,"time",tpRec)
         #-------
 
 if (is.na(spaceStrata)) {
-  CL$space <- NA
+  CL$space <- "all"
   spRec <- as.list(NA)
 } else {
   CL$space <- CL[,spaceStrata]}    
@@ -162,7 +162,7 @@ if (!is.na(spRec[1])) CL <- recFun(CL,"space",spRec)
         #-------
 
 if (is.na(techStrata)) {
-  CL$technical <- NA
+  CL$technical <- "all"
   tcRec <- as.list(NA)
 } else {
   CL$technical <- CL[,techStrata]}    
