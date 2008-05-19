@@ -99,8 +99,15 @@ if (is.na(techStrata)==FALSE & techStrata%in%names(tab))
 
 if (!is.null(result)) {
   if (nrow(result)==0) result <- NULL}
-if (!is.null(result)) rownames(result) <- 1:nrow(result) 
- 
+if (!is.null(result)) {
+  rownames(result) <- 1:nrow(result) 
+#levels of mod field are redefined (ordered) 
+  num <- suppressWarnings(as.numeric(as.character(result$mod)))
+  lev <- c(as.character(unique(sort(num[!is.na(num)]))),         #numerical modalities are sorted numerically
+           unique(sort(as.character(result$mod)[is.na(num)])))   #character modalities are sorted
+  result$mod <- factor(result$mod,levels=lev)
+}
+
 return(new("edaResult",desc="csRelativeValue",outPut=result))
 }
 
@@ -146,8 +153,15 @@ if (is.na(techStrata)==FALSE & techStrata%in%names(df))
 
 if (!is.null(result)) {
   if (nrow(result)==0) result <- NULL}
-if (!is.null(result)) rownames(result) <- 1:nrow(result) 
- 
+if (!is.null(result)) {
+  rownames(result) <- 1:nrow(result) 
+  #levels of mod field are redefined (ordered) 
+  num <- suppressWarnings(as.numeric(as.character(result$mod)))
+  lev <- c(as.character(unique(sort(num[!is.na(num)]))),         #numerical modalities are sorted numerically
+           unique(sort(as.character(result$mod)[is.na(num)])))   #character modalities are sorted
+  result$mod <- factor(result$mod,levels=lev)
+}
+
 return(new("edaResult",desc="clceRelativeValue",outPut=result))
 }
 
@@ -190,18 +204,8 @@ if (!is.null(tabPoints)) {
   tab$value[is.na(tab$value)] <- 0
   tab$vrblA[is.na(tab$vrblA)] <- tabPoints$vrblA[1] 
   tab$valueA[is.na(tab$valueA)] <- 0
-  #tab must be ordered within 'type' and then 'mod'
-  ord <- tapply(paste(as.character(tab$mod),1:nrow(tab),sep=":-:"),
-                list(tab$type),
-                function(x) {
-                  Md <- sapply(x,function(y) strsplit(y,":-:")[[1]])
-                  if (all(suppressWarnings(is.finite(as.numeric(Md[1,]))))) {
-                                                    Md[2,order(as.numeric(Md[1,]))]
-                                                  } else {
-                                                    Md[2,order(Md[1,])]
-                                                  }})
-  tab <- tab[as.numeric(unlist(ord)),]
-
+  tab <- tab[order(tab$type,tab$mod),]
+  
 } else {
 
   #-----------------------------------------------------------------------------
@@ -229,13 +233,10 @@ if (indG[2]) {
   names(Points) <- as.character(factor(tab$type,levels=modal,labels=1:length(modal)))
 } else {
   Points <- NULL
-}
+}                         
  
 #modification of levels to sort numerical value correctly
-#vv <- levels(tab$mod)
-#index <- is.na(suppressWarnings(as.numeric(vv)))
-#tab$mod <- factor(tab$mod,levels=c(as.character(sort(as.numeric(vv[!index]))),vv[index]))
-tab$mod <- factor(tab$mod,levels=unique(tab$mod)) 
+#tab$mod <- factor(tab$mod,levels=unique(tab$mod)) 
  
   #-----------------------------------------------------------------------------
   # Update of graphical parameters
