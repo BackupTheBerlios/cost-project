@@ -20,7 +20,12 @@ setGeneric("wlPlot", function(object,
 
 setMethod("wlPlot", signature(object="csData"), function(object,
                                                          selection=FALSE,...){
+
 tab <- object@ca 
+
+#tests on ca table fields
+if (all(is.na(tab$indWt))) stop("no individual weight data in ca table!!")
+if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!") 
 
 data(GraphsPar)                                                                                                               
 dots <- list(...)
@@ -78,6 +83,11 @@ setMethod("mlPlot", signature(object="csData"), function(object,
                                                          selection=FALSE,
                                                          ...){
 tab <- object@ca 
+
+#tests on ca table fields
+if (all(is.na(tab$matStage))) stop("no maturity stage data in ca table!!")
+if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!") 
+
 
 data(GraphsPar)                                                                                                                  
 dots <- list(...) 
@@ -138,6 +148,11 @@ setMethod("slPlot", signature(object="csData"), function(object,
 
 tab <- object@ca 
 
+#tests on ca table fields
+if (all(is.na(tab$sex))) stop("no sex data in ca table!!")
+if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!") 
+
+
 data(GraphsPar)                                                                                                                  
 dots <- list(...) 
 sapply(names(GP),function(x) 
@@ -193,6 +208,10 @@ setMethod("wlBoxplot", signature(object="csData"), function(object,...){
 
 tab <- object@ca 
 
+#tests on ca table fields
+if (all(is.na(tab$indWt))) stop("no individual weight data in ca table!!")
+if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!") 
+
 data(GraphsPar)                                                                                                           
 dots <- list(...)
 if (is.null(dots$pch)) dots$pch <- 20
@@ -237,6 +256,11 @@ setMethod("mlBoxplot", signature(object="csData"), function(object,...){
 
 tab <- object@ca
 
+#tests on ca table fields
+if (all(is.na(tab$matStage))) stop("no maturity stage data in ca table!!")
+if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!") 
+
+
 data(GraphsPar)                                                                                                           
 dots <- list(...)
 if (is.null(dots$pch)) dots$pch <- 20
@@ -279,6 +303,10 @@ setGeneric("slBoxplot", function(object,...){
 setMethod("slBoxplot", signature(object="csData"), function(object,...){
 
 tab <- object@ca
+
+#tests on ca table fields
+if (all(is.na(tab$sex))) stop("no sex data in ca table!!")
+if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!") 
 
 data(GraphsPar)                                                                                                                  
 dots <- list(...)
