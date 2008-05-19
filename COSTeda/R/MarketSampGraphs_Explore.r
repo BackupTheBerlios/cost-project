@@ -1,3 +1,11 @@
+
+
+
+
+        
+
+
+
 #################################################################################################
 ##                                                                                             ##
 ## Plots of volume of landings and number of fish measured by time, technical and space strata ##
@@ -6,114 +14,234 @@
 #################################################################################################
 
 
-setGeneric("biasPlot", function(samObj,
-                                popObj,
-                                ...){
-	standardGeneric("biasPlot")
-})
-
-         
-                                                                     
-setMethod("biasPlot", signature(samObj="csDataVal",popObj="clDataVal"), function(samObj,
-                                                                                 popObj=clDataVal(),       
-                                                                                 samFld="lenNum",    #or "wt","subSampWt", "nbSamp" (number of samples)
-                                                                                 popFld="landWt", #or... 
-                                                                                 timeStrata="quarter",  #or "year", "semester","month"
-                                                                                 spaceStrata="area",    #or "rect"
-                                                                                 techStrata="commCat",   #or "foCatNat" or...
-                                                                                 show="all",   #or "samp", "pop"
-                                                                                 ...){
+      ##########################
+      ##                      ##
+      ##  Internal functions  ##
+      ##                      ##
+      ##########################
 
 
-CL <- FALSE
-if (nrow(popObj@cl)==1) CL <- TRUE                                                                                  
-TechInd <- is.null(techStrata)
-TimeInd <- is.null(timeStrata)
-SpaceInd <- is.null(spaceStrata)
 
 
-if (all(c(TechInd,TimeInd,SpaceInd))) stop("No stratification!!")
-#Tests on stratification parameters
-if (!TechInd) {
-  if (!techStrata%in%c("commCat","foCatNat","foCatEu5","foCatEu6")) stop("Wrong 'techStrata' parameter!")}
-if (!TimeInd) {
-  if (!timeStrata%in%c("year","semester","quarter","month")) stop("Wrong 'timeStrata' parameter!")}           
-if (!SpaceInd) {
-  if (!spaceStrata%in%c("area","rect")) stop("Wrong 'spaceStrata' parameter!")}           
+#-------------------------------------------------------------------------------
+# Calculation from cs datasets of relative values for a specified stratification
+#-------------------------------------------------------------------------------
 
 
-#If timeStrata="semester", "quarter" or "month", field must be put in HH
-HHtime <- as.numeric(as.character(samObj@hh$year))
-HHmonth <- as.numeric(sapply(samObj@hh$date,function(x) strsplit(as.character(x),"-")[[1]][2]))
-if (!TimeInd) {
-  if (timeStrata=="month") HHtime <- HHmonth 
-  if (timeStrata=="quarter") HHtime <- ceiling(HHmonth/3)
-  if (timeStrata=="semester") HHtime <- ceiling(HHmonth/6)}
+csRelativeValue <- function(df,Var,timeStrata,spaceStrata,techStrata,Cons=FALSE){
+
+#if df is a validated object...
+if (!Cons) {
+
+  HH <- hh(df) 
+  #time stratification fields must be added to hh
+  HH$month <- sapply(HH$date,function(x) as.numeric(strsplit(x,"-")[[1]][2]))
+  HH$quarter <- ceiling(HH$month/3)
+  HH$semester <- ceiling(HH$month/6)
+
+  #all strata information is in hh table, except for technical stratification (it can be also in tr or in sl/hl) 
+    #if technical stratification is in tr table, it has to be merged with hh
+  if (is.na(techStrata)==FALSE & techStrata%in%c("vslLen","vslPwr","vslSize","vslType")) {
+    #tr primary key to link tr and hh
+    trKey <- apply(tr(df)[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode")],1,paste,collapse="")   
+    hhKey <- apply(HH[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode")],1,paste,collapse="")
+    HH[,techStrata] <- tr(df)[match(hhKey,trKey),techStrata]
+  }
+
+  #hh primary key to link hh and sl/hl table
+  hhKey <- apply(HH[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum")],1,paste,collapse="")   #hh primary key
+
+   #if Var="lenNum", HH has to be merged with hl table, else it will be merged to sl table
+  if (Var=="lenNum") {
+    tab <- hl(df)
+  } else {
+    tab <- sl(df)
+    tab$nbSamp <- 1}
   
-  
-HHtime <- factor(HHtime,exclude=NULL)  #sorting time occurrences
-if (!TimeInd) 
-  eval(parse('',text=paste("samObj@hh$",timeStrata,"<- as.numeric(as.character(HHtime))",sep=""))) 
-#insert 'Stratas' from HH to SL or HL 
-if (samFld=="lenNum") 
-  tab <- merge(samObj@hl,samObj@hh,all.x=TRUE) 
-else 
-  tab <- merge(samObj@sl,samObj@hh,all.x=TRUE)  
+  tabKey <- apply(tab[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum")],1,paste,collapse="") 
+  #hh information is pasted to tab
+  tab <- cbind.data.frame(tab,
+                          HH[match(tabKey,hhKey),names(HH)%in%c(timeStrata,spaceStrata,techStrata),drop=FALSE]
+                         )  
 
-mod <- c("\"Time\"","\"Space\"","\"Technical\"")[c(!TimeInd,!SpaceInd,!TechInd)]
-
-tabPop <- cl(popObj)
-tabPop$semester <- ceiling(tabPop$quarter/2) 
-
-if (samFld=="nbSamp"){
-  fun <- "length"
-  Var <- "wt"
 } else {
-  fun <- "sum,na.rm=TRUE"
-  Var <- samFld}
+#if df is a consolidated object...
 
-index <- c(1:sum(!TimeInd,!TechInd,!SpaceInd))
-eval(parse('',text=paste("Lev",index," <- unique(c(tab$",c(timeStrata,spaceStrata,techStrata),",tabPop$",                             #levels
-                         c(timeStrata,spaceStrata,techStrata),"))",sep="",collapse=";")))
-eval(parse('',text=paste("Mes",index," <- tapply(tab$",Var,",list(factor(tab$",c(timeStrata,spaceStrata,techStrata),                 #sampled value
-                         ",levels=sort(Lev",index,"))),",fun,")",sep="",collapse=";")))
-if (!CL) {eval(parse('',text=paste("Pop",index," <- tapply(tabPop$",popFld,",list(factor(tabPop$",c(timeStrata,spaceStrata,techStrata), #population value
-                                   ",levels=sort(Lev",index,"))),sum,na.rm=TRUE)",sep="",collapse=";")))}
+  if (Var=="lenNum") {
+    tab <- hl(df)
+  } else {
+    tab <- sl(df)
+    tab$nbSamp <- 1}
+}
 
 
+#internal procedure to calculate and report relative value within specified stratification
+dfRelativeValue <- function(tab,val,field,strat){
+if (all(is.na(tab[,field]))) {
+  return(NULL)
+} else {
+  summ <- tapply(tab[,val],list(tab[,field]),sum,na.rm=TRUE)
+  return(data.frame(value=summ/sum(summ,na.rm=TRUE),
+                    vrbl=val,
+                    mod=names(summ),
+                    str=field,
+                    type=strat))}
+}
 
-eval(parse('',text=paste("Mes",index,"[is.na(Mes",index,")] <- 0",sep="",collapse=";")))                                              #NA <- 0
-if (!CL) eval(parse('',text=paste("Pop",index,"[is.na(Pop",index,")] <- 0",sep="",collapse=";")))
+#for each stratification, calculation is made
+result <- NULL
+if (is.na(timeStrata)==FALSE & timeStrata%in%names(tab)) 
+  result <- rbind.data.frame(result,dfRelativeValue(tab,Var,timeStrata,"time"))
+if (is.na(spaceStrata)==FALSE & spaceStrata%in%names(tab)) 
+  result <- rbind.data.frame(result,dfRelativeValue(tab,Var,spaceStrata,"space"))
+if (is.na(techStrata)==FALSE & techStrata%in%names(tab)) 
+  result <- rbind.data.frame(result,dfRelativeValue(tab,Var,techStrata,"technical"))
 
-eval(parse('',text=paste("Mes",index," <- Mes",index,"/sum(Mes",index,",na.rm=TRUE)",sep="",collapse=";")))                           #Rate calculation
-if (!CL) eval(parse('',text=paste("Pop",index," <- Pop",index,"/sum(Pop",index,",na.rm=TRUE)",sep="",collapse=";")))
+if (!is.null(result)) {
+  if (nrow(result)==0) result <- NULL}
+if (!is.null(result)) rownames(result) <- 1:nrow(result) 
+ 
+return(new("edaResult",desc="csRelativeValue",outPut=result))
+}
 
-eval(parse('',text=paste("dimVec <- c(",paste("length(Mes",index,")",sep="",collapse=","),")",sep="")))                               #dimensions
 
-int1 <- paste("names(Mes",index,")",sep="",collapse=",")
-int2 <- paste("Mes",index,sep="",collapse=",")
-if (CL) 
-  int3 <- "0" 
-else 
-  int3 <- paste("Pop",index,sep="",collapse=",")
-int4 <- paste(mod,sep="",collapse=",") 
 
-eval(parse('',text=paste("TechDf <- data.frame(str=c(",int1,"),mes=c(",int2,"),pop=c(",int3,"),GRP=rep(c(",int4,"),dimVec))",sep="")))  #data.frame
-TechDf$str <- factor(TechDf$str,levels=as.character(TechDf$str))
 
-TechDf$grp <- factor(TechDf$GRP,labels=1:length(unique(TechDf$GRP)))
-TechDf$GRPplus <- factor(TechDf$GRP,levels=c("Space","Technical","Time"),labels=c(paste("Space =",spaceStrata),paste("Technical =",techStrata),paste("Time =",timeStrata)))
-TAB <- TechDf[order(TechDf$GRP),c("str","mes","pop","GRPplus")]
-rownames(TAB) <- 1:nrow(TAB)
-if (show=="samp") 
-  TechDf$pop <- 0 
-if (show=="pop") 
-  TechDf$mes <- NA
 
-mes <- TechDf$mes
-names(mes) <- TechDf$grp
 
-#-----> graphical display 
+
+
+
+#-------------------------------------------------------------------------------
+# Calculation from ce/cl datasets of relative values for a specified stratification
+#-------------------------------------------------------------------------------
+
+
+clceRelativeValue <- function(df,Var,timeStrata,spaceStrata,techStrata){  #here, df=df@ce or df@cl
+
+#a time stratification field is missing in cl/ce table, so we add it to df
+df$semester <- ceiling(df$quarter/2)
+
+#internal procedure to calculate and report relative volume within specified stratification
+dfRelativeValue <- function(tab,val,field,strat){
+if (all(is.na(tab[,field]))) {
+  return(NULL)
+} else {
+summ <- tapply(tab[,val],list(tab[,field]),sum,na.rm=TRUE)
+return(data.frame(value=summ/sum(summ,na.rm=TRUE),
+                  vrbl=val,
+                  mod=names(summ),
+                  str=field,
+                  type=strat))}
+}
+
+#for each stratification, calculation is made
+result <- NULL
+if (is.na(timeStrata)==FALSE & timeStrata%in%names(df)) 
+  result <- rbind.data.frame(result,dfRelativeValue(df,Var,timeStrata,"time"))
+if (is.na(spaceStrata)==FALSE & spaceStrata%in%names(df)) 
+  result <- rbind.data.frame(result,dfRelativeValue(df,Var,spaceStrata,"space"))
+if (is.na(techStrata)==FALSE & techStrata%in%names(df)) 
+  result <- rbind.data.frame(result,dfRelativeValue(df,Var,techStrata,"technical"))
+
+if (!is.null(result)) {
+  if (nrow(result)==0) result <- NULL}
+if (!is.null(result)) rownames(result) <- 1:nrow(result) 
+ 
+return(new("edaResult",desc="clceRelativeValue",outPut=result))
+}
+
+
+
+
+
+
+
+
+#-------------------------------------------------------------------------------
+# Display of relative rates of given variable within a specified sratification
+#-------------------------------------------------------------------------------
+
+
+plotRelativeValue <- function(tabColumns,tabPoints=NULL,...){
+
+if (is.null(tabColumns)) stop("No information in main object!!") 
+
+if (!is.null(tabPoints)) {
+
+
+  #-----------------------------------------------------------------------------
+  # Case n°1 : 2 types of information
+  #-----------------------------------------------------------------------------
+  
+  
+  #only matching stratifications are kept
+  indStrCol <- apply(tabColumns[,c("str","type")],1,paste,collapse="")  #stratification from table n°1
+  indStrPoi <- apply(tabPoints[,c("str","type")],1,paste,collapse="")   #stratification from table n°2
+  tabColumns <- tabColumns[indStrCol%in%indStrPoi,]
+  if (nrow(tabColumns)==0) stop("Stratifications of input objects are not matching!!")
+  tabPoints <- tabPoints[indStrPoi%in%indStrCol,]
+  
+  #before merging, some fields have to be distinguished
+  names(tabPoints)[1:2] <- c("valueA","vrblA")
+  tab <- merge(tabColumns,tabPoints,sort=FALSE,all=TRUE)  #ou sort=TRUE??
+  #NA values are filled
+  tab$vrbl[is.na(tab$vrbl)] <- tabColumns$vrbl[1]
+  tab$value[is.na(tab$value)] <- 0
+  tab$vrblA[is.na(tab$vrblA)] <- tabPoints$vrblA[1] 
+  tab$valueA[is.na(tab$valueA)] <- 0
+  #tab must be ordered within 'type' and then 'mod'
+  ord <- tapply(paste(as.character(tab$mod),1:nrow(tab),sep=":-:"),
+                list(tab$type),
+                function(x) {
+                  Md <- sapply(x,function(y) strsplit(y,":-:")[[1]])
+                  if (all(suppressWarnings(is.finite(as.numeric(Md[1,]))))) {
+                                                    Md[2,order(as.numeric(Md[1,]))]
+                                                  } else {
+                                                    Md[2,order(Md[1,])]
+                                                  }})
+  tab <- tab[as.numeric(unlist(ord)),]
+
+} else {
+
+  #-----------------------------------------------------------------------------
+  # Case n°2 : only 1 type of information
+  #-----------------------------------------------------------------------------
+
+
+  tab <- tabColumns
+
+}  
+ 
+ 
+  #-----------------------------------------------------------------------------
+  # Preparation for graphical display
+  #-----------------------------------------------------------------------------
+ 
+ 
+
+tab$strip <- apply(tab[,c("type","str")],1,function(x) paste(unique(x),collapse=" = "))
+indG <- c(TRUE,!is.null(tab$vrblA))
+
+if (indG[2]) {
+  Points <- tab$valueA
+  modal <- sort(unique(as.character(tab$type)))
+  names(Points) <- as.character(factor(tab$type,levels=modal,labels=1:length(modal)))
+} else {
+  Points <- NULL
+}
+ 
+#modification of levels to sort numerical value correctly
+#vv <- levels(tab$mod)
+#index <- is.na(suppressWarnings(as.numeric(vv)))
+#tab$mod <- factor(tab$mod,levels=c(as.character(sort(as.numeric(vv[!index]))),vv[index]))
+tab$mod <- factor(tab$mod,levels=unique(tab$mod)) 
+ 
+  #-----------------------------------------------------------------------------
+  # Update of graphical parameters
+  #-----------------------------------------------------------------------------
+ 
+ 
 data(GraphsPar)                                                                                                                           
 dots <- list(...) 
 if (is.null(dots$p.col)) 
@@ -132,456 +260,230 @@ if (is.null(dots$rot))
 sapply(names(GP),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
                     eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+
 if (is.null(dots$xlab)) 
   dots$xlab <- "" 
 if (is.null(dots$ylab)) 
   dots$ylab <- "Frequency" 
 if (is.null(dots$main)) 
-  dots$main <- paste("Relative Rates of \"",samFld,"\"",paste(c(" and \"",popFld,"\" variables"),collapse="")[!CL],"\nby ",paste(unique(TechDf$GRP),collapse=", ")," Strata",sep="")
-g <- c(!CL,TRUE)
-print(barchart(pop~str|GRPplus,data=TechDf,scales=list(x=list(relation="free",rot=dots$rot[1]),font=dots$font.axis),main=list(dots$main,font=dots$font.main),
+  dots$main <- paste("Relative Rates of \"",paste(c(as.character(tab$vrbl[1]),as.character(tab$vrblA[1])),collapse="\" and \""),"\" variable(s) \nby ",
+                     paste(unique(as.character(tab$type)),collapse=", ")," Strata",sep="")
+
+
+  #-----------------------------------------------------------------------------
+  # Graphical display 
+  #-----------------------------------------------------------------------------
+
+
+print(barchart(value~mod|strip,data=tab,scales=list(x=list(relation="free",rot=dots$rot[1]),font=dots$font.axis),main=list(dots$main,font=dots$font.main),
                xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),par.strip.text=list(font=dots$font.lab),
-               key =list(lines=list(pch=c(15,1)[g],type=c("p","l")[g],col=c(dots$p.bg[1],dots$l.col[1])[g],lwd=c(2,dots$lwd[1])[g],cex=c(1.2,dots$cex[1])[g],lty=c(1,dots$lty[1])[g]),
-                         text=list(c(popFld,samFld)[g]),font=dots$font.lab,space="right",columns=1,border=TRUE), 
-               prepanel=function(x,y,mis=mes,subscripts,...){
+               key =list(lines=list(pch=c(15,1)[indG],type=c("p","l")[indG],col=c(dots$p.bg[1],dots$l.col[1])[indG],lwd=c(2,dots$lwd[1])[indG],
+                         cex=c(1.2,dots$cex[1])[indG],lty=c(1,dots$lty[1])[indG]),
+                         text=list(c(as.character(tab$vrbl)[1],as.character(tab$vrblA)[1])[indG]),font=dots$font.lab,space="right",columns=1,border=TRUE), 
+               prepanel=function(x,y,mis=Points,subscripts,...){
                 x <- x[,drop=TRUE]
                 prepanel.default.bwplot(x,y,...)
                },
-               panel = function(x,y,mis=mes,subscripts,...){
+               panel = function(x,y,mis=Points,subscripts,...){
                 x <- x[,drop=TRUE]
                 panel.barchart(x,y,col=dots$p.bg[1],fill=dots$p.bg[1],...)
                 panel.lines(type="o",mis[names(mis)==as.character(packet.number())],col=dots$l.col[1],lwd=dots$lwd[1],pch=dots$pch[1],cex=dots$cex[1],lty=dots$lty[1])},
-               layout=c(1,length(unique(TechDf$GRP))),ylim=c(0,max(c(TechDf$mes,TechDf$pop),na.rm=TRUE)*1.05)))
+               layout=c(1,length(unique(tab$strip))),ylim=c(0,max(c(tab$value,tab$valueA),na.rm=TRUE)*1.05)))
         
-return(TAB) 
+        
+  #-----------------------------------------------------------------------------
+  # Return displayed information 
+  #-----------------------------------------------------------------------------
+
+
+invisible(tab)     
+
+}        
+   
+   
+   
+
+
+
+
+
+      #########################
+      ##                     ##
+      ##  Methods to export  ##
+      ##                     ##
+      #########################
+
+
+
+#-------------------------------------------------------------------------------
+# relativeValue
+#-------------------------------------------------------------------------------
+
+
+    #---------------------------------------------------------------------------
+    # Validated objects
+    #---------------------------------------------------------------------------
+
+
+                                                          #ex-biasPlot
+setGeneric("relativeValue", function(data,                #cs/cl/ceDataVal or cs/cl/ceDataCons 
+                                     strDef,              #'strIni' object
+                                     ...){
+
+  standardGeneric("relativeValue")
+
 })
 
 
 
 
+setMethod("relativeValue", signature("csDataVal","missing"), function(data,       
+                                                                      field="lenNum",    #or "wt", "subSampWt", "nbSamp" (number of samples)
+                                                                      ...){
 
-#Same thing with CE table
+strDef <- strIni(timeStrata="quarter",spaceStrata="area",techStrata="foCatEu5")
+csRelativeValue(data,field,strDef@timeStrata,strDef@spaceStrata,strDef@techStrata)
 
-                                                                   
-setMethod("biasPlot", signature(samObj="csDataVal",popObj="ceDataVal"), function(samObj,
-                                                                                 popObj=ceDataVal(),        
-                                                                                 samFld="lenNum",    #or "wt","subSampWt" , "nbSamp" (number of samples)
-                                                                                 popFld="trpNum", #or ...
-                                                                                 timeStrata="quarter",  #or "year", "semester","month"
-                                                                                 spaceStrata="area",    #or "rect"
-                                                                                 techStrata="foCatEu5",   #or "foCatNat", "foCatEu6"
-                                                                                 show="all",   #or "samp", "pop"
-                                                                                 ...){
-
-CE <- FALSE
-if (nrow(popObj@ce)==1) CE <- TRUE                                                                                  
-TechInd <- is.null(techStrata) ; TimeInd <- is.null(timeStrata) ; SpaceInd <- is.null(spaceStrata)
-if (all(c(TechInd,TimeInd,SpaceInd))) stop("No stratification!!")
-
-#Tests on stratification parameters
-if (!TechInd) {
-  if (!techStrata%in%c("foCatNat","foCatEu5","foCatEu6")) stop("Wrong 'techStrata' parameter!")}
-if (!TimeInd) {
-  if (!timeStrata%in%c("year","semester","quarter","month")) stop("Wrong 'timeStrata' parameter!")}           
-if (!SpaceInd) {
-  if (!spaceStrata%in%c("area","rect")) stop("Wrong 'spaceStrata' parameter!")}           
-
-#If timeStrata="semester", "quarter" or "month", field must be put in HH
-HHtime <- as.numeric(as.character(samObj@hh$year))
-HHmonth <- as.numeric(sapply(samObj@hh$date,function(x) strsplit(as.character(x),"-")[[1]][2]))
-if (!TimeInd) {
-  if (timeStrata=="month") HHtime <- HHmonth }
-if (!TimeInd) {
-  if (timeStrata=="quarter") HHtime <- ceiling(HHmonth/3) }
-if (!TimeInd) {
-  if (timeStrata=="semester") HHtime <- ceiling(HHmonth/6) }
+})         
   
-HHtime <- factor(HHtime,exclude=NULL)  #sorting time occurrences
-if (!TimeInd) eval(parse('',text=paste("samObj@hh$",timeStrata,"<- as.numeric(as.character(HHtime))",sep=""))) 
-#insert 'Stratas' from HH to SL or HL 
-if (samFld=="lenNum") 
-  tab <- merge(samObj@hl,samObj@hh,all.x=TRUE) 
-else 
-  tab <- merge(samObj@sl,samObj@hh,all.x=TRUE)  
-
-mod <- c("\"Time\"","\"Space\"","\"Technical\"")[c(!TimeInd,!SpaceInd,!TechInd)]
-
-tabPop <- popObj@ce
-tabPop$semester <- ceiling(tabPop$quarter/2) 
-
-if (samFld=="nbSamp"){
-  fun <- "length"
-  Var <- "wt"
-} else {
-  fun <- "sum,na.rm=TRUE"
-  Var <- samFld}
-
-
-index <- c(1:sum(!TimeInd,!TechInd,!SpaceInd))
-eval(parse('',text=paste("Lev",index," <- unique(c(tab$",c(timeStrata,spaceStrata,techStrata),",tabPop$",
-                         c(timeStrata,spaceStrata,techStrata),"))",sep="",collapse=";")))
-eval(parse('',text=paste("Mes",index," <- tapply(tab$",Var,",list(factor(tab$",c(timeStrata,spaceStrata,techStrata),
-                         ",levels=sort(Lev",index,"))),",fun,")",sep="",collapse=";")))
-if (!CE) {eval(parse('',text=paste("Pop",index," <- tapply(tabPop$",popFld,",list(factor(tabPop$",c(timeStrata,spaceStrata,techStrata),
-                                   ",levels=sort(Lev",index,"))),sum,na.rm=TRUE)",sep="",collapse=";")))}
-
-
-
-eval(parse('',text=paste("Mes",index,"[is.na(Mes",index,")] <- 0",sep="",collapse=";"))) 
-if (!CE) eval(parse('',text=paste("Pop",index,"[is.na(Pop",index,")] <- 0",sep="",collapse=";")))
-
-eval(parse('',text=paste("Mes",index," <- Mes",index,"/sum(Mes",index,",na.rm=TRUE)",sep="",collapse=";")))
-if (!CE) eval(parse('',text=paste("Pop",index," <- Pop",index,"/sum(Pop",index,",na.rm=TRUE)",sep="",collapse=";")))
-
-eval(parse('',text=paste("dimVec <- c(",paste("length(Mes",index,")",sep="",collapse=","),")",sep="")))
-
-int1 <- paste("names(Mes",index,")",sep="",collapse=",")
-int2 <- paste("Mes",index,sep="",collapse=",")
-if (CE) 
-  int3 <- "0" 
-else 
-  int3 <- paste("Pop",index,sep="",collapse=",")
-int4 <- paste(mod,sep="",collapse=",") 
-
-eval(parse('',text=paste("TechDf <- data.frame(str=c(",int1,"),mes=c(",int2,"),pop=c(",int3,"),GRP=rep(c(",int4,"),dimVec))",sep="")))
-TechDf$str <- factor(TechDf$str,levels=as.character(TechDf$str))
-
-TechDf$grp <- factor(TechDf$GRP,labels=1:length(unique(TechDf$GRP)))
-TechDf$GRPplus <- factor(TechDf$GRP,levels=c("Space","Technical","Time"),labels=c(paste("Space =",spaceStrata),paste("Technical =",techStrata),paste("Time =",timeStrata)))
-TAB <- TechDf[order(TechDf$GRP),c("str","mes","pop","GRPplus")]
-rownames(TAB) <- 1:nrow(TAB)
-if (show=="samp") 
-  TechDf$pop <- 0
-if (show=="pop") 
-  TechDf$mes <- NA
-
-mes <- TechDf$mes
-names(mes) <- TechDf$grp
-
-#graphical display 
-data(GraphsPar)                                                                                                                           
-dots <- list(...) 
-if (is.null(dots$p.col)) 
-  dots$p.col <- "black"
-if (is.null(dots$p.bg)) 
-  dots$p.bg <- "lightblue"
-if (is.null(dots$l.col)) 
-  dots$l.col <- "red"
-if (is.null(dots$lwd)) 
-  dots$lwd <- 2
-if (is.null(dots$pch)) 
-  dots$pch <- 20
-if (is.null(dots$rot)) 
-  dots$rot <- 0 
-
-sapply(names(GP),function(x) 
-                  if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
-if (is.null(dots$xlab)) 
-  dots$xlab <- ""
-if (is.null(dots$ylab)) 
-  dots$ylab <- "Frequency" 
-if (is.null(dots$main)) 
-  dots$main <- paste("Relative Rates of \"",samFld,"\"",paste(c(" and \"",popFld,"\" variables"),collapse="")[!CE],"\nby ",paste(unique(TechDf$GRP),collapse=", ")," Strata",sep="")
-g <- c(!CE,TRUE)
-print(barchart(pop~str|GRPplus,data=TechDf,scales=list(x=list(relation="free",rot=dots$rot[1]),font=dots$font.axis),main=list(dots$main,font=dots$font.main),
-               xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),par.strip.text=list(font=dots$font.lab),
-               key =list(lines=list(pch=c(15,1)[g],type=c("p","l")[g],col=c(dots$p.bg[1],dots$l.col[1])[g],lwd=c(2,dots$lwd[1])[g],cex=c(1.2,dots$cex[1])[g],lty=c(1,dots$lty[1])[g]),
-                         text=list(c(popFld,samFld)[g]),font=dots$font.lab,space="right",columns=1,border=TRUE), 
-               prepanel=function(x,y,mis=mes,subscripts,...){
-                x <- x[,drop=TRUE]
-                prepanel.default.bwplot(x,y,...)
-               },
-               panel = function(x,y,mis=mes,subscripts,...){
-                x <- x[,drop=TRUE]
-                panel.barchart(x,y,col=dots$p.bg[1],fill=dots$p.bg[1],...)
-                panel.lines(type="o",mis[names(mis)==as.character(packet.number())],col=dots$l.col[1],lwd=dots$lwd[1],pch=dots$pch[1],cex=dots$cex[1],lty=dots$lty[1])},
-               layout=c(1,length(unique(TechDf$GRP))),ylim=c(0,max(c(TechDf$mes,TechDf$pop),na.rm=TRUE)*1.05)))
-        
-return(TAB) 
-})
-
-           
-
-
-
-
-###################################
-###################################
-##  Consolidated data structure  ##
-###################################
-###################################
-
-
-
+  
+  
                                                                      
-setMethod("biasPlot", signature(samObj="csDataCons",popObj="clDataCons"), function(samObj,
-                                                                                   popObj,       
-                                                                                   samFld="lenNum",    #or "wt","subSampWt" ,"nbSamp"
-                                                                                   popFld="landWt", #or... 
-                                                                                   show="all",   #or "samp", "pop"
-                                                                                   ...){
+setMethod("relativeValue", signature("csDataVal","strIni"), function(data,
+                                                                     strDef,       
+                                                                     field="lenNum",     #or "wt", "subSampWt", "nbSamp" (number of samples)
+                                                                     ...){
 
-if (samFld=="lenNum") 
-  tab <- hl(samObj) 
-else 
-  tab <- sl(samObj)
+csRelativeValue(data,field,strDef@timeStrata,strDef@spaceStrata,strDef@techStrata)
 
-tabPop <- cl(popObj)
-
-#test
-if (all(is.na(tab$time)) | all(is.na(tabPop$time))) {
-  timeStrata <- NULL 
-  TimeInd <- TRUE
-} else {
-  timeStrata <- "time" 
-  TimeInd <- FALSE}
-  
-if (all(is.na(tab$space)) | all(is.na(tabPop$space))) {
-  spaceStrata <- NULL 
-  SpaceInd <- TRUE
-} else {
-  spaceStrata <- "space"
-  SpaceInd <- FALSE}
-  
-if (all(is.na(tab$technical)) | all(is.na(tabPop$technical))) {
-  techStrata <- NULL
-  TechInd <- TRUE
-} else {
-  techStrata <- "technical" 
-  TechInd <- FALSE}
-                                                                                 
-if (all(c(TechInd,TimeInd,SpaceInd))) stop("No stratification!!")
-
-mod <- c("\"Time\"","\"Space\"","\"Technical\"")[c(!TimeInd,!SpaceInd,!TechInd)]
-
-
-if (samFld=="nbSamp"){
-  fun <- "length"
-  Var <- "wt"
-} else {
-  fun <- "sum,na.rm=TRUE"
-  Var <- samFld}
-
-
-
-
-index <- c(1:sum(!TimeInd,!TechInd,!SpaceInd))
-eval(parse('',text=paste("Lev",index," <- unique(c(as.character(tab$",c(timeStrata,spaceStrata,techStrata),
-                         "),as.character(tabPop$",c(timeStrata,spaceStrata,techStrata),")))",sep="",collapse=";")))
-eval(parse('',text=paste("Mes",index," <- tapply(tab$",Var,",list(factor(tab$",c(timeStrata,spaceStrata,techStrata),
-                         ",levels=sort(Lev",index,")[sort(Lev",index,")!=\"NA\"])),",fun,")",sep="",collapse=";")))
-eval(parse('',text=paste("Pop",index," <- tapply(tabPop$",popFld,",list(factor(tabPop$",c(timeStrata,spaceStrata,techStrata),",levels=sort(Lev",index,
-                         ")[sort(Lev",index,")!=\"NA\"])),sum,na.rm=TRUE)",sep="",collapse=";")))
-
-
-
-eval(parse('',text=paste("Mes",index,"[is.na(Mes",index,")] <- 0",sep="",collapse=";"))) 
-eval(parse('',text=paste("Pop",index,"[is.na(Pop",index,")] <- 0",sep="",collapse=";")))
-
-eval(parse('',text=paste("Mes",index," <- Mes",index,"/sum(Mes",index,",na.rm=TRUE)",sep="",collapse=";")))
-eval(parse('',text=paste("Pop",index," <- Pop",index,"/sum(Pop",index,",na.rm=TRUE)",sep="",collapse=";")))
-
-eval(parse('',text=paste("dimVec <- c(",paste("length(Mes",index,")",sep="",collapse=","),")",sep="")))
-
-int1 <- paste("names(Mes",index,")",sep="",collapse=",")
-int2 <- paste("Mes",index,sep="",collapse=",")
-int3 <- paste("Pop",index,sep="",collapse=",")
-int4 <- paste(mod,sep="",collapse=",") 
-
-eval(parse('',text=paste("TechDf <- data.frame(str=c(",int1,"),mes=c(",int2,"),pop=c(",int3,"),GRP=rep(c(",int4,"),dimVec))",sep="")))
-TechDf$str <- factor(TechDf$str,levels=as.character(TechDf$str))
-
-TechDf$grp <- factor(TechDf$GRP,labels=1:length(unique(TechDf$GRP)))
-TechDf$GRPplus <- factor(TechDf$GRP,levels=c("Space","Technical","Time"),labels=c(paste("Space =",spaceStrata),paste("Technical =",techStrata),paste("Time =",timeStrata)))
-TAB <- TechDf[order(TechDf$GRP),c("str","mes","pop","GRPplus")]
-rownames(TAB) <- 1:nrow(TAB)
-
-if (show=="samp") 
-  TechDf$pop <- 0 
-if (show=="pop") 
-  TechDf$mes <- NA
-
-mes <- TechDf$mes
-names(mes) <- TechDf$grp
-
-#graph display 
-data(GraphsPar)                                                                                                                           
-dots <- list(...) 
-if (is.null(dots$p.col)) 
-  dots$p.col <- "black"
-if (is.null(dots$p.bg)) 
-  dots$p.bg <- "lightblue"
-if (is.null(dots$l.col)) 
-  dots$l.col <- "red"
-if (is.null(dots$lwd)) 
-  dots$lwd <- 2 
-if (is.null(dots$pch)) 
-  dots$pch <- 20
-if (is.null(dots$rot)) 
-  dots$rot <- 0  
-
-sapply(names(GP),function(x) 
-                  if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
-if (is.null(dots$xlab)) 
-  dots$xlab <- "" 
-if (is.null(dots$ylab)) 
-  dots$ylab <- "Frequency" 
-if (is.null(dots$main)) 
-  dots$main <- paste("Relative Rates of \"",samFld,"\"",paste(c(" and \"",popFld,"\" variables"),collapse=""),"\nby ",paste(unique(TechDf$GRP),collapse=", ")," Strata",sep="")
-
-print(barchart(pop~str|GRPplus,data=TechDf,scales=list(x=list(relation="free",rot=dots$rot[1]),font=dots$font.axis),main=list(dots$main,font=dots$font.main),
-               xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),par.strip.text=list(font=dots$font.lab),
-               key =list(lines=list(pch=c(15,1),type=c("p","l"),col=c(dots$p.bg[1],dots$l.col[1]),lwd=c(2,dots$lwd[1]),cex=c(1.2,dots$cex[1]),lty=c(1,dots$lty[1])),
-                         text=list(c(popFld,samFld)),font=dots$font.lab,space="right",columns=1,border=TRUE), 
-               prepanel=function(x,y,mis=mes,subscripts,...){
-                x <- x[,drop=TRUE]
-                prepanel.default.bwplot(x,y,...)
-               },
-               panel = function(x,y,mis=mes,subscripts,...){
-                x <- x[,drop=TRUE]
-                panel.barchart(x,y,col=dots$p.bg[1],fill=dots$p.bg[1],...)
-                panel.lines(type="o",mis[names(mis)==as.character(packet.number())],col=dots$l.col[1],lwd=dots$lwd[1],pch=dots$pch[1],cex=dots$cex[1],lty=dots$lty[1])},
-               layout=c(1,length(unique(TechDf$GRP))),ylim=c(0,max(c(TechDf$mes,TechDf$pop),na.rm=TRUE)*1.05)))
-        
-return(TAB) 
 })
+                                                                               
+ 
+   
+   
+setMethod("relativeValue", signature("clDataVal","missing"), function(data,       
+                                                                      field="landWt",    
+                                                                      ...){
 
+strDef <- strIni(timeStrata="quarter",spaceStrata="area")
+clceRelativeValue(data@cl,field,strDef@timeStrata,strDef@spaceStrata,strDef@techStrata)
 
-
-#the same with effort data
-
+})         
+  
+  
+  
                                                                      
-setMethod("biasPlot", signature(samObj="csDataCons",popObj="ceDataCons"), function(samObj,
-                                                                                   popObj,       
-                                                                                   samFld="lenNum",    #or "wt","subSampWt" , "nbSamp" (number of samples)
-                                                                                   popFld="trpNum", #or... 
-                                                                                   show="all",   #or "samp", "pop"
-                                                                                   ...){
+setMethod("relativeValue", signature("clDataVal","strIni"), function(data,
+                                                                     strDef,       
+                                                                     field="landWt",    
+                                                                     ...){
 
-if (samFld=="lenNum") 
-  tab <- hl(samObj) 
-else 
-  tab <- sl(samObj)
+clceRelativeValue(data@cl,field,strDef@timeStrata,strDef@spaceStrata,strDef@techStrata)
 
-tabPop <- ce(popObj)
+})   
 
-#test
-if (all(is.na(tab$time)) | all(is.na(tabPop$time))) {
-  timeStrata <- NULL
-  TimeInd <- TRUE 
-} else {
-  timeStrata <- "time" 
-  TimeInd <- FALSE}
+
+
+setMethod("relativeValue", signature("ceDataVal","missing"), function(data,       
+                                                                      field="trpNum",    
+                                                                      ...){
+
+strDef <- strIni(timeStrata="quarter",spaceStrata="area")
+clceRelativeValue(data@ce,field,strDef@timeStrata,strDef@spaceStrata,strDef@techStrata)
+
+})         
   
-if (all(is.na(tab$space)) | all(is.na(tabPop$space))) {
-  spaceStrata <- NULL 
-  SpaceInd <- TRUE 
-} else {
-  spaceStrata <- "space"
-  SpaceInd <- FALSE}
+  
+  
+                                                                     
+setMethod("relativeValue", signature("ceDataVal","strIni"), function(data,
+                                                                     strDef,       
+                                                                     field="trpNum",    
+                                                                     ...){
 
-if (all(is.na(tab$technical)) | all(is.na(tabPop$technical))) {
-  techStrata <- NULL 
-  TechInd <- TRUE
-} else {
-  techStrata <- "technical" 
-  TechInd <- FALSE}
-                                                                                 
-if (all(c(TechInd,TimeInd,SpaceInd))) stop("No stratification!!")
+clceRelativeValue(data@ce,field,strDef@timeStrata,strDef@spaceStrata,strDef@techStrata)
 
-mod <- c("\"Time\"","\"Space\"","\"Technical\"")[c(!TimeInd,!SpaceInd,!TechInd)]
+})   
 
 
-if (samFld=="nbSamp"){
-  fun <- "length"
-  Var <- "wt"
-} else {
-  fun <- "sum,na.rm=TRUE"
-  Var <- samFld}
+     
+    #---------------------------------------------------------------------------
+    # Consolidated objects
+    #---------------------------------------------------------------------------
+     
+     
+     
+     
+setMethod("relativeValue", signature("csDataCons","missing"), function(data,       
+                                                                       field="lenNum",    #or "wt", "subSampWt", "nbSamp" (number of samples)
+                                                                       ...){
+
+csRelativeValue(data,field,"time","space","technical",Cons=TRUE)
+
+})         
+  
+  
+   
+   
+setMethod("relativeValue", signature("clDataCons","missing"), function(data,       
+                                                                       field="landWt",    
+                                                                       ...){
+
+clceRelativeValue(data@cl,field,"time","space","technical")
+
+})         
 
 
-index <- c(1:sum(!TimeInd,!TechInd,!SpaceInd))
-eval(parse('',text=paste("Lev",index," <- unique(c(as.character(tab$",c(timeStrata,spaceStrata,techStrata),
-                         "),as.character(tabPop$",c(timeStrata,spaceStrata,techStrata),")))",sep="",collapse=";")))
-eval(parse('',text=paste("Mes",index," <- tapply(tab$",Var,",list(factor(tab$",c(timeStrata,spaceStrata,techStrata),
-                         ",levels=sort(Lev",index,")[sort(Lev",index,")!=\"NA\"])),",fun,")",sep="",collapse=";")))
-eval(parse('',text=paste("Pop",index," <- tapply(tabPop$",popFld,",list(factor(tabPop$",c(timeStrata,spaceStrata,techStrata),
-                         ",levels=sort(Lev",index,")[sort(Lev",index,")!=\"NA\"])),sum,na.rm=TRUE)",sep="",collapse=";")))
 
 
+setMethod("relativeValue", signature("ceDataCons","missing"), function(data,       
+                                                                       field="trpNum",    
+                                                                       ...){
 
-eval(parse('',text=paste("Mes",index,"[is.na(Mes",index,")] <- 0",sep="",collapse=";"))) 
-eval(parse('',text=paste("Pop",index,"[is.na(Pop",index,")] <- 0",sep="",collapse=";")))
+clceRelativeValue(data@ce,field,"time","space","technical")
 
-eval(parse('',text=paste("Mes",index," <- Mes",index,"/sum(Mes",index,",na.rm=TRUE)",sep="",collapse=";")))
-eval(parse('',text=paste("Pop",index," <- Pop",index,"/sum(Pop",index,",na.rm=TRUE)",sep="",collapse=";")))
+})         
+  
+  
+     
+     
+#-------------------------------------------------------------------------------
+# plot (--> relativeValue)
+#-------------------------------------------------------------------------------
+     
 
-eval(parse('',text=paste("dimVec <- c(",paste("length(Mes",index,")",sep="",collapse=","),")",sep="")))
+setMethod("plot",signature("edaResult","missing"), function(x,
+                                                            ...){
 
-int1 <- paste("names(Mes",index,")",sep="",collapse=",")
-int2 <- paste("Mes",index,sep="",collapse=",")
-int3 <- paste("Pop",index,sep="",collapse=",")
-int4 <- paste(mod,sep="",collapse=",") 
+if (x@desc%in%c("csRelativeValue","clceRelativeValue")) plotRelativeValue(x@outPut,...)
+if (x@desc=="sampDeltaCalc") {
+      result <- plotDelta(x,...)
+      return(invisible(result))}
+if (x@desc=="sampDeltaId") {
+      result <- plotDeltaId(x,...)
+      return(invisible(result))}
+if (x@desc=="landisVol") plotVol(x,...) 
+if (x@desc=="alMulti") plotAlMulti(x,...)
+#...
 
-eval(parse('',text=paste("TechDf <- data.frame(str=c(",int1,"),mes=c(",int2,"),pop=c(",int3,"),GRP=rep(c(",int4,"),dimVec))",sep="")))
-TechDf$str <- factor(TechDf$str,levels=as.character(TechDf$str))
+})    
+     
+     
+setMethod("plot",signature("edaResult","edaResult"), function(x,
+                                                              y,
+                                                              ...){
 
-TechDf$grp <- factor(TechDf$GRP,labels=1:length(unique(TechDf$GRP)))
-TechDf$GRPplus <- factor(TechDf$GRP,levels=c("Space","Technical","Time"),labels=c(paste("Space =",spaceStrata),paste("Technical =",techStrata),paste("Time =",timeStrata)))
-TAB <- TechDf[order(TechDf$GRP),c("str","mes","pop","GRPplus")]
-rownames(TAB) <- 1:nrow(TAB)
+if (all(c(x@desc,y@desc)%in%c("csRelativeValue","clceRelativeValue"))) plotRelativeValue(x@outPut,y@outPut,...)
+#...
 
-if (show=="samp") 
-  TechDf$pop <- 0
-if (show=="pop") 
-  TechDf$mes <- NA
+})        
 
-mes <- TechDf$mes ; names(mes) <- TechDf$grp
+setMethod("boxplot",signature("edaResult"), function(x,
+                                                     ...){
 
-#graph display 
-data(GraphsPar)                                                                                                                           
-dots <- list(...) 
-if (is.null(dots$p.col)) 
-  dots$p.col <- "black"
-if (is.null(dots$p.bg)) 
-  dots$p.bg <- "lightblue"
-if (is.null(dots$l.col)) 
-  dots$l.col <- "red"
-if (is.null(dots$lwd)) 
-  dots$lwd <- 2 
-if (is.null(dots$pch)) 
-  dots$pch <- 20 
-if (is.null(dots$rot)) 
-  dots$rot <- 0  
+if (x@desc=="landisVol") boxplotVol(x,...) 
+#...
 
-sapply(names(GP),function(x) 
-                  if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
-if (is.null(dots$xlab)) 
-  dots$xlab <- ""
-if (is.null(dots$ylab)) 
-  dots$ylab <- "Frequency" 
-if (is.null(dots$main)) 
-  dots$main <- paste("Relative Rates of \"",samFld,"\"",paste(c(" and \"",popFld,"\" variables"),collapse=""),"\nby ",paste(unique(TechDf$GRP),collapse=", ")," Strata",sep="")
+})        
 
-print(barchart(pop~str|GRPplus,data=TechDf,scales=list(x=list(relation="free",rot=dots$rot[1]),font=dots$font.axis),main=list(dots$main,font=dots$font.main),
-               xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),par.strip.text=list(font=dots$font.lab),
-               key =list(lines=list(pch=c(15,1),type=c("p","l"),col=c(dots$p.bg[1],dots$l.col[1]),lwd=c(2,dots$lwd[1]),cex=c(1.2,dots$cex[1]),lty=c(1,dots$lty[1])),
-                         text=list(c(popFld,samFld)),font=dots$font.lab,space="right",columns=1,border=TRUE), 
-               prepanel=function(x,y,mis=mes,subscripts,...){
-                x <- x[,drop=TRUE]
-                prepanel.default.bwplot(x,y,...)
-               },
-               panel = function(x,y,mis=mes,subscripts,...){
-                x <- x[,drop=TRUE]
-                panel.barchart(x,y,col=dots$p.bg[1],fill=dots$p.bg[1],...)
-                panel.lines(type="o",mis[names(mis)==as.character(packet.number())],col=dots$l.col[1],lwd=dots$lwd[1],pch=dots$pch[1],cex=dots$cex[1],lty=dots$lty[1])},
-               layout=c(1,length(unique(TechDf$GRP))),ylim=c(0,max(c(TechDf$mes,TechDf$pop),na.rm=TRUE)*1.05)))
-        
-return(TAB) 
-})
-
-
-                                                                 
+                     
