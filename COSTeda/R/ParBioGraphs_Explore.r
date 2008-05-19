@@ -356,7 +356,14 @@ tab <- ca(object)
 tab$age <- factor(tab$age,exclude=NA)
 tab$matStage <- factor(tab$matStage,exclude=NA)
 tab$sex <- factor(as.character(tab$sex),exclude="U")
+tab$lenCls <- as.numeric(as.character(tab$lenCls))
+
 des.tab <- tab[,c("age","matStage","sex","lenCls","indWt")]
+#index of 'empty' columns
+test <- apply(des.tab,2,function(x) all(is.na(x)))
+des.tab <- des.tab[,!test]
+
+if (ncol(des.tab)==0) stop("no data to be used in object!!")
 
 plot.design(des.tab,...) 
 })
