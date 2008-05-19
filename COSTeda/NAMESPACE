@@ -19,29 +19,20 @@ export(
 )
 
 exportClasses(
-	"ageLenMult",
-	"dltCls",
-	"dltId",
-	"landisVol"
+  "edaResult"
 )
 
 exportMethods(
-	"ageLenMultinom",
-	"plot.ageLenMult",
+	"ageLenMulti",
+	"relativeValue",
   "plot",
-	"dltPlot",
-	"smpPlot",
+  "boxplot",
+	"deltCalc",
 	"lenDisPlot",
-  "biasPlot",
-  "landisVolume",
-  "fdPlot",
-  "fdBoxplot",
-  "foPlot",
-  "foBoxplot",
+  "landisVol",
   "bioPar.plot",
   "bioPar.boxplot",
   "csPlot.design",
   "cstSummary",
-  "disInfo",
-  "dltCalc"
+  "disInfo"
 )
