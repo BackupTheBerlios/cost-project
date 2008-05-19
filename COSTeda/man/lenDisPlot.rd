@@ -1,10 +1,11 @@
-\name{lenDisPlot,csData-method}
+\name{lenDisPlot}
 \alias{lenDisPlot}
 \alias{lenDisPlot,csData-method}
+\alias{lenDisPlot,csDataVal-method}
 \docType{methods}
 \title{Plot of length distribution for a specified trip}
 \description{
-This method plots from a \emph{csData} object the length distribution of one or several samples in a specified trip, for given species and catch category.
+This method plots from a \emph{csData/csDataVal} object the length distribution of one or several samples in a specified trip, for given species and catch category.
 }
 
 \usage{
@@ -20,16 +21,9 @@ lenDisPlot(x,trpCode,species,fraction="LAN",staNum="all",\dots)
   \item{...}{Further graphical arguments.}
 }
 
-\details{For more informations about arguments, see \emph{FishFrame/COST Exchange format specification}.}
-
-
-\references{Vigneau, J. and Mahevas, S. (2007)
-\emph{Detecting sampling outliers and sampling heterogeneity when catch-at-length is estimated using the ratio estimator}. Oxford Journals.
-}
-
 \author{Mathieu Merzereaud}
 
-\seealso{\code{\link{dltCls}}, \code{\link{dltId}}, \code{\link{dltCalc}}, \code{\link{dltPlot}}, \code{\link{plot.dltId}}, \code{\link{smpPlot}}
+\seealso{\code{\link{edaResult}}, \code{\link{deltCalc}}, \code{\link{plot.edaResult}}
 }
 
 \examples{

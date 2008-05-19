@@ -1,52 +1,41 @@
-\name{landisVol-class}
-\docType{class}
+\name{landisVol}
 \alias{landisVol}
-\alias{landisVol-class}
-\title{Class "landis.Vol"}
-\description{Sea-sampled catch informations for given species and catch category. Calculation levels are FOs, fishing days, and trips.
-Any object of this class is created by \emph{landisVolume} procedure.}
-
-\section{Slots}{
-\tabular{lrl}{
-\bold{slot} \tab \bold{class} \tab \bold{description} \cr
-\bold{\code{fraction}} \tab \code{character} \tab Specified catch category. \cr
-\bold{\code{species}} \tab \code{character} \tab Specified species. \cr
-
-\bold{\code{Strata$timeStrata}} \tab \code{character} \tab Specified time stratification (to be chosen between \code{"year"}, \cr
-                                         \tab \tab \code{"quarter"}, \code{"month"} and \code{NULL}).  \cr
-\bold{\code{Strata$techStrata}} \tab \code{character} \tab Specified technical stratification (to be chosen between \code{"gear"}, \cr
-                                         \tab \tab \code{"foCatNat"}, \code{"foCatEu5"}, \code{"foCatEu6"} and \code{NULL}). \cr
-\bold{\code{Strata$spaceStrata}} \tab \code{character} \tab Specified technical stratification (to be chosen between \code{"area"}, \cr
-                                         \tab \tab \code{"rect"} and \code{NULL}). \cr
-\bold{\code{VolFO_FDTR}} \tab \code{list} \tab Catch weight by FO for each fishing day of each trip. \cr
-\bold{\code{MeanFO_FDTR}} \tab \code{numeric} \tab Mean FO-catch weight for each fishing day of each trip. \cr
-\bold{\code{VolFD_TR}} \tab \code{list} \tab Catch weight by fishing day for each trip and each strata, \cr
-                                   \tab \tab raised by numbers of FO. \cr
-\bold{\code{MeanFD_TR}} \tab \code{numeric} \tab Mean FD-raised catch weight by trip and strata.
-}
+\alias{landisVol,csData,missing-method}
+\alias{landisVol,csData,strIni-method}
+\docType{methods}
+\title{Calculation upon sea-sampled catch at FO level, fishing day level, and trip level.}
+\description{
+This method creates an object of class \emph{edaResult} with \emph{desc="landisVol"} containing volume informations about sampled and raised catch,
+for a given species in a specified catch category. It requires a \emph{csData} object built from \pkg{COSTcore} package.
+Only sea sampling data is computed.
 }
 
-\details{For more informations about arguments, see \emph{FishFrame/COST Exchange format specification}.}
 
-
-\section{Methods}{
-  \describe{
-    \item{fdPlot}{\code{signature(x = "landisVol")}: graphical display of mean fishing-day-catch weight by trip (and strata if \code{groups} parameter is not \code{NULL}).}
-    \item{fdBoxplot}{\code{signature(x = "landisVol")}: boxplot of catch weight by fishing day for each trip.}
-    \item{foPlot}{\code{signature(x = "landisVol")}: graphical display of mean FO-catch weight for each fishing day of each trip.}
-    \item{foBoxplot}{\code{signature(x = "landisVol")}: boxplot of catch weight by FO for each fishing day of each trip.}
-   }
+\usage{
+\S4method{landisVol}{csData,missing}(object,species,fraction="LAN",\dots)
+\S4method{landisVol}{csData,strIni}(object,strDef,species,fraction="LAN",\dots)
 }
 
+\arguments{
+  \item{object}{A \emph{csData} object with sea-sampling information (\emph{tr}, \emph{hh} and \emph{sl} required).}
+  \item{strDef}{A \emph{strIni} object specifying time (e.g \code{"year"}, \code{"quarter"}, \code{"month"},...),
+  space (e.g \code{"area"}, \code{"rect"},...) and/or technical stratification  (e.g \code{"gear"}, \code{"foCatNat"}, \code{"foCatEu5"},...).}
+  \item{species}{Field specifying species (e.g \code{"Solea vulgaris"}).}
+  \item{fraction}{Field specifying catch category (to be chosen between \code{"LAN"} and \code{"DIS"}.).}
+  \item{...}{Further arguments.}
+}
+
+
+\value{An object of class \emph{edaResult} with \emph{desc="landisVol"}.}
 
 \author{Mathieu Merzereaud}
 
-\seealso{\code{\link{landisVolume}}, \code{\link{fdPlot}}, \code{\link{fdBoxplot}}, \code{\link{foPlot}}, \code{\link{foBoxplot}}
+\seealso{\code{\link{edaResult}}, \code{\link{plot.edaResult}}, \code{\link{boxplot.edaResult}}
 }
 
 \examples{
-showClass("landisVol")
+data(sole)  
+obj <- landisVol(sole.cs,species="Solea vulgaris")
 }
 
-\keyword{classes}
-
+\keyword{methods}
