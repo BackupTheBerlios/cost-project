@@ -139,7 +139,7 @@ plotAlMulti <- function(x,                   #'edaResult' object with desc="alMu
   # Update of graphical parameters
   #-----------------------------------------------------------------------------
 
-data(GraphsPar)                                                                                                                            
+data(GraphsPar,envir=environment())                                                                                                                            
 dots <- list(...)
 sapply(names(GP),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
