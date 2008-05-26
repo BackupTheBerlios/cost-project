@@ -27,7 +27,7 @@ tab <- object@ca
 if (all(is.na(tab$indWt))) stop("no individual weight data in ca table!!")
 if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!") 
 
-data(GraphsPar)                                                                                                               
+data(GraphsPar,envir=environment())                                                                                                               
 dots <- list(...)
 sapply(names(GP),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
@@ -89,7 +89,7 @@ if (all(is.na(tab$matStage))) stop("no maturity stage data in ca table!!")
 if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!") 
 
 
-data(GraphsPar)                                                                                                                  
+data(GraphsPar,envir=environment())                                                                                                                  
 dots <- list(...) 
 sapply(names(GP),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
@@ -153,7 +153,7 @@ if (all(is.na(tab$sex))) stop("no sex data in ca table!!")
 if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!") 
 
 
-data(GraphsPar)                                                                                                                  
+data(GraphsPar,envir=environment())                                                                                                                  
 dots <- list(...) 
 sapply(names(GP),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep="")))))
@@ -212,7 +212,7 @@ tab <- object@ca
 if (all(is.na(tab$indWt))) stop("no individual weight data in ca table!!")
 if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!") 
 
-data(GraphsPar)                                                                                                           
+data(GraphsPar,envir=environment())                                                                                                           
 dots <- list(...)
 if (is.null(dots$pch)) dots$pch <- 20
 sapply(names(GP),function(x) 
@@ -261,7 +261,7 @@ if (all(is.na(tab$matStage))) stop("no maturity stage data in ca table!!")
 if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!") 
 
 
-data(GraphsPar)                                                                                                           
+data(GraphsPar,envir=environment())                                                                                                           
 dots <- list(...)
 if (is.null(dots$pch)) dots$pch <- 20
 sapply(names(GP),function(x) 
@@ -308,7 +308,7 @@ tab <- object@ca
 if (all(is.na(tab$sex))) stop("no sex data in ca table!!")
 if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!") 
 
-data(GraphsPar)                                                                                                                  
+data(GraphsPar,envir=environment())                                                                                                                  
 dots <- list(...)
 if (is.null(dots$pch)) dots$pch <- 20
 sapply(names(GP),function(x) 
