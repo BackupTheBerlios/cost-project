@@ -243,7 +243,7 @@ if (indG[2]) {
   #-----------------------------------------------------------------------------
  
  
-data(GraphsPar)                                                                                                                           
+data(GraphsPar,envir=environment())                                                                                                                           
 dots <- list(...) 
 if (is.null(dots$p.col)) 
   dots$p.col <- "black"
