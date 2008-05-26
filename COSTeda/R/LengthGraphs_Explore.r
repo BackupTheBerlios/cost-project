@@ -387,7 +387,7 @@ if (length(stra)==0) {
 object2 <- x@outPut$SampDeltaMat
 
 #graphical parameters specification
-data(GraphsPar)                                                                                                                          
+data(GraphsPar,envir=environment())                                                                                                                          
 dots <- list(...)
 sapply(names(GP),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
@@ -442,7 +442,7 @@ if (ncol(object)>2) {
 
                     
 #graphical parameters specification
-data(GraphsPar)                                                                                                                          
+data(GraphsPar,envir=environment())                                                                                                                          
 dots <- list(...)
 sapply(names(GP),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
@@ -547,7 +547,7 @@ Som.wku <- sum(tabUnPop$wt,na.rm=TRUE)
 w.ku <- tapply(tabUn$wt,list(tabUn$Unite),sum,na.rm=TRUE)
 VecSomme <- w.ku%*%t(Som.djku/Som.wku) 
 
-data(GraphsPar)                                                                                                                        
+data(GraphsPar,envir=environment())                                                                                                                        
 dots <- list(...)
 sapply(names(GP),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
@@ -597,7 +597,7 @@ trpCode <- as.character(trpCode)
 staNum <- as.character(staNum)
 if ("all"%in%staNum) staNum <- "all" 
 
-data(GraphsPar)                                                                                                                       
+data(GraphsPar,envir=environment())                                                                                                                       
 object <- hl(x)
 lgthCode <- as.character(sl(x)[(sl(x)$trpCode%in%trpCode)&(sl(x)$spp%in%species),"lenCode"][1])
 
