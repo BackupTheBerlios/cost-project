@@ -188,7 +188,7 @@ index <- c(timeStrata,techStrata,spaceStrata)
   # Update of graphical parameters
   #-----------------------------------------------------------------------------
 
-data(GraphsPar)                                                                                                       
+data(GraphsPar,envir=environment())                                                                                                       
 dots <- list(...)
 sapply(names(GP),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
@@ -265,7 +265,7 @@ if (is.null(groups)) {
 
 fdBoxplot <- function(x,...){       
   
-data(GraphsPar)                                                                                                        
+data(GraphsPar,envir=environment())                                                                                                        
 dots <- list(...)
 
 if (is.null(dots$pch)) 
@@ -307,7 +307,7 @@ print(bwplot(bb~aa,data=df,main=list(dots$main,font=dots$font.main),xlab=list(do
 
 foPlot <- function(x,...){       
 
-data(GraphsPar)                                                                                                   
+data(GraphsPar,envir=environment())                                                                                                   
 dots <- list(...)
 if (is.null(dots$rot)) 
   dots$rot <- 0
@@ -343,7 +343,7 @@ print(xyplot(val~Fday|trpCode,data=df,main=list(dots$main,font=dots$font.main),x
 
 foBoxplot <- function(x,...){       
 
-data(GraphsPar)                                                                                                        
+data(GraphsPar,envir=environment())                                                                                                        
 dots <- list(...)
 if (is.null(dots$rot)) 
   dots$rot <- 0 
