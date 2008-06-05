@@ -322,6 +322,174 @@ setClass("csDataCons",
 #})
 #
 
+
+##====================================================================
+## Class constructor for validated objects with only tr & ca tables filled (not to be exported)
+##====================================================================
+
+
+csDataConsCATR <- function(object,                 #no hh, sl & hl tables in validated object
+                           objStrat,
+                           desc="Unknown stock",  
+                           ...){  
+
+timeStrata <- objStrat@timeStrata              # <<<- to make the code clearer, but maybe it's not the thing to do
+spaceStrata <- objStrat@spaceStrata            #
+techStrata <- objStrat@techStrata              #
+tpRec <- objStrat@tpRec                        #
+spRec <- objStrat@spRec                        #
+tcRec <- objStrat@tcRec                        #
+
+CA <- ca(object)
+cc <- is.na(techStrata)==FALSE & techStrata=="commCat"
+vsl <- is.na(techStrata)==FALSE & techStrata%in%c("vslPwr","vslSize","vslLen","vslType")
+
+#recoding procedure
+recFun <- function(df,field,rec) {                  
+  Typ <- class(df[,field]) 
+  fc <- factor(df[,field]) 
+  Lev <- levels(fc)[!levels(fc)%in%rec$from]
+  df[,field] <- factor(fc,levels=c(Lev,rec$from),labels=c(Lev,rec$to))
+  eval(parse('',text=paste("df[,field] <- as.",Typ,"(as.character(df[,field]))",sep="")))
+  return(df)
+}
+  
+        #-------
+        # Time stratification
+        #-------
+  
+# 'semester' field is put in ca
+CA$semester <- ceiling(CA$quarter/2)
+
+if (is.na(timeStrata)) {
+  CA$time <- "all" 
+  tpRec <- as.list(NA)
+} else {
+  CA$time <- CA[,timeStrata]}  
+
+if (!is.na(tpRec[1])) CA <- recFun(CA,"time",tpRec)
+
+        #-------
+        # Space stratification
+        #-------
+       
+if (is.na(spaceStrata)) {
+  CA$space <- "all" 
+  spRec <- as.list(NA)
+} else {
+  CA$space <- CA[,spaceStrata]}
+  
+if (!is.na(spRec[1])) CA <- recFun(CA,"space",spRec)  
+  
+        #-------
+        # Technical stratification
+        #-------
+    
+if (is.na(techStrata)) {
+  CA$technical <- "all" 
+  tcRec <- as.list(NA)
+} else {
+  CA$technical <- CA[,techStrata]}
+
+if (!is.na(tcRec[1])) CA <- recFun(CA,"technical",tcRec)
+        
+        #------- 
+        # PSUid : combination of trip code, time, space and technical stratification
+        #-------
+
+psuid <- apply(CA[,c("sampType","landCtry","vslFlgCtry","proj","trpCode","time","space","technical")],1,paste,collapse=":-:")    
+CA$PSUid <- factor(psuid,levels=unique(psuid),labels=1:length(unique(psuid)))
+CA$PSUid <- as.numeric(as.character(CA$PSUid))
+
+        #------- 
+        # SSUid : cst for each PSUid in that particular case
+        #-------
+                                      
+CA$SSUid <- 1
+
+
+#TECHNICAL : technical case is a bit different 
+  #if tech strata = commercial cat...
+if (cc) CA$technical <- CA$commCat
+  #if tech strata = vslPwr, vslSize, vslLen or vslType, this information stored in tr must be written in ca
+if (vsl) { 
+  indCa <- apply(CA[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode")],1,paste,collapse=":-:") 
+  indTr <- apply(object@tr[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode")],1,paste,collapse=":-:") 
+  CA$technical <- object@tr[match(indCa,indTr),techStrata]
+}
+
+if (!is.na(techStrata)) {
+  if (!is.na(tcRec[1])) CA <- recFun(CA,"technical",tcRec)
+} else {
+  CA$technical <- "all"}
+     
+
+        #------- 
+        # addition of the sorting stratification fields
+        #-------
+
+fields <- c("catchCat","landCat","commCatScl","commCat")
+CA$sort <- apply(CA[,fields],1,paste,collapse="-")
+
+
+
+#-------------------------------------------------------------------------------
+# Addition of fields in TR
+#-------------------------------------------------------------------------------
+
+    #---------------------------------------------------------------------------
+    # merge TR and CA by the keyfields to include PSUid, time, space and technical fields in TR
+    #---------------------------------------------------------------------------
+
+tr <- merge(object@tr,unique(CA[,c("sampType",
+                            "landCtry",
+                            "vslFlgCtry",
+                            "year",
+                            "proj",
+                            "trpCode",
+                            "PSUid",
+                            "time",
+                            "space")]),sort=FALSE,all=TRUE)  #no technical strata for tr table part that is only linked to ca   (maybe to be modified)
+
+tr$technical[!is.na(tr$PSUid)] <- "all"
+#ordering by PSUid field
+tr <- tr[order(tr$PSUid),]
+
+ 
+#'number of days' and 'number of FO' fields should be updated in tr table according to stratification and ca table --> TO DO
+
+
+
+#-------------------------------------------------------------------------------
+# Creation of the CONSOLIDATED object
+#-------------------------------------------------------------------------------
+
+    #---------------------------------------------------------------------------
+    # selection of the appropriate fields (selection of the new stratification fields 
+    # instead of the original) in the tables created above
+    #---------------------------------------------------------------------------
+
+csc <- new("csDataCons")
+
+	tr <- tr[,match(names(tr(csc)),names(tr))]
+  rownames(tr) <- 1:nrow(tr)
+	
+	ca <- CA[,match(names(ca(csc)),names(CA))]
+  rownames(ca) <- 1:nrow(ca)  
+  
+new("csDataCons",desc=desc,tr=coerceCons(tr,csc@tr),ca=coerceCons(ca,csc@ca))
+
+}
+
+
+
+
+##====================================================================
+## Class constructor
+##====================================================================
+
+
+
 setGeneric("csDataCons", function(object,objStrat,...){
 	standardGeneric("csDataCons")
 })
@@ -331,6 +499,14 @@ setMethod("csDataCons", signature("csDataVal","strIni"), function(object,
                                                                   objStrat,
                                                                   desc="Unknown stock",  
                                                                   ...){  
+
+#if no information in hh, only tr & ca tables are supposed to be filled
+if (nrow(object@hh)==1 & all(is.na(object@hh))) {
+  
+  csDataConsCATR(object=object,objStrat=objStrat,desc=desc)
+
+#else...
+} else {
 
 timeStrata <- objStrat@timeStrata              # <<<- to make the code clearer, but maybe it's not the thing to do
 spaceStrata <- objStrat@spaceStrata            #
@@ -607,7 +783,8 @@ if (!is.na(spaceStrata)) {
         #------- 
         # creation of new values of PSUid
         #-------
-    
+
+if (any(index)) {    
 # the new PSUid values must begin where current PSUid values in hh table end (because all trips from tr are supposed to be recorded in hh)
 begin <- max(HH$PSUid,na.rm=TRUE)
 #PSUid is defined by the combination of a trip, time, space and technical strata
@@ -615,7 +792,7 @@ psuid <- apply(ca[index,c("sampType","landCtry","vslFlgCtry","proj","trpCode","t
 ca$PSUid[index] <- as.numeric(as.character(factor(psuid,levels=unique(psuid),labels=(1:length(unique(psuid)))+begin)))
 #SSuid field insertion in indexed ca table 
 ca$SSUid[index] <- 1
-
+}
         #------- 
         # addition of the sorting stratification fields
         #-------
@@ -660,8 +837,8 @@ df <- data.frame(
    )
 #substitution of 'number of days' and 'number of FO' fields by updated values in tr table 
 index <- match(tr$PSUid,df$PSUid)
-tr$foNum <- df$nOP[index]
-tr$daysAtSea <- df$nDay[index]
+foNumTemp <- df$nOP[index] ; tr$foNum[!is.na(foNumTemp)] <- foNumTemp[!is.na(foNumTemp)]
+daysAtSeaTemp <- df$nDay[index] ; tr$daysAtSea[!is.na(daysAtSeaTemp)] <- daysAtSeaTemp[!is.na(daysAtSeaTemp)]
 
 
     #---------------------------------------------------------------------------
@@ -707,6 +884,7 @@ csc <- new("csDataCons")
   rownames(ca) <- 1:nrow(ca)  
   
 new("csDataCons",desc=desc,tr=coerceCons(tr,csc@tr),hh=coerceCons(hh,csc@hh),sl=coerceCons(sl,csc@sl),hl=coerceCons(hl,csc@hl),ca=coerceCons(ca,csc@ca))
+}
 })
 
 
