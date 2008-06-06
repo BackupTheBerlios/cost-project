@@ -1,3 +1,22 @@
+		CHANGES IN COSTcore VERSION 1.2-1
+
+NEW FEATURES
+    o csDataCons class creator extended to csDataVal objects that only contain tr and ca information  
+DOCUMENTATION
+BUG FIXES
+    o bug if all ca datas were linked to hh table, fixed.
+
+		CHANGES IN COSTcore VERSION 1.2-0
+
+NEW FEATURES
+    o new strIni class with stratification definition (time, space, technical) and recoding specification
+    o new csDataCons class creator that post stratify a csDataVal object with respect to an input strIni object  
+    o new clDataCons class creator that post stratify a clDataVal object with respect to an input strIni object  
+    o new ceDataCons class creator that post stratify a ceDataVal object with respect to an input strIni object  
+DOCUMENTATION
+    o man updated with new features
+BUG FIXES
+
 		CHANGES IN COSTcore VERSION 1.1-1
 
 NEW FEATURES
