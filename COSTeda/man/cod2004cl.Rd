@@ -1,20 +1,29 @@
 \name{cod2004cl}
 \alias{cod2004cl}
+\alias{had2004cl}
+\alias{whi2004cl}
+\alias{sai2004cl}
 \docType{data}
-\title{Cod 2004 commercial landings data}
+\title{FRS commercial landings data}
 \description{
-  Cod 2004 commercial landings data in the COST data exchange format.
+FRS commercial landings data in the COST data exchange format.
+\cr Currently consists of cod, haddock, whiting and saithe for 2004. 
 }
-\usage{data(cod2004cl)}
+\usage{
+data(cod2004cl)
+data(had2004cl)
+data(whi2004cl)
+data(sai2004cl)
+}
 \format{
-Formal class 'clData' [package "COSTcore"] with 2 slots: 
+Formal class 'clData' [package "COSTcore"] objects with 2 slots: 
 \cr@desc: description
-\cr@ce: data frame of 2601 observations of 19 variables  
+\cr@ce: data frame of 19 variables  
 \cr see clData for details of the variables  
 
 }
 \details{
-Commercial landings data from vessels landing cod into Scottish ports during 2004,  
+Commercial landings data from vessels landing the named species into Scottish ports during 2004,  
 aggregated by month, ICES statistical rectangle, ICES area and gear type.  
 Compiled from fisheries information network (FIN) data.  
 %  ~~ If necessary, more details than the __description__ above ~~

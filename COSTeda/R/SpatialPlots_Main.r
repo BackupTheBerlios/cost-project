@@ -14,7 +14,6 @@ function(object,variable,SpaceStrat,TimeStrat,TechStrat,func,nplots=1,multiscale
 # strata.space.plot
 # function that does stratified spatial plots 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 obj <-missing(object)
 vbl <-missing(variable)
 spst <-missing(SpaceStrat)
@@ -62,11 +61,14 @@ if(!(variable %in% names(dataframe)))stop("No such variable in the cost object")
 varname <-paste(substitute(variable))
 spacename <-paste(substitute(SpaceStrat))
 if(!(spacename %in% c("rect","area")))stop("SpaceStat must be either rect or area")
+
 funcname <-paste(substitute(func))
 
 eval(parse(text=paste("variable <-dataframe$",variable,sep="")))
 if(is.numeric(variable)==FALSE) stop("You need to spacify a numeric variable")
 eval(parse(text=paste("statsqs <-dataframe$",SpaceStrat,sep="")))
+
+
 default.title <-paste(funcname,"of",varname,"by",spacename,sep=" ")
 #print(default.title)
 if(nplots>1&missing(multiscale.title))multiscale.title <-default.title
@@ -199,11 +201,27 @@ par(pty="s")
 data(NHcoast)
 data(finecoast)
 data(alldepths)
+data(faoAreas)
 if(!is.null(breaks)&&substitute(breaks)=="commonbreaks")options(warn=-1)
 if(!(maptype %in% c("image","contour","bubble","values"))) 
 stop("maptype must be one of: image, contour, bubble, or values")
 
+if(any(is.na(SpaceStrat)))
+{
+warning("spatial strata included NA's")
+newSpaceStrat <-SpaceStrat[!is.na(SpaceStrat)]
+variable <-variable[!is.na(SpaceStrat)]
+SpaceStrat <-newSpaceStrat
+}
+
+if(all(SpaceStrat %in% faoAreas$FAO))
+{
+#print("areas are FAO")
+SpaceStrat <-as.character(faoAreas$ICES[match(SpaceStrat,faoAreas$FAO)])
+}
+
 statsqs <-SpaceStrat
+
 if(!is.statsq(SpaceStrat)) statsqs <-convert.icesarea.statsq(SpaceStrat)$statsq
 if(!is.statsq(SpaceStrat)&maptype=="contour") stop("Contour plots are not possible for area strata")
 
@@ -215,12 +233,16 @@ midlats <-seq(29.5, 86.0, 0.5) + 0.25
 lonnames <- c("A0","A1","A2","A3",paste(rep(LETTERS[c(2:8,10:12,13)], rep(10, 11)), rep(0:9,11), sep = ""))
 midlons <- (-44:69) + 0.5
  
-
 # The default plotting area covers the limits of the statsq 
 
 latlons <-convert.statsq.lat.lon(statsqs)
 navals <-unique(c(which(is.na(latlons$lon)),which(is.na(latlons$lat))))
-if(length(navals)>0)latlons <-latlons[-navals,]
+if(length(navals)>0)
+{
+latlons$lon <-latlons$lon[-navals]
+latlons$lat <-latlons$lat[-navals]
+}
+
 #latlons <-latlons[-unique(c(which(is.na(latlons$lon)),which(is.na(latlons$lat)))),]
 minx <-min(latlons$lon)
 maxx <-max(latlons$lon)
@@ -267,11 +289,24 @@ valpercell <-tapply(variable,SpaceStrat,func)
 statsqs <-as.character(names(valpercell))
 values <-as.vector(valpercell)
 if(!is.statsq(SpaceStrat))
+#if(all(SpaceStrat %in% faoAreas$ICES))
 {
 casout <-convert.icesarea.statsq(names(valpercell))
 statsqs <-casout$statsq
 values <-as.vector(valpercell[match(casout$parentarea,toupper(names(valpercell)))])
 }
+#if(all(SpaceStrat %in% faoAreas$FAO))
+#{
+#ICESareas <-as.character(faoAreas$ICES[match(names(valpercell),faoAreas$FAO)])
+#casout <-convert.icesarea.statsq(ICESareas)
+#statsqs <-casout$statsq
+#values <-as.vector(valpercell[match(casout$parentarea,toupper(names(valpercell)))])
+#}
+
+
+
+
+
 index <-match(statsqs,rects1)
 vals <-rep(NA,length(midlons)^2)
 ww <-(1:length(index))[is.finite(index)]
@@ -341,6 +376,7 @@ if(!fcoast)landmass.polygons("snow2",border=col.coast)
 }
 }
 if(!is.statsq(SpaceStrat)) 
+#if(!is.statsq(statsqs)) 
 {
 ices.divs <-TRUE
 landmass.polygons("white",border=col.coast)

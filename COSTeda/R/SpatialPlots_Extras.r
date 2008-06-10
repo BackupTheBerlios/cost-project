@@ -9,6 +9,7 @@
 #   convert.statsq.lat.lon
 #   convert.icesarea.statsq
 #   convert.icesarea.lat.lon
+#   convert.statsq.icesarea
 #   ices.division.lines
 #   ices.division.names
 
@@ -318,6 +319,29 @@ return(out)
 
 #-----------------end of convert.icesarea.lat.lon------------------------
 
+convert.statsq.icesarea <-function(statsqs)
+{
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# convert.statsq.area
+# function that gives the ICES subarea, division and subdivision
+# for a given statsq
+# needs ICESAreaRects
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+data(ICESAreaRects)
+aa <-ICESAreaRects
+if(is.statsq(statsqs)!=TRUE)stop("statistical rectangles not in expected format")
+check <-match(statsqs,aa$statsq)
+if(any(is.na(check)!=FALSE))warning("some of your statsqs are not recognised")
+subdivs <-as.character(aa$subdivision[match(statsqs,aa$statsq)])
+divs <-as.character(aa$division[match(statsqs,aa$statsq)])
+subarea <-as.character(aa$subarea[match(statsqs,aa$statsq)])
+out <-list(subdivs=subdivs,divs=divs,subarea=subarea)
+return(out)
+}
+
+
+#-------------------end of convert.statsq.icesarera
 `ices.division.lines` <-
 function (division = NULL, area = NULL, lty = 1, col = 1, lwd = 1) 
 {
