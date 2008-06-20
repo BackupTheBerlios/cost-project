@@ -204,8 +204,8 @@ if (all(is.null(timeStrata),is.null(techStrata),is.null(spaceStrata))) {
     dots$main <- paste("Mean Weight by Fishing Day for each Trip\nSpecies :",paste(x@outPut$species,collapse=", "),"    Fraction :",paste(x@outPut$fraction,collapse=", "))
   df <- data.frame(trp=names(x@outPut$MeanFD_TR),bb=as.numeric(x@outPut$MeanFD_TR))
 
-  xyplot(bb~trp,data=df,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),
-         scales=list(font=dots$font.axis,x=list(rot=dots$rot)),pch=dots$pch[1],fill=dots$p.bg[1],cex=dots$p.cex[1],col=dots$col[1])
+  print(xyplot(bb~trp,data=df,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),
+         scales=list(font=dots$font.axis,x=list(rot=dots$rot)),pch=dots$pch[1],fill=dots$p.bg[1],cex=dots$p.cex[1],col=dots$col[1]))
                      
 } else {    
 
