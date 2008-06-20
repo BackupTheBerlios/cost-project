@@ -15,7 +15,9 @@ export(
   "landmass.polygons",
   "mergecsData",
   "space.plot",
-  "strata.space.plot"
+  "strata.space.plot",
+  "tabConsist",
+  "dfApply"
 )
 
 exportClasses(
