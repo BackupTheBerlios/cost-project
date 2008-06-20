@@ -448,3 +448,68 @@ invisible(calc)
 })
 
 
+
+# CS/CL/CE consistency (presence of values of a given field in each specified table)
+
+tabConsist <- function(lTab,field) {                 #lTab is a list containing various COST objects
+
+#test on objects classes
+ind <- FALSE
+clas <- unlist(lapply(lTab,class))
+if (all(clas%in%c("csData","ceData","clData"))) ind <- TRUE
+if (all(clas%in%c("csDataVal","ceDataVal","clDataVal"))) ind <- TRUE
+if (all(clas%in%c("csDataCons","ceDataCons","clDataCons"))) ind <- TRUE
+if (!ind) stop("objects classes don't match!!")
+
+#names for each table
+nam <- rep(c("CS","CL","CE"),each=3) ; reit <- rep(c(5,1,1),each=3)
+names(reit) <- names(nam) <- c("csData","csDataVal","csDataCons","clData","clDataVal","clDataCons","ceData","ceDataVal","ceDataCons")
+NAM <- nam[clas] ; IND <- rep(1,length(NAM))
+if (length(NAM)>1) invisible(sapply(2:length(NAM),function(x) IND[x] <<- sum(NAM[1:x]%in%NAM[x])))
+NAM <- paste(NAM,IND,sep="")
+namTab <- namT <- unlist(do.call("list",lapply(lTab,function(x) slotNames(x)[-1])))
+at <- rep("_",length(namTab))
+at[namTab%in%c("cl","ce")] <- ""
+namTab[namTab%in%c("cl","ce")] <- ""
+NAMES <- paste(rep(NAM,reit[clas]),at,namTab,sep="")
+
+#tables in lTab are split and put in a list
+eval(parse('',text=paste("newLtab <- list(",paste(NAMES,"=lTab[[",rep(1:length(NAM),reit[clas]),"]]@",namT,collapse=",",sep=""),")",sep="")))
+
+#test the presence of specified field in the tables, and remove the table if no
+n <- length(newLtab)
+invisible(sapply(n:1,function(x) if (!field%in%names(newLtab[[x]])) newLtab[[x]] <<- NULL))
+if (length(newLtab)==0) stop("specified field cannot be found in input objects!!")
+
+#all values of specified field (colNames of the resulting table)
+lValues <- do.call("list",lapply(newLtab,function(x) unique(x[,field])))
+lValues <- sort(na.omit(unique(unlist(lValues))))
+
+#presence of each value in each table for the specified field (Y/N)
+tab <- do.call("rbind",lapply(1:length(newLtab),function(x) lValues%in%newLtab[[x]][,field]))
+dimnames(tab) <- list(names(newLtab),lValues)
+tab[tab] <- "x" ; tab[tab=="FALSE"] <- ""
+
+return(as.table(tab))
+}
+
+
+
+
+
+#mix between 'aggregate' & 'tapply'
+dfApply <- function(tab,valueField,rowFields,colField,fun,...){
+if (length(colField)!=1) stop("wrong 'rowField' parameter!!")
+if (length(valueField)!=1) stop("wrong 'valueField' parameter!!")
+
+#rowFields are concatenated and then tapply function is used
+mat <- tapply(tab[,valueField],list(apply(tab[,rowFields],1,paste,collapse=":-:"),tab[,colField]),fun,...)
+mat1 <- do.call("rbind",lapply(rownames(mat),function(x) strsplit(x,":-:")[[1]]))
+df1 <- as.data.frame(mat1) ; names(df1) <- rowFields
+df2 <- as.data.frame(mat) ; rownames(df2) <- NULL
+dfInt <- data.frame(rep("|",nrow(df1))) ; names(dfInt)[1] <- "|"
+df <- cbind.data.frame(df1,dfInt,df2)
+return(df)
+}
+
+
