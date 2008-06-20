@@ -775,7 +775,7 @@ if (vsl) {
   indTr <- apply(object@tr[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode")],1,paste,collapse=":-:") 
   ca$technical <- object@tr[match(indCa,indTr),techStrata]
 }
-if (!is.na(spaceStrata)) {
+if (!is.na(techStrata)) {
   if (!is.na(tcRec[1])) ca <- recFun(ca,"technical",tcRec)
 } else {
   ca$technical <- "all"}
