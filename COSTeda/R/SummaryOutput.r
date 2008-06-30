@@ -503,7 +503,7 @@ if (length(colField)!=1) stop("wrong 'rowField' parameter!!")
 if (length(valueField)!=1) stop("wrong 'valueField' parameter!!")
 
 #rowFields are concatenated and then tapply function is used
-mat <- tapply(tab[,valueField],list(apply(tab[,rowFields],1,paste,collapse=":-:"),tab[,colField]),fun,...)
+mat <- tapply(tab[,valueField],list(apply(tab[,rowFields,drop=FALSE],1,paste,collapse=":-:"),tab[,colField]),fun,...)
 mat1 <- do.call("rbind",lapply(rownames(mat),function(x) strsplit(x,":-:")[[1]]))
 df1 <- as.data.frame(mat1) ; names(df1) <- rowFields
 df2 <- as.data.frame(mat) ; rownames(df2) <- NULL
