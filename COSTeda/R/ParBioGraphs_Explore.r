@@ -11,6 +11,7 @@
 ###########################################
 
 setGeneric("wlPlot", function(object,
+                              species="all",
                               selection=FALSE,...){
 	standardGeneric("wlPlot")}
 )
@@ -19,9 +20,11 @@ setGeneric("wlPlot", function(object,
 
 
 setMethod("wlPlot", signature(object="csData"), function(object,
+                                                         species="all",
                                                          selection=FALSE,...){
 
 tab <- object@ca 
+if (!"all"%in%species) tab <- tab[tab$spp%in%species,]
 
 #tests on ca table fields
 if (all(is.na(tab$indWt))) stop("no individual weight data in ca table!!")
@@ -72,6 +75,7 @@ if (selection){
 
 
 setGeneric("mlPlot", function(object,
+                              species="all",
                               selection=FALSE,
                               ...){
 	standardGeneric("mlPlot")}
@@ -80,10 +84,11 @@ setGeneric("mlPlot", function(object,
 
 
 setMethod("mlPlot", signature(object="csData"), function(object,
+                                                         species="all",
                                                          selection=FALSE,
                                                          ...){
 tab <- object@ca 
-
+if (!"all"%in%species) tab <- tab[tab$spp%in%species,]
 #tests on ca table fields
 if (all(is.na(tab$matStage))) stop("no maturity stage data in ca table!!")
 if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!") 
@@ -135,6 +140,7 @@ if (selection){
 
 
 setGeneric("slPlot", function(object,
+                              species="all",
                               selection=FALSE,
                               ...){
 	standardGeneric("slPlot")}
@@ -143,10 +149,12 @@ setGeneric("slPlot", function(object,
 
 
 setMethod("slPlot", signature(object="csData"), function(object,
+                                                         species="all",
                                                          selection=FALSE,
                                                          ...){
 
 tab <- object@ca 
+if (!"all"%in%species) tab <- tab[tab$spp%in%species,]
 
 #tests on ca table fields
 if (all(is.na(tab$sex))) stop("no sex data in ca table!!")
@@ -198,15 +206,16 @@ if (selection){
 
 
 
-setGeneric("wlBoxplot", function(object,...){
+setGeneric("wlBoxplot", function(object,species="all",...){
 	standardGeneric("wlBoxplot")}
 )
 
 
 
-setMethod("wlBoxplot", signature(object="csData"), function(object,...){
+setMethod("wlBoxplot", signature(object="csData"), function(object,species="all",...){
 
 tab <- object@ca 
+if (!"all"%in%species) tab <- tab[tab$spp%in%species,]
 
 #tests on ca table fields
 if (all(is.na(tab$indWt))) stop("no individual weight data in ca table!!")
@@ -246,15 +255,16 @@ bwplot(indWt~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(
 
 
 
-setGeneric("mlBoxplot", function(object,...){
+setGeneric("mlBoxplot", function(object,species="all",...){
 	standardGeneric("mlBoxplot")}
 )
 
 
 
-setMethod("mlBoxplot", signature(object="csData"), function(object,...){
+setMethod("mlBoxplot", signature(object="csData"), function(object,species="all",...){
 
 tab <- object@ca
+if (!"all"%in%species) tab <- tab[tab$spp%in%species,]
 
 #tests on ca table fields
 if (all(is.na(tab$matStage))) stop("no maturity stage data in ca table!!")
@@ -295,14 +305,15 @@ bwplot(matStage~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=li
 
 
 
-setGeneric("slBoxplot", function(object,...){
+setGeneric("slBoxplot", function(object,species="all",...){
 	standardGeneric("slBoxplot")}
 )
 
 
-setMethod("slBoxplot", signature(object="csData"), function(object,...){
+setMethod("slBoxplot", signature(object="csData"), function(object,species="all",...){
 
 tab <- object@ca
+if (!"all"%in%species) tab <- tab[tab$spp%in%species,]
 
 #tests on ca table fields
 if (all(is.na(tab$sex))) stop("no sex data in ca table!!")
@@ -345,14 +356,15 @@ bwplot(sex~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(do
 # Specific plot.design #
 ########################
 
-setGeneric("csPlot.design", function(object,...){
+setGeneric("csPlot.design", function(object,species="all",...){
 	standardGeneric("csPlot.design")}
 )
 
 
-setMethod("csPlot.design", signature(object="csDataVal"), function(object,...){
+setMethod("csPlot.design", signature(object="csDataVal"), function(object,species="all",...){
  
 tab <- ca(object)
+if (!"all"%in%species) tab <- tab[tab$spp%in%species,]
 tab$age <- factor(tab$age,exclude=NA)
 tab$matStage <- factor(tab$matStage,exclude=NA)
 tab$sex <- factor(as.character(tab$sex),exclude="U")
@@ -377,6 +389,7 @@ plot.design(des.tab,...)
 
 setGeneric("bioPar.plot", function(object,
                                    type="wl",     #or "ml" or "sl"
+                                   species="all",
                                    selection=FALSE,...){
 	standardGeneric("bioPar.plot")}
 )
@@ -384,14 +397,16 @@ setGeneric("bioPar.plot", function(object,
 
 setMethod("bioPar.plot", signature(object="csData"), function(object,
                                                               type="wl",
+                                                              species="all",
                                                               selection=FALSE,
                                                               ...){
-eval(parse('',text=paste(type,"Plot(object,selection=selection,...)",sep="")))
+eval(parse('',text=paste(type,"Plot(object,species=species,selection=selection,...)",sep="")))
 })
 
 
 setGeneric("bioPar.boxplot", function(object,
                                       type="wl",     #or "ml" or "sl"
+                                      species="all",
                                       ...){
 	standardGeneric("bioPar.boxplot")}
 )
@@ -399,8 +414,9 @@ setGeneric("bioPar.boxplot", function(object,
 
 setMethod("bioPar.boxplot", signature(object="csData"), function(object,
                                                                  type="wl",
+                                                                 species="all",
                                                                  ...){
-eval(parse('',text=paste(type,"Boxplot(object,...)",sep="")))
+eval(parse('',text=paste(type,"Boxplot(object,species=species,...)",sep="")))
 })
 
 
