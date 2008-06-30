@@ -8,11 +8,12 @@ Version of \emph{plot.design} procedure from \pkg{graphics} package applied to \
 }
 
 \usage{
-csPlot.design(object,\dots)
+csPlot.design(object,species="all",\dots)
 }
 
 \arguments{
   \item{object}{A \emph{csDataVal} object with \emph{ca} informations.}
+  \item{species}{A character (vector) specifying species (default value is "all" for all species) .}
   \item{...}{Further arguments.}
 }
 

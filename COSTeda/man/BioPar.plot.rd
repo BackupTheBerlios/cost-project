@@ -8,11 +8,12 @@ This method implements a scatter plot of individual biological data. It requires
 }
 
 \usage{
-bioPar.plot(object,type="wl",selection=FALSE,\dots)}
+bioPar.plot(object,type="wl",species="all",selection=FALSE,\dots)}
 
 \arguments{
   \item{object}{A \emph{csData} object with \emph{ca} informations.}
   \item{type}{To be chosen between \code{"wl"} (weight at length), \code{"ml"} (maturity at length) or \code{"sl"} (sex at length).}
+  \item{species}{A character (vector) specifying species (default value is "all" for all species) .}
   \item{selection}{If \code{TRUE}, outlier(s) identification can be done and corresponding ca table extract is returned.}
   \item{...}{Further graphical arguments.}
 }

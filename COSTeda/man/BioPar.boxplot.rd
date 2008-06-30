@@ -8,12 +8,13 @@ This method implements a boxplot of individual biological data. It requires a \e
 }
 
 \usage{
-bioPar.boxplot(object,type="wl",\dots)
+bioPar.boxplot(object,type="wl",species="all",\dots)
 }
 
 \arguments{
   \item{object}{A \emph{csData} object with \emph{ca} informations.}
   \item{type}{To be chosen between \code{"wl"} (weight at length), \code{"ml"} (maturity at length) or \code{"sl"} (sex at length).}
+  \item{species}{A character (vector) specifying species (default value is "all" for all species) .}
   \item{...}{Further graphical arguments.}
 }
 
