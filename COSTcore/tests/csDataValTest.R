@@ -28,12 +28,12 @@ checkRun(csv <- csDataVal(sole.cs))
 checkTrue(is(csv, "csDataVal"))
 
 # SUid creator
-checkRun(lst <- createSUid(csv))
-checkIdentical(nrow(lst$tr), nrow(tr(csv)))
-checkIdentical(nrow(lst$hh), nrow(hh(csv)))
-checkIdentical(nrow(lst$sl), nrow(sl(csv)))
-checkIdentical(nrow(lst$hl), nrow(hl(csv)))
-checkIdentical(nrow(lst$ca), nrow(ca(csv)))
-
+#checkRun(lst <- createSUid(csv))
+#checkIdentical(nrow(lst$tr), nrow(tr(csv)))
+#checkIdentical(nrow(lst$hh), nrow(hh(csv)))
+#checkIdentical(nrow(lst$sl), nrow(sl(csv)))
+#checkIdentical(nrow(lst$hl), nrow(hl(csv)))
+#checkIdentical(nrow(lst$ca), nrow(ca(csv)))
+#
 finishTest()
 
