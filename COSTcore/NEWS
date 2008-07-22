@@ -1,3 +1,19 @@
+		CHANGES IN COSTcore VERSION 1.2-2
+
+NEW FEATURES
+    o new raw, validated and consolidated objects matching the modification of the DEF described in the 'Minutes of the 2nd COST meeting'
+    o update of the consolidated class creator 
+    o addition of the year information to the consolidated fields 'time'
+    o inclusion of the field 'date' in the consolidated table hh
+    o update of the check methods according to objects new definitions (field names, key indexes,...)
+    o new 'subset' methods for raw and validated CS objects 
+    o new 'subsetSpp' method
+    o update of the 'sole' and 'soleData' .RData files (COSTcore package datasets)      
+DOCUMENTATION
+    o man updated with modifications and new features 
+BUG FIXES
+    o inclusion of 'space suppressor' to ensure the matching of keys in 'checkDataIntegrity' check method 
+
 		CHANGES IN COSTcore VERSION 1.2-1
 
 NEW FEATURES
