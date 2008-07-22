@@ -45,9 +45,11 @@ setClass("ceData",
 			month=as.numeric(NA), # PK
 			area=as.character(NA), # PK
 			rect=as.character(NA), # PK 
+			subRect=as.character(NA), #PK
 			foCatNat=as.character(NA), # PK
 			foCatEu5=as.character(NA), # PK
 			foCatEu6=as.character(NA), # PK
+			harbour=as.character(NA),
 			trpNum=as.numeric(NA),
 			foNum=as.numeric(NA),
 			foDur=as.numeric(NA),
@@ -221,6 +223,7 @@ setMethod("subset", signature(x="ceData"), function(x,subset,...){
 	r <- eval(e, df0, parent.frame())
 	ceData(df0[r,])
 })
+
 
 
 #====================================================================
