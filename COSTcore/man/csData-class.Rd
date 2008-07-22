@@ -9,6 +9,7 @@
 \alias{csData,data.frame,data.frame,data.frame,missing,missing-method}
 \alias{csData,data.frame,data.frame,data.frame,data.frame,missing-method}
 \alias{csData,data.frame,data.frame,data.frame,data.frame,data.frame-method}
+\alias{csData,data.frame,missing,missing,missing,data.frame-method}
 \alias{csData,character,character,character,character,missing-method}
 \alias{csData,character,character,character,character,character-method}
 \title{Class "csData"}
