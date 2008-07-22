@@ -60,6 +60,7 @@ exportMethods(
 #	"is.ceData",
 #	"is.clData",
 	"subset",
+	"subsetSpp",
 	"rbind2",
 	"ceDataVal",
 	"ceDataCons",
@@ -67,7 +68,7 @@ exportMethods(
 	"clDataCons",
 	"csDataVal",
 	"csDataCons",
-	"coerceDataFrameColumns",
-	"createSUid"
+	"coerceDataFrameColumns"
+# "createSUid"
 )
 
