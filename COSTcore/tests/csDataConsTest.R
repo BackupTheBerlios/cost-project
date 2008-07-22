@@ -20,7 +20,7 @@ library(COSTcore)
 setCon()
 zz <- startTest("csDataConsTest.txt")
 tagTest("csDataCons testing ...")
-
+                                  
 data(sole)
 
 # constructor
