@@ -47,7 +47,7 @@ setClass("clDataCons",
 			time=as.factor(NA), # PK
 			space=as.factor(NA), # PK 
 			technical=as.factor(NA), # PK
-			spp=as.factor(NA), # PK 
+			taxon=as.factor(NA), # PK 
 			landCat=as.character(NA), # PK 
 			commCatScl=as.character(NA), # PK
 			commCat=as.character(NA), # PK
@@ -113,7 +113,11 @@ spRec <- objStrat@spRec                           #
 tcRec <- objStrat@tcRec                           #
                                                   #
 CL <- object@cl                                   ####
-CL$semester <- ceiling(CL$quarter/2)      
+Semester <- ceiling(CL$quarter/2)      
+
+CL$month <- paste(as.character(CL$year),as.character(CL$month),sep=" - ")                         #<<- 22/07/2008 update : addition of year information to "time" field                
+CL$quarter <- paste(as.character(CL$year),as.character(CL$quarter),sep=" - ")                     #
+CL$semester <- paste(as.character(CL$year),as.character(Semester),sep=" - ")                      #
 
 #-------------------------------------------------------------------------------
 # Addition of fields
