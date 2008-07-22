@@ -117,7 +117,7 @@ setClass("csDataCons",
 			aggLev=as.character(NA),
 			catReg=as.character(NA),
 			sppReg=as.character(NA),
-			#date=as.character(NA), 	=> time
+			date=as.character(NA), #	=> time
 			#time=as.character(NA), 	=> time
 			foDur=as.numeric(NA),
 			latIni=as.numeric(NA),
@@ -152,12 +152,13 @@ setClass("csDataCons",
 			trpCode=as.factor(NA), # FK
 			staNum=as.numeric(NA), # FK
 			spp=as.factor(NA), # PK 
+			sex=as.factor(NA), # PK 
 			#catchCat=as.character(NA), # PK	=> sort 
 			#landCat=as.character(NA), # PK	=> sort 
 			#commCatScl=as.character(NA), # PK	=> sort
 			#commCat=as.character(NA), # PK	=> sort
 			#subSampCat=as.character(NA), # PK	=> sort
-#			valCode=as.factor(NA), 
+      #valCode=as.factor(NA), 
 			wt=as.numeric(NA), 
 			subSampWt=as.numeric(NA), 
 			lenCode=as.factor(NA)),
@@ -215,11 +216,13 @@ setClass("csDataCons",
 			fishId=as.numeric(NA), # PK
 			lenCode=as.character(NA),
 			plusGrp=as.character(NA),
+			ageMeth=as.character(NA),
 			otoWt=as.numeric(NA),
 			otoSide=as.character(NA),
 			indWt=as.numeric(NA),
 			matScale=as.character(NA),
-			matStage=as.character(NA))
+			matStage=as.character(NA),
+      matMeth=as.character(NA))
 	),
 	validity=valcscData
 )
@@ -341,8 +344,6 @@ spRec <- objStrat@spRec                        #
 tcRec <- objStrat@tcRec                        #
 
 CA <- ca(object)
-cc <- is.na(techStrata)==FALSE & techStrata=="commCat"
-vsl <- is.na(techStrata)==FALSE & techStrata%in%c("vslPwr","vslSize","vslLen","vslType")
 
 #recoding procedure
 recFun <- function(df,field,rec) {                  
@@ -359,7 +360,12 @@ recFun <- function(df,field,rec) {
         #-------
   
 # 'semester' field is put in ca
-CA$semester <- ceiling(CA$quarter/2)
+#CA$semester <- ceiling(CA$quarter/2)
+Semester <- ceiling(CA$quarter/2) 
+CA$month <- paste(as.character(CA$year),as.character(CA$month),sep=" - ")                         #<<- 30/06/2008 update : addition of year information to "time" field                
+CA$quarter <- paste(as.character(CA$year),as.character(CA$quarter),sep=" - ")                     #
+CA$semester <- paste(as.character(CA$year),as.character(Semester),sep=" - ")                      #
+ 
 
 if (is.na(timeStrata)) {
   CA$time <- "all" 
@@ -382,16 +388,11 @@ if (is.na(spaceStrata)) {
 if (!is.na(spRec[1])) CA <- recFun(CA,"space",spRec)  
   
         #-------
-        # Technical stratification
+        # Technical stratification  :--> no technical stratification for linked ca and tr (that are not linked to hh, sl & hl)
         #-------
     
-if (is.na(techStrata)) {
-  CA$technical <- "all" 
-  tcRec <- as.list(NA)
-} else {
-  CA$technical <- CA[,techStrata]}
+CA$technical <- NA
 
-if (!is.na(tcRec[1])) CA <- recFun(CA,"technical",tcRec)
         
         #------- 
         # PSUid : combination of trip code, time, space and technical stratification
@@ -405,24 +406,7 @@ CA$PSUid <- as.numeric(as.character(CA$PSUid))
         # SSUid : cst for each PSUid in that particular case
         #-------
                                       
-CA$SSUid <- 1
-
-
-#TECHNICAL : technical case is a bit different 
-  #if tech strata = commercial cat...
-if (cc) CA$technical <- CA$commCat
-  #if tech strata = vslPwr, vslSize, vslLen or vslType, this information stored in tr must be written in ca
-if (vsl) { 
-  indCa <- apply(CA[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode")],1,paste,collapse=":-:") 
-  indTr <- apply(object@tr[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode")],1,paste,collapse=":-:") 
-  CA$technical <- object@tr[match(indCa,indTr),techStrata]
-}
-
-if (!is.na(techStrata)) {
-  if (!is.na(tcRec[1])) CA <- recFun(CA,"technical",tcRec)
-} else {
-  CA$technical <- "all"}
-     
+CA$SSUid <- 1  
 
         #------- 
         # addition of the sorting stratification fields
@@ -449,9 +433,9 @@ tr <- merge(object@tr,unique(CA[,c("sampType",
                             "trpCode",
                             "PSUid",
                             "time",
-                            "space")]),sort=FALSE,all=TRUE)  #no technical strata for tr table part that is only linked to ca   (maybe to be modified)
+                            "space",
+                            "technical")]),sort=FALSE,all.x=TRUE)  #no technical strata for tr table part that is only linked to ca  
 
-tr$technical[!is.na(tr$PSUid)] <- "all"
 #ordering by PSUid field
 tr <- tr[order(tr$PSUid),]
 
@@ -500,7 +484,7 @@ setMethod("csDataCons", signature("csDataVal","strIni"), function(object,
                                                                   desc="Unknown stock",  
                                                                   ...){  
 
-#if no information in hh, only tr & ca tables are supposed to be filled
+#if no information in hh, only tr & ca tables are supposed to be filled, so...
 if (nrow(object@hh)==1 & all(is.na(object@hh))) {
   
   csDataConsCATR(object=object,objStrat=objStrat,desc=desc)
@@ -523,23 +507,11 @@ HH <- object@hh                                ####
 #-------------------------------------------------------------------------------
 
     #---------------------------------------------------------------------------
-    # if technical stratification is Commercial category the information on 
-    # market category specified in SL is levelled up to HH. 
-    # As a consequence, as many HH rows are created as there are related commercial categories
+    # if technical stratification is Commercial category, "technical" field in hh and tr is to be filled with NAs, so a NA field named 'commCat' is created in tr & hh 
     #---------------------------------------------------------------------------
     
 cc <- is.na(techStrata)==FALSE & techStrata=="commCat"
-if (cc) {
-  HH$ind <- 1:nrow(HH)
-  HH <- merge(HH,unique(object@sl[,c("sampType",
-                              "landCtry",
-                              "vslFlgCtry",
-                              "year",
-                              "proj",
-                              "trpCode",
-                              "staNum",
-                              "commCat")]),sort=FALSE,all=TRUE)
-  HH <- HH[order(HH$ind),]}
+if (cc) HH$commCat <- NA
 
     #---------------------------------------------------------------------------
     # if tech strata = vslPwr, vslSize, vslLen, vslType
@@ -573,7 +545,13 @@ recFun <- function(df,field,rec) {                  # <<<- there's surely a more
   
 # Creation of a data.frame containing the different modalities of time stratification
 month <- sapply(HH$date,function(x) as.numeric(strsplit(x,"-")[[1]][2]))
-time.DF <- data.frame(month = month, quarter = ceiling(month/3), semester = ceiling(month/6),year=HH$year)
+#time.DF <- data.frame(month = month, quarter = ceiling(month/3), semester = ceiling(month/6),year=HH$year)    
+Year <- HH$year
+time.DF <- data.frame(month = paste(as.character(Year),as.character(month),sep=" - "),                      #<<- 30/06/2008 update : addition of year information to "time" field
+                      quarter = paste(as.character(Year),as.character(ceiling(month/3)),sep=" - "),         #eg "2006 - 1"
+                      semester = paste(as.character(Year),as.character(ceiling(month/6)),sep=" - "),        #WARNING : this format will have to be taken into account in recoding process
+                      year=Year)       
+
 
 if (is.na(timeStrata)) {
   HH$time <- "all" 
@@ -631,10 +609,6 @@ HH$SSUid <- unlist(tapply(HH$PSUid,list(HH$PSUid),function(x) 1:length(x)))
     # merge SL and HH by the keyfields to include PSUid, SSUid, time, space and technical fields in SL
     #---------------------------------------------------------------------------
 
-#if tech strata = commercial cat, merge between hh and sl must also be applied within 'commCat' field 
-ccInd <- NULL 
-if (cc) ccInd <- "commCat"
-
 sl <- merge(object@sl,HH[,c("sampType",
                      "landCtry",
                      "vslFlgCtry",
@@ -642,7 +616,6 @@ sl <- merge(object@sl,HH[,c("sampType",
                      "proj",
                      "trpCode",
                      "staNum",
-                     ccInd,
                      "time",
                      "space",
                      "technical",
@@ -664,22 +637,15 @@ sl$sort <- apply(sl[,fields],1,paste,collapse="-")
 
 #Need to be ordered like the result of TSUid below     
 sl <- sl[order(sl$PSUid,sl$SSUid),]                                  
-PSSUid <- apply(sl[,c("PSUid","SSUid")],1,paste,collapse=".")
-#in order to be sure that 'tapply' at the next line will keep the data in order  
-PSSUid <- factor(PSSUid,levels=unique(PSSUid))                         
-#function to be applied to catchCat*landCat*commCatScl*commCat crossed values 
-#by PSSUid values to create TSUid field in sl  
-tsuidFun <- function(x) as.numeric(as.character(factor(x,levels=unique(x),labels=1:length(unique(x)))))  
-                                                                                                                 
-if (cc) { 
-  ccIndic <- "technical"
-} else {
-  ccIndic <- "commCat"}
+
+#TSUid creation has been simplified by supposing that commCatScl is unique per species             #<<- 30/06/2008 update : only CC defines TSUid
+                             
+if (cc) {                                                                                          #<<- 30/06/2008 update : if techStrata!="commCat", then TSUid = NA
+  sl$TSUid <- sl$commCat                                                                           #
+} else {                                                                                           #
+  sl$TSUid <- NA                                                                                   #
+}                                                                                                  #
   
-ccat <- apply(sl[,c("catchCat","landCat","commCatScl",ccIndic)],1,paste,collapse="")    
-sl$TSUid <- unlist(tapply(ccat,list(PSSUid),tsuidFun))
-
-
 #-------------------------------------------------------------------------------
 # Addition of fields in HL
 #-------------------------------------------------------------------------------
@@ -702,6 +668,7 @@ hl <- merge(object@hl,sl[,c("sampType",
                      "commCatScl",
                      "commCat",
                      "subSampCat",
+                     "sex",                #added 21/07/08
                      "sort",
                      "time",
                      "space",
@@ -721,8 +688,8 @@ hl <- hl[order(hl$PSUid,hl$SSUid,hl$TSUid),]
     # merge CA and HH by the keyfields to include PSUid, SSUid, time, space and technical fields in CA
     #---------------------------------------------------------------------------
 
-#if tech strata = commercial cat, merge between hh and ca must also be applied within 'commCat' field --> use of ccInd
-#presence of NAs will mean that information is only linked to tr table 
+#ca & hh are merged
+#presence of NAs will mean that ca information is only linked to tr table 
 ca <- merge(object@ca,HH[,c("sampType",
                      "landCtry",
                      "vslFlgCtry",
@@ -730,7 +697,6 @@ ca <- merge(object@ca,HH[,c("sampType",
                      "proj",
                      "trpCode",
                      "staNum",
-                     ccInd,
                      "time",
                      "space",
                      "technical",
@@ -746,15 +712,21 @@ ca <- ca[order(ca$PSUid),]
 index <- is.na(ca$PSUid)
 
         #------- 
-        # creation of time, space and technical stratification fields
+        # creation of time and space stratification fields for indexed part of ca (no technical stratification for tr/ca)
         #-------
 
 #TIME
 #'semester' field is added to ca table
-ca$semester <- ceiling(ca$quarter/2)
+#ca$semester <- ceiling(ca$quarter/2)  
+Semester <- ceiling(ca$quarter/2)     
+ca$month <- paste(as.character(ca$year),as.character(ca$month),sep=" - ")                         #<<- 30/06/2008 update : addition of year information to "time" field                
+ca$quarter <- paste(as.character(ca$year),as.character(ca$quarter),sep=" - ")                     #
+ca$semester <- paste(as.character(ca$year),as.character(Semester),sep=" - ")                      #
 
+                                                              
 if (!is.na(timeStrata)) {
-  ca$time[index] <- ca[index,timeStrata]
+  ca$time <- as.character(ca$time)                                                                #<<- 30/06/2008 update 
+  ca$time[index] <- ca[index,timeStrata]                                                           
   if (!is.na(tpRec[1])) ca <- recFun(ca,"time",tpRec)
 } else {
   ca$time <- "all"}
@@ -766,19 +738,6 @@ if (!is.na(spaceStrata)) {
 } else {
   ca$space <- "all"}
 
-#TECHNICAL : technical case is a bit different 
-  #if tech strata = commercial cat...
-if (cc) ca$technical[index] <- ca[index,"commCat"]
-  #if tech strata = vslPwr, vslSize, vslLen or vslType, this information stored in tr must be written in ca
-if (vsl) { 
-  indCa <- apply(ca[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode")],1,paste,collapse=":-:") 
-  indTr <- apply(object@tr[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode")],1,paste,collapse=":-:") 
-  ca$technical <- object@tr[match(indCa,indTr),techStrata]
-}
-if (!is.na(techStrata)) {
-  if (!is.na(tcRec[1])) ca <- recFun(ca,"technical",tcRec)
-} else {
-  ca$technical <- "all"}
      
         #------- 
         # creation of new values of PSUid
@@ -824,7 +783,7 @@ tr <- merge(object@tr,unique(HH[,c("sampType",
 
     #---------------------------------------------------------------------------
     # when the level of aggregation is "H", i.e. information is registered by fishing operation, 
-    # calculation of the new number of days at sea and number of FOs per PSUid.
+    # calculation of the updated number of days at sea and number of FOs per PSUid has to be done.
     #---------------------------------------------------------------------------
 
 HHh <- HH[HH$aggLev=="H",]
@@ -850,6 +809,7 @@ index <- match(apply(tr[,colN],1,paste,collapse=""),apply(ca[,colN],1,paste,coll
 indexTr <- (1:nrow(tr))[!is.na(index)]  #to preserve the information already added from hh  
 #index & indexTr are linking tr and ca datas
 tr$PSUid[indexTr] <- ca$PSUid[index[!is.na(index)]]
+tr$time <- as.character(tr$time)                                                                #<<- 30/06/2008 update 
 tr$time[indexTr] <- ca$time[index[!is.na(index)]]
 tr$space[indexTr] <- ca$space[index[!is.na(index)]]
 #no technical strata for tr table part that is only linked to ca
