@@ -189,7 +189,11 @@ spRec <- objStrat@spRec                          #
 tcRec <- objStrat@tcRec                          #
                                                  #
 CE <- object@ce                                  #####
-CE$semester <- ceiling(CE$quarter/2)      
+Semester <- ceiling(CE$quarter/2)      
+
+CE$month <- paste(as.character(CE$year),as.character(CE$month),sep=" - ")                         #<<- 22/07/2008 update : addition of year information to "time" field                
+CE$quarter <- paste(as.character(CE$year),as.character(CE$quarter),sep=" - ")                     #
+CE$semester <- paste(as.character(CE$year),as.character(Semester),sep=" - ")                      #
 
 #-------------------------------------------------------------------------------
 # Addition of fields
