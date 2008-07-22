@@ -104,6 +104,7 @@ setClass("csData",
 			year=as.numeric(NA), # PK
 			proj=as.character(NA), # PK
 			trpCode=as.character(NA), # PK
+			harbour=as.character(NA),
 			vslLen=as.numeric(NA), 
 			vslPwr=as.numeric(NA), 
 			vslSize=as.numeric(NA), 
@@ -135,12 +136,12 @@ setClass("csData",
 			lonFin=as.numeric(NA),
 			area=as.character(NA),
 			rect=as.character(NA),
+			subRect=as.character(NA),
 			foDep=as.numeric(NA),
 			waterDep=as.numeric(NA),
 			foCatNat=as.character(NA),
 			foCatEu5=as.character(NA),
 			foCatEu6=as.character(NA),
-			gear=as.character(NA),
 			meshSize=as.numeric(NA),
 			selDev=as.character(NA),
 			meshSizeSelDev=as.numeric(NA),
@@ -159,6 +160,7 @@ setClass("csData",
 			commCatScl=as.character(NA), # PK
 			commCat=as.character(NA), # PK
 			subSampCat=as.character(NA), # PK
+		  sex=as.character(NA), # PK
 #			valCode=as.character(NA), 
 			wt=as.numeric(NA), 
 			subSampWt=as.numeric(NA), 
@@ -201,16 +203,19 @@ setClass("csData",
 			stock=as.character(NA), # PK
 			area=as.character(NA), # PK
 			rect=as.character(NA), # PK
+			subRect=as.character(NA), #PK
 			lenCls=as.numeric(NA), # PK
 			age=as.numeric(NA), # PK
 			fishId=as.numeric(NA), # PK
 			lenCode=as.character(NA),
 			plusGrp=as.character(NA),
+			ageMeth=as.character(NA),
 			otoWt=as.numeric(NA),
 			otoSide=as.character(NA),
 			indWt=as.numeric(NA),
 			matScale=as.character(NA),
 			matStage=as.character(NA),
+			matMeth=as.character(NA),
 			stringsAsFactors=F)
 	),
 	validity=valcsData
@@ -580,76 +585,233 @@ setMethod("rbind2", signature(x="csData", y="csData"), function(x,y){
 	csData(tr=unique(tr), hh=unique(hh), sl=unique(sl), hl=unique(hl), ca=unique(ca))
 })
 
+
+
+
+##====================================================================
+## subset
+##====================================================================
+#
+#setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr"){
+#
+#	if(table!="tr") stop("Subseting implemented only for slot tr.")
+#	
+#	# get idx
+#	trpk <- tr(x)[,1:6]
+#	trpk <- apply(trpk,1,paste,collapse="")
+#	trpk <- gsub("[[:space:]]","",trpk)
+#
+#	hhfk <- hh(x)[,1:6]
+#	hhfk <- apply(hhfk,1,paste,collapse="")
+#	hhfk <- gsub("[[:space:]]","",hhfk)
+#
+#	hhpk <- hh(x)[,1:7]
+#	hhpk <- apply(hhpk,1,paste,collapse="")
+#	hhpk <- gsub("[[:space:]]","",hhpk)
+#
+#	slfk <- sl(x)[,1:7]
+#	slfk <- apply(slfk,1,paste,collapse="")
+#	slfk <- gsub("[[:space:]]","",slfk)
+#
+#	slpk <- sl(x)[,1:13]
+#	slpk <- apply(slpk,1,paste,collapse="")
+#	slpk <- gsub("[[:space:]]","",slpk)
+#
+#	hlfk <- hl(x)[,c(1:13)]
+#	hlfk <- apply(hlfk,1,paste,collapse="")
+#	hlfk <- gsub("[[:space:]]","",hlfk)
+#
+##	hlpk <- hl(x)[,1:15]
+##	hlpk <- apply(hlpk,1,paste,collapse="")
+##	hlpk <- gsub("[[:space:]]","",hlpk)
+#
+#	cafk <- ca(x)[,c(1:6)]
+#	cafk <- apply(cafk,1,paste,collapse="")
+#	cafk <- gsub("[[:space:]]","",cafk)
+#
+##	capk <- ca(x)[,c(1:21)]
+##	capk <- apply(capk,1,paste,collapse="")
+##	capk <- gsub("[[:space:]]","",capk)
+#	
+#	# new idx
+#	e <- substitute(subset)
+#	df0 <- do.call(table, list(object=x))
+#	r <- eval(e, df0, parent.frame())
+#	
+#	# subset
+#	tr <- df0[r,]
+#	tridx <- apply(tr[,1:6],1,paste,collapse="")
+#	tridx <- gsub("[[:space:]]","",tridx)
+#	hh <- hh(x)[hhfk %in% tridx,]	
+#	hhidx <- apply(hh[,1:7],1,paste,collapse="")
+#	hhidx <- gsub("[[:space:]]","",hhidx)
+#	sl <- sl(x)[slfk %in% hhidx,]	
+#	slidx <- apply(sl[,1:13],1,paste,collapse="")
+#	slidx <- gsub("[[:space:]]","",slidx)
+#	hl <- hl(x)[hlfk %in% slidx,]	
+#	ca <- ca(x)[cafk %in% tridx,]
+#
+#	# output
+#	if(nrow(tr)<1) csData()
+#	if(nrow(hh)<1) csData(tr=tr)
+#	if(nrow(sl)<1) csData(tr=tr, hh=hh)
+#	if(nrow(hl)<1) csData(tr=tr, hh=hh, sl=sl)
+#	if(nrow(ca)<1) csData(tr=tr, hh=hh, sl=sl, hl=hl)
+#	else csData(tr=tr, hh=hh, sl=sl, hl=hl, ca=ca)
+#})
+#
+#
+#
+
+
+
 #====================================================================
-# subset
+# MM 21/07/08
+# subset : one specified table is subset, and other tables are accordingly subset downward and upward 
+# (hh, sl , hl subsets don't impact on ca ; ca subset doesn't impact on hh, sl & hl) 
 #====================================================================
+
 
 setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr"){
 
-	if(table!="tr") stop("Subseting implemented only for slot tr.")
-	
-	# get idx
-	trpk <- tr(x)[,1:6]
-	trpk <- apply(trpk,1,paste,collapse="")
-	trpk <- gsub("[[:space:]]","",trpk)
+  #-----------------------------------------------------------------------------
+  # Extraction of each table
+  #-----------------------------------------------------------------------------
 
-	hhfk <- hh(x)[,1:6]
-	hhfk <- apply(hhfk,1,paste,collapse="")
-	hhfk <- gsub("[[:space:]]","",hhfk)
+  tr <- tr(x)
+  hh <- hh(x)
+  sl <- sl(x)
+  hl <- hl(x)
+  ca <- ca(x)
 
-	hhpk <- hh(x)[,1:7]
-	hhpk <- apply(hhpk,1,paste,collapse="")
-	hhpk <- gsub("[[:space:]]","",hhpk)
+  #-----------------------------------------------------------------------------
+  # Function to build a primary or a foreign key for any table
+  #-----------------------------------------------------------------------------
+  
+  fpKey <- function(tab,colIndex,sep="") {
+    key <- tab[,colIndex]
+    key <- apply(key,1,paste,collapse=sep)
+    key <- gsub("[[:space:]]","",key)
+    return(key)
+  }
 
-	slfk <- sl(x)[,1:7]
-	slfk <- apply(slfk,1,paste,collapse="")
-	slfk <- gsub("[[:space:]]","",slfk)
 
-	slpk <- sl(x)[,1:13]
-	slpk <- apply(slpk,1,paste,collapse="")
-	slpk <- gsub("[[:space:]]","",slpk)
+  #-----------------------------------------------------------------------------
+  # Parts of tr that are linked to hh & ca are identified
+  #-----------------------------------------------------------------------------
+  
+  indca <- fpKey(tr,1:6)%in%fpKey(ca,1:6)
+  #part of tr that is linked to ca, and index
+  trca <- tr[indca,] ; trca$N <- (1:nrow(tr))[indca]
+  #part of tr that is linked to hh (ie not linked to ca), and index
+  trhh <- tr[!indca,] ; trhh$N <- (1:nrow(tr))[!indca]
 
-	hlfk <- hl(x)[,c(1:13)]
-	hlfk <- apply(hlfk,1,paste,collapse="")
-	hlfk <- gsub("[[:space:]]","",hlfk)
 
-#	hlpk <- hl(x)[,1:15]
-#	hlpk <- apply(hlpk,1,paste,collapse="")
-#	hlpk <- gsub("[[:space:]]","",hlpk)
+  #-----------------------------------------------------------------------------
+  # Specified table is subset according to 'subset' parameter
+  #-----------------------------------------------------------------------------
 
-	cafk <- ca(x)[,c(1:6)]
-	cafk <- apply(cafk,1,paste,collapse="")
-	cafk <- gsub("[[:space:]]","",cafk)
-
-#	capk <- ca(x)[,c(1:21)]
-#	capk <- apply(capk,1,paste,collapse="")
-#	capk <- gsub("[[:space:]]","",capk)
-	
-	# new idx
 	e <- substitute(subset)
 	df0 <- do.call(table, list(object=x))
 	r <- eval(e, df0, parent.frame())
+  eval(parse('',text=paste(table, "<- df0[r,]")))
+  
+
+  #-----------------------------------------------------------------------------
+  # Keyfield indexes according to table hierarchy are defined in Up & Down tables
+  #-----------------------------------------------------------------------------
+
+  Up <- matrix(c("trhh","hh","sl","trca","1:6","1:7","1:14","1:6"),nrow=2,byrow=TRUE)
+  dimnames(Up) <- list(c("tab","index"),c("hh","sl","hl","ca"))
+
+  Down <- matrix(c("hh","ca","sl","hl","1:6","1:6","1:7","1:14"),nrow=2,byrow=TRUE)
+  dimnames(Down) <- list(c("tab","index"),c("tr","tr","hh","sl"))
+
+  #-----------------------------------------------------------------------------
+  # Generic subsetting function using Up & Down table format
+  #-----------------------------------------------------------------------------
+  
+  subs <- function(tabName,tabKey){
+  if (tabName%in%dimnames(tabKey)[[2]]) {
+    indSub <<- TRUE   #index that shows that the procedure has been used 
+    mat <- tabKey[,dimnames(tabKey)[[2]]%in%tabName,drop=FALSE]
+    eval(parse('',text=paste(mat["tab",], " <<- ", mat["tab",], "[fpKey(", mat["tab",], ",", mat["index",],           #warning : "<<-" might be replaced by 'assign(...)'
+                             ")%in%fpKey(", tabName, ",", mat["index",], "),]",sep="",collapse=";")))
+    Recall(mat["tab",1],tabKey)      #mat["tab",1] because if tabName=="tr" & tabKey=Down, mat["tab",] = c("hh",ca")
+  }}
+
+  #-----------------------------------------------------------------------------
+  # Let's apply the subsetting "loop" 
+  #-----------------------------------------------------------------------------
+    
+    indSub <- FALSE
+    #first, upward from 'table'...
+    subs(table,Up)
+    
+    #then paste trhh & trca, and reorder according to N field (if indSub=TRUE)
+    if (indSub) {
+      tr <- rbind.data.frame(trhh,trca)
+      tr <- tr[order(tr$N),1:(ncol(tr)-1)]
+    }
+    
+    #and finally, downward from "tr" (for consistency)
+    subs("tr",Down)
+  
+  
+  #-----------------------------------------------------------------------------
+  # Output
+  #-----------------------------------------------------------------------------
+
+ 	if(nrow(tr)<1) csData(desc=x@desc)
+ 	else if ((nrow(hh)<1) & (nrow(ca)>0)) csData(tr=tr,ca=ca,desc=x@desc)
+ 	      else if(nrow(hh)<1) csData(tr=tr,desc=x@desc)
+             else if(nrow(sl)<1) csData(tr=tr, hh=hh,desc=x@desc)
+                  else if(nrow(hl)<1) csData(tr=tr, hh=hh, sl=sl,desc=x@desc)
+	                     else if(nrow(ca)<1) csData(tr=tr, hh=hh, sl=sl, hl=hl,desc=x@desc)
+	                          else csData(tr=tr, hh=hh, sl=sl, hl=hl, ca=ca,desc=x@desc)
+
+})
+
+
+
+
+
+#====================================================================
+# MM 21/07/08
+# subsetSpp : only sl table is subset, and only hl is modified consequently
+#====================================================================
+
+
+
+setGeneric("subsetSpp", function(x,subset,...){
+	standardGeneric("subsetSpp")
+	}
+)
+
+setMethod("subsetSpp", signature(x="csData"), function(x,subset,...){
+  
+  #get idx
+	hlfk <- hl(x)[,c(1:14)]
+	hlfk <- apply(hlfk,1,paste,collapse="")
+	hlfk <- gsub("[[:space:]]","",hlfk)
+  
+  # new idx
+	e <- substitute(subset)
+	df0 <- do.call("sl", list(object=x))
+	r <- eval(e, df0, parent.frame())
 	
 	# subset
-	tr <- df0[r,]
-	tridx <- apply(tr[,1:6],1,paste,collapse="")
-	tridx <- gsub("[[:space:]]","",tridx)
-	hh <- hh(x)[hhfk %in% tridx,]	
-	hhidx <- apply(hh[,1:7],1,paste,collapse="")
-	hhidx <- gsub("[[:space:]]","",hhidx)
-	sl <- sl(x)[slfk %in% hhidx,]	
-	slidx <- apply(sl[,1:13],1,paste,collapse="")
+	sl <- df0[r,]
+	slidx <- apply(sl[,1:14],1,paste,collapse="")
 	slidx <- gsub("[[:space:]]","",slidx)
 	hl <- hl(x)[hlfk %in% slidx,]	
-	ca <- ca(x)[cafk %in% tridx,]
 
 	# output
-	if(nrow(tr)<1) csData()
-	if(nrow(hh)<1) csData(tr=tr)
-	if(nrow(sl)<1) csData(tr=tr, hh=hh)
-	if(nrow(hl)<1) csData(tr=tr, hh=hh, sl=sl)
-	if(nrow(ca)<1) csData(tr=tr, hh=hh, sl=sl, hl=hl)
-	else csData(tr=tr, hh=hh, sl=sl, hl=hl, ca=ca)
+	if(nrow(sl)<1) 
+    stop("No data kept from subsetting process!!")
+	else 
+    csData(tr=tr(x), hh=hh(x), sl=sl, hl=hl, ca=ca(x),desc=x@desc)
+
 })
 
 
