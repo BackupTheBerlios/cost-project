@@ -46,13 +46,15 @@ setClass("clData",
 			month=as.numeric(NA), # PK
 			area=as.character(NA), # PK
 			rect=as.character(NA), # PK 
-			spp=as.character(NA), # PK 
+			subRect=as.character(NA), #PK
+			taxon=as.character(NA), # PK 
 			landCat=as.character(NA), # PK 
 			commCatScl=as.character(NA), # PK
 			commCat=as.character(NA), # PK
 			foCatNat=as.character(NA), # PK
 			foCatEu5=as.character(NA), # PK
 			foCatEu6=as.character(NA), # PK
+			harbour=as.character(NA),
 			unallocCatchWt=as.numeric(NA),
 			misRepCatchWt=as.numeric(NA),
 			landWt=as.numeric(NA),
@@ -205,6 +207,11 @@ setMethod("subset", signature(x="clData"), function(x,subset,...){
 	r <- eval(e, df0, parent.frame())
 	clData(df0[r,])
 })
+
+                                                                               
+
+
+
 
 #====================================================================
 # replacement
