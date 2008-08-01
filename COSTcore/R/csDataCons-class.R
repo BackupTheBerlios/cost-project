@@ -1003,65 +1003,83 @@ setMethod("rbind2", signature(x="csDataCons", y="csDataCons"), function(x,y){
 # subset
 #====================================================================
 
-setMethod("subset", signature(x="csDataCons"), function(x,subset,..., table="tr"){
+setMethod("subset", signature(x="csDataCons"), function(x,subset,...){
+   
+    # subset each table
+    e <- substitute(subset)
+    tr <- tr(x)[eval(e,tr(x), parent.frame()),]
+    hh <- hh(x)[eval(e,hh(x), parent.frame()),]
+    sl <- sl(x)[eval(e,sl(x), parent.frame()),]
+    hl <- hl(x)[eval(e,hl(x), parent.frame()),]
+    ca <- ca(x)[eval(e,ca(x), parent.frame()),]
 
-	# get idx
-	trpk <- tr(x)$PSUid
-	hhfk <- hh(x)$PSUid
-	hhpk <- hh(x)$SSUid
-	slfk <- sl(x)$SSUid
-	slpk <- sl(x)$TSUid
-	hlfk <- hl(x)$TSUid
-	cafk <- ca(x)$PSUid
-	cafk2 <- ca(x)$SSUid
-	
-	# new idx
-	e <- substitute(subset)
-	df0 <- do.call(table, list(object=x))
-	r <- eval(e, df0, parent.frame())
-	
-	# subset
-	if(table=="tr"){
-		tr <- df0[r,]
-		hh <- hh[hh$PSUid %in% tr$PSUid]
-		sl <- sl[sl$SSUid %in% hh$SSUid]
-		hl <- hl[hl$TSUid %in% sl$TSUid]
-		ca <- ca[ca$PSUid %in% tr$PSUid]
-	} else if (table=="hh"){
-		hh <- df0[r,]
-		tr <- tr[tr$PSUid %in% unique(hh$PSUid)]
-		sl <- sl[sl$SSUid %in% hh$SSUid]
-		hl <- hl[hl$TSUid %in% sl$TSUid]
-		ca <- ca[ca$PSUid %in% tr$PSUid]
-	} else if(table=="sl"){
-		sl <- df0[r,]
-		tr <- tr[tr$PSUid %in% unique(sl$PSUid)]
-		hh <- hh[hh$SSUid %in% unique(sl$SSUid)]
-		hl <- hl[hl$TSUid %in% sl$TSUid]
-		ca <- ca[ca$PSUid %in% tr$PSUid]
-	} else if(table=="hl"){
-		hl <- df0[r,]
-		tr <- tr[tr$PSUid %in% unique(hl$PSUid)]
-		hh <- hh[hh$SSUid %in% unique(hl$SSUid)]
-		sl <- sl[sl$TSUid %in% unique(hl$TSUid)]
-		ca <- ca[ca$PSUid %in% tr$PSUid]
-	} else if(table=="ca"){
-		ca <- df0[r,]
-		tr <- tr[tr$PSUid %in% unique(ca$PSUid)]
-		hh <- hh[hh$PSUid %in% tr$PSUid]
-		sl <- sl[sl$SSUid %in% hh$SSUid]
-		hl <- hl[hl$TSUid %in% sl$TSUid]
-	}		
-
-	# output
-	if(nrow(tr)<1) csData()
-	if(nrow(hh)<1) csData(tr=tr)
-	if(nrow(sl)<1) csData(tr=tr, hh=hh)
-	if(nrow(hl)<1) csData(tr=tr, hh=hh, sl=sl)
-	if(nrow(ca)<1) csData(tr=tr, hh=hh, sl=sl, hl=hl)
-	else csData(tr=tr, hh=hh, sl=sl, hl=hl, ca=ca)
+    new("csDataCons",tr=tr,hh=hh,sl=sl,hl=hl,ca=ca)
 })
 
+
+
+
+
+
+#setMethod("subset", signature(x="csDataCons"), function(x,subset,..., table="tr"){
+#
+#	# get idx
+#	trpk <- tr(x)$PSUid
+#	hhfk <- hh(x)$PSUid
+#	hhpk <- hh(x)$SSUid
+#	slfk <- sl(x)$SSUid
+#	slpk <- sl(x)$TSUid
+#	hlfk <- hl(x)$TSUid
+#	cafk <- ca(x)$PSUid
+#	cafk2 <- ca(x)$SSUid
+#	
+#	# new idx
+#	e <- substitute(subset)
+#	df0 <- do.call(table, list(object=x))
+#	r <- eval(e, df0, parent.frame())
+#	
+#	# subset
+#	if(table=="tr"){
+#		tr <- df0[r,]
+#		hh <- hh[hh$PSUid %in% tr$PSUid]
+#		sl <- sl[sl$SSUid %in% hh$SSUid]
+#		hl <- hl[hl$TSUid %in% sl$TSUid]
+#		ca <- ca[ca$PSUid %in% tr$PSUid]
+#	} else if (table=="hh"){
+#		hh <- df0[r,]
+#		tr <- tr[tr$PSUid %in% unique(hh$PSUid)]
+#		sl <- sl[sl$SSUid %in% hh$SSUid]
+#		hl <- hl[hl$TSUid %in% sl$TSUid]
+#		ca <- ca[ca$PSUid %in% tr$PSUid]
+#	} else if(table=="sl"){
+#		sl <- df0[r,]
+#		tr <- tr[tr$PSUid %in% unique(sl$PSUid)]
+#		hh <- hh[hh$SSUid %in% unique(sl$SSUid)]
+#		hl <- hl[hl$TSUid %in% sl$TSUid]
+#		ca <- ca[ca$PSUid %in% tr$PSUid]
+#	} else if(table=="hl"){
+#		hl <- df0[r,]
+#		tr <- tr[tr$PSUid %in% unique(hl$PSUid)]
+#		hh <- hh[hh$SSUid %in% unique(hl$SSUid)]
+#		sl <- sl[sl$TSUid %in% unique(hl$TSUid)]
+#		ca <- ca[ca$PSUid %in% tr$PSUid]
+#	} else if(table=="ca"){
+#		ca <- df0[r,]
+#		tr <- tr[tr$PSUid %in% unique(ca$PSUid)]
+#		hh <- hh[hh$PSUid %in% tr$PSUid]
+#		sl <- sl[sl$SSUid %in% hh$SSUid]
+#		hl <- hl[hl$TSUid %in% sl$TSUid]
+#	}		
+#
+#	# output
+#	if(nrow(tr)<1) csData()
+#	if(nrow(hh)<1) csData(tr=tr)
+#	if(nrow(sl)<1) csData(tr=tr, hh=hh)
+#	if(nrow(hl)<1) csData(tr=tr, hh=hh, sl=sl)
+#	if(nrow(ca)<1) csData(tr=tr, hh=hh, sl=sl, hl=hl)
+#	else csData(tr=tr, hh=hh, sl=sl, hl=hl, ca=ca)
+#})
+#
 
 #====================================================================
 # replacement
