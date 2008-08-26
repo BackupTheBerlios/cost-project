@@ -72,7 +72,8 @@ hlslhh <- merge(newhl,slhh,by=c("sampType",
                                 "landCat",
                                 "commCatScl",
                                 "commCat",
-                                "subSampCat"),all=FALSE)
+                                "subSampCat",
+                                "sex"),all=FALSE)
 
 invisible(list(spp=species,slhh=slhh,hlslhh=hlslhh))
 }
