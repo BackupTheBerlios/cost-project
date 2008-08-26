@@ -120,7 +120,7 @@ if (fraction!="all")  tabHL <- tabHL[tabHL$catchCat==fraction,]
  
 #measured numbers are raised to sample-level
 tabHL$Number <- tabHL$lenNum*(tabHL$wt/tabHL$subSampWt)
-#data is aggregated within 'subSampCat' field
+#data is aggregated within 'subSampCat' & 'sex' field
     #weights 
 tb <- unique(tabHL[,c(1:12,17:18,24)])
 tabHL.Wt <- spdAgreg(list(wt=tb$wt,
