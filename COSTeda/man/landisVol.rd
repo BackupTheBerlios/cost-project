@@ -19,8 +19,8 @@ Only sea sampling data is computed.
 \arguments{
   \item{object}{A \emph{csData} object with sea-sampling information (\emph{tr}, \emph{hh} and \emph{sl} required).}
   \item{strDef}{A \emph{strIni} object specifying time (e.g \code{"year"}, \code{"quarter"}, \code{"month"},...),
-  space (e.g \code{"area"}, \code{"rect"},...) and/or technical stratification  (e.g \code{"gear"}, \code{"foCatNat"}, \code{"foCatEu5"},...).}
-  \item{species}{Field specifying species (e.g \code{"Solea vulgaris"}).}
+  space (e.g \code{"area"}, \code{"rect"},...) and/or technical stratification  (e.g \code{"foCatNat"}, \code{"foCatEu5"},...).}
+  \item{species}{Field specifying species (e.g \code{"Solea solea"}).}
   \item{fraction}{Field specifying catch category (to be chosen between \code{"LAN"} and \code{"DIS"}.).}
   \item{...}{Further arguments.}
 }
@@ -35,7 +35,7 @@ Only sea sampling data is computed.
 
 \examples{
 data(sole)  
-obj <- landisVol(sole.cs,species="Solea vulgaris")
+obj <- landisVol(sole.cs,species="Solea solea")
 }
 
 \keyword{methods}

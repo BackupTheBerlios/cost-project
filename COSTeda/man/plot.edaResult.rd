@@ -101,7 +101,7 @@ plot(CS,CL)
 
 #desc="sampDeltaCalc"
 strD <- strIni(timeStrata="quarter",techStrata="commCat")
-dlt <- deltCalc(sole.cs,strD,"Solea vulgaris",strategy="cc",indSamp=TRUE)
+dlt <- deltCalc(sole.cs,strD,"Solea solea",strategy="cc",indSamp=TRUE)
 
 plot(dlt,strat1="techStrata",strat2="timeStrata")
 
@@ -113,7 +113,7 @@ plot(dlt,strat1="techStrata",strat2="timeStrata")
 
 #desc="landisVol"
 ldV <- landisVol(sole.cs,strIni(techStrata="foCatEu5",timeStrata="quarter"),
-                 species="Solea vulgaris")
+                 species="Solea solea")
 
 plot(ldV)
 plot(ldV,groups="techStrata")

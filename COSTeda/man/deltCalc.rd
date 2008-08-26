@@ -16,7 +16,7 @@ deltCalc(data,strDef,species,fraction="LAN",strategy="metier",indSamp=FALSE,\dot
 \arguments{
   \item{data}{A \emph{csData/csDataVal} object with \emph{tr}, \emph{hh}, \emph{sl} and \emph{hl} informations.}
   \item{strDef}{A \emph{strIni} object specifying time, space or/and technical stratification.}
-  \item{species}{Field specifying species (e.g \code{"Solea vulgaris"}).}
+  \item{species}{Field specifying species (e.g \code{"Solea solea"}).}
   \item{fraction}{Fate of the catch on which calculation is made. To be chosen between \code{"LAN"}, \code{"DIS"} and \code{"all"}.}
   \item{strategy}{To be chosen between \code{"metier"} and \code{"cc"} (for commercial categories).}
   \item{indSamp}{If \code{TRUE}, output is within each sample and is dedicated to outliers detection. If \code{FALSE}, output is within length classes and is dedicated to variance calculation.}
@@ -37,7 +37,7 @@ deltCalc(data,strDef,species,fraction="LAN",strategy="metier",indSamp=FALSE,\dot
 \examples{
 data(sole)
 strD <- strIni(timeStrata="quarter",techStrata="commCat")
-obj <- deltCalc(sole.cs,strD,"Solea vulgaris",strategy="cc",indSamp=TRUE)
+obj <- deltCalc(sole.cs,strD,"Solea solea",strategy="cc",indSamp=TRUE)
 
 }
 \keyword{methods}

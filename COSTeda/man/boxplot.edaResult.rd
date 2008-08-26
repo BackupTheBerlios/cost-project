@@ -37,7 +37,7 @@ This method plots the output of an object of class \emph{edaResult}, resulting f
 
 #desc="landisVol"
 data(sole)
-ldV <- landisVol(sole.cs,species="Solea vulgaris")
+ldV <- landisVol(sole.cs,species="Solea solea")
 
 boxplot(ldV)
 boxplot(ldV,type="FO")

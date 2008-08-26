@@ -15,7 +15,7 @@ lenDisPlot(x,trpCode,species,fraction="LAN",staNum="all",\dots)
 \arguments{
   \item{x}{A \emph{csData} object with \emph{hl} informations.}
   \item{trpCode}{Character specifying trip code.}
-  \item{species}{Field specifying species (e.g \code{"Solea vulgaris"}).}                                                                                                                         
+  \item{species}{Field specifying species (e.g \code{"Solea solea"}).}                                                                                                                         
   \item{fraction}{Field specifying catch category (e.g \code{"LAN"}).}
   \item{staNum}{Character vector specifying sample(s) (or FOs). \code{"all"} results in displaying all samples of the specified trip, and \code{"allSum"} adds them up.}
   \item{...}{Further graphical arguments.}
@@ -28,6 +28,6 @@ lenDisPlot(x,trpCode,species,fraction="LAN",staNum="all",\dots)
 
 \examples{
 data(sole)
-lenDisPlot(sole.cs,"DIL1197","Solea vulgaris","DIS")
+lenDisPlot(sole.cs,"DIL1197","Solea solea","DIS")
 }
 \keyword{methods}
