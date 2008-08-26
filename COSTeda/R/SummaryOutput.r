@@ -71,7 +71,7 @@ setMethod("cstSummary", signature(object="csData"), function(object,
                                                              except=NULL,
                                                              ...){
 eval(parse('',text=paste("dat <- object@",tab,sep="")))
-listFact <- list(tr=1:15,hh=c(1:14,19:29),sl=c(1:13,16),hl=1:15,ca=c(1:20,22:23,25,27:28))
+listFact <- list(tr=1:16,hh=c(1:14,19:29),sl=c(1:14,17),hl=1:15,ca=c(1:21,23:25,27,29:31))
 proc.cstSummary(dat,sizeMax,except,listFact[[tab]])                                       
 })
 
@@ -83,7 +83,7 @@ setMethod("cstSummary", signature(object="csDataVal"), function(object,
                                                                 except=NULL,
                                                                 ...){
 eval(parse('',text=paste("dat <- object@",tab,sep="")))
-listFact <- list(tr=1:15,hh=c(1:14,19:29),sl=c(1:13,16),hl=1:15,ca=c(1:20,22:23,25,27:28))
+listFact <- list(tr=1:16,hh=c(1:14,19:29),sl=c(1:14,17),hl=1:15,ca=c(1:21,23:25,27,29:31))
 proc.cstSummary(dat,sizeMax,except,listFact[[tab]])                                       
 })
 
@@ -95,7 +95,7 @@ setMethod("cstSummary", signature(object="csDataCons"), function(object,
                                                                  except=NULL,
                                                                  ...){
 eval(parse('',text=paste("dat <- object@",tab,sep="")))
-listFact <- list(tr=2:14,hh=c(3:15),sl=c(4:14,17),hl=4:16,ca=c(3:17,19:20,23,25:26))
+listFact <- list(tr=2:14,hh=3:16,sl=c(4:15,18),hl=4:16,ca=c(3:17,19:21,23,25:27))
 proc.cstSummary(dat,sizeMax,except,listFact[[tab]])                                       
 })
 
@@ -110,7 +110,7 @@ setMethod("cstSummary", signature(object="clData"), function(object,
                                                              except=NULL,
                                                              ...){
 dat <- object@cl
-proc.cstSummary(dat,sizeMax,except,1:14)
+proc.cstSummary(dat,sizeMax,except,1:16)
 })
 
 
@@ -121,7 +121,7 @@ setMethod("cstSummary", signature(object="clDataVal"), function(object,
                                                                 except=NULL,
                                                                 ...){
 dat <- object@cl
-proc.cstSummary(dat,sizeMax,except,1:14)
+proc.cstSummary(dat,sizeMax,except,1:16)
 })
 
 
@@ -144,7 +144,7 @@ setMethod("cstSummary", signature(object="ceData"), function(object,
                                                              except=NULL,
                                                              ...){
 dat <- object@ce
-proc.cstSummary(dat,sizeMax,except,1:9)
+proc.cstSummary(dat,sizeMax,except,1:11)
 })
 
 
@@ -155,7 +155,7 @@ setMethod("cstSummary", signature(object="ceDataVal"), function(object,
                                                                 except=NULL,
                                                                 ...){
 dat <- object@ce
-proc.cstSummary(dat,sizeMax,except,1:9)
+proc.cstSummary(dat,sizeMax,except,1:11)
 })
 
 
