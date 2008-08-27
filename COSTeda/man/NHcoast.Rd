@@ -22,8 +22,9 @@
 \source{
  National Geophysical Data Center: \url{http://rimmer.ngdc.noaa.gov/coast/}
 }
-\seealso{\code{\link{finecoast}} as a finer resolution alternative, 
-\code{\link{landmass.polygons}} for adding the landmass polygons.}
+\seealso{\code{\link{finecoast}} as a finer resolution alternative.%modif MM 
+%\code{\link{landmass.polygons}} for adding the landmass polygons.
+}
 \examples{
 data(NHcoast)
 plot(NHcoast$lon,NHcoast$lat,type="l")

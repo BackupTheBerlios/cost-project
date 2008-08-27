@@ -26,7 +26,7 @@ function(csobj)
 # tables
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-if(class(csobj)!="csData") stop("this function only works on a csData object")
+if(class(csobj)%in%c("csData","csDataVal")!=TRUE) stop("this function only works on a csData object")
 
 
 ca6colstring <-apply(csobj@ca[,c(1:6)],1,paste,collapse=".")
@@ -78,19 +78,19 @@ csobj@tr$yearfromdate <-as.numeric(substr(csobj@tr$date,1,4))
  
 caindex <-match(ca6colstring,tr6colstring)
 if(any(is.na(caindex))) warning("The key fields between tr and ca tables dont all match")
-csobj@ca$rect <-csobj@tr$rect[caindex]
-csobj@ca$area <-csobj@tr$area[caindex]
-csobj@ca$date <-csobj@tr$date[caindex]
+#csobj@ca$rect <-csobj@tr$rect[caindex]
+#csobj@ca$area <-csobj@tr$area[caindex]
+#csobj@ca$date <-csobj@tr$date[caindex]
 csobj@ca$foCatNat <-csobj@tr$foCatNat[caindex]
 csobj@ca$foCatEu5 <-csobj@tr$foCatEu5[caindex]
 csobj@ca$foCatEu6 <-csobj@tr$foCatEu6[caindex]
-csobj@ca$quarter <-as.numeric(substr(quarters(as.POSIXlt(csobj@ca$date)),2,3))
-csobj@ca$yearfromdate <-as.numeric(substr(csobj@ca$date,1,4))
-csobj@ca$monthfromdate <-as.numeric(substr(csobj@ca$date,6,7))
+#csobj@ca$quarter <-as.numeric(substr(quarters(as.POSIXlt(csobj@ca$date)),2,3))
+#csobj@ca$yearfromdate <-as.numeric(substr(csobj@ca$date,1,4))
+#csobj@ca$monthfromdate <-as.numeric(substr(csobj@ca$date,6,7))
 
-csobj@hh$quarter <-as.numeric(substr(quarters(as.POSIXlt(csobj@hh$date)),2,3))
-csobj@hh$month <-as.POSIXlt(csobj@hh$date)$mon+1
-csobj@hh$yearfromdate <-as.numeric(substr(csobj@hh$date,1,4))
+#csobj@hh$quarter <-as.numeric(substr(quarters(as.POSIXlt(csobj@hh$date)),2,3))
+#csobj@hh$month <-as.POSIXlt(csobj@hh$date)$mon+1
+#csobj@hh$yearfromdate <-as.numeric(substr(csobj@hh$date,1,4))
 
 return(csobj)
 }
@@ -349,7 +349,7 @@ function (division = NULL, area = NULL, lty = 1, col = 1, lwd = 1)
 # ices.division.lines
 # function that draws ICES division and subarea boundaries
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    division.list <- c("I","IIa", "IIb", "IIIa", "IVa", "IVb", "IVc", 
+    division.list <- c("I","IIa", "IIb", "IIIa","IIIb","IIIc", "IVa", "IVb", "IVc", 
         "Va", "Vb", "VIa", "VIb", "VIIa", "VIIb", "VIIc", "VIId", 
         "VIIe", "VIIf", "VIIg", "VIIh", "VIIj", "VIIk", "VIIIa", 
         "VIIIb", "VIIIc", "VIIId", "VIIIe", "IXa", "IXb", "X", 
@@ -548,9 +548,29 @@ if ("IIa" %in% division) {
         lat <- c(68.7, 59, 59, 60)
         lon <- c(-27, -27, -44, -44)
         lines(lon, lat, lty = lty, col = col, lwd = lwd)
-    }
-
+        }
+    if("IIIa" %in% division) {
+     
+lon <-c(10.74488,11.34143)
+lat <-c(56.15972,55.93602)
+lines(lon,lat,lty = lty, col = col, lwd = lwd)
+lines(c(12.43510,12.23625),c(56.20944,56.08516),lty = lty, col = col, lwd = lwd)
+         }
+if("IIIb" %in% division) {    
+lines(c(12.43510,12.78308),c(55.31461,55.36433),lty = lty, col = col, lwd = lwd)        
+lines(c(12.43510,12.23625),c(56.20944,56.08516),lty = lty, col = col, lwd = lwd)        
+        
+        }
+if("IIIc" %in% division) {    
+lon <-c(10.74488,11.34143)
+lat <-c(56.15972,55.93602)
+lines(lon,lat,lty = lty, col = col, lwd = lwd)
+lines(c(11.88826,11.88826),c(54.54407,54.17123),lty = lty, col = col, lwd = lwd)
+ }
+    
 }
+
+
 
 #--------------------------end of ices.division.lines-------------------
 

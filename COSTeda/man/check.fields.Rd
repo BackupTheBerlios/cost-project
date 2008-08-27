@@ -46,6 +46,7 @@ Optionally prints a log file to the current working directory.
 \seealso{\code{\link{code.list}} for the expected character variables, \code{\link{numeric.list}} for the ranges of numeric variables, and 
 \code{\link{variable.list}} for details of variable names, types and a brief description of each.}
 \examples{
+%library(COSTdata)    %modif MM
 data(cod2004cs)
 check.fields(cod2004cs)
 check.fields(cod2004cs,logfile=TRUE)

@@ -7,8 +7,8 @@
 #   strata.space.plot
 #   scale.plot
 
-`strata.space.plot` <-
-function(object,variable,SpaceStrat,TimeStrat,TechStrat,func,nplots=1,multiscale.title,multiscale.cex=1,...)
+`strataSpacePlot` <-
+function(object,variable,SpaceStrat,func,TimeStrat,TechStrat,nplots=1,multiscale.title,multiscale.cex=1,...)
 {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # strata.space.plot
@@ -17,23 +17,25 @@ function(object,variable,SpaceStrat,TimeStrat,TechStrat,func,nplots=1,multiscale
 obj <-missing(object)
 vbl <-missing(variable)
 spst <-missing(SpaceStrat)
+if(missing(TechStrat)) TechStrat <-NULL
+if(missing(TimeStrat)) TimeStrat <-NULL
 if(any(obj,vbl,spst))stop("function reqiues object variable and SpaceStrat")
 
-if(class(object)=="clData")
+if(class(object)%in%c("clData","clDataVal","clDataCons"))
 {
 dataframe <-object@cl
 dataname <-"cl"
 clnames <-names(object@cl)
 if(!(variable %in% clnames))stop("No such variable in the cost object")
 }
-if(class(object)=="ceData")
+if(class(object)%in%c("ceData","ceDataVal","ceDataCons"))
 {
 dataframe <-object@ce
 dataname <-"ce"
 cenames <-names(object@ce)
 if(!(variable %in% cenames))stop("No such variable in the cost object")
 }
-if(class(object)=="csData")
+if(class(object)%in%c("csData","csDataVal","csDataCons"))
 {
 trnames <-names(object@tr)
 hhnames <-names(object@hh)
@@ -46,7 +48,9 @@ varindex <-which(is.finite(match(c(trnames,hhnames,slnames,hlnames,canames),vari
 vartable <-tablenames[varindex]
 if(length(vartable)>1) warning("specified variable occurs in more than one csData table")
 if(length(vartable)<1) stop("No such variable in the cost object")
-newcs <-mergecsData(object)
+#newcs <-mergecsData(object)
+newcs <-object
+if(!class(object)%in%c("csDataCons","clDataCons","ceDataCons")) newcs <-mergecsData(object)
 eval(parse(text=paste("dataframe <-newcs@",vartable[1],sep="")))
 dataname <-vartable[1]
 if(variable=="lenCls") 
@@ -59,15 +63,27 @@ dataname <-plottable
 }
 if(!(variable %in% names(dataframe)))stop("No such variable in the cost object")
 varname <-paste(substitute(variable))
-spacename <-paste(substitute(SpaceStrat))
-if(!(spacename %in% c("rect","area")))stop("SpaceStat must be either rect or area")
+#spacename <-paste(substitute(SpaceStrat))
+#if(!(spacename %in% c("rect","area")))stop("SpaceStat must be either rect or area")
 
+if(!class(object)%in%c("csDataCons","clDataCons","ceDataCons"))
+{
+spacename <-paste(substitute(SpaceStrat))
+#if(!(spacename %in% c("rect","area")))stop("SpaceStat must be either rect or area")
+}
+if(class(object)%in%c("csDataCons","clDataCons","ceDataCons"))
+{
+SpaceStrat <-"space"
+spacename <-paste(substitute(SpaceStrat))
+TechStrat <-"technical"
+TimeStrat <-"time"
+}
 funcname <-paste(substitute(func))
 
 eval(parse(text=paste("variable <-dataframe$",variable,sep="")))
 if(is.numeric(variable)==FALSE) stop("You need to spacify a numeric variable")
 eval(parse(text=paste("statsqs <-dataframe$",SpaceStrat,sep="")))
-
+if(unique(statsqs)[1]=="all")stop("Can not do a spatial plot without a spatial stratification, SpaceStrata must be rect or area.")  
 
 default.title <-paste(funcname,"of",varname,"by",spacename,sep=" ")
 #print(default.title)
@@ -79,7 +95,8 @@ timeindex <-techindex <-1:dim(dataframe)[1]
 
 if(!is.null(TimeStrat))
 {
-timeperiods <-switch(TimeStrat,year=unique(dataframe$year),quarter=c(1:4),month=c(1:12))
+timeperiods <-switch(TimeStrat,time=sort(unique(dataframe$time)),year=unique(dataframe$year),quarter=c(1:4),month=c(1:12))
+if(timeperiods[1]=="all") TimeStrat <-NULL
 timestrataname <-paste(toupper(substr(TimeStrat,1,1)),substr(TimeStrat,2,nchar(TimeStrat)),sep="")
 }
 
@@ -87,16 +104,19 @@ timestrataname <-paste(toupper(substr(TimeStrat,1,1)),substr(TimeStrat,2,nchar(T
 
 if(!is.null(TechStrat))
 {
-techtypes <-switch(TechStrat,foCatEu5=unique(dataframe$foCatEu5[!is.na(dataframe$foCatEu5)])
+techtypes <-switch(TechStrat,technical=unique(dataframe$technical[!is.na(dataframe$technical)])
+,foCatEu5=unique(dataframe$foCatEu5[!is.na(dataframe$foCatEu5)])
 ,foCatEu6=unique(dataframe$foCatEu6[!is.na(dataframe$foCatEu6)])
 ,foCatNat=unique(dataframe$foCatNat[!is.na(dataframe$foCatNat)])
 ,commCat=unique(dataframe$commCat[!is.na(dataframe$commCat)])
 )
+if(techtypes[1]=="all")TechStrat <-NULL
 }
 
 techtitle <-timetitle <-NULL
 # finding the maximum value by strata and setting up a common scale 
 maxvals <-NULL
+nstrata <-0
 timeindex <-techindex <-1:dim(dataframe)[1]
 for(i in 1:length(timeperiods))
 {
@@ -108,13 +128,13 @@ index <-intersect(timeindex,techindex)
 if(length(index)>0) 
 {
 maxvals <-append(maxvals,as.vector(tapply(variable[index],statsqs[index],func)))
+nstrata <-nstrata+1
 }
 }
 }
-maxstratavalue <-max(maxvals)
+maxstratavalue <-max(maxvals,na.rm=T)
 commonbreaks <-seq(0,maxstratavalue,length.out=8)
-
-nstrata <-length(timeperiods)*length(techtypes)
+nstrata1 <-length(timeperiods)*length(techtypes)
 pages <-ceiling(nstrata/nplots)
 lastpageplot <-nplots*(1:pages)
 addtoplot <-c(lastpageplot[lastpageplot<nstrata],nstrata)
@@ -128,16 +148,15 @@ if(nplots!=1)
 par(mfrow=c(1,1))
 layout(x)
 }
-
 # running throught the strat doing a plot for each. 
 k <-0
 for(i in 1:length(timeperiods))
 {
 for(j in 1:length(techtypes))
 {
-k <-k+1
-index <-1:dim(dataframe)[1]
-plotvars <-space.plot(variable[index],statsqs[index],func,breaks=commonbreaks,plotmap=FALSE,...)
+#k <-k+1
+#index <-1:dim(dataframe)[1]
+#plotvars <-space.plot(variable[index],statsqs[index],func,breaks=commonbreaks,plotmap=FALSE,...)
 if(!is.null(TimeStrat)) 
 {
 timeindex <-which(dataframe[[TimeStrat]] %in% timeperiods[i])
@@ -151,6 +170,9 @@ techtitle <-paste(TechStrat,"=",techtypes[j],sep=" ")
 index <-intersect(timeindex,techindex)
 if(length(index)>0) #plotmap <-NULL
 {
+k <-k+1
+bigindex <-1:dim(dataframe)[1]
+plotvars <-space.plot(variable[bigindex],statsqs[bigindex],func,breaks=commonbreaks,plotmap=FALSE,...)
 options(warn=-1)
 # stops "breaks dont span range of .." warnings when commonbreaks are used
 space.plot(variable[index],statsqs[index],func,overlay=T,breaks=commonbreaks,...)
@@ -177,14 +199,15 @@ options(warn=0)
 }
 # ---------------------end of strata.space.plot------------------------------------
 
- 
+setGeneric("strataSpacePlot")
+#---------------------------------------------------------------------------------- 
 `space.plot` <-
 function(variable,SpaceStrat,func,
 xlim=NULL,ylim=NULL,zlim=NULL,xlab=NULL,ylab=NULL,breaks=NULL,
 maptype="image",plotmap=TRUE,overlay=FALSE,
 ices.divs=FALSE,depths=FALSE,statrects=FALSE,fcoast=FALSE,landmass=FALSE,
 pch=1,colour=TRUE,
-col.coast="blue",col.cont="grey",col.pch="red",col.rect="grey",col.land="snow2",
+col.coast="blue",col.cont="grey",col.pch="red",col.rect="grey",col.land="white",
 col.depth="grey",col.text=1,
 scale=FALSE,scale.title="",scale.cex=0.6,scaleplace="bottomright",scale.box="o",
 cex.max.bubble=2,threshold=0,digits.text=0,cex.text=1,
@@ -202,10 +225,13 @@ data(NHcoast)
 data(finecoast)
 data(alldepths)
 data(faoAreas)
+data(Europe)
+data(landmasses)
 if(!is.null(breaks)&&substitute(breaks)=="commonbreaks")options(warn=-1)
 if(!(maptype %in% c("image","contour","bubble","values"))) 
 stop("maptype must be one of: image, contour, bubble, or values")
 
+#if(unique(SpaceStrat)[1]=="all")stop("Can not do a spatial plot without a spatial stratification, SpaceStrata must be rect or area.")  
 if(any(is.na(SpaceStrat)))
 {
 warning("spatial strata included NA's")
@@ -213,6 +239,14 @@ newSpaceStrat <-SpaceStrat[!is.na(SpaceStrat)]
 variable <-variable[!is.na(SpaceStrat)]
 SpaceStrat <-newSpaceStrat
 }
+if(any(is.na(variable)))
+{
+warning("variable included NA's")
+newvariable <-variable[!is.na(variable)]
+SpaceStrat <-SpaceStrat[!is.na(variable)]
+variable <-newvariable
+}
+
 
 if(all(SpaceStrat %in% faoAreas$FAO))
 {
@@ -221,7 +255,6 @@ SpaceStrat <-as.character(faoAreas$ICES[match(SpaceStrat,faoAreas$FAO)])
 }
 
 statsqs <-SpaceStrat
-
 if(!is.statsq(SpaceStrat)) statsqs <-convert.icesarea.statsq(SpaceStrat)$statsq
 if(!is.statsq(SpaceStrat)&maptype=="contour") stop("Contour plots are not possible for area strata")
 
@@ -271,8 +304,11 @@ lowy <-midy-bigside/4
 hiy <-midy+bigside/4
 areax <-c(lowx-0.5,hix+0.5)
 areay <-c(lowy-0.25,hiy+0.25)
-
-
+extremes <-c(-30 <areax[1],33.5>areax[2],
+#max(newcoast$lon,na.rm=T)>areax[2],
+min(newcoast$lat,na.rm=T)<areay[1],max(newcoast$lat,na.rm=T)>areax[2])
+fextremes <-c(-13.5 <areax[1],15>areax[2],45<areay[1],63>areax[2])
+if(!landmass) col.land <-"white"
 # overriding the default x anyd y labels if not specified
 
 if(is.null(xlab)) xlab <-""
@@ -372,22 +408,46 @@ axis(4,midlats,latnames,cex.axis=0.5,las=3,tick=F,line=-1)
 
 if(maptype=="bubble")
 {
-if(!fcoast)landmass.polygons("snow2",border=col.coast)
+if(!fcoast&all(extremes))
+{
+polygon(newcoast,col=col.land,border=col.coast)
+polygon(landmasses$iceland,col=col.land,border=col.coast)
+polygon(landmasses$greenland,col=col.land,border=col.coast)
+coverline(col.land)
+box()
+}
+if(!all(extremes))landmass.polygons(col.land,border=col.coast)
 }
 }
 if(!is.statsq(SpaceStrat)) 
 #if(!is.statsq(statsqs)) 
 {
 ices.divs <-TRUE
-landmass.polygons("white",border=col.coast)
+if(!fcoast&all(extremes))
+{
+polygon(newcoast,col=col.land,border=col.coast)
+polygon(landmasses$iceland,col=col.land,border=col.coast)
+polygon(landmasses$greenland,col=col.land,border=col.coast)
+coverline(col.land)
+box()
+}
+if(!all(extremes))landmass.polygons(col.land,border=col.coast)
 }
 
 # adding ices divisions
 if(ices.divs)ices.division.lines()
 # adding the coastline
 if(landmass) fcoast <-FALSE
+if(!all(fextremes)) fcoast <-FALSE
 if(fcoast)lines(finecoast$lon,finecoast$lat,col=col.coast)
-if(!(fcoast))lines(NHcoast$lon,NHcoast$lat,col=col.coast)
+if(!(fcoast)&all(extremes))
+{
+lines(newcoast$lon,newcoast$lat,col=col.coast)
+coverline(col.land)
+lines(landmasses$iceland,col=col.coast)
+lines(landmasses$greenland,col=col.coast)
+}
+if(!all(extremes))lines(NHcoast$lon,NHcoast$lat,col=col.coast)
 # adding depths
 if(depths[1])
 {
@@ -396,7 +456,19 @@ for(i in 1:length(depths))
 ww <-(1:length(alldepths$lon))[depths[i]==alldepths$depth]
 lines(alldepths$lon[ww],alldepths$lat[ww],col=col.depth)
 }}
-if(landmass)landmass.polygons(colour=col.land,border=col.coast)
+if(landmass)
+{
+if(!fcoast&all(extremes))
+{
+polygon(newcoast,col=col.land,border=col.coast)
+polygon(landmasses$iceland,col=col.land,border=col.coast)
+polygon(landmasses$greenland,col=col.land,border=col.coast)
+coverline(col.land)
+box()
+}
+if(!all(extremes))landmass.polygons(col.land,border=col.coast)
+}
+
 
 # the bubble and value plotting comes after coastlines, depths etc so it is not overwriten 
 if(maptype=="values"&plotmap)
@@ -418,7 +490,14 @@ if(!is.statsq(SpaceStrat)) lls <-convert.icesarea.lat.lon(as.factor(names(valper
 bins <-as.numeric(cut(as.vector(valpercell),breaks,include.lowest=TRUE))
 vals <-breaks[bins+1]
 size <- cex.max.bubble * ((vals - threshold)/(max(vals,na.rm=T) - threshold))
-if(!fcoast)landmass.polygons(col.land,border=col.coast)
+if(!fcoast&all(extremes))
+{
+polygon(newcoast,col=col.land,border=col.coast)
+polygon(landmasses$iceland,col=col.land,border=col.coast)
+polygon(landmasses$greenland,col=col.land,border=col.coast)
+box()
+}
+if(!all(extremes))landmass.polygons(col.land,border=col.coast)
 points(lls$lon,lls$lat,col=col.pch,cex=size,pch=pch)
 
 }
@@ -452,6 +531,20 @@ return(invisible(out))
 }
 
 #-----------------------end of space.plot----------------------------------------
+coverline <-function(colour)
+{
+lonfrom <-c(-1.951,30.186,30.186)
+lonto <-c(35.0,30.186,35.0)
+latfrom <-c(46.67,46.67,59.921)
+latto <-c(46.67,59.921,59.921)
+segments(lonfrom,latfrom,lonto,latto,col=colour,lwd=3)
+}
+
+
+
+
+
+
 
 `scale.plot` <-
 function(bks,place="center",multiscale.title="",scaletype,fillcol,scale.box,cex.max.bubble,scale.cex)
@@ -483,3 +576,227 @@ legend(place,inset=0.02,leg,pch=rep(pch,length(bks)),pt.cex=scalesize[2:length(s
 }
 
 #----------------end of scale.plot----------------------------------
+
+  
+
+
+spacePlot <-function(costobj, variable, SpaceStrata, func, TimeStrata, TechStrata,...)
+{
+space.plot(costobj, variable, SpaceStrata,...)
+}
+
+#spacePlot.nocost <-function(costobj, variable, SpaceStrata, func, TimeStrata, TechStrata,...)
+#{
+#space.plot(costobj, variable, func,...)
+#space.plot(costobj, variable, SpaceStrata,...)
+#space.plot(variable, SpaceStrata,func,...)
+#}
+
+spacePlot.cl <-function(costobj, variable, SpaceStrata,func,TimeStrata,TechStrata,...)
+{
+clnames <-names(costobj@cl)
+if(!(variable %in% clnames))stop("No such variable in the cost object")
+eval(parse(text=paste("variable <-costobj@cl$",variable,sep="")))
+eval(parse(text=paste("SpaceStrata <-costobj@cl$",SpaceStrata,sep="")))
+space.plot(variable,SpaceStrata,func,...)
+}
+
+spacePlot.clcons <-function(costobj, variable, SpaceStrata,func,TimeStrata,TechStrata,...)
+{
+clnames <-names(costobj@cl)
+if(!(variable %in% clnames))stop("No such variable in the cost object")
+SpaceStrata <-"space"
+eval(parse(text=paste("variable <-costobj@cl$",variable,sep="")))
+eval(parse(text=paste("SpaceStrata <-costobj@cl$",SpaceStrata,sep="")))
+space.plot(variable,SpaceStrata,func,...)
+}
+
+
+spacePlot.stratcl <-function(costobj, variable, SpaceStrata,func,TimeStrata,TechStrata,...)
+{
+clnames <-names(costobj@cl)
+if(!(variable %in% clnames))stop("No such variable in the cost object")
+varname <-paste(substitute(variable))
+funcname <-paste(substitute(func))
+spacename <-paste(substitute(SpaceStrata))
+default.title <-paste(funcname,"of",varname,"by",spacename,sep=" ")
+strataSpacePlot(costobj,variable,SpaceStrata,func,TimeStrata,multiscale.title=default.title,...)
+}
+
+
+spacePlot.stratcl2 <-function(costobj, variable, SpaceStrata,func,TimeStrata,TechStrata,...)
+{
+clnames <-names(costobj@cl)
+if(!(variable %in% clnames))stop("No such variable in the cost object")
+varname <-paste(substitute(variable))
+funcname <-paste(substitute(func))
+spacename <-paste(substitute(SpaceStrata))
+default.title <-paste(funcname,"of",varname,"by",spacename,sep=" ")
+strataSpacePlot(costobj,variable,SpaceStrata,func,TimeStrata,TechStrata,multiscale.title=default.title,...)
+}
+
+spacePlot.stratcl3 <-function(costobj, variable, SpaceStrata,func,TimeStrata,TechStrata,...)
+{
+clnames <-names(costobj@cl)
+if(!(variable %in% clnames))stop("No such variable in the cost object")
+varname <-paste(substitute(variable))
+funcname <-paste(substitute(func))
+spacename <-paste(substitute(SpaceStrata))
+default.title <-paste(funcname,"of",varname,"by",spacename,sep=" ")
+strataSpacePlot(costobj,variable,SpaceStrata,func,TimeStrat=NULL,TechStrat=TechStrata,multiscale.title=default.title,...)
+}
+
+
+spacePlot.ce <-function(costobj, variable, SpaceStrata,func,TimeStrata,TechStrata,...)
+{
+cenames <-names(costobj@ce)
+if(!(variable %in% cenames))stop("No such variable in the cost object")
+eval(parse(text=paste("variable <-costobj@ce$",variable,sep="")))
+eval(parse(text=paste("SpaceStrata <-costobj@ce$",SpaceStrata,sep="")))
+space.plot(variable,SpaceStrata,func,...)
+}
+
+
+spacePlot.cecons <-function(costobj, variable, SpaceStrata,func,TimeStrata,TechStrata,...)
+{
+cenames <-names(costobj@ce)
+if(!(variable %in% cenames))stop("No such variable in the cost object")
+SpaceStrata <-"space"
+eval(parse(text=paste("variable <-costobj@ce$",variable,sep="")))
+eval(parse(text=paste("SpaceStrata <-costobj@ce$",SpaceStrata,sep="")))
+space.plot(variable,SpaceStrata,func,...)
+}
+
+
+spacePlot.stratce <-function(costobj, variable, SpaceStrata,func,TimeStrata,TechStrata,...)
+{
+cenames <-names(costobj@ce)
+if(!(variable %in% cenames))stop("No such variable in the cost object")
+varname <-paste(substitute(variable))
+funcname <-paste(substitute(func))
+spacename <-paste(substitute(SpaceStrata))
+default.title <-paste(funcname,"of",varname,"by",spacename,sep=" ")
+strataSpacePlot(costobj,variable,SpaceStrata,func,TimeStrata,multiscale.title=default.title,...)
+}
+
+spacePlot.stratce2 <-function(costobj, variable, SpaceStrata,func,TimeStrata,TechStrata,...)
+{
+cenames <-names(costobj@ce)
+if(!(variable %in% cenames))stop("No such variable in the cost object")
+varname <-paste(substitute(variable))
+funcname <-paste(substitute(func))
+spacename <-paste(substitute(SpaceStrata))
+default.title <-paste(funcname,"of",varname,"by",spacename,sep=" ")
+strataSpacePlot(costobj,variable,SpaceStrata,func,TimeStrata,TechStrata,multiscale.title=default.title,...)
+}
+
+spacePlot.stratce3 <-function(costobj, variable, SpaceStrata,func,TimeStrata,TechStrata,...)
+{
+cenames <-names(costobj@ce)
+if(!(variable %in% cenames))stop("No such variable in the cost object")
+varname <-paste(substitute(variable))
+funcname <-paste(substitute(func))
+spacename <-paste(substitute(SpaceStrata))
+default.title <-paste(funcname,"of",varname,"by",spacename,sep=" ")
+strataSpacePlot(costobj,variable,SpaceStrata,func,TimeStrat=NULL,TechStrat=TechStrata,multiscale.title=default.title,...)
+}
+
+
+
+
+spacePlot.cs <-function(costobj, variable, SpaceStrata,func,TimeStrata,TechStrata,...)
+{
+object <-costobj
+variable <-variable
+trnames <- names(object@tr)
+hhnames <- names(object@hh)
+slnames <- names(object@sl)
+hlnames <- names(object@hl)
+canames <- names(object@ca)
+tablenames <- c(rep("tr", length(trnames)), rep("hh",
+length(hhnames)), rep("sl", length(slnames)), rep("hl",
+length(hlnames)), rep("ca", length(canames)))
+varindex <- which(is.finite(match(c(trnames, hhnames,slnames, hlnames, canames), variable)))
+vartable <- tablenames[varindex]
+if (length(vartable) > 1)warning("specified variable occurs in more than one csData table")
+if (length(vartable) < 1)stop("No such variable in the cost object")
+newcs <- mergecsData(object)
+eval(parse(text = paste("dataframe <-newcs@", vartable[1],sep = "")))
+dataname <- vartable[1]
+if (variable == "lenCls") 
+{
+plottable <- readline(cat("lenCls occurs in both hl length frequency tables and ca age length tables \n\nwhich do you want to plot? hl or ca \n"))
+eval(parse(text = paste("dataframe <-newcs@", plottable,sep = "")))
+dataname <- plottable
+}
+eval(parse(text=paste("variable <-dataframe$",variable,sep="")))
+eval(parse(text=paste("SpaceStrata <-dataframe$",SpaceStrata,sep="")))
+space.plot(variable,SpaceStrata,func,...)
+}
+
+
+
+spacePlot.stratcs <-function(costobj, variable, SpaceStrata,func,TimeStrata,TechStrata,...)
+{
+csnames <-unique(c(names(costobj@tr),names(costobj@hh),names(costobj@sl),names(costobj@hl),
+names(costobj@ca)))
+if(!(variable %in% csnames))stop("No such variable in the cost object")
+varname <-paste(substitute(variable))
+funcname <-paste(substitute(func))
+spacename <-paste(substitute(SpaceStrata))
+default.title <-paste(funcname,"of",varname,"by",spacename,sep=" ")
+#print(default.title)
+#if(missing(multiscale.title))multiscale.title <-default.title
+strataSpacePlot(costobj,variable,SpaceStrata,func,TimeStrata,multiscale.title=default.title,...)
+}
+
+
+spacePlot.stratcs2 <-function(costobj, variable, SpaceStrata,func,TimeStrata,TechStrata,...)
+{
+csnames <-unique(c(names(costobj@tr),names(costobj@hh),names(costobj@sl),names(costobj@hl),
+names(costobj@ca)))
+if(!(variable %in% csnames))stop("No such variable in the cost object")
+varname <-paste(substitute(variable))
+funcname <-paste(substitute(func))
+spacename <-paste(substitute(SpaceStrata))
+default.title <-paste(funcname,"of",varname,"by",spacename,sep=" ")
+strataSpacePlot(costobj,variable,SpaceStrata,func,TimeStrata,TechStrata,multiscale.title=default.title,...)
+}
+
+spacePlot.stratcs3 <-function(costobj, variable, SpaceStrata,func,TimeStrata,TechStrata,...)
+{
+csnames <-unique(c(names(costobj@tr),names(costobj@hh),names(costobj@sl),names(costobj@hl),
+names(costobj@ca)))
+if(!(variable %in% csnames))stop("No such variable in the cost object")
+varname <-paste(substitute(variable))
+funcname <-paste(substitute(func))
+spacename <-paste(substitute(SpaceStrata))
+default.title <-paste(funcname,"of",varname,"by",spacename,sep=" ")
+strataSpacePlot(costobj,variable,SpaceStrata,func,TimeStrat=NULL,TechStrat=TechStrata,multiscale.title=default.title,...)
+}
+
+
+setGeneric("spacePlot")
+#setMethod("spacePlot",signature(costobj="numeric",variable="character",SpaceStrata="missing",func="func"),spacePlot.nocost)
+setMethod("spacePlot",signature(costobj="clData",variable="character",SpaceStrata="character",func="function"),spacePlot.cl)
+setMethod("spacePlot",signature(costobj="clDataCons",variable="character",SpaceStrata="character",func="function"),spacePlot.clcons)
+setMethod("spacePlot",signature(costobj="clData",variable="character",SpaceStrata="character",func="function",TimeStrata="character"),spacePlot.stratcl)
+setMethod("spacePlot",signature(costobj="clData",variable="character",SpaceStrata="character",func="function",
+TimeStrata="character",TechStrata="character"),spacePlot.stratcl2)
+setMethod("spacePlot",signature(costobj="clData",variable="character",SpaceStrata="character",func="function",
+TimeStrata="missing",TechStrata="character"),spacePlot.stratcl3)
+
+setMethod("spacePlot",signature(costobj="ceData",variable="character",SpaceStrata="character",func="function"),spacePlot.ce)
+setMethod("spacePlot",signature(costobj="ceDataCons",variable="character",SpaceStrata="character",func="function"),spacePlot.cecons)
+setMethod("spacePlot",signature(costobj="ceData",variable="character",SpaceStrata="character",func="function",TimeStrata="character"),spacePlot.stratce)
+setMethod("spacePlot",signature(costobj="ceData",variable="character",SpaceStrata="character",func="function",
+TimeStrata="character",TechStrata="character"),spacePlot.stratce2)
+setMethod("spacePlot",signature(costobj="ceData",variable="character",SpaceStrata="character",func="function",
+TimeStrata="missing",TechStrata="character"),spacePlot.stratce3)
+
+setMethod("spacePlot",signature(costobj="csData",variable="character",SpaceStrata="character",func="function"),spacePlot.cs)
+setMethod("spacePlot",signature(costobj="csData",variable="character",SpaceStrata="character",func="function",TimeStrata="character"),spacePlot.stratcs)
+setMethod("spacePlot",signature(costobj="csData",variable="character",SpaceStrata="character",func="function",
+TimeStrata="character",TechStrata="character"),spacePlot.stratcs2)
+setMethod("spacePlot",signature(costobj="csData",variable="character",SpaceStrata="character",func="function",
+TimeStrata="missing",TechStrata="character"),spacePlot.stratcs3)

@@ -1,32 +1,34 @@
 \name{cod2004cs}
 \alias{cod2004cs}
-\alias{had2004cs}
-\alias{sai2004cs}
-\alias{whi2004cs}
+%\alias{had2004cs}
+%\alias{sai2004cs}
+%\alias{whi2004cs}
+%\alias{had1999cs}
 \docType{data}
 \title{FRS commercial sampling data }
 \description{
 FRS commercial sampling data in the COST data exchange format.
-\cr Currently consists of cod, haddock, whiting and saithe for 2004. 
+%\cr Currently consists of cod, haddock, whiting and saithe for 2004 and haddock for 1999. 
 }
 \usage{
 data(cod2004cs)
-data(had2004cs)
-data(whi2004cs)
-data(sai2004cs)
+%data(had2004cs)
+%data(whi2004cs)
+%data(sai2004cs)
+%data(had1999cs)
 }
 \format{
 Formal class 'csData' [package "COSTcore"] objects with 6 slots
 \cr@desc: description
-\cr@tr: data.frame of 15 variables 
+\cr@tr: data.frame of 16 variables 
 \cr@hh: data.frame of 29 variables 
-\cr@sl: data.frame of 16 variables
+\cr@sl: data.frame of 17 variables
 \cr@hl: data.frame of 16 variables
-\cr@ca: data.frame of 28 variables
+\cr@ca: data.frame of 31 variables
 \cr see csData for details of the variables   
 }
 \details{
-Commercial sampling data from vessels landing the names species into Scottish ports during 2004,  
+Commercial sampling data from vessels landing the names species into Scottish ports, the data are   
 aggregated by month, ICES statistical rectangle, ICES area and gear type.  
 Compiled from FRS sampling programme data. 
 }

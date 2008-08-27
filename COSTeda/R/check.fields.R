@@ -19,20 +19,23 @@ sink(paste(objname,"logfile.txt",sep="."))
 cat(paste(objname," logfile created ",date(),"\n\n"))
 }
 
+objclass <-class(costobj)[1]
 
-if(class(costobj)[1]=="clData")
+if(objclass %in% c("clData","ceData","csData","ceDataVal","csDataVal","clDataVal")!=TRUE)stop("costobj not one of csDate clData, or ceData")
+
+if(class(costobj)[1]=="clData"|class(costobj)[1]=="clDataVal")
 {
 cat("\tThis is a cl Data object\n")
 dframe1 <-list(cl_table=costobj@cl)
 }
 
-if(class(costobj)[1]=="ceData")
+if(class(costobj)[1]=="ceData"|class(costobj)[1]=="ceDataVal")
 {
 cat("\tThis is a ce Data object\n")
 dframe1 <-list(ce_table=costobj@ce)
 }
 
-if(class(costobj)[1]=="csData")
+if(class(costobj)[1]=="csData"|class(costobj)[1]=="csDataVal")
 {
 cat("\tThis is a cs Data object\n")
 dframe1 <-list(tr_table=costobj@tr,hh_table=costobj@hh,sl_table=costobj@sl,hl_table=costobj@hl,
@@ -169,7 +172,8 @@ cat("finished\n")
 }
 #------------------end of check.fields function------------------------
 
-
+setGeneric("check.fields")
+#--------------------end of methods--------------
 `integertest` <-
 function(x,na.rm=F)
 {

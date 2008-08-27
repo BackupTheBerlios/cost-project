@@ -7,7 +7,7 @@
 }
 \usage{data(code.list)}
 \format{
-A list of 28 variables each a data frame with (usually) \emph{\$code} and \emph{\$description} and possibly other information. 
+A list of 28 variables each a data frame with (usually) \code{$code} and \code{$description} and possibly other information. 
 
 }
 %\details{

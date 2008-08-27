@@ -13,6 +13,10 @@ Data frame containing ICES area codes and ICES statistical rectangle codes.
   \item{\code{AreaCode}}{area code (to lowest level hence same as subdivision)}
   \item{\code{AreaName}}{area name}
   \item{\code{StatRect}}{statistical rectangle (including some subdivisions e.g. "51E2a")}
+  %added MM
+  \item{\code{lon}}{longitude}
+  \item{\code{lat}}{latitude}
+  %added MM
   \item{\code{statsq}}{statistical rectangle (without subdivisions)}
   \item{\code{division}}{ICES division}
   \item{\code{subarea}}{ICES subarea}  
