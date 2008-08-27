@@ -21,6 +21,8 @@ landisVolumeFun <- function(object,         #csData object
                             techStrata,     #from hh 
                             ...){ 
 
+M_ik <- y_ikj <- m_ik <- NULL
+
 if (is.na(timeStrata)) timeStrata <- NULL
 if (is.na(spaceStrata)) spaceStrata <- NULL
 if (is.na(techStrata)) techStrata <- NULL
