@@ -6,16 +6,16 @@ importFrom("COSTcore")
 
 export(
   "check.fields",
-  "convert.statsq.lat.lon",
-  "convert.icesarea.statsq",
-  "convert.icesarea.lat.lon",
-  "ices.division.lines",
-  "ices.division.names",
-  "is.statsq",
-  "landmass.polygons",
-  "mergecsData",
-  "space.plot",
-  "strata.space.plot",
+#  "convert.statsq.lat.lon",
+#  "convert.icesarea.statsq",
+#  "convert.icesarea.lat.lon",
+#  "ices.division.lines",
+#  "ices.division.names",
+#  "is.statsq",
+#  "landmass.polygons",
+#  "mergecsData",
+#  "space.plot",
+#  "strata.space.plot",
   "tabConsist",
   "dfApply"
 )
@@ -36,5 +36,6 @@ exportMethods(
   "bioPar.boxplot",
   "csPlot.design",
   "cstSummary",
-  "disInfo"
+  "disInfo",
+  "spacePlot"
 )
