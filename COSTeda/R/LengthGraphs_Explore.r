@@ -102,7 +102,7 @@ deltCalcFun <- function(object,
                         indSamp=FALSE,
                         ...){
 
- 
+nbTot_Lg <- WkvTot <- DELTA <- Delta <- NkMatrix <- WkMatrix <- SampDeltaMat <- NULL 
 #strategy="metier" & techStrata="commCat" don't match
 if (is.na(techStrata)==FALSE & strategy=="metier" & techStrata=="commCat") 
     stop("'commCat' technical stratification does not match with 'metier' strategy!!") 
