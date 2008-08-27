@@ -110,6 +110,7 @@ Age <- Age[!test,]
 #2 cases to distinguish : stratification or no stratification ('ntest'= FALSE or TRUE)
 ntest <- all(is.null(timeStrata),is.null(spaceStrata),is.null(techStrata))
 
+Mm <- NULL
 #'multinom' function applied to Tab object
 eval(parse('',text=paste("Mm <- multinom(Age~Length",c(paste("*",paste(c(timeStrata,spaceStrata,techStrata),collapse="*"),"-1",sep=""),"")[c(!ntest,ntest)],
                          ",Hess=T,model=T,data=Tab)",sep="")))
