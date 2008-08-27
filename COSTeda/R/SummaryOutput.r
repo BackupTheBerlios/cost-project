@@ -453,6 +453,8 @@ invisible(calc)
 
 tabConsist <- function(lTab,field) {                 #lTab is a list containing various COST objects
 
+newLtab <- NULL
+
 #test on objects classes
 ind <- FALSE
 clas <- unlist(lapply(lTab,class))
