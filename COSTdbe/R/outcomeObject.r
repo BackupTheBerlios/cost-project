@@ -1,5 +1,5 @@
-library(COSTcore)
-
+#library(COSTcore)
+#
 #====================================================================
 # dbeObj : outcome object for all COSTdbe package methods ouputs
 #====================================================================
