@@ -1,0 +1,12 @@
+Package: COSTdbe
+Title: Design-based estimates package for COST.
+Version: 0.1
+Date: 2008
+Author: COST Team and various contributors.
+Description: ToDo
+Depends: R(>= 2.6.0), COSTcore, lattice
+Maintainer: John Doe <johndoe@nowhere.com>
+License: GPL 2 or above
+LazyLoad: Yes
+LazyData: Yes
+
