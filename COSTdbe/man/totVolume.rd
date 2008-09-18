@@ -48,7 +48,8 @@ clObject <- clDataCons(clDataVal(sole.cl),strDef)
 ceObject <- ceDataCons(ceDataVal(sole.ce),strDef)
 
 #dbeOutput initial object
-obj <- dbeObject(desc="My object",species="Solea solea",catchCat="DIS",strataDesc=strDef,methodDesc="analytical")
+obj <- dbeObject(desc="My object",species="Solea solea",catchCat="DIS",strataDesc=strDef,
+                 methodDesc="analytical")
 
 ##raising by trip
 newObj <- totVolume(obj,csObject,ceObject)
