@@ -1,6 +1,6 @@
 
-library(COSTcore)
-
+#library(COSTcore)
+#
 #====================================================================
 # strLChl : * presence of length classes in hl by strata (consolidated object as input)
 #====================================================================
@@ -351,7 +351,7 @@ Alk <- Alk$newAlk
 Prop <- propMissLgth(Alk)
 
 } else {         #if 'alk' is stratified
-
+val <- NULL
 #apply function on each alk for each strata
 res <- apply(alk,3:Dim,function(x) {
     eval(parse('',text=paste("val <- ",type,"Fun(x",",value=value"[!ms],")",collapse="",sep="")))
