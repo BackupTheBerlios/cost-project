@@ -1,0 +1,23 @@
+import("methods","utils","graphics","lattice")
+
+importClassesFrom("COSTcore")
+
+importFrom("COSTcore")
+
+export(
+  "dbeObject"
+)
+
+exportClasses(
+  "dbeOutput"
+)
+
+exportMethods(
+	"totVolume",
+	"dbePlot",
+	"sampledFO",
+	"alkLgthRec",
+	"viewGapsAlkCons",
+	"propMissLgthCons",
+	"sampStrDef"
+)
