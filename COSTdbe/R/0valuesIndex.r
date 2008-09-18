@@ -1,7 +1,7 @@
 
 
-library(COSTcore)
-
+#library(COSTcore)
+#
 
 
 #====================================================================
@@ -18,7 +18,7 @@ sapply(x, function(x) substring(as.character(x),1,3))
 }
 
 
-setGeneric("sampledFO", function(x,species,fraction,sampPar=TRUE,...){     #'sampPar' checks if given species is considered as automatically sampled (if TRUE, sppReg=Par <-> sppReg=All, i.e. includes sppReg="Par" in the analysis ) 
+setGeneric("sampledFO", function(x,species,fraction="LAN",sampPar=TRUE,...){     #'sampPar' checks if given species is considered as automatically sampled (if TRUE, sppReg=Par <-> sppReg=All, i.e. includes sppReg="Par" in the analysis ) 
 	standardGeneric("sampledFO")
 	}
 )
