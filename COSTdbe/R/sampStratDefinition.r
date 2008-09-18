@@ -1,6 +1,6 @@
 
-library(COSTcore)
-
+#library(COSTcore)
+#
 #====================================================================
 # sampStrDef : * defines from a given dataset which was the sampling strategy  (according to ANNEX B of "Minutes of the 2nd COST expert meeting")
 #                  - at the haul level (one value per row in hh)
@@ -148,7 +148,7 @@ return(list(sampStrategyTR=trIND,sampStrategyHH=val))
 #====================================================================  
    
 
-setGeneric("sampStrDef", function(x,...){#,species,fraction="LAN",fishAct="foCatEu5",sampPar=TRUE,...){
+setGeneric("sampStrDef", function(x,species,fraction="LAN",fishAct="foCatEu5",sampPar=TRUE,...){
 	standardGeneric("sampStrDef")
 	}
 )
