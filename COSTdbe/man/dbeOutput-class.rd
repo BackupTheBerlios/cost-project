@@ -10,7 +10,7 @@
 \bold{slot} \tab \bold{desc} \tab \bold{elements} \tab \bold{class} \tab \bold{description} \cr
 \bold{\code{desc}} \tab \tab \tab \code{character} \tab Descriptive slot \cr
 \bold{\code{species}} \tab \tab \tab \code{character} \tab Species \cr
-\bold{\code{catchCat}} \tab \tab \tab \code{character} \tab Catch category \cr
+\bold{\code{catchCat}} \tab \tab \tab \code{character} \tab Catch category (eg "LAN", "DIS" or "all") \cr
 \bold{\code{param}} \tab \tab \tab \code{character} \tab Parameter estimated (eg "maturity","sex-ratio",...)  \cr
 \bold{\code{strataDesc}} \tab \tab \tab \code{strIni} \tab Stratification considered \cr
 \bold{\code{methodDesc}} \tab \tab \tab \code{character} \tab Used method (eg "analytical","bootstrap" or "Bayesian") \cr

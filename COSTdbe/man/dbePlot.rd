@@ -29,21 +29,17 @@ dbePlot(object,Slot,type="bar",Xstratum=NULL,step=NA,dispKey=TRUE,\dots)
 \examples{
 data(sole)
 
-#consolidated datasets are built 
-strDef <- strIni(timeStrata="quarter",techStrata="foCatEu5")
-csObject <- csDataCons(csDataVal(sole.cs),strDef)
-clObject <- clDataCons(clDataVal(sole.cl),strDef)
-ceObject <- ceDataCons(ceDataVal(sole.ce),strDef)
+#stratification object
+strDef <- strIni(timeStrata="quarter",spaceStrata="area")
+#consolidated object
+object <- csDataCons(csDataVal(sole.cs),strDef)
+#dbeOutput initial object with needed parameters
+dbeOutput <- dbeObject(desc="My object",species="Solea solea",param="weight",
+                       strataDesc=strDef,methodDesc="analytical")
 
-#dbeOutput initial object
-obj <- dbeObject(desc="My object",species="Solea solea",catchCat="DIS",strataDesc=strDef,
-                 methodDesc="analytical")
+lWeight <- bpEstim(dbeOutput,object)
 
-#raising by trip
-newObj <- totVolume(obj,csObject,ceObject)
-
-#plotting method
-dbePlot(newObj,"totalW",type="bar",Xstratum="technical")
+dbePlot(lWeight,Slot="lenStruc",step=10,ylab="Mean weight (g)")
 
 }
 \keyword{methods}
