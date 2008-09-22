@@ -132,8 +132,8 @@ dbeObject <- function(desc, species, catchCat, param, strataDesc, methodDesc, ..
 
 if (missing(desc)) desc <- as.character(NA)
 if (missing(species)|all(is.na(species))) stop("Missing 'species' parameter!!")
-if (all(is.na(catchCat))) stop("Missing 'catchCat' parameter!!")
-if (missing(catchCat)|(length(catchCat)>1)|(!all(tolower(catchCat)%in%c("dis","lan")))) stop("Wrong 'catchCat' parameter!!")
+if (missing(catchCat)) catchCat <- "LAN"
+if ((length(catchCat)>1)|(all(is.na(catchCat)))) catchCat <- "LAN"
 if (missing(param)) param <- as.character(NA)
 if (missing(strataDesc)) strataDesc <- strIni()
 if (missing(methodDesc)) methodDesc <- as.character(NA)
