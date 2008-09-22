@@ -15,7 +15,8 @@
 setGeneric("dbePlot", function(object,
                                Slot,                                 
                                type="bar",                           
-                               Xstratum=NULL,                        
+                               Xstratum=NULL,
+                               step=NA,                        
                                dispKey=TRUE,                         
                                ...){
 standardGeneric("dbePlot")}
@@ -29,6 +30,7 @@ setMethod("dbePlot",signature(object="dbeOutput"),
                     Slot,                                 #ex: "lenStruc"
                     type="bar",                           #to be chosen between "bar", "line", "point" 
                     Xstratum=NULL,                        #stratum displayed on x-axis if Slot is in c("nSamp","nMes","totalN","totalNvar","totalW","totalWvar")
+                    step=NA,                              #length or age classes step (if NA, empty classes are not drawn)
                     dispKey=TRUE,                         #if TRUE and if various panels are displayed, a describing key is displayed
                     ...){                                 #further graphical parameters
 
@@ -71,7 +73,7 @@ if (is.null(dots$rot)) dots$rot <- 90
   # Extraction of the numerical data, and formatting process
   #-----------------------------------------------------------------------------
 
-tab <- slot(object,Slot)$estim
+tab <- slot(object,Slot) ; if (length(tab)<3) tab <- tab$estim  #if slot is a list with 2 elements
 if (nrow(tab)==0) stop("no available data!!")
 if (all(is.na(tab))) stop("no available data!!")
 if (all(levels(factor(as.character(tab$time)))=="all")) tab$time <- NA
@@ -95,7 +97,12 @@ vrbl <- switch(Slot,
                ageStruc="age",
                ageVar="age")
 #levels of 'vrbl' field must be defined as numerics
-tab[,vrbl] <- factor(as.numeric(tab[,vrbl]))
+val <- as.numeric(as.character(tab[,vrbl]))
+if (!is.na(step)) {
+tab[,vrbl] <- factor(as.character(val),levels=seq(min(val,na.rm=TRUE),max(val,na.rm=TRUE),by=step))
+} else {
+tab[,vrbl] <- factor(val)
+}
 
 Xstratum <- NULL
 
@@ -137,7 +144,7 @@ if (is.null(Xstratum)) {
 nTst <- sum(indStr)==0
 
 eval(parse('',text=paste(plotFun,"(value ~ ",c("rep(0,nrow(tab))",vrbl)[c(!lStruc,lStruc)],paste("|",paste(c("time","space","technical")[indStr],collapse="*",sep=""),sep="")[!nTst],
-  ",data=tab,horizontal=FALSE,",typePar,
+  ",data=tab,horizontal=FALSE,",typePar,"drop.unused.levels=FALSE,"[lStruc & !is.na(step)],
   "main=list(dots$main,font=dots$font.main,col=dots$col.main,cex=dots$cex.main),ylim=c(0,max(tab$value,na.rm=TRUE)*1.02),",
   "col=dots$col,lwd=dots$lwd,lty=dots$lty,pch=dots$pch,cex=dots$p.cex,fill=dots$col,par.strip.text=list(font=dots$font.lab),",
   "scales=list(x=list(rot=dots$rot,cex=dots$cex",",draw=FALSE"[!lStruc],"),y=list(cex=dots$cex),font=dots$font.axis,col=dots$col.axis,cex=dots$cex.axis),",
