@@ -574,8 +574,8 @@ N <- tapply(ceObject@ce$trpNum,list(factor(CEstrat,levels=dimnames(yij)[[3]])),s
 #------
 CLt <- clObject@cl[clObject@cl$taxon%in%landSpp,]
 CLstrat <- paste(CLt$time,CLt$space,CLt$technical,sep=":-:")
-if (any(is.na(CLt$landWt))) warning("missing values for 'landWt' field in clObject!!")
-X <- tapply(CLt$landWt,list(factor(CLstrat,levels=dimnames(yij)[[3]])),sum,na.rm=TRUE)     
+if (any(is.na(CLt$landWt))) warning("missing values for 'landWt' field in clObject!!")                ############## <<<<<---------<<<< for the moment, raising variable is only 'landWt'   
+X <- tapply(CLt$landWt,list(factor(CLstrat,levels=dimnames(yij)[[3]])),sum,na.rm=TRUE)                             # other numerical fields ('landMult',...) should be taken into account in the calculation                   
 
 #so, estimate of the total volume is...
 yiBar <- apply(yij,c(1,3),sum,na.rm=TRUE)/mi 
@@ -852,7 +852,7 @@ procRaise.landings(csObject,ceObject,clObject,dbeOutput,landSpp=landSpp,val=val,
 #
 #source("C:/Documents and Settings/mmerzere/Bureau/0valuesIndex.r")
 #
-##consolidated datasets are built for testing 
+#consolidated datasets are built for testing 
 #strDef <- strIni(timeStrata="quarter",techStrata="foCatEu5")
 #csObject <- csDataCons(csDataVal(sole.cs),strDef)
 #clObject <- clDataCons(clDataVal(sole.cl),strDef)
