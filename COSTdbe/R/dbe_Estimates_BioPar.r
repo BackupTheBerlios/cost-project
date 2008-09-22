@@ -26,15 +26,16 @@ setMethod("bpEstim", signature(dbeOutput="dbeOutput",object="csDataCons"), funct
 
 As.num <- function(x) as.numeric(as.character(x))
 species <- dbeOutput@species
+fraction <- dbeOutput@catchCat ; if ("all"%in%fraction) fraction <- c("LAN","DIS")
 if (all(is.na(species))) stop("no species in 'dbeOutput' object!!")  
 if ("all"%in%species) species <- unique(as.character(c(object@ca$spp,object@hl$spp)))
 
 #-------------------------------------------------------------------------------
-#restriction of CA and HL tables to specified species (no restriction on catch category, all data is kept)
+#restriction of CA and HL tables to specified species & catch category
 #-------------------------------------------------------------------------------
 
 ca <- object@ca[object@ca$spp%in%species,]
-hl <- object@hl[object@hl$spp%in%species,]
+hl <- object@hl[object@hl$spp%in%species & extCatchCat(object@hl$sort)%in%fraction,]
 if (nrow(ca)==0) stop("no biological parameters in consolidated object!!")
 if (nrow(hl)==0) stop("no hl information!!")
 
