@@ -19,5 +19,6 @@ exportMethods(
 	"alkLgthRec",
 	"viewGapsAlkCons",
 	"propMissLgthCons",
-	"sampStrDef"
+	"sampStrDef",
+	"bpEstim"
 )
