@@ -190,8 +190,8 @@ tcRec <- objStrat@tcRec                          #
                                                  #
 CE <- object@ce                                  #####
 Semester <- ceiling(CE$quarter/2)      
-
-CE$month <- paste(as.character(CE$year),as.character(CE$month),sep=" - ")                         #<<- 22/07/2008 update : addition of year information to "time" field                
+                                                                                                  #<<- 22/09/2008 update : addition of quarter in 'month' information 
+CE$month <- paste(as.character(CE$year),as.character(CE$quarter),as.character(CE$month),sep=" - ")#<<- 22/07/2008 update : addition of year information to "time" field                
 CE$quarter <- paste(as.character(CE$year),as.character(CE$quarter),sep=" - ")                     #
 CE$semester <- paste(as.character(CE$year),as.character(Semester),sep=" - ")                      #
 
