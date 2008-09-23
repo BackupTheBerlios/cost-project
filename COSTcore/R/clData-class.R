@@ -73,25 +73,30 @@ setGeneric("clData", function(cl, ...){
 	}
 )
 
-setMethod("clData", signature("data.frame"), function(cl, desc="Unknown stock", ...){
+setMethod("clData", signature("data.frame"), function(cl, desc="Unknown stock", check=FALSE, ...){
 	# create object and name columns properly 
 	obj <- new("clData")
 	cl0 <- obj@cl
 	names(cl) <- names(cl0)
 	# corce columns
 	cl <- coerceDataFrameColumns(cl, cl0)
-	# object
+	#check
+	if (check) check.fields(new("clData", cl=cl, desc=desc))
+  # object
 	new("clData", cl=cl, desc=desc)
 })
 
-setMethod("clData", signature("matrix"), function(cl, desc="Unknown stock", ...){
+setMethod("clData", signature("matrix"), function(cl, desc="Unknown stock", check=FALSE, ...){
 	# coerce to dataframe
 	cl <- as.data.frame(cl)
+	
+  #check
+	if (check) check.fields(clData(cl=cl, desc=desc))
 	# create object and name columns properly 
 	clData(cl=cl, desc=desc)
 })
 
-setMethod("clData", signature("missing"), function(desc="Unknown stock", ...){
+setMethod("clData", signature("missing"), function(desc="Unknown stock", check=FALSE, ...){
 	new("clData", desc=desc)
 })
 
@@ -99,7 +104,7 @@ setMethod("clData", signature("missing"), function(desc="Unknown stock", ...){
 # IO constructor
 #====================================================================
 
-setMethod("clData", signature("character"), function(cl, desc="Unknown stock", ...){
+setMethod("clData", signature("character"), function(cl, desc="Unknown stock", check=FALSE, ...){
 
 	# read CSV files
 	# ToDo
@@ -111,6 +116,8 @@ setMethod("clData", signature("character"), function(cl, desc="Unknown stock", .
 	# remove record type 
 	cl <- cl[,-1]
 
+  #check
+	if (check) check.fields(clData(cl=cl, desc=desc))  
 	# create object and name columns properly 
 	clData(cl=cl, desc=desc)
 })
@@ -202,10 +209,14 @@ setMethod("rbind2", signature(x="clData", y="clData"), function(x,y){
 #====================================================================
 
 setMethod("subset", signature(x="clData"), function(x,subset,...){
+
+is.Val <- class(x)=="clDataVal"
 	e <- substitute(subset)
 	df0 <- cl(x)	
 	r <- eval(e, df0, parent.frame())
-	clData(df0[r,])
+	res <- clData(df0[r,])
+if (is.Val) res <- clDataVal(res)
+return(res)
 })
 
                                                                                
