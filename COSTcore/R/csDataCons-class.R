@@ -362,8 +362,8 @@ recFun <- function(df,field,rec) {
 # 'semester' field is put in ca
 #CA$semester <- ceiling(CA$quarter/2)
 Semester <- ceiling(CA$quarter/2) 
-CA$month <- paste(as.character(CA$year),as.character(CA$month),sep=" - ")                         #<<- 30/06/2008 update : addition of year information to "time" field                
-CA$quarter <- paste(as.character(CA$year),as.character(CA$quarter),sep=" - ")                     #
+CA$month <- paste(as.character(CA$year),as.character(CA$quarter),as.character(CA$month),sep=" - ")#<<- 22/09/2008 update : addition of quarter in 'month' information               
+CA$quarter <- paste(as.character(CA$year),as.character(CA$quarter),sep=" - ")                     #<<- 30/06/2008 update : addition of year information to "time" field 
 CA$semester <- paste(as.character(CA$year),as.character(Semester),sep=" - ")                      #
  
 
@@ -546,10 +546,10 @@ recFun <- function(df,field,rec) {                  # <<<- there's surely a more
 # Creation of a data.frame containing the different modalities of time stratification
 month <- sapply(HH$date,function(x) as.numeric(strsplit(x,"-")[[1]][2]))
 #time.DF <- data.frame(month = month, quarter = ceiling(month/3), semester = ceiling(month/6),year=HH$year)    
-Year <- HH$year
-time.DF <- data.frame(month = paste(as.character(Year),as.character(month),sep=" - "),                      #<<- 30/06/2008 update : addition of year information to "time" field
-                      quarter = paste(as.character(Year),as.character(ceiling(month/3)),sep=" - "),         #eg "2006 - 1"
-                      semester = paste(as.character(Year),as.character(ceiling(month/6)),sep=" - "),        #WARNING : this format will have to be taken into account in recoding process
+Year <- HH$year                                                                                                       #<<- 22/09/2008 update : addition of quarter information in 'month'
+time.DF <- data.frame(month = paste(as.character(Year),as.character(ceiling(month/3)),as.character(month),sep=" - "), #<<- 30/06/2008 update : addition of year information to "time" field
+                      quarter = paste(as.character(Year),as.character(ceiling(month/3)),sep=" - "),                   #eg "2006 - 1"
+                      semester = paste(as.character(Year),as.character(ceiling(month/6)),sep=" - "),                  #WARNING : this format will have to be taken into account in recoding process
                       year=Year)       
 
 
@@ -718,8 +718,8 @@ index <- is.na(ca$PSUid)
 #TIME
 #'semester' field is added to ca table
 #ca$semester <- ceiling(ca$quarter/2)  
-Semester <- ceiling(ca$quarter/2)     
-ca$month <- paste(as.character(ca$year),as.character(ca$month),sep=" - ")                         #<<- 30/06/2008 update : addition of year information to "time" field                
+Semester <- ceiling(ca$quarter/2)                                                                 #<<- 22/09/2008 update : addition of quarter information in 'month'
+ca$month <- paste(as.character(ca$year),as.character(ca$quarter),as.character(ca$month),sep=" - ")#<<- 30/06/2008 update : addition of year information to "time" field                
 ca$quarter <- paste(as.character(ca$year),as.character(ca$quarter),sep=" - ")                     #
 ca$semester <- paste(as.character(ca$year),as.character(Semester),sep=" - ")                      #
 
