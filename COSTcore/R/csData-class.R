@@ -229,7 +229,7 @@ setGeneric("csData", function(tr, hh, sl, hl, ca, ...){
 	}
 )
 
-setMethod("csData", signature("data.frame", "missing", "missing", "missing", "missing"), function(tr, desc="Unknown stock", ...){
+setMethod("csData", signature("data.frame", "missing", "missing", "missing", "missing"), function(tr, desc="Unknown stock", check=FALSE, ...){
 	# create object and name columns properly 
 	obj <- new("csData")
 	
@@ -238,11 +238,13 @@ setMethod("csData", signature("data.frame", "missing", "missing", "missing", "mi
 	names(tr) <- names(tr0)
 	tr <- coerceDataFrameColumns(tr, tr0)
 
+  #check
+  if (check) check.fields(new("csData", tr=tr, desc=desc))
 	# object
 	new("csData", tr=tr, desc=desc)
 })
 
-setMethod("csData", signature("data.frame", "data.frame", "missing", "missing", "missing"), function(tr, hh, desc="Unknown stock", ...){
+setMethod("csData", signature("data.frame", "data.frame", "missing", "missing", "missing"), function(tr, hh, desc="Unknown stock", check=FALSE, ...){
 	# create object and name columns properly 
 	obj <- new("csData")
 
@@ -255,11 +257,13 @@ setMethod("csData", signature("data.frame", "data.frame", "missing", "missing", 
 	names(hh) <- names(hh0)
 	hh <- coerceDataFrameColumns(hh, hh0)
 
+  #check
+  if (check) check.fields(new("csData", tr=tr, hh=hh, desc=desc))
 	# object
 	new("csData", tr=tr, hh=hh, desc=desc)
 })
 
-setMethod("csData", signature("data.frame", "data.frame", "data.frame", "missing", "missing"), function(tr, hh, sl, desc="Unknown stock", ...){
+setMethod("csData", signature("data.frame", "data.frame", "data.frame", "missing", "missing"), function(tr, hh, sl, desc="Unknown stock", check=FALSE, ...){
 	# create object and name columns properly 
 	obj <- new("csData")
 
@@ -276,11 +280,13 @@ setMethod("csData", signature("data.frame", "data.frame", "data.frame", "missing
 	names(sl) <- names(sl0)
 	sl <- coerceDataFrameColumns(sl, sl0)
 
+  #check
+  if (check) check.fields(new("csData", tr=tr, hh=hh, sl=sl, desc=desc))
 	# object
 	new("csData", tr=tr, hh=hh, sl=sl, desc=desc)
 })
 
-setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.frame", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", ...){
+setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.frame", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", check=FALSE, ...){
 	# create object and name columns properly 
 	obj <- new("csData")
 
@@ -301,10 +307,13 @@ setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.fr
 	names(hl) <- names(hl0)
 	hl <- coerceDataFrameColumns(hl, hl0)
 
+  #check
+  if (check) check.fields(new("csData", tr=tr, hh=hh, sl=sl, hl=hl, desc=desc))
+  #object
 	new("csData", tr=tr, hh=hh, sl=sl, hl=hl, desc=desc)
 })
 
-setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.frame", "data.frame"), function(tr, hh, sl, hl, ca,  desc="Unknown stock",...){
+setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.frame", "data.frame"), function(tr, hh, sl, hl, ca,  desc="Unknown stock", check=FALSE, ...){
 	# create object and name columns properly 
 	obj <- new("csData")
 	# tr
@@ -328,11 +337,13 @@ setMethod("csData", signature("data.frame", "data.frame", "data.frame", "data.fr
 	names(ca) <- names(ca0)
 	ca <- coerceDataFrameColumns(ca, ca0)
 
+  #check
+  if (check) check.fields(new("csData", tr=tr, hh=hh, sl=sl, hl=hl, ca=ca, desc=desc))
 	# object
 	new("csData", tr=tr, hh=hh, sl=sl, hl=hl, ca=ca, desc=desc)
 })
 
-setMethod("csData", signature("data.frame", "missing", "missing", "missing", "data.frame"), function(tr, hh, sl, hl, ca,  desc="Unknown stock",...){
+setMethod("csData", signature("data.frame", "missing", "missing", "missing", "data.frame"), function(tr, hh, sl, hl, ca,  desc="Unknown stock", check=FALSE, ...){
 	# create object and name columns properly 
 	obj <- new("csData")
 	# tr
@@ -344,6 +355,8 @@ setMethod("csData", signature("data.frame", "missing", "missing", "missing", "da
 	names(ca) <- names(ca0)
 	ca <- coerceDataFrameColumns(ca, ca0)
 
+  #check
+  if (check) check.fields(new("csData", tr=tr, ca=ca, desc=desc))
 	# object
 	new("csData", tr=tr, ca=ca, desc=desc)
 })
@@ -358,7 +371,7 @@ setMethod("csData", signature("missing", "missing", "missing", "missing", "missi
 # IO constructor
 #====================================================================
 
-setMethod("csData", signature("character", "character", "character", "character", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", ...){
+setMethod("csData", signature("character", "character", "character", "character", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", check=FALSE, ...){
 
 	# read CSV files
 	# ToDo
@@ -385,11 +398,13 @@ setMethod("csData", signature("character", "character", "character", "character"
 	names(hh) <- names(obj@hh)
 	names(sl) <- names(obj@sl)
 	names(hl) <- names(obj@hl)
-	csData(tr=tr, hh=hh, sl=sl, hl=hl, desc=desc)
+	#check
+  if (check) check.fields(csData(tr=tr, hh=hh, sl=sl, hl=hl, desc=desc))
+  csData(tr=tr, hh=hh, sl=sl, hl=hl, desc=desc)
 })
 
 
-setMethod("csData", signature("character", "character", "character", "character", "character"), function(tr, hh, sl, hl, ca, desc="Unknown stock", ...){
+setMethod("csData", signature("character", "character", "character", "character", "character"), function(tr, hh, sl, hl, ca, desc="Unknown stock", check=FALSE, ...){
 
 	# read CSV files
 	# ToDo
@@ -420,6 +435,8 @@ setMethod("csData", signature("character", "character", "character", "character"
 	names(sl) <- names(obj@sl)
 	names(hl) <- names(obj@hl)
 	names(ca) <- names(obj@ca)
+	#check
+  if (check) check.fields(csData(tr=tr, hh=hh, sl=sl, hl=hl, ca=ca, desc=desc))	
 	csData(tr=tr, hh=hh, sl=sl, hl=hl, ca=ca, desc=desc)
 })
 
@@ -674,6 +691,7 @@ setMethod("rbind2", signature(x="csData", y="csData"), function(x,y){
 
 setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr"){
 
+isVal <- class(x)=="csDataVal"
   #-----------------------------------------------------------------------------
   # Extraction of each table
   #-----------------------------------------------------------------------------
@@ -762,13 +780,16 @@ setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr"){
   # Output
   #-----------------------------------------------------------------------------
 
- 	if(nrow(tr)<1) csData(desc=x@desc)
- 	else if ((nrow(hh)<1) & (nrow(ca)>0)) csData(tr=tr,ca=ca,desc=x@desc)
- 	      else if(nrow(hh)<1) csData(tr=tr,desc=x@desc)
-             else if(nrow(sl)<1) csData(tr=tr, hh=hh,desc=x@desc)
-                  else if(nrow(hl)<1) csData(tr=tr, hh=hh, sl=sl,desc=x@desc)
-	                     else if(nrow(ca)<1) csData(tr=tr, hh=hh, sl=sl, hl=hl,desc=x@desc)
-	                          else csData(tr=tr, hh=hh, sl=sl, hl=hl, ca=ca,desc=x@desc)
+ 	if(nrow(tr)<1) res <- csData(desc=x@desc)
+ 	else if ((nrow(hh)<1) & (nrow(ca)>0)) res <- csData(tr=tr,ca=ca,desc=x@desc)
+ 	      else if(nrow(hh)<1) res <- csData(tr=tr,desc=x@desc)
+             else if(nrow(sl)<1) res <- csData(tr=tr, hh=hh,desc=x@desc)
+                  else if(nrow(hl)<1) res <- csData(tr=tr, hh=hh, sl=sl,desc=x@desc)
+	                     else if(nrow(ca)<1) res <- csData(tr=tr, hh=hh, sl=sl, hl=hl,desc=x@desc)
+	                          else res <- csData(tr=tr, hh=hh, sl=sl, hl=hl, ca=ca,desc=x@desc)
+
+if (isVal) res <- csDataVal(res)
+return(res)
 
 })
 
@@ -789,6 +810,8 @@ setGeneric("subsetSpp", function(x,subset,...){
 )
 
 setMethod("subsetSpp", signature(x="csData"), function(x,subset,...){
+
+is.Val <- class(x)=="csDataVal"
   
   #get idx
 	hlfk <- hl(x)[,c(1:14)]
@@ -810,7 +833,10 @@ setMethod("subsetSpp", signature(x="csData"), function(x,subset,...){
 	if(nrow(sl)<1) 
     stop("No data kept from subsetting process!!")
 	else 
-    csData(tr=tr(x), hh=hh(x), sl=sl, hl=hl, ca=ca(x),desc=x@desc)
+    res <- csData(tr=tr(x), hh=hh(x), sl=sl, hl=hl, ca=ca(x),desc=x@desc)
+
+if (is.Val) res <- csDataVal(res)
+return(res)
 
 })
 
