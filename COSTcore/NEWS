@@ -1,3 +1,14 @@
+		CHANGES IN COSTcore VERSION 1.2-3
+
+NEW FEATURES
+    o new codification of time field in consolidated object for months (yyyy - q - m)
+    o 'check.fields' function added (with 'code.list', 'numeric.list' and 'variable.list' .rda files added in 'data' folder)
+    o checking process inserted in class construction (logical 'check' parameter)
+    o subset methods added for validated objects
+DOCUMENTATION
+    o man updated with modifications and new features 
+BUG FIXES
+
 		CHANGES IN COSTcore VERSION 1.2-2
 
 NEW FEATURES
