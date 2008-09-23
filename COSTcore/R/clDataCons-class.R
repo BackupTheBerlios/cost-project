@@ -114,8 +114,8 @@ tcRec <- objStrat@tcRec                           #
                                                   #
 CL <- object@cl                                   ####
 Semester <- ceiling(CL$quarter/2)      
-
-CL$month <- paste(as.character(CL$year),as.character(CL$month),sep=" - ")                         #<<- 22/07/2008 update : addition of year information to "time" field                
+                                                                                                  #<<- 22/09/2008 update : addition of quarter in 'month' information 
+CL$month <- paste(as.character(CL$year),as.character(CL$quarter),as.character(CL$month),sep=" - ")#<<- 22/07/2008 update : addition of year information to "time" field                
 CL$quarter <- paste(as.character(CL$year),as.character(CL$quarter),sep=" - ")                     #
 CL$semester <- paste(as.character(CL$year),as.character(Semester),sep=" - ")                      #
 
