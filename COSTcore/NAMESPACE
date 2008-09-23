@@ -10,7 +10,8 @@ export(
 	"setCon",
 	"startTest",
 	"tagTest",
-	"strIni"
+	"strIni",
+	"check.fields"
 )
 exportClasses(
 	"ceData",
