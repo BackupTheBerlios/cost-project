@@ -69,20 +69,26 @@ setGeneric("ceData", function(ce, ...){
 	}
 )
 
-setMethod("ceData", signature("data.frame"), function(ce, desc="Unknown stock", ...){
+setMethod("ceData", signature("data.frame"), function(ce, desc="Unknown stock", check=FALSE, ...){
 	# create object and name columns properly 
 	obj <- new("ceData")
 	ce0 <- obj@ce
 	names(ce) <- names(ce0)
 	# corce columns
 	ce <- coerceDataFrameColumns(ce, ce0)
-	# object
+	#check
+	if (check) check.fields(new("ceData", ce=ce, desc=desc))
+  # object
 	new("ceData", ce=ce, desc=desc)
 })
 
-setMethod("ceData", signature("matrix"), function(ce, desc="Unknown stock", ...){
+setMethod("ceData", signature("matrix"), function(ce, desc="Unknown stock", check=FALSE, ...){
 	# coerce to data.frame
 	ce <- as.data.frame(ce)
+	
+  #check
+	if (check) check.fields(ceData(ce, desc))
+
 	# create object and name columns properly 
 #	obj <- new("ceData")
 #	names(ce) <- names(obj@ce)
@@ -90,7 +96,7 @@ setMethod("ceData", signature("matrix"), function(ce, desc="Unknown stock", ...)
 	ceData(ce, desc)
 })
 
-setMethod("ceData", signature("missing"), function(desc="Unknown stock", ...){
+setMethod("ceData", signature("missing"), function(desc="Unknown stock", check=FALSE, ...){
 	new("ceData", desc=desc)
 })
 
@@ -98,7 +104,7 @@ setMethod("ceData", signature("missing"), function(desc="Unknown stock", ...){
 # IO constructor
 #====================================================================
 
-setMethod("ceData", signature("character"), function(ce, desc="Unknown stock", ...){
+setMethod("ceData", signature("character"), function(ce, desc="Unknown stock", check=FALSE, ...){
 
 	# read CSV files
 	# ToDo
@@ -114,7 +120,11 @@ setMethod("ceData", signature("character"), function(ce, desc="Unknown stock", .
 #	obj <- new("ceData")
 #	names(ce) <- names(obj@ce)
 #	new("ceData", ce=ce, desc=desc)
-	ceData(ce=ce, dec=desc)
+
+  #check
+	if (check) check.fields(ceData(ce=ce, desc=desc))
+
+	ceData(ce=ce, desc=desc)
 })
 
 #====================================================================
@@ -218,10 +228,14 @@ setMethod("rbind2", signature(x="ceData", y="ceData"), function(x,y){
 if (!isGeneric("subset")) setGeneric("subset")
 
 setMethod("subset", signature(x="ceData"), function(x,subset,...){
-	e <- substitute(subset)
+	
+is.Val <- class(x)=="ceDataVal"  
+  e <- substitute(subset)
 	df0 <- ce(x)	
 	r <- eval(e, df0, parent.frame())
-	ceData(df0[r,])
+	res <- ceData(df0[r,])
+if (is.Val) res <- ceDataVal(res)
+return(res)
 })
 
 
