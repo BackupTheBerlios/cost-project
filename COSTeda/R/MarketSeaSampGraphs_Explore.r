@@ -9,7 +9,7 @@
 
                                                        
 #-------------------------------------------------------------------------------
-# Calculation from cs datasets of volume of landings/discards per haul/fd/trip
+# Calculation from cs datasets of volume (weights) of landings/discards per haul/fd/trip
 #-------------------------------------------------------------------------------
 
 
@@ -19,6 +19,7 @@ landisVolumeFun <- function(object,         #csData object
                             timeStrata,     #from hh
                             spaceStrata,    #from hh
                             techStrata,     #from hh 
+                            sampPar=TRUE,   #'sampPar' checks if given species is considered as automatically sampled (if TRUE, sppReg=Par <-> sppReg=All, i.e. includes sppReg="Par" in the analysis )
                             ...){ 
 
 M_ik <- y_ikj <- m_ik <- NULL
@@ -39,8 +40,8 @@ if (missing(species)) {
   un <- unique(as.character(object@sl$spp))
   un <- un[!is.na(un)]  
   if (length(un)>1) {
-    warning("Several species in SL table!! Only the first one will be taken into account!")}
-  species <- un[1]} 
+    warning("Several species in SL table!! All will be taken into account!")}
+  species <- un} 
 
 #restriction of data to specified fraction and species
 capt.sub <- capt.sub[capt.sub$catchCat%in%fraction,]                                                                                                                                              
@@ -73,48 +74,60 @@ if (!is.null(spaceStrata))
  
 
 
-#Number of sampled fishing days by trip, tech,time,space                                                 
-expr1 <- paste(",tabSamp$",c(timeStrata,techStrata,spaceStrata),sep="",collapse="")
-if (expr1==",tabSamp$") 
-  expr1 <- ""   
-              
-expr2 <- paste(",op.sub$",c(timeStrata,techStrata,spaceStrata),sep="",collapse="")
-if (expr2==",op.sub$") 
-  expr2 <- ""      
+#Number of sampled fishing days by trip, tech,time,space                                                               
+expr1 <- paste(",op.sub$",c(timeStrata,techStrata,spaceStrata),sep="",collapse="")
+if (expr1==",op.sub$") 
+  expr1 <- ""      
            
-expr3 <- paste(",tabl1$",c(timeStrata,techStrata,spaceStrata),sep="",collapse="")
-if (expr3==",tabl1$") 
-  expr3 <- ""                 
+expr2 <- paste(",tabl1$",c(timeStrata,techStrata,spaceStrata),sep="",collapse="")
+if (expr2==",tabl1$") 
+  expr2 <- ""                 
 
 
 #M_ik = total number of FOs by fishing day, by trip, by tech,time,space 
-eval(parse('',text=paste("M_ik <- tapply(op.sub$staNum,list(op.sub$trpCode,op.sub$date",expr2,"),function(x) length(unique(x)))",sep="")))
+eval(parse('',text=paste("M_ik <- tapply(op.sub$staNum,list(op.sub$trpCode,op.sub$date",expr1,"),function(x) length(unique(x)))",sep="")))
 
-#m_ik = Number of sampled FOs by fishing day, by trip, by tech,time,space 
-#Fo is considered sampled if foVal=="V" and : catchReg=="All"  &&  sppReg=="All"
-#                                             catchReg==fraction && sppReg=="All"
-#                                             catchReg=="All"  &&  sppReg=="Par"  && species in SL table for the FO and the fraction
-#                                             catchReg==fraction  &&  sppReg=="Par"  && species in SL table for the FO and the fraction 
-if (fraction=="LAN") 
+
+if (fraction=="LAN") {
   fract <- "Lan" 
-else 
-  fract <- "Dis" 
+} else {
+  fract <- "Dis" }
+
+
+  #-----------------------------------------------------------------------------
+  # Sampled weight index (Windex)
+  #-----------------------------------------------------------------------------
+
+    #---------------------------------------------------------------------------
+    # A haul is considered as sampled (weights) for a given species and a given fraction if :
+    #   1) (catchReg=="All") OR (catchReg==frac)
+    #   AND
+    #   2) (sppReg=="All") OR (sppReg=="Par" AND sampPar=TRUE)
+    #---------------------------------------------------------------------------
+
+#hh-index for sampled(1/0)/non sampled(NA) haul (weights) will be the combination of 2 indexes
+indexCat <- indexSpp <- rep(0,nrow(op.sub))
+#indexCat==1 if catReg=="All" or frac
+indexCat[op.sub$catReg%in%c("All",fract)] <- 1
+#indexSpp==1 if sppReg=="All" or if sppReg=="Par" & sampPar==TRUE
+capt.sub$ind <- 1 ; indSpp <- merge(op.sub,unique(capt.sub[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","ind")]),all.x=TRUE)$ind     #indSpp <-> index of hauls with related information in sl for given species and fraction
+indexSpp[op.sub$sppReg=="All" | (op.sub$sppReg=="Par" & sampPar)] <- 1
+#so, Windex = indexCat*indexSpp (sampled haul index)
+Windex <- indexCat*indexSpp
+indZero <- (Windex==1) & (is.na(indSpp))    #indZero : index of sampled hauls with 0 values 
+#finally,...
+Windex[Windex==0] <- NA ; Windex[indZero] <- 0
 
 #'ind2', the valid sampling indicator, is built   
-capt.sub$ind <- 1  
-tabSamp <- merge(op.sub,capt.sub[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","ind")],all.x=TRUE)
-tabSamp$ind[is.na(tabSamp$ind)] <- 0
-tabSamp$ind2 <- tabSamp$ind   #sampling indicator
-tabSamp$ind2[tabSamp$catReg=="All" & tabSamp$sppReg=="All"] <- 1
-tabSamp$ind2[tabSamp$catReg==fract & tabSamp$sppReg=="All"] <- 1
-tabSamp$ind2[tabSamp$catReg=="All" & tabSamp$sppReg=="Par" & tabSamp$ind==1] <- 1
-tabSamp$ind2[tabSamp$catReg==fract & tabSamp$sppReg=="Par" & tabSamp$ind==1] <- 1
-tabSamp$ind2[tabSamp$foVal!="V"] <- 0
+Windex[op.sub$foVal!="V"] <- NA
+op.sub$ind <- Windex
 
-eval(parse('',text=paste("m_ik <- tapply(tabSamp$ind2,list(tabSamp$trpCode,tabSamp$date",expr1,"),sum)",sep="")))          
+
+#m_ik = Number of sampled FOs by fishing day, by trip, by tech,time,space 
+eval(parse('',text=paste("m_ik <- tapply(!is.na(Windex),list(op.sub$trpCode,op.sub$date",expr1,"),sum)",sep="")))          
 
 #essentially to homogenize vectors sizes 
-tabl1 <- merge(tabSamp,aggregate(capt.sub$wt,list(sampType=capt.sub$sampType,
+tabl1 <- merge(op.sub,aggregate(capt.sub$wt,list(sampType=capt.sub$sampType,
                                                   landCtry=capt.sub$landCtry,
                                                   vslFlgCtry=capt.sub$vslFlgCtry,
                                                   year=capt.sub$year,
@@ -127,11 +140,11 @@ tabl1 <- merge(tabSamp,aggregate(capt.sub$wt,list(sampType=capt.sub$sampType,
 names(tabl1)[ncol(tabl1)] <- "wt"    
 tabl1$wt[is.na(tabl1$wt)] <- 0    #this means that species is absent                                            
   
-#ind2 is the sampling indicator in tabl1  
-tabl1 <- tabl1[tabl1$ind2==1,]  
+#ind is the sampling indicator in tabl1 (~Windex) 
+tabl1 <- tabl1[!is.na(tabl1$ind),]  
 
 #y_ikj = Total sampled weight by fishing day, by trip, by tech,time,space   
-eval(parse('',text=paste("y_ikj <- tapply(tabl1$wt,list(tabl1$trpCode,tabl1$date",expr3,"),sum,na.rm=TRUE)",sep="")))
+eval(parse('',text=paste("y_ikj <- tapply(tabl1$wt,list(tabl1$trpCode,tabl1$date",expr2,"),sum,na.rm=TRUE)",sep="")))
   
 #y_ikj_hat = Weight of each sample by fishing day and by trip                                                                                          
 y_ikj_hat <- split(tabl1$wt,paste(tabl1$trpCode,tabl1$date,sep=":-:"),drop=TRUE)
@@ -146,9 +159,14 @@ y_IK <- M_ik*y_ikj/m_ik
 ll <- sum(!is.null(techStrata),!is.null(timeStrata),!is.null(spaceStrata))
 indic <- ll+2
 val <- expand.grid(dimnames(y_IK)[1:indic])
-valChar <- apply(val[,-2,drop=FALSE],1,function(x) paste(as.character(x),collapse=":-:"))    
-MAT <- array(valChar,dim=dim(y_IK))
-MAT[is.na(y_IK)] <- NA
+#  valChar <- apply(val[,-2,drop=FALSE],1,function(x) paste(as.character(x),collapse=":-:"))    
+#  MAT <- array(valChar,dim=dim(y_IK))
+#  MAT[is.na(y_IK)] <- NA
+valChar <- apply(val[!is.na(y_IK),-2,drop=FALSE],1,function(x) paste(as.character(x),collapse=":-:")) 
+MAT <- array(y_IK,dim(y_IK))
+MAT[!is.na(MAT)] <- valChar
+
+
 
 #y_ik_hat = Raised Weight for each fishing day by trip   
 y_ik_hat <- split(y_IK,MAT,drop=TRUE) 
@@ -430,6 +448,7 @@ setGeneric("landisVol", function(object,
                                  strDef,                                   
                                  species,
                                  fraction="LAN",
+                                 sampPar=TRUE,
                                  ...){
 	standardGeneric("landisVol")
 })
@@ -441,9 +460,10 @@ setGeneric("landisVol", function(object,
 setMethod("landisVol", signature("csData","missing"), function(object,
                                                                species,         
                                                                fraction="LAN",  #or "DIS"
+                                                               sampPar=TRUE,
                                                                ...){ 
 
-landisVolumeFun(object,species=species,fraction=fraction,timeStrata=NA,spaceStrata=NA,techStrata=NA)
+landisVolumeFun(object,species=species,fraction=fraction,timeStrata=NA,spaceStrata=NA,techStrata=NA,sampPar=sampPar)
 
 })
 
@@ -452,9 +472,10 @@ setMethod("landisVol", signature("csData","strIni"), function(object,
                                                               strDef,
                                                               species,         
                                                               fraction="LAN",  #or "DIS"
+                                                              sampPar=TRUE,
                                                               ...){ 
 
-landisVolumeFun(object,species=species,fraction=fraction,timeStrata=strDef@timeStrata,spaceStrata=strDef@spaceStrata,techStrata=strDef@techStrata)
+landisVolumeFun(object,species=species,fraction=fraction,timeStrata=strDef@timeStrata,spaceStrata=strDef@spaceStrata,techStrata=strDef@techStrata,sampPar=sampPar)
 
 })
 
