@@ -102,7 +102,12 @@ if (!is.null(result)) {
 if (!is.null(result)) {
   rownames(result) <- 1:nrow(result) 
 #levels of mod field are redefined (ordered) 
-  num <- suppressWarnings(as.numeric(as.character(result$mod)))
+    #to prevent wrong numerical testing (ex for 'rect' :"37E9")                 #modif 08/09/2008
+    modal <- gsub("E","p",as.character(result$mod))                             #
+    modal <- gsub("e","p",modal)                                                #
+    modal <- gsub("D","p",modal)                                                #
+    modal <- gsub("d","p",modal)                                                #
+  num <- suppressWarnings(as.numeric(modal))
   lev <- c(as.character(unique(sort(num[!is.na(num)]))),         #numerical modalities are sorted numerically
            unique(sort(as.character(result$mod)[is.na(num)])))   #character modalities are sorted
   result$mod <- factor(result$mod,levels=lev)
@@ -156,7 +161,12 @@ if (!is.null(result)) {
 if (!is.null(result)) {
   rownames(result) <- 1:nrow(result) 
   #levels of mod field are redefined (ordered) 
-  num <- suppressWarnings(as.numeric(as.character(result$mod)))
+      #to prevent wrong numerical testing (ex for 'rect' :"37E9")                 #modif 08/09/2008
+    modal <- gsub("E","p",as.character(result$mod))                             #
+    modal <- gsub("e","p",modal)                                                #
+    modal <- gsub("D","p",modal)                                                #
+    modal <- gsub("d","p",modal)                                                #
+  num <- suppressWarnings(as.numeric(modal))
   lev <- c(as.character(unique(sort(num[!is.na(num)]))),         #numerical modalities are sorted numerically
            unique(sort(as.character(result$mod)[is.na(num)])))   #character modalities are sorted
   result$mod <- factor(result$mod,levels=lev)
