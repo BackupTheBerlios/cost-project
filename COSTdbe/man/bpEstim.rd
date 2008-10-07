@@ -4,16 +4,18 @@
 \docType{methods}
 \title{Analytical estimates of biological parameters}
 \description{
-This method implements analytical estimates of empirical weight-at-length, maturity-at-length, sex-ratio-at-length and variances. The needed parameters are from input 'dbeOutput' slots. 
+This method implements analytical estimates of empirical weight-at-length/age, maturity-at-length/age, sex-ratio-at-length/age and variances. The needed parameters are from input 'dbeOutput' slots. 
 }                                                                                                                                           
 
 \usage{
-bpEstim(dbeOutput,object,\dots)
+bpEstim(dbeOutput,object,adjust=TRUE,\dots)
 }
 
 \arguments{
   \item{dbeOutput}{A \emph{dbeOutput} object.}
   \item{object}{A \emph{csDataCons} object.}
+  \item{adjust}{Logical. If FALSE, length distribution in \emph{object}'s CA table is supposed to be representative of the catch (all calculations are made within CA). 
+If TRUE (default value), previous assumption is rejected, and estimates-at-age are calculated by injecting \emph{object}'s HL information.}
   \item{...}{Further arguments.}
 }
 
@@ -33,7 +35,7 @@ dbeOutput <- dbeObject(desc="My object",species="Solea solea",param="weight",
                        strataDesc=strDef,methodDesc="analytical")
 
 lWeight <- bpEstim(dbeOutput,object)
-#graphic
+#graph
 dbePlot(lWeight,Slot="lenStruc",step=10,ylab="Mean weight (g)")
 
 }
