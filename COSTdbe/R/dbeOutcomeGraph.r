@@ -85,6 +85,11 @@ if (all(is.na(tab$time))) timeStrata <- FALSE
 if (all(is.na(tab$space))) spaceStrata <- FALSE
 if (all(is.na(tab$technical))) techStrata <- FALSE
 
+#we get rid of unused levels
+if (timeStrata) tab$time <- factor(tab$time)
+if (spaceStrata) tab$space <- factor(tab$space)
+if (techStrata) tab$technical <- factor(tab$technical)
+
 #indicates if Slot is in c("nSamp","nMes","totalN","totalNvar","totalW","totalWvar") or in c("lenStruc","lenVar","ageStruc","ageVar") 
 lStruc <- Slot%in%c("lenStruc","lenVar","ageStruc","ageVar")
 vrbl <- ""
@@ -113,7 +118,7 @@ if (is.null(dots$xlab)) dots$xlab <- vrbl
 if (is.null(dots$ylab)) dots$ylab <- Slot
 tstSp <- !is.na(object@species)
 tstCat <- !is.na(object@catchCat)
-if (is.null(dots$main)) dots$main <- paste("\"dbeOutput\" graph of '",Slot,"' slot \n",
+if (is.null(dots$main)) dots$main <- paste("'",Slot,"' slot estimates \n",
     paste(c("for ",paste("\"",object@species,"\" species",sep="")," and ",
     paste("\"",object@catchCat,"\" fraction",sep=""))[c(tstSp|tstCat,tstSp,tstSp&tstCat,tstCat)],collapse=""),sep="")   
 
@@ -170,7 +175,7 @@ eval(parse('',text=paste(plotFun,"(value ~ ",Xstratum,paste("|",paste(newStr,col
   ",key=list(points=list(pch=15,cex=dots$k.cex,col=strip.col[1:length(newStr)]),text=list(newSTR),space=\"right\",font=dots$font.lab,columns=1,border=TRUE)"[dispKey & !nTst],
   ")",sep=""))) 
 
-}
+}                
 })
 
           
@@ -202,3 +207,4 @@ eval(parse('',text=paste(plotFun,"(value ~ ",Xstratum,paste("|",paste(newStr,col
 
 
 
+    
