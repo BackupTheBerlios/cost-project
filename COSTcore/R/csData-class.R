@@ -79,7 +79,7 @@ valcsData <- function(object){
 	# check data integrity
 	if(checkDataIntegrity(tr[,1:6], hh[,1:6])==FALSE) stop("Data integrity problem in table \"hh\". Missing related records in \"tr\".")
 	if(checkDataIntegrity(hh[,1:7], sl[,1:7])==FALSE) stop("Data integrity problem in table \"sl\". Missing related records in \"hh\".")
-	if(checkDataIntegrity(sl[,1:13], hl[,c(1:13)])==FALSE) stop("Data integrity problem in table \"hl\". Missing related records in \"sl\".")
+	if(checkDataIntegrity(sl[,1:14], hl[,1:14])==FALSE) stop("Data integrity problem in table \"hl\". Missing related records in \"sl\".")   #modif 23/10/08
 	if(checkDataIntegrity(tr[,1:6], ca[,1:6])==FALSE) stop("Data integrity problem in table \"ca\". Missing related records in \"tr\".")
 
 	# Everything is fine
