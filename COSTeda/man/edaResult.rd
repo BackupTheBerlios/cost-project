@@ -74,7 +74,8 @@ Most often it can be called by a plotting procedure (e.g \emph{plot} or \emph{bo
  \tab \tab techStrata \tab \code{character} \tab Technical stratification field. \cr
  \tab \tab Mm \tab \code{multinomial} \tab A \pkg{nnet} package object resulting from \cr
                        \tab \tab \tab \tab \emph{multinom} procedure. \cr
- \tab \tab dat \tab \code{data.frame} \tab Age-at-Length data for specified stratification. \cr
+ \tab \tab dat \tab \code{data.frame} \tab Age-at-Length data for specified stratification. Predictors used in model formula expression were taken from this table. \cr
+ \tab \tab age \tab \code{matrix} \tab Extract of \emph{dat} table. Response matrix used in model formula expression. \cr
 }}
 
 \author{Mathieu Merzereaud}

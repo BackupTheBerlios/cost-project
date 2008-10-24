@@ -22,6 +22,12 @@ ageLenMulti(data,strDef,elmts=list(tp="all",sp="all",tc="all"),age.plus=-1,\dots
   \item{...}{Further arguments.}
 }
 
+\details{
+Output object can then be called by \emph{plot} method to display fitted result (see \code{plot.edaResult}). 
+Furthermore, response matrix (\emph{outPut@age} element) and predictors (in \emph{outPut@dat} table) called by \emph{multinom} formula expression are provided. 
+Considering this output as the full multinomial log-linear model, various strata effects studies can then be achieved from this using multinomial nested models or/and contrasts redefinition.    
+}
+
 \references{Gerritsen, H.D., McGrath, D., and Lordan, C. (2006)
 \emph{A simple method for comparing age-length keys reveals significant regional 
 differences within a single stock of haddock (Melanogrammus aeglefinus)}. ICES Journal of Marine Science, 63: 1096-1100.

@@ -1,6 +1,6 @@
 \name{GraphsPar}
 \alias{GraphsPar} 
-\alias{GP}
+\alias{gp}
 \docType{data}
 \title{Default graphical parameters for plotting procedures from "COSTeda" package.}
 \description{
@@ -8,7 +8,7 @@ List of default graphical parameters used for \pkg{COSTeda} plotting procedures.
 }
 \usage{GraphsPar}
 \format{
-Components of \emph{GP} graphical parameters list:
+Components of \emph{gp} graphical parameters list:
 \tabular{rll}{
 l.col \tab character \tab Color(s) of lines \cr
 l.lwd \tab numeric \tab Heaviness of lines \cr

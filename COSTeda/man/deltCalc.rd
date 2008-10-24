@@ -10,7 +10,7 @@ It requires a \emph{csData/csDataVal} object built from \pkg{COSTcore} package. 
 }
 
 \usage{
-deltCalc(data,strDef,species,fraction="LAN",strategy="metier",indSamp=FALSE,\dots)
+deltCalc(data,strDef,species,fraction="LAN",strategy="metier",indSamp=TRUE,\dots)
 }
 
 \arguments{
@@ -37,7 +37,7 @@ deltCalc(data,strDef,species,fraction="LAN",strategy="metier",indSamp=FALSE,\dot
 \examples{
 data(sole)
 strD <- strIni(timeStrata="quarter",techStrata="commCat")
-obj <- deltCalc(sole.cs,strD,"Solea solea",strategy="cc",indSamp=TRUE)
+obj <- deltCalc(sole.cs,strD,"Solea solea",strategy="cc")
 
 }
 \keyword{methods}
