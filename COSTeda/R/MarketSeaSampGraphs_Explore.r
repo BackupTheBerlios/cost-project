@@ -126,6 +126,7 @@ op.sub$ind <- Windex
 #m_ik = Number of sampled FOs by fishing day, by trip, by tech,time,space 
 eval(parse('',text=paste("m_ik <- tapply(!is.na(Windex),list(op.sub$trpCode,op.sub$date",expr1,"),sum)",sep="")))          
 
+
 #essentially to homogenize vectors sizes 
 tabl1 <- merge(op.sub,aggregate(capt.sub$wt,list(sampType=capt.sub$sampType,
                                                   landCtry=capt.sub$landCtry,
@@ -138,10 +139,16 @@ tabl1 <- merge(op.sub,aggregate(capt.sub$wt,list(sampType=capt.sub$sampType,
                all.x=TRUE)                
 
 names(tabl1)[ncol(tabl1)] <- "wt"    
-tabl1$wt[is.na(tabl1$wt)] <- 0    #this means that species is absent                                            
+tabl1$wt[is.na(tabl1$wt)] <- 0    #this means that species is absent (or not sampled)                                            
   
 #ind is the sampling indicator in tabl1 (~Windex) 
 tabl1 <- tabl1[!is.na(tabl1$ind),]  
+
+#ADDED 10/10/2008 : if 'aggLev' = J, all FOs are considered to be sampled,so M_ik data is put in m_ik for these trips ###############################################################
+comma <- paste(rep(",",length(dim(M_ik))-2),collapse="",sep="")                                                                                                                     #
+if (any(tabl1$aggLev%in%"J")) {                                                                                                                                                     #
+ eval(parse('',text=paste("m_ik[as.character(tabl1$trpCode)[tabl1$aggLev%in%\"J\"],",comma,"] <- M_ik[as.character(tabl1$trpCode)[tabl1$aggLev%in%\"J\"],",comma,"]",sep="")))      #
+}                                                                                                                                                                                   #
 
 #y_ikj = Total sampled weight by fishing day, by trip, by tech,time,space   
 eval(parse('',text=paste("y_ikj <- tapply(tabl1$wt,list(tabl1$trpCode,tabl1$date",expr2,"),sum,na.rm=TRUE)",sep="")))
@@ -210,9 +217,9 @@ index <- c(timeStrata,techStrata,spaceStrata)
 
 data(GraphsPar,envir=environment())                                                                                                       
 dots <- list(...)
-sapply(names(GP),function(x) 
+sapply(names(gp),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+                    eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
   dots$xlab <- "Trip Code" 
 if (is.null(dots$ylab)) 
@@ -251,7 +258,7 @@ strip.col <- trellis.par.get("strip.background")$col
 if (is.null(groups)) {
           
   eval(parse('',text=paste("print(xyplot(bb~trp|",paste(index,collapse="*"),",data=df,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),",
-                           "ylab=list(dots$ylab,font=dots$font.lab),par.strip.text=list(font=dots$font.lab),scales=list(font=dots$font.axis,x=list(relation=\"free\",rot=dots$rot)),",
+                           "ylab=list(dots$ylab,font=dots$font.lab),par.strip.text=list(font=dots$font.lab),scales=list(font=dots$font.axis,x=list(relation=\"free\",rot=dots$rot,cex=dots$cex.lab[1])),",
                            "key=list(points=list(pch=15,cex=dots$p.cex[1],col=strip.col[1:length(index)]),text=list(index),font=dots$font.lab,columns=1,border=TRUE,space=\"right\"),",
                            "prepanel=function(x,y,...){x <- x[,drop=TRUE] ; prepanel.default.xyplot(x,y,...)},",
                            "panel = function(x,y,...){x <- x[,drop=TRUE] ; panel.xyplot(x,y,pch=dots$pch[1],fill=dots$p.bg[1],cex=dots$p.cex[1],col=dots$col[1],...)}))",sep="")))
@@ -265,7 +272,7 @@ if (is.null(groups)) {
   groups <- eval(parse('',text=groups))
 
   eval(parse('',text=paste("print(xyplot(bb~trp",paste("|",paste(indexStr,collapse="*"),sep="")[l1>0],",data=df,groups=",groups,",main=list(dots$main,font=dots$font.main),",
-                           "xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),scales=list(font=dots$font.axis,x=list(relation=\"free\",rot=dots$rot)),",
+                           "xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),scales=list(font=dots$font.axis,x=list(relation=\"free\",rot=dots$rot,cex=dots$cex.lab[1])),",
                            "key=list(points=list(pch=c(rep(dots$pch[1],l2),NA,",c("rep(15,l1)","NA")[c((l1>0),(l1==0))],"),fill=dots$p.bg[1:l2],cex=dots$p.cex[1],lwd=dots$p.lwd[1],",
                            "col=c(rep(dots$col[1],l2),NA",",strip.col[1:l1]"[l1>0],")),text=list(c(LEV,\"\",\"",paste(indexStr,collapse="\",\""),"\")),title=\"",groups,"\",",
                            "cex.title=0.8,space=\"right\",font=dots$font.lab,columns=1,border=TRUE),par.strip.text=list(font=dots$font.lab),",
@@ -284,6 +291,13 @@ if (is.null(groups)) {
 #-------------------------------------------------------------------------------
 
 fdBoxplot <- function(x,...){       
+
+stratas <- c("timeStrata","techStrata","spaceStrata")
+timeStrata <- x@outPut$timeStrata
+techStrata <- x@outPut$techStrata
+spaceStrata <- x@outPut$spaceStrata 
+
+index <- c(timeStrata,techStrata,spaceStrata)
   
 data(GraphsPar,envir=environment())                                                                                                        
 dots <- list(...)
@@ -291,29 +305,61 @@ dots <- list(...)
 if (is.null(dots$pch)) 
   dots$pch <- 19
 
-sapply(names(GP),function(x) 
+sapply(names(gp),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+                    eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
   dots$xlab <- "Trip Code" 
 if (is.null(dots$ylab)) 
   dots$ylab <- "Weight (g)" 
-if (is.null(dots$main)) 
-  dots$main <- paste("Weight by Fishing Day for each Trip\nSpecies :",
-                     paste(x@outPut$species,collapse=", "),"    Fraction :",paste(x@outPut$fraction,collapse=", "))
 
-obj <- x@outPut$VolFD_TR 
-names(obj) <- sapply(names(x@outPut$VolFD_TR),function(x) strsplit(x,":-:")[[1]][1])    
-vec <- unlist(x@outPut$VolFD_TR)
-nvec <- unlist(lapply(x@outPut$VolFD_TR,length)) 
-df <- data.frame(aa=rep(names(obj),nvec),bb=vec)
 
-print(bwplot(bb~aa,data=df,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),
-             pch=dots$pch[1],fill=dots$p.bg[1],scales=list(font=dots$font.axis,x=list(rot=dots$rot)),
-             par.settings=list(box.rectangle=list(col=dots$col[1]),box.umbrella=list(col=dots$col[1],lty=dots$lty[1]),
-             plot.symbol=list(col=dots$col[1]))))
+if (all(is.null(timeStrata),is.null(techStrata),is.null(spaceStrata))) {
+
+  if (is.null(dots$main)) 
+    dots$main <- paste("Weight by Fishing Day for each Trip\nSpecies :",
+                       paste(x@outPut$species,collapse=", "),"    Fraction :",paste(x@outPut$fraction,collapse=", "))
+
+  obj <- x@outPut$VolFD_TR 
+  names(obj) <- sapply(names(x@outPut$VolFD_TR),function(x) strsplit(x,":-:")[[1]][1])    
+  vec <- unlist(x@outPut$VolFD_TR)
+  nvec <- unlist(lapply(x@outPut$VolFD_TR,length)) 
+  df <- data.frame(aa=rep(names(obj),nvec),bb=vec)
+
+  print(bwplot(bb~aa,data=df,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),
+               pch=dots$pch[1],fill=dots$p.bg[1],scales=list(font=dots$font.axis,x=list(rot=dots$rot)),
+               par.settings=list(box.rectangle=list(col=dots$col[1]),box.umbrella=list(col=dots$col[1],lty=dots$lty[1]),
+               plot.symbol=list(col=dots$col[1]))))
+
+} else {
+
+  if (is.null(dots$main)) 
+    dots$main <- paste("Weight by Fishing Day for each Trip\nSpecies :",
+                       paste(x@outPut$species,collapse=", "),"    Fraction :",paste(x@outPut$fraction,collapse=", "),"\n",
+                       paste("Time Strata :",timeStrata)[!is.null(timeStrata)],
+                       paste("   Technical Strata :",techStrata)[!is.null(techStrata)],
+                       paste("   Space Strata :",spaceStrata)[!is.null(spaceStrata)])
+                       
+datas <-  x@outPut$VolFD_TR
+df <- as.data.frame(do.call("rbind",lapply(rep(names(datas),lapply(datas,length)), function(x) strsplit(x,":-:")[[1]])))    
+names(df) <- c("trp",timeStrata,techStrata,spaceStrata)
+df$bb <- as.numeric(unlist(datas))
+
+strip.col <- trellis.par.get("strip.background")$col
+
+eval(parse('',text=paste("print(bwplot(bb~trp|",paste(index,collapse="*"),",data=df,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),",
+                          "ylab=list(dots$ylab,font=dots$font.lab),par.strip.text=list(font=dots$font.lab),scales=list(font=dots$font.axis,x=list(relation=\"free\",rot=dots$rot,cex=dots$cex.lab[1])),",
+                          "key=list(points=list(pch=15,cex=dots$p.cex[1],col=strip.col[1:length(index)]),text=list(index),font=dots$font.lab,columns=1,border=TRUE,space=\"right\"),",
+                          "prepanel=function(x,y,...){x <- x[,drop=TRUE] ; prepanel.default.bwplot(x,y,...)},",
+                          "panel = function(x,y,...){x <- x[,drop=TRUE] ; panel.bwplot(x,y,pch=dots$pch[1],fill=dots$p.bg[1],cex=dots$p.cex[1],col=dots$col[1],",
+                          "par.settings=list(box.rectangle=list(col=dots$col[1]),box.umbrella=list(col=dots$col[1],lty=dots$lty[1]),plot.symbol=list(col=dots$col[1])),...)}))",sep="")))
 
 }
+}
+
+
+
+
 
 
 ################################################################################
@@ -331,9 +377,9 @@ data(GraphsPar,envir=environment())
 dots <- list(...)
 if (is.null(dots$rot)) 
   dots$rot <- 0
-sapply(names(GP),function(x) 
+sapply(names(gp),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+                    eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 
 if (is.null(dots$xlab)) 
   dots$xlab <- "Fishing day" 
@@ -348,7 +394,7 @@ mat <- t(sapply(names(x@outPut$MeanFO_FDTR),function(x) strsplit(x,":-:")[[1]]))
 df <- data.frame(trpCode=mat[,1],date=mat[,2],Fday=as.numeric(unlist(tapply(mat[,1],list(mat[,1]),function(x) 1:length(x)))),val=as.numeric(x@outPut$MeanFO_FDTR))
    
 print(xyplot(val~Fday|trpCode,data=df,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),
-             scales=list(font=dots$font.axis,x=list(rot=dots$rot)),par.strip.text=list(font=dots$font.lab),
+             scales=list(font=dots$font.axis,x=list(rot=dots$rot,cex=dots$cex.lab[1])),par.strip.text=list(font=dots$font.lab),
              pch=dots$pch[1],fill=dots$p.bg[1],cex=dots$p.cex[1],col=dots$col[1]))
 }
 
@@ -370,9 +416,9 @@ if (is.null(dots$rot))
 if (is.null(dots$pch)) 
   dots$pch <- 19
   
-sapply(names(GP),function(x) 
+sapply(names(gp),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+                    eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
   dots$xlab <- "Fishing day"
 if (is.null(dots$ylab)) 
@@ -394,7 +440,7 @@ df <- data.frame(trpCode=mat[,1],date=mat[,2],Fday=rep(ind1,ind2),val=vec)
 df$Fday <- as.factor(df$Fday)
 
 print(bwplot(val~Fday|trpCode,data=df,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),
-             pch=dots$pch[1],fill=dots$p.bg[1],scales=list(font=dots$font.axis,x=list(rot=dots$rot)),par.strip.text=list(font=dots$font.lab),
+             pch=dots$pch[1],fill=dots$p.bg[1],scales=list(font=dots$font.axis,x=list(rot=dots$rot,cex=dots$cex.lab[1])),par.strip.text=list(font=dots$font.lab),
              par.settings=list(box.rectangle=list(col=dots$col[1]),box.umbrella=list(col=dots$col[1],lty=dots$lty[1]),
              plot.symbol=list(col=dots$col[1]))))
 }
