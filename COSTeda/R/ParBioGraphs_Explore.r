@@ -32,9 +32,9 @@ if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!")
 
 data(GraphsPar,envir=environment())                                                                                                               
 dots <- list(...)
-sapply(names(GP),function(x) 
+sapply(names(gp),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+                    eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
   dots$xlab <- "Length(mm)"
 if (is.null(dots$ylab)) 
@@ -96,9 +96,9 @@ if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!")
 
 data(GraphsPar,envir=environment())                                                                                                                  
 dots <- list(...) 
-sapply(names(GP),function(x) 
+sapply(names(gp),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+                    eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
   dots$xlab <- "Length(mm)" 
 if (is.null(dots$ylab)) 
@@ -163,9 +163,9 @@ if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!")
 
 data(GraphsPar,envir=environment())                                                                                                                  
 dots <- list(...) 
-sapply(names(GP),function(x) 
+sapply(names(gp),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep="")))))
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+                    eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
   dots$xlab <- "Length(mm)"
 if (is.null(dots$ylab)) 
@@ -224,9 +224,9 @@ if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!")
 data(GraphsPar,envir=environment())                                                                                                           
 dots <- list(...)
 if (is.null(dots$pch)) dots$pch <- 20
-sapply(names(GP),function(x) 
+sapply(names(gp),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+                    eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
   dots$xlab <- "Length(mm)" 
 if (is.null(dots$ylab)) 
@@ -250,7 +250,7 @@ bwplot(indWt~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(
 
 
 #########################################
-# boxplot of individual maturity~length #
+# boxplot of individual length~maturity #
 #########################################
 
 
@@ -274,15 +274,15 @@ if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!")
 data(GraphsPar,envir=environment())                                                                                                           
 dots <- list(...)
 if (is.null(dots$pch)) dots$pch <- 20
-sapply(names(GP),function(x) 
+sapply(names(gp),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+                    eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
   dots$xlab <- "Length(mm)"
 if (is.null(dots$ylab)) 
   dots$ylab <- "Maturity"
 if (is.null(dots$main)) 
-  dots$main <- "Boxplot of individual maturity at length"
+  dots$main <- "Boxplot of individual length at maturity"
 
 tab$matStage <- factor(tab$matStage)
 #missing length classes are taken into account
@@ -300,7 +300,7 @@ bwplot(matStage~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=li
 
 
 ####################################
-# boxplot of individual sex~length #
+# boxplot of individual length~sex #
 ####################################
 
 
@@ -322,15 +322,15 @@ if (all(is.na(tab$lenCls))) stop("no length class data in ca table!!")
 data(GraphsPar,envir=environment())                                                                                                                  
 dots <- list(...)
 if (is.null(dots$pch)) dots$pch <- 20
-sapply(names(GP),function(x) 
+sapply(names(gp),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+                    eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab))
   dots$xlab <- "Length(mm)"
 if (is.null(dots$ylab)) 
   dots$ylab <- "Sex"
 if (is.null(dots$main)) 
-  dots$main <- "Boxplot of individual sex at length"
+  dots$main <- "Boxplot of individual length at sex"
 
 tab$sex <- factor(as.character(tab$sex),exclude="U")
 #missing length classes are taken into account
