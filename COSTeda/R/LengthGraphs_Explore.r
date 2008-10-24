@@ -99,7 +99,7 @@ deltCalcFun <- function(object,
                         timeStrata,
                         spaceStrata,
                         techStrata,
-                        indSamp=FALSE,
+                        indSamp=TRUE,
                         ...){
 
 nbTot_Lg <- WkvTot <- DELTA <- Delta <- NkMatrix <- WkMatrix <- SampDeltaMat <- NULL 
@@ -116,7 +116,7 @@ if (is.na(techStrata)) techStrata <- NULL
 #all information that we need is in tabHL (hh,sl,hl info)
 tabHL <- UE.proc(object,species)$hlslhh 
 #restriction to specified catch category
-if (fraction!="all")  tabHL <- tabHL[tabHL$catchCat==fraction,]
+if (fraction!="all")  tabHL <- tabHL[tabHL$catchCat%in%fraction,]
  
 #measured numbers are raised to sample-level
 tabHL$Number <- tabHL$lenNum*(tabHL$wt/tabHL$subSampWt)
@@ -195,7 +195,7 @@ if (!Ntc) {
 }
 
 
-#stratfication fields are converted to factors 
+#stratification fields are converted to factors 
 if (!Ntp) {
   tempS <- factor(tabHL[,timeStrata])
   #modification of levels to sort numerical value correctly
@@ -299,10 +299,14 @@ if (!indSamp) {
                            "as.character(tabHL[,techStrata])"[!Ntc]),collapse=",",sep=""),"),function(x) progint(x,1,tabHL))",sep="")))
   
   #Delta information is transfered into a more friendly object --> DeltaMatrix
-  DeltaMatrix <- array(0,dim=c(length(levels(tabHL$Length)),dim(Delta)),dimnames=unlist(list(list(levels(tabHL$Length)),dimnames(Delta)),recursive=FALSE))
-  index <- apply(expand.grid(dimnames(Delta)),1,function(x) paste("\"",x,"\"",collapse=",",sep=""))
-  invisible(sapply(index,function(x) eval(parse('',text=paste("if (!is.null(Delta[",index,"][[1]])) DeltaMatrix[,",index,"] <<- Delta[",index,"][[1]]",sep="")))))
-
+  if (all(c(Ntp,Nsp,Ntc))) {                                                            # added 08/10/2008
+    DeltaMatrix <- Delta[[1]]                                                           #
+  } else {                                                                              #
+    DeltaMatrix <- array(0,dim=c(length(levels(tabHL$Length)),dim(Delta)),dimnames=unlist(list(list(levels(tabHL$Length)),dimnames(Delta)),recursive=FALSE))
+    index <- apply(expand.grid(dimnames(Delta)),1,function(x) paste("\"",x,"\"",collapse=",",sep=""))
+    invisible(sapply(index,function(x) eval(parse('',text=paste("if (!is.null(Delta[",index,"][[1]])) DeltaMatrix[,",index,"] <<- Delta[",index,"][[1]]",sep="")))))
+  }                                                                                     #
+  
   eval(parse('',text=paste("NkMatrix <- tapply(1:nrow(tabHL),list(",
                            paste(c("as.character(tabHL[,timeStrata])"[!Ntp],"as.character(tabHL[,spaceStrata])"[!Nsp],
                            "as.character(tabHL[,techStrata])"[!Ntc]),collapse=",",sep=""),"),function(x) progint(x,2,tabHL))",sep="")))
@@ -374,7 +378,11 @@ timeStrata <- x@outPut$timeStrata
 spaceStrata <- x@outPut$spaceStrata
 techStrata <- x@outPut$techStrata
 
-
+#elmts list
+if (is.null(elmts$tp)) elmts$tp <-"all"
+if (is.null(elmts$sp)) elmts$sp <-"all"
+if (is.null(elmts$tc)) elmts$tc <-"all"
+elmts <- list(tp=elmts$tp,sp=elmts$sp,tc=elmts$tc)
  
 stra <- c(timeStrata,spaceStrata,techStrata)
 
@@ -387,12 +395,13 @@ if (length(stra)==0) {
  
 object2 <- x@outPut$SampDeltaMat
 
+if (is.null(dots$l.col)) dots$l.col <- "#8CC2FFE6"
 #graphical parameters specification
 data(GraphsPar,envir=environment())                                                                                                                          
 dots <- list(...)
-sapply(names(GP),function(x) 
+sapply(names(gp),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+                    eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
   dots$xlab <- "Sample number"
 if (is.null(dots$ylab)) 
@@ -445,9 +454,9 @@ if (ncol(object)>2) {
 #graphical parameters specification
 data(GraphsPar,envir=environment())                                                                                                                          
 dots <- list(...)
-sapply(names(GP),function(x) 
+sapply(names(gp),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+                    eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
   dots$xlab <- "Sample number"
 if (is.null(dots$ylab)) 
@@ -550,9 +559,9 @@ VecSomme <- w.ku%*%t(Som.djku/Som.wku)
 
 data(GraphsPar,envir=environment())                                                                                                                        
 dots <- list(...)
-sapply(names(GP),function(x) 
+sapply(names(gp),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+                    eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 
 if (is.null(dots$col)) 
   dots$col <- dots$l.col
@@ -614,9 +623,9 @@ if (is.null(dots$p.bg))
 if (is.null(dots$cex.axis)) 
   dots$cex.axis <- 0.8
 
-sapply(names(GP),function(x) 
+sapply(names(gp),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+                    eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
   dots$xlab <- "Length"
 if (is.null(dots$ylab)) 
@@ -684,7 +693,7 @@ setGeneric("deltCalc", function(data,                #cs/cl/ceData or cs/cl/ceDa
                                 species,
                                 fraction="LAN", #or "all" or "DIS"
                                 strategy="metier", #or "cc"
-                                indSamp=FALSE,    
+                                indSamp=TRUE,    
                                 ...){
 
   standardGeneric("deltCalc")
@@ -699,7 +708,7 @@ setMethod("deltCalc", signature("csData","strIni"), function(data,
                                                              species,
                                                              fraction="LAN", #or "all" or "DIS"
                                                              strategy="metier", #or "cc"
-                                                             indSamp=FALSE,       
+                                                             indSamp=TRUE,       
                                                              ...){
 
 deltCalcFun(data,species=species,fraction=fraction,strategy=strategy,timeStrata=strDef@timeStrata,
@@ -716,7 +725,7 @@ setMethod("deltCalc", signature("csDataVal","strIni"), function(data,
                                                                 species,
                                                                 fraction="LAN", #or "all" or "DIS"
                                                                 strategy="metier", #or "cc"
-                                                                indSamp=FALSE,       
+                                                                indSamp=TRUE,       
                                                                 ...){
 
 deltCalcFun(data,species=species,fraction=fraction,strategy=strategy,timeStrata=strDef@timeStrata,
