@@ -119,7 +119,8 @@ result <- list(timeStrata=timeStrata,
                spaceStrata=spaceStrata,
                techStrata=techStrata,
                Mm=Mm,
-               dat=Tab)
+               dat=Tab,
+               age=Age)
 
 return(new("edaResult",desc="alMulti",outPut=result))
 
@@ -142,9 +143,9 @@ plotAlMulti <- function(x,                   #'edaResult' object with desc="alMu
 
 data(GraphsPar,envir=environment())                                                                                                                            
 dots <- list(...)
-sapply(names(GP),function(x) 
+sapply(names(gp),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+                    eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
   dots$xlab <- "Length (mm)"
 if (is.null(dots$ylab)) 
