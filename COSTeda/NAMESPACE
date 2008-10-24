@@ -3,9 +3,9 @@ import("methods","utils","graphics","lattice","nnet")
 importClassesFrom("COSTcore")
 
 importFrom("COSTcore")
-
+           
 export(
-  "check.fields",
+#  "check.fields",
 #  "convert.statsq.lat.lon",
 #  "convert.icesarea.statsq",
 #  "convert.icesarea.lat.lon",
@@ -37,5 +37,6 @@ exportMethods(
   "csPlot.design",
   "cstSummary",
   "disInfo",
-  "spacePlot"
+  "spacePlot",
+  "disCorrPlot"
 )
