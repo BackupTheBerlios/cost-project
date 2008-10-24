@@ -268,16 +268,16 @@ if (is.null(dots$pch))
 if (is.null(dots$rot)) 
   dots$rot <- 0  
 
-sapply(names(GP),function(x) 
+sapply(names(gp),function(x) 
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
-                    eval(parse('',text=paste("dots$",x," <<- GP$",x,sep=""))))
+                    eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 
 if (is.null(dots$xlab)) 
   dots$xlab <- "" 
 if (is.null(dots$ylab)) 
   dots$ylab <- "Frequency" 
 if (is.null(dots$main)) 
-  dots$main <- paste("Relative Rates of \"",paste(c(as.character(tab$vrbl[1]),as.character(tab$vrblA[1])),collapse="\" and \""),"\" variable(s) \nby ",
+  dots$main <- paste("Relative Rates of total \"",paste(c(as.character(tab$vrbl[1]),as.character(tab$vrblA[1])),collapse="\" and \""),"\" value(s) \nby ",
                      paste(unique(as.character(tab$type)),collapse=", ")," Strata",sep="")
 
 
