@@ -26,7 +26,7 @@ function(csobj)
 # tables
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-if(class(csobj)%in%c("csData","csDataVal")!=TRUE) stop("this function only works on a csData object")
+if(class(csobj)%in%c("csData","csDataVal","csDataCons")!=TRUE) stop("this function only works on a csData object")
 
 
 ca6colstring <-apply(csobj@ca[,c(1:6)],1,paste,collapse=".")
@@ -94,6 +94,9 @@ csobj@ca$foCatEu6 <-csobj@tr$foCatEu6[caindex]
 
 return(csobj)
 }
+#----------------------------------
+setGeneric("mergecsData")
+
 #------------end of mergecsData-------------------------------
 
 `.layout.matrix` <-
@@ -193,6 +196,8 @@ data(NHcoast)
 data(landmasses)
 NHcoast$string[24171:24335] <-722
 
+lon <- lat <- NULL  #MM add 27/10/2008 'no visible binding for global variable' 
+
 alllandmasses <-c("africa","andros","anglesey","arran","baliaricsC","baliaricsW","baltic1",
      "baltic2","baltic3","baltic4","bear","cephalonia","chios","corsica",
 "crete","cyprus","dutch1","dutch2","dutch3","dutch4",
@@ -240,6 +245,10 @@ all((substr(x,1,1) %in% numberchars)),
 all((substr(x,2,2) %in% numberchars))
 ))
 }
+#-------------------------------------------------------
+
+#setGeneric("is.statsq")
+
 #--------------end of is.statsq-------------------------
 
 `convert.statsq.lat.lon` <-
@@ -267,7 +276,40 @@ warning("Some stat squares have not been recognised.")
 out <-list(lon=lon,lat=lat)
     return(out)
 }
+#--------------------------------------------------------------
+
+#setGeneric("convert.statsq.lat.lon")
 #-----------------end of convert.statsq.lat.lon----------------
+
+
+convert.lon.lat.statsq <-function (lon, lat) 
+{
+if(any(lat<36)|any(lat>80))stop("lat value out of range")
+if(any(lon<(-44))|any(lon>69))stop("lon value out of range")
+newlat <- cut(lat, seq(35.5, 80.5, 0.5),right=FALSE)
+newlon <- cut(lon, (-44:69),right=FALSE)
+labels <- 0:90
+latlabels <- ifelse(labels < 10, paste("0", labels, sep = ""),
+as.character(labels))
+lonlabels <- c("A0","A1","A2","A3",paste(rep(LETTERS[c(2:8,10:12,13)], rep(10, 11)), rep(0:9,        11), sep = ""))
+    y <- latlabels[as.numeric(newlat)]
+    x <- lonlabels[as.numeric(newlon)]
+    ices <- paste(y, x, sep = "")
+    if (any(is.na(x)) | any(is.na(y))) 
+        warning("Not all points have been matched to an ICES rectangle.")
+    return((ices))
+}
+
+#------------end of convert.lon.lat.statssq---------------
+
+
+
+
+
+
+
+
+
 
 `convert.icesarea.statsq` <-
 function(areas)
@@ -286,14 +328,16 @@ a$statsq <-toupper(as.character(a$statsq))
 a$division <-toupper(as.character(a$division))
 a$subdivision <-toupper(as.character(a$subdivision))
 a$subarea <-toupper(as.character(a$subarea))
-b <-stack(a,select=c(subarea,division,subdivision))
+b <-stack(a,select=c("subarea","division","subdivision"))  # MM added 27/10/2008  'no visible binding for global variable'
 b$statsq <-rep(a$statsq,3)
 statsqs <-as.character(b$statsq[which(!is.na(match(b$values,areas)))])
 parentarea <-as.character(b$values[which(!is.na(match(b$values,areas)))])
 out <-list(statsq=statsqs,parentarea=parentarea)
 return(out)
 }
+#-----------------------------------------------------------------------
 
+#setGeneric("convert.icesarea.statsq")
 #-----------------end of convert.icesarea.statsq------------------------
 
 `convert.icesarea.lat.lon` <-
@@ -304,19 +348,21 @@ function(icesarea)
 # of an ICES area
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 lons <-c(3,3,2.5,-9,-15,-15,-15,-10.5,-19,3,-5,-11,-10.5,-7,-7,-3.5,0,3,-18,-35,-28,-28,-3.5,
--2,-8,-6,-14.25,-14.25,-10,40)
+-2,-8,-6,-14.25,-14.25,-10,40,-12)
 lats <-c(52,55.5,59.5,58,58,53.5,50.5,61.5,67,67,53.75,53.5,50.5,51,49,49.5,50.25,78,72.5,62,54,43,47
-,45,46,44,46,40,40,78)
+,45,46,44,46,40,40,78,61.5)
 areas <-c("IVc","IVb","IVa","VIa","VIb","VIIc","VIIk","Vb","Va","IIa","VIIa","VIIb","VIIj","VIIg",
 "VIIh","VIIc","VIId","IIb","XIVa","XIVb","XII","X","VIIIa","VIIIb","VIIId","VIIIc","VIIIe"
-,"IXb","IXa","I")
+,"IXb","IXa","I","Vb1")
 
 index <-match(icesarea,areas)
 if(any(is.na(index)))warning("some of the ices areas not recognised")
 out <-list(lon=lons[index],lat=lats[index])
 return(out)
 }
+#--------------------------------------
 
+#setGeneric("convert.icesarea.lat.lon")
 #-----------------end of convert.icesarea.lat.lon------------------------
 
 convert.statsq.icesarea <-function(statsqs)
@@ -342,6 +388,8 @@ return(out)
 
 
 #-------------------end of convert.statsq.icesarera
+
+
 `ices.division.lines` <-
 function (division = NULL, area = NULL, lty = 1, col = 1, lwd = 1) 
 {
@@ -570,8 +618,9 @@ lines(c(11.88826,11.88826),c(54.54407,54.17123),lty = lty, col = col, lwd = lwd)
     
 }
 
+#------------------------------------------------------------------------
 
-
+#setGeneric("ices.division.lines")
 #--------------------------end of ices.division.lines-------------------
 
 ices.division.names <-function(text.cex=1)
@@ -590,7 +639,236 @@ c("IVc","IVb","IVa","VIa","VIb","VIIc","VIIk","Vb","Va","IIa","VIIa","VIIb","VII
 ,"IXb","IXa","I"))
 par(cex=1)
 }
+#-----------------------------------------------------------------------
 
+#setGeneric("ices.division.names")
 #-------------end of ices.division.names----------------------------------
+
+subSetSpp <-function(costobj,spp)
+{
+library(COSTcore)
+data(code.list)
+if(spp %in% code.list$spp$X3A_CODE)
+{
+index <-which(code.list$spp$X3A_CODE==spp)
+if(length(index)>1)stop("More than one species for this code, try the scientific name")
+spp <-as.character(code.list$spp$Scientific_name[index] )
+}
+if(class(costobj)=="csData")
+{
+costobj@ca <- costobj@ca[which(costobj@ca$spp==spp),]   
+costobj@hl <- costobj@hl[which(costobj@hl$spp==spp),]
+costobj@sl <- costobj@sl[which(costobj@sl$spp==spp),]
+fishname <-as.character(code.list$spp$English_name[code.list$spp$Scientific_name==spp])
+cat("csData subset by species",fishname,spp,"\n") 
+cat("New data set consists of",length(costobj@hl$spp),"length records","\n") 
+cat("and",length(costobj@ca$spp),"age or maturity records","\n") 
+}
+
+if(class(costobj)=="clData")
+{
+costobj@cl <- costobj@cl[which(costobj@cl$taxon==spp),]   
+fishname <-as.character(code.list$spp$English_name[code.list$spp$Scientific_name==spp])
+cat("clData subset by taxon",fishname,spp,"\n") 
+cat("New data set consists of",length(costobj@cl$taxon),"records","\n") 
+}
+return(costobj)
+}
+
+#-------end of subSetSpp--------------------------------------------
+
+convert.samplingarea.statsq <-function(areacode,samplingarea="Demersal")
+{
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Returns the constituent statsqs of a sampling area
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+x <-areacode
+if (class(x) != "character") x <- as.character(areacode)
+allareas <-c("Demersal","Mackerel","Herring","Nephrops","Scallops","Edible Crab")
+if (!(samplingarea %in% allareas))stop(cat("Sampling area must be one of",allareas,"\n"))
+data(samplingareas)
+a <-samplingareas
+samparea <-subset(a,a$TypeName==samplingarea)
+uniindex <-match(unique(substr(samparea$StatRect,1,4)),substr(samparea$StatRect,1,4))
+samparea <-samparea[uniindex,]
+#index <- match(as.character(samparea$AreaCode),x)
+index <-which(!is.na(match(as.character(samparea$AreaCode),x)))
+ss <-as.character(substr(samparea$StatRect[index],1,4))
+parentarea <-as.character(samparea$AreaCode[index])
+areaname <-as.character(samparea$AreaName[index])
+out <-list(statsq=ss,parentarea=parentarea,parentname=areaname)
+return(out)
+}
+#-------------end of convert.samplingarea.statsq-------------------------
+
+convert.statsq.samplingarea <-function(statsq,samplingarea="Demersal")
+{
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Returns the FRS sampling area of a statsq 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+x <-statsq
+if (class(x) != "character") x <- as.character(statsq)
+allareas <-c("Demersal","Mackerel","Herring","Nephrops","Scallops","Edible Crab")
+if (!(samplingarea %in% allareas))stop(cat("Sampling area must be one of",allareas,"\n"))
+data(samplingareas)
+a <-samplingareas
+samparea <-subset(a,a$TypeName==samplingarea)
+uniindex <-match(unique(substr(samparea$StatRect,1,4)),substr(samparea$StatRect,1,4))
+samparea <-samparea[uniindex,]
+index <- match(x,as.character(substr(samparea$StatRect,1,4)))
+ss <-as.character(substr(samparea$StatRect[index],1,4))
+parentarea <-as.character(samparea$AreaCode[index])
+areaname <-as.character(samparea$AreaName[index])
+out <-list(parentarea=parentarea,parentname=areaname,statsq=ss)
+return(out)
+}
+
+#-------------end of convert.statsq.samplingarea-------------------------
+
+
+demersal.sampling.lines <-function(doarea,nos=FALSE,...)
+{
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Adds FRS demersal sampling area boundaries to a map
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if(missing(doarea))doarea <-c(1:13,40:48,50,60:61,70,93:95)
+#area 02
+lon <-c(-4,1,1,-2,-2,-4,-4)
+lat <-c(62,62,59,59,59.5,59.5,62)
+if(2 %in% doarea)lines(lon,lat,...)
+# area13
+lon <-c(1,4,4,1,1)
+lat <-c(62,62,59.5,59.5,62)
+if(13 %in% doarea)lines(lon,lat,...)
+lon <-c(5.3,4,4,5,5,7,7)
+lat <-c(62,62,58.5,58.5,57.5,57.5,58.1)
+if(13 %in% doarea)lines(lon,lat,...)
+#area05
+lon <-c(0,1,1,4,4,5,5,2,2,0,0)
+lat <-c(59,59,59.5,59.5,58.5,58.5,58,58,57.5,57.5,59)
+if(5 %in% doarea)lines(lon,lat,...)
+#area06
+lon <-c(0,2,2,5,5,3,3,1,1,0,0)
+lat <-c(57.5,57.5,58,58,55.5,55.5,55,55,55.5,55.5,57.5)
+if(6 %in% doarea)lines(lon,lat,...)
+#area07
+lon <-c(5,8,8,8.4,NA,8.2,5,5)
+lat <-c(57.5,57.5,57,57,NA,55.5,55.5,57)
+if(7 %in% doarea)lines(lon,lat,...)
+#area10
+lon <-c(2,3,3,8.3,NA,7.1,3,3,2,2)
+lat <-c(55,55,55.5,55.5,NA,53.5,53.5,54,54,55)
+if(10 %in% doarea)lines(lon,lat,...)
+#area12
+lon <-c(3,7.1,NA,2,2,3,3)
+lat <-c(53.5,53.5,NA,51,52,52,53.5)
+if(12 %in% doarea)lines(lon,lat,...)
+#area 11
+lon <-c(0.1,1,1,3,3,2,2,1)
+lat <-c(53.5,53.5,54,54,52,52,51,51)
+if(11 %in% doarea)lines(lon,lat,...)
+# area8
+lon <-c(-3,0,0,1,1,2,2,1,1,0)
+lat <-c(56,56,55.5,55.5,55,55,54,54,53.5,53.5)
+if(8 %in% doarea)lines(lon,lat,...)
+# area9
+lon <-c(-4,-3,-3,NA,-3,-3,NA,-4,-4)
+lat <-c(59.5,59.5,59,NA,58.94,58.64,NA,58.58,59.5)
+if(9 %in% doarea)lines(lon,lat,...)
+#area4
+lon <-c(-3,-2,-2,0,0,-3,NA,-2,-2,-2.5,-2.5,-3,NA,-3,-3,NA,-3,-3)
+lat <-c(59.5,59.5,59,59,56,56,NA,57.6,58,58,58.5,58.5,NA,58.64,58.94,NA,59,59.5)
+if(4 %in% doarea)lines(lon,lat,...)
+#area40
+lon <-c(-5,-4,-4,NA,-5,-5)
+lat <-c(59.5,59.5,58.5,NA,58.55,59.5)
+if(40 %in% doarea)lines(lon,lat,...)
+#area41 
+lon <-c(-5,-4,-4,-6,-6,-5,-5)
+lat <-c(60.5,60.5,59.5,59.5,60,60,60.5)
+if(41 %in% doarea)lines(lon,lat,...)
+#area60
+lon <-c(-15,-4,-4,-5,-5,-15,-15)
+lat <-c(63,63,60.5,60.5,60,60,63)
+if(60 %in% doarea)lines(lon,lat,...)
+#area61
+lon <-c(-10,-7,-7,-8,-8,-10,-10)
+lat <-c(61.5,61.5,60.5,60.5,60,60,61.5)
+if(61 %in% doarea)lines(lon,lat,...)
+#area42
+lon <-c(-7,-5,-5,-7,-7)
+lat <-c(59.5,59.5,58.5,58.5,59.5)
+if(62 %in% doarea)lines(lon,lat,...)
+#area44
+lon <-c(-10,-8,-8,-7,-7,-8,-8,-10,-10)
+lat <-c(58.5,58.5,59,59,57,57,56,56,58.5)
+if(44 %in% doarea)lines(lon,lat,...)
+# area 48
+lon <-c(-12,-6,-6,-7,-7,-8,-8,-10,-10,-12,-12)
+lat <-c(60,60,59.5,59.5,59,59,58.5,58.5,54.5,54.5,60)
+if(48 %in% doarea)lines(lon,lat,...)
+#area70
+lon <-c(-18,-12,-12,-18,-18)
+lat <-c(60,60,54.5,54.5,60)
+if(70 %in% doarea)lines(lon,lat,...)
+#area94
+lon <-c(-18,-12,-12,-18,-18)
+lat <-c(54.5,54.5,52.5,52.5,54.5)
+if(94 %in% doarea)lines(lon,lat,...)
+#area47
+lon <-c(-10,-6,-6,NA,-8,-10,-10)
+lat <-c(56,56,55,NA,54.5,54.5,56)
+if(47 %in% doarea)lines(lon,lat,...)
+#area93
+lon <-c(-12,-8,NA,-9.5,-12,-12)
+lat <-c(54.5,54.5,NA,52.5,52.5,54.5)
+if(93 %in% doarea)lines(lon,lat,...)
+#area95
+lon <-c(-12,-9.5,NA,-7.6,-5,NA,-2,-2,NA,-4.8,-12,-12)
+lat <-c(52.5,52.5,NA,52,52,NA,50.6,49.5,NA,48,48,52.5)
+if(95 %in% doarea)lines(lon,lat,...)
+#area43
+lon <-c(-7,-5,NA,-5.8,-7,-7)
+lat <-c(58.5,58.5,NA,57.5,57.5,58.5)
+if(43 %in% doarea)lines(lon,lat,...)
+#area46
+lon <-c(-6,-4.8,NA,-5,-6,-6)
+lat <-c(56,56,NA,55,55,56)
+if(46 %in% doarea)lines(lon,lat,...)
+if(nos)
+{
+lonname <-c(-2,2.5,2,4.6,7,2.5,-1,0.5,5,-3.5,-4.5,-4.6,-6,-11,-8.6,2,4,-7,-5,-6,-6.75,-5.25,-8,
+-8.5,-11,-14,-14,-11,-3)
+latname <-c(61,61,58.5,59.75,56.5,56.5,57.5,54.5,54.5,59,59,59.85,59,61.5,60.75,53.25,53,51,53.5,58,56.7,
+55.5,55.5,57.5,58,57.5,53.5,53.5,58)
+strataname <-c("01","02","05","13","07","06","04","08","10","09","40","41","42","60","61","11",
+"12","95","50","43","45","46","47","44","48","70","94","93","03")
+index <-match(doarea,as.numeric(strataname))
+text(lonname[index],latname[index],strataname[index])
+}
+}
+
+#----------------------------------
+
+
+.convert.samplingarea.lat.lon <-function(samparea)
+{
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# function that returns the approx centre 
+# of an sampling area
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+samparea <-as.numeric(as.character(samparea))
+lons <-c(-2,2.5,2,4.6,7,2.5,-1,0.5,5,-3.5,-4.5,-4.6,-6,-11,-8.6,2,4,-7,-5,-6,-6.75,-5.25,-8,
+-8.5,-11,-14,-14,-11,-3)
+lats <-c(61,61,58.5,59.75,56.5,56.5,57.5,54.5,54.5,59,59,59.85,59,61.5,60.75,53.25,53,51,53.5,58,56.7,
+55.5,55.5,57.5,58,57.5,53.5,53.5,58)
+areas <-c("01","02","05","13","07","06","04","08","10","09","40","41","42","60","61","11",
+"12","95","50","43","45","46","47","44","48","70","94","93","03")
+areas <-as.numeric(areas)
+index <-match(samparea,areas)
+if(any(is.na(index)))warning("some of the sampling areas areas not recognised")
+out <-list(lon=lons[index],lat=lats[index])
+return(out)
+}
 
 
