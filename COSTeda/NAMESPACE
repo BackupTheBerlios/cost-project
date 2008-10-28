@@ -5,6 +5,19 @@ importClassesFrom("COSTcore")
 importFrom("COSTcore")
            
 export(
+"convert.statsq.lat.lon",
+"convert.lon.lat.statsq",
+"convert.icesarea.statsq",
+"convert.statsq.icesarea",
+"convert.icesarea.lat.lon",
+"ices.division.lines",
+"ices.division.names",
+"is.statsq",
+"mergecsData",
+"subSetSpp",
+"convert.samplingarea.statsq",
+"convert.statsq.samplingarea",
+"demersal.sampling.lines",
 #  "check.fields",
 #  "convert.statsq.lat.lon",
 #  "convert.icesarea.statsq",
