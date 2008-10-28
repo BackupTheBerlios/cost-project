@@ -16,6 +16,17 @@
 \alias{spacePlot,ceData,character,character,function,missing,character-method}
 \alias{spacePlot,ceDataCons,character,character,function,ANY,ANY-method}
 
+\alias{spacePlot,clDataCons,character,character,function,character,ANY-method}              %
+\alias{spacePlot,clDataCons,character,character,function,character,character-method}        %
+\alias{spacePlot,clDataCons,character,character,function,missing,character-method}          %
+\alias{spacePlot,ceDataCons,character,character,function,character,ANY-method}              %
+\alias{spacePlot,ceDataCons,character,character,function,character,character-method}        % MM added 27/10/2008
+\alias{spacePlot,ceDataCons,character,character,function,missing,character-method}          %
+\alias{spacePlot,csDataCons,character,character,function,ANY,ANY-method}                    %
+\alias{spacePlot,csDataCons,character,character,function,character,ANY-method}              %
+\alias{spacePlot,csDataCons,character,character,function,character,character-method}        %
+\alias{spacePlot,csDataCons,character,character,function,missing,character-method}          %
+
 \alias{spacePlot}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Spatial plotting function}
@@ -45,9 +56,19 @@ spacePlot(costobj, variable, SpaceStrata, func, TimeStrata, TechStrata,\dots)
   \item{variable}{The name of the numeric variable within the specified COST object to be plotted specified as a character string, e.g. "age" . 
   \cr If a COST object is missing a vector of the numeric variable to be plotted.}
   \item{SpaceStrata}{The name of the spatial strata over which \code{variable} is to be grouped specified as a character string. 
-  Options are ICES statistical rectangle "rect", or ICES and FAO areas "area".
+  Options are ICES statistical rectangle "rect", or ICES and FAO areas "area" if a COST object is specified.
   \cr If a COST object is missing a character vector of the same length as \code{variable} specifying the spatial strata. 
-  ICES rectangles have the form "34D2", ICES areas are expressed in Roman numerics e.g. "IVa" and FAO areas in the form "27.4.a".
+  \cr ICES rectangles have the form "34D2" 
+  \cr ICES areas in have the form "IVa"   
+  \cr FAO areas have the form "27.4.a" (FOA area 27 corresponds to ICES areas).
+  \cr GSA areas within the Mediterranean are numbered "G3701" to "G3730". 
+  \cr FRS sampling areas are prefixed with a six letter code the first three being FRS the second three specifying the sampling shceme:
+  \cr    FRSDMS demersal sampling area two digit codes e.g. "FRSDMS05" 
+  \cr    FRSMAC mackerel sampling area two digit codes e.g. "FRSMAC01"   
+  \cr    FRSHER herring sampling area two digit codes e.g. "FRSHER01"
+  \cr    FRSNEP Nephrops sampling area two letter codes e.g. "FRSNEPFL"
+  \cr    FRSSCA scallop sampling area two letter codes e.g. "FRSSCAEC"
+  
   }
   \item{func}{The name of the grouping function to be applied to \code{variable} over \code{SpaceStrata}. This can be any 
   function that can be passed as the \code{func} argument to tapply.
@@ -76,7 +97,7 @@ Other arguments are :                                                  %
   
   \item{plotmap}{Logical. If FALSE plots the map area but omits the "image", "contour", "bubble", or "values".}
   \item{overlay}{Logical. If TRUE adds to the proceeding plot.}
-  \item{ices.divs}{Logical. If TRUE adds ICES division lines.}
+  \item{area.lines}{Logical. If TRUE adds the boundary lines of ICES or FRS demsersal sampling areas.}
   \item{depths}{Vector of the form c(50,100,200,500). Adds the specified depth contour.}
   \item{statrects}{Logical. If TRUE adds ICES statistical rectangle division lines.}
   \item{fcoast}{Logical. If TRUE adds 1:250,000 scale coastline. Not available when landmass=TRUE.}
@@ -189,11 +210,11 @@ statrects=TRUE,nplots=4,maptype="image",landmass=TRUE,col.land="lightgrey",col.t
 %spacePlot(CEFAS2006cl,"landWt","rect",mean,TechStrata="foCatNat",nplots=6)     %
 %par(ask=FALSE)                                                                 %
 
-# IFREMER effort for sole:  number of trips by gear code (DCR level 5) and quarter by FAO area 
-par(ask=TRUE)
-data(sole.ce)
-spacePlot(sole.ce,"trpNum","area",sum,TimeStrata="quarter",TechStrata="foCatEu5",nplots=4)
-par(ask=FALSE)
+%# IFREMER effort for sole:  number of trips by gear code (DCR level 5) and quarter by FAO area 
+%par(ask=TRUE)
+%data(sole)
+%spacePlot(sole.ce,"trpNum","area",sum,TimeStrata="quarter",TechStrata="foCatEu5",nplots=4)
+%par(ask=FALSE)
 
 }
 \keyword{hplot}

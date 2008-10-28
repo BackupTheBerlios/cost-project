@@ -3,6 +3,11 @@
 \alias{landmasses}
 \alias{newcoast}
 \alias{faoAreas}
+\alias{alldepths}
+\alias{finecoast}
+\alias{ICESAreaRects}
+\alias{NHcoast}
+\alias{samplingareas}
 \docType{data}
 \title{Internal datasets for COSTeda package spatial plotting}
 \description{
