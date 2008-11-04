@@ -373,7 +373,7 @@ df <- data.frame(do.call("rbind",lapply(strat,function(X) {
                                           eval(parse('',text=paste("dat <- cbind(val,",paste(strSpl,collapse=","),")",sep="")))
                                           if (is.null(val)) dat <- NULL else names(dat) <- ""    
                                           return(dat)})))
-names(df) <- c("age","lenCls",paste("str",(3:Dim)-2,sep=""))
+if (nrow(df)>0) names(df) <- c("age","lenCls",paste("str",(3:Dim)-2,sep=""))                                                            ############ modified MM : 03/11/2008
 }
 
 Prop <- list()
@@ -503,10 +503,11 @@ strLC <- strLChl(object)
 
     #if type%in%c("fillMiss","sFillMiss","lFillMiss"), 'addIndTab' object in 'val' must be formatted as ca table, and pasted to object@ca
   if (type%in%c("fillMiss","sFillMiss","lFillMiss","sFillAge")) {
+    if (nrow(val$addIndTab)>0) {                                                                                                            #########added MM 04/11/2008
     df <- val$addIndTab ; names(df) <- c("age","lenCls","time"[!indNAtime],"space"[!indNAspace])
     if (any(c(indNAtime,indNAspace))) 
       eval(parse('',text=paste("df$",c("time"[indNAtime],"space"[indNAspace])," <- NA",collapse=";",sep="")))
-    #df must be updated by removing stratified length classes that are not in hl
+    #df must be updated by removing stratified length classes that are not in hl                                      
     #index data frame
     indDF <- expand.grid(dimnames(strLC)) ; indDF <- indDF[strLC,]
     names(indDF) <- c("lenCls","time"[!indNAtime],"space"[!indNAspace])
@@ -524,7 +525,7 @@ strLC <- strLChl(object)
     object@ca <- rbind(object@ca,df) 
     object@ca$age <- as.numeric(as.character(object@ca$age))
     object@ca$lenCls <- as.numeric(as.character(object@ca$lenCls))  
-  }
+  }}
 
 if (preview & postview) {
   cat("\n\n\n\n")
