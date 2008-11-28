@@ -1,3 +1,4 @@
+
 #library(COSTcore)
 #
 #====================================================================
@@ -17,12 +18,16 @@ setClass("dbeOutput",
 		nMes="data.frame",                       #number of individual measures
 		lenStruc="list",                         #estimates of the length structure (param-at-length)
 		lenVar="data.frame",                     #estimates of the variance of '$lenStruc'
+		lenNum="list",                           #further numerical data about length structure (ex: ci, cv) 
 		ageStruc="list",                         #estimates of the age structure (param-at-age)
 		ageVar="data.frame",                     #estimates of the variance of '$ageStruc'
+		ageNum="list",                           #further numerical data about age structure (ex: ci, cv) 
 		totalN="list",                           #estimates of the total number of the parameters
 		totalNvar="data.frame",                  #estimates of the variance of '$totalN'
+		totalNnum="list",                        #further numerical data about total numbers (ex: ci, cv) 
 		totalW="list",                           #estimates of the total weight of the parameters
-		totalWvar="data.frame"                   #estimates of the variance of '$totalW'
+		totalWvar="data.frame",                  #estimates of the variance of '$totalW'
+		totalWnum="list"                         #further numerical data about total weights (ex: ci, cv) 
 	),
 	prototype(
     desc="dbeObject",
@@ -62,6 +67,22 @@ setClass("dbeOutput",
       technical=as.character(NA),
       length=as.character(NA),
       value=as.numeric(NA)),
+    lenNum=list(
+        ci=data.frame(
+          time=as.character(NA),
+          space=as.character(NA),
+          technical=as.character(NA),
+          length=as.character(NA),
+          value=as.numeric(NA),
+          inf=as.numeric(NA),
+          sup=as.numeric(NA)),
+        cv=data.frame(
+          time=as.character(NA),
+          space=as.character(NA),
+          technical=as.character(NA),
+          length=as.character(NA),
+          value=as.numeric(NA))
+        ),    
 		ageStruc=list(
         estim=data.frame(      
           time=as.character(NA),
@@ -83,6 +104,22 @@ setClass("dbeOutput",
       technical=as.character(NA),
       age=as.character(NA),
       value=as.numeric(NA)),
+    ageNum=list(
+        ci=data.frame(
+          time=as.character(NA),
+          space=as.character(NA),
+          technical=as.character(NA),
+          age=as.character(NA),
+          value=as.numeric(NA),
+          inf=as.numeric(NA),
+          sup=as.numeric(NA)),
+        cv=data.frame(
+          time=as.character(NA),
+          space=as.character(NA),
+          technical=as.character(NA),
+          age=as.character(NA),
+          value=as.numeric(NA))
+        ),    
 		totalN=list(
         estim=data.frame(      
           time=as.character(NA),
@@ -101,6 +138,20 @@ setClass("dbeOutput",
       space=as.character(NA),
       technical=as.character(NA),
       value=as.numeric(NA)),
+    totalNnum=list(
+        ci=data.frame(
+          time=as.character(NA),
+          space=as.character(NA),
+          technical=as.character(NA),
+          value=as.numeric(NA),
+          inf=as.numeric(NA),
+          sup=as.numeric(NA)),
+        cv=data.frame(
+          time=as.character(NA),
+          space=as.character(NA),
+          technical=as.character(NA),
+          value=as.numeric(NA))
+        ),    
 		totalW=list(
         estim=data.frame(      
           time=as.character(NA),
@@ -118,7 +169,21 @@ setClass("dbeOutput",
       time=as.character(NA),
       space=as.character(NA),
       technical=as.character(NA),
-      value=as.numeric(NA))
+      value=as.numeric(NA)),
+    totalWnum=list(
+        ci=data.frame(
+          time=as.character(NA),
+          space=as.character(NA),
+          technical=as.character(NA),
+          value=as.numeric(NA),
+          inf=as.numeric(NA),
+          sup=as.numeric(NA)),
+        cv=data.frame(
+          time=as.character(NA),
+          space=as.character(NA),
+          technical=as.character(NA),
+          value=as.numeric(NA))
+        )    
 	)
 )
 
