@@ -21,6 +21,11 @@ dbeCalc(object,type="CI",vrbl="l",probs=c(0.025,0.975),replicates=FALSE,update=F
   \item{...}{Further arguments used as '\emph{quantile} method input parameter (if \code{type="CI"} and besides \code{probs} parameter).}
 }
 
+\details{
+If calculation is made from replicates (see \emph{replicates} parameter), confidence interval is estimated using \emph{quantile} fonction with \emph{probs} and \dots parameters.
+If calculation is made from estimates, normal distribution of total estimates is assumed.
+}
+
 
 \author{Mathieu Merzereaud}
 \seealso{\code{\link{dbeOutput}}, \code{\link{dbePlot}}, \code{\link{quantile}}
