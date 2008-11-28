@@ -35,8 +35,6 @@ dbeOutput <- dbeObject(desc="My object",species="Solea solea",param="weight",
                        strataDesc=strDef,methodDesc="analytical")
 
 lWeight <- bpEstim(dbeOutput,object)
-#graph
-dbePlot(lWeight,Slot="lenStruc",step=10,ylab="Mean weight (g)")
 
 }
 \keyword{methods}
