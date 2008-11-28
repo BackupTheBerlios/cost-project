@@ -22,5 +22,6 @@ exportMethods(
 	"viewGapsAlkCons",
 	"propMissLgthCons",
 	"sampStrDef",
-	"bpEstim"
+	"bpEstim",
+	"dbeCalc"
 )
