@@ -46,5 +46,6 @@ sole.cons <- csDataCons(csDataVal(sole.cs),sole.str)
 sole.dbeOutput <- dbeObject(desc="Results of design based estimates",species="Solea solea",param="weight",strataDesc=sole.str,methodDesc="Bootstrap")
 sole.Weight <- bpBoot(sole.dbeOutput,sole.cons, sample.boot=T)
 }
+
 \keyword{bootstrap}
 
