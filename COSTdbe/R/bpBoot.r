@@ -31,7 +31,6 @@ setMethod("bpBoot", signature("dbeOutput", "csDataCons"),function(dbeOutput,
                                                                   nboot=1000,
                                                                   ...){
 #! Select and format data 
-print(Sys.time())
 As.num <- function(x) as.numeric(as.character(x))
 species <- dbeOutput@species
 if (all(is.na(species))) stop("no species in 'dbeOutput' object!!")  
@@ -258,7 +257,7 @@ if (nrow(age)!=0)
 if (!dbeOutput@methodDesc%in%"bootstrap") warnings("'methodDesc' slot in 'dbeOutput' object will be updated!!")
 dbeOutput@methodDesc <- "bootstrap"
 
-print(Sys.time())  
+
 return(dbeOutput)
   
 })
