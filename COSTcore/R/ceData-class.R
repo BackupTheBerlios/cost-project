@@ -103,12 +103,12 @@ setMethod("ceData", signature("missing"), function(desc="Unknown stock", check=F
 #====================================================================
 # IO constructor
 #====================================================================
-
-setMethod("ceData", signature("character"), function(ce, desc="Unknown stock", check=FALSE, ...){
+  #addition of a default format using colClasses to keep RECTANGLE and SUB_RECTANGLE as character                                                                      
+setMethod("ceData", signature("character"), function(ce, desc="Unknown stock", check=FALSE, defColClasses=c(RECTANGLE="character",SUB_RECTANGLE="character") ...){
 
 	# read CSV files
 	# ToDo
-	ce <- read.csv(ce,...)
+	ce <- read.csv(ce,colClasses=defColClasses,...)
 
 	# check names are correct
 	checkCEnms(ce)
