@@ -1,7 +1,6 @@
 import("methods","utils","graphics","lattice","nnet")
 
 importClassesFrom("COSTcore")
-
 importFrom("COSTcore")
            
 export(
