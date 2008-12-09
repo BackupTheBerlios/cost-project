@@ -49,7 +49,8 @@ setClass("ceData",
 			foCatNat=as.character(NA), # PK
 			foCatEu5=as.character(NA), # PK
 			foCatEu6=as.character(NA), # PK
-			harbour=as.character(NA),
+			harbour=as.character(NA), #PK     #modif MM 01/12/2008 (PK)
+			vslLenCat=as.character(NA), #PK   #modif MM 01/12/2008
 			trpNum=as.numeric(NA),
 			foNum=as.numeric(NA),
 			foDur=as.numeric(NA),
@@ -103,8 +104,9 @@ setMethod("ceData", signature("missing"), function(desc="Unknown stock", check=F
 #====================================================================
 # IO constructor
 #====================================================================
+
   #addition of a default format using colClasses to keep RECTANGLE and SUB_RECTANGLE as character                                                                      
-setMethod("ceData", signature("character"), function(ce, desc="Unknown stock", check=FALSE, defColClasses=c(RECTANGLE="character",SUB_RECTANGLE="character") ...){
+setMethod("ceData", signature("character"), function(ce, desc="Unknown stock", check=FALSE, defColClasses=c(RECTANGLE="character",SUB_RECTANGLE="character"), ...){
 
 	# read CSV files
 	# ToDo
@@ -126,6 +128,7 @@ setMethod("ceData", signature("character"), function(ce, desc="Unknown stock", c
 
 	ceData(ce=ce, desc=desc)
 })
+
 
 #====================================================================
 # Accessor functions
