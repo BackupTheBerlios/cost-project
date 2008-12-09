@@ -215,14 +215,16 @@ setClass("csDataCons",
 			age=as.numeric(NA), # PK
 			fishId=as.numeric(NA), # PK
 			lenCode=as.character(NA),
+			ageMeth=as.character(NA),   #modif MM 01/12/2008
 			plusGrp=as.character(NA),
-			ageMeth=as.character(NA),
+#			ageMeth=as.character(NA),
 			otoWt=as.numeric(NA),
 			otoSide=as.character(NA),
-			indWt=as.numeric(NA),
+			indWt=as.numeric(NA),  
+      matMeth=as.character(NA),    #modif MM 01/12/2008
 			matScale=as.character(NA),
-			matStage=as.character(NA),
-      matMeth=as.character(NA))
+			matStage=as.character(NA))
+#     matMeth=as.character(NA))
 	),
 	validity=valcscData
 )
@@ -654,8 +656,8 @@ if (cc) {                                                                       
     # merge HL and SL by the keyfields to include PSUid, SSUid, TSUid, sorting, time, space and technical stratification in HL
     #---------------------------------------------------------------------------
 
-
-hl <- merge(object@hl,sl[,c("sampType",
+hlSex <- slSex(object@sl,object@hl)                                           #
+hl <- merge(hlSex,sl[,c("sampType",                                             #08/12/2008 modif MM ('sex' as partial key field in SL)  : object@hl <-> hlSex
                      "landCtry",
                      "vslFlgCtry",
                      "year",
@@ -677,6 +679,7 @@ hl <- merge(object@hl,sl[,c("sampType",
                      "SSUid",
                      "TSUid")],sort=FALSE,all.x=TRUE)
 
+hl$sex <- hl$lsex                                                               #08/12/2008 modif MM
 hl <- hl[order(hl$PSUid,hl$SSUid,hl$TSUid),]
 
 
