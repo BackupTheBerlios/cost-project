@@ -12,21 +12,21 @@
 ####################
 # fast 'aggregate' #
 ####################
+slSex <- COSTcore:::slSex
+spdAgreg <- COSTcore:::spdAgreg
 
-
-
-spdAgreg <- function(X,BY,FUN,...){
-FactCar <- sapply(BY,as.character)
-val <- apply(FactCar,1,function(x) paste(x,collapse=":-:"))
-valAg <- aggregate(X,list(val=val),FUN,...)
-tab <- as.data.frame(matrix(unlist(strsplit(as.character(valAg$val),":-:")),ncol=length(BY),byrow=TRUE))
-tab.ag <- data.frame(tab,valAg[,-1])
-namBY <- names(BY) ; namX <- names(X)
-if (is.null(namBY)) namBY <- rep("",length(BY)) ; if (is.null(namX)) namX <- rep("",length(X))
-namBY[namBY==""] <- paste("c.",1:sum(namBY==""),sep="") ; namX[namX==""] <- paste("v.",1:sum(namX==""),sep="")
-names(tab.ag) <- c(namBY,namX)
-return(tab.ag)}
-
+#spdAgreg <- function(X,BY,FUN,...){
+#FactCar <- sapply(BY,as.character)
+#val <- apply(FactCar,1,function(x) paste(x,collapse=":-:"))
+#valAg <- aggregate(X,list(val=val),FUN,...)
+#tab <- as.data.frame(matrix(unlist(strsplit(as.character(valAg$val),":-:")),ncol=length(BY),byrow=TRUE))
+#tab.ag <- data.frame(tab,valAg[,-1])
+#namBY <- names(BY) ; namX <- names(X)
+#if (is.null(namBY)) namBY <- rep("",length(BY)) ; if (is.null(namX)) namX <- rep("",length(X))
+#namBY[namBY==""] <- paste("c.",1:sum(namBY==""),sep="") ; namX[namX==""] <- paste("v.",1:sum(namX==""),sep="")
+#names(tab.ag) <- c(namBY,namX)
+#return(tab.ag)}
+#
 
 
 #################
@@ -58,8 +58,10 @@ slhh <- merge(newsl,hh,by=c("sampType",
                             "trpCode",
                             "staNum"),all=FALSE)
 
-#hl & slhh are merged and subset for specified species
-newhl <- object@hl[object@hl$spp%in%species,]
+#hl & slhh are merged and subset for specified species --> sex field is transformed according to sl$sex values
+Hl <- slSex(object@sl,object@hl)                                                         #
+Hl <- Hl[,-ncol(Hl)]                                                                     #      'lsex' field is removed
+newhl <- Hl[Hl$spp%in%species,]#newhl <- object@hl[object@hl$spp%in%species,]            #modif 09/12/2008
 hlslhh <- merge(newhl,slhh,by=c("sampType",
                                 "landCtry",
                                 "vslFlgCtry",
@@ -403,7 +405,7 @@ sapply(names(gp),function(x)
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
                     eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
-  dots$xlab <- "Sample number"
+  dots$xlab <- "Samples"
 if (is.null(dots$ylab)) 
   dots$ylab <- "Delta values" 
 if (is.null(dots$main)) 
@@ -458,7 +460,7 @@ sapply(names(gp),function(x)
                   if (is.null(eval(parse('',text=paste("dots$",x,sep=""))))) 
                     eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
-  dots$xlab <- "Sample number"
+  dots$xlab <- "Samples"
 if (is.null(dots$ylab)) 
   dots$ylab <- "Delta values" 
 if (is.null(dots$main)) 
