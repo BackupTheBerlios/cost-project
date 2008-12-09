@@ -79,7 +79,7 @@ valcsData <- function(object){
 	# check data integrity
 	if(checkDataIntegrity(tr[,1:6], hh[,1:6])==FALSE) stop("Data integrity problem in table \"hh\". Missing related records in \"tr\".")
 	if(checkDataIntegrity(hh[,1:7], sl[,1:7])==FALSE) stop("Data integrity problem in table \"sl\". Missing related records in \"hh\".")
-	if(checkDataIntegrity(sl[,1:14], hl[,1:14])==FALSE) stop("Data integrity problem in table \"hl\". Missing related records in \"sl\".")   #modif 23/10/08
+	if(checkDataIntegrity(sl[,1:14], slSex(sl,hl)[,1:14])==FALSE) stop("Data integrity problem in table \"hl\". Missing related records in \"sl\".")   #modif 08/12/08 'Sex' field not always a key field in SL
 	if(checkDataIntegrity(tr[,1:6], ca[,1:6])==FALSE) stop("Data integrity problem in table \"ca\". Missing related records in \"tr\".")
 
 	# Everything is fine
@@ -104,11 +104,12 @@ setClass("csData",
 			year=as.numeric(NA), # PK
 			proj=as.character(NA), # PK
 			trpCode=as.character(NA), # PK
-			harbour=as.character(NA),
+#			harbour=as.character(NA),      #modif MM 01/12/2008
 			vslLen=as.numeric(NA), 
 			vslPwr=as.numeric(NA), 
 			vslSize=as.numeric(NA), 
 			vslType=as.character(NA), 
+			harbour=as.character(NA),      #modif MM 01/12/2008
 			foNum=as.numeric(NA), 
 			daysAtSea=as.numeric(NA), 
 			vslId=as.numeric(NA), 
@@ -154,13 +155,13 @@ setClass("csData",
 			proj=as.character(NA), # FK
 			trpCode=as.character(NA), # FK
 			staNum=as.numeric(NA), # FK
-			spp=as.character(NA), # PK 
+			spp=as.character(NA), # PK  
 			catchCat=as.character(NA), # PK 
 			landCat=as.character(NA), # PK 
 			commCatScl=as.character(NA), # PK
 			commCat=as.character(NA), # PK
 			subSampCat=as.character(NA), # PK
-		  sex=as.character(NA), # PK
+ 		  sex=as.character(NA), # ~PK       
 #			valCode=as.character(NA), 
 			wt=as.numeric(NA), 
 			subSampWt=as.numeric(NA), 
@@ -180,7 +181,7 @@ setClass("csData",
 			commCatScl=as.character(NA), # FK
 			commCat=as.character(NA), # FK
 			subSampCat=as.character(NA), # FK
-			sex=as.character(NA), # PK
+			sex=as.character(NA), # ~PK
 			lenCls=as.numeric(NA), # PK
 			lenNum=as.numeric(NA),
 			stringsAsFactors=F),
@@ -207,15 +208,15 @@ setClass("csData",
 			lenCls=as.numeric(NA), # PK
 			age=as.numeric(NA), # PK
 			fishId=as.numeric(NA), # PK
-			lenCode=as.character(NA),
-			plusGrp=as.character(NA),
-			ageMeth=as.character(NA),
-			otoWt=as.numeric(NA),
-			otoSide=as.character(NA),
-			indWt=as.numeric(NA),
-			matScale=as.character(NA),
-			matStage=as.character(NA),
-			matMeth=as.character(NA),
+			lenCode=as.character(NA),           
+			ageMeth=as.character(NA),     #modif MM 01/12/2008     
+			plusGrp=as.character(NA),        
+			otoWt=as.numeric(NA),                         
+			otoSide=as.character(NA),       
+			indWt=as.numeric(NA),             
+			matMeth=as.character(NA),     #modif MM 01/12/2008             
+      matScale=as.character(NA),        
+			matStage=as.character(NA),        
 			stringsAsFactors=F)
 	),
 	validity=valcsData
@@ -366,6 +367,7 @@ setMethod("csData", signature("missing", "missing", "missing", "missing", "missi
 	# create object and name columns properly 
 	new("csData", desc=desc)
 })
+
 
 #====================================================================
 # IO constructor
@@ -699,7 +701,7 @@ isVal <- class(x)=="csDataVal"
   tr <- tr(x)
   hh <- hh(x)
   sl <- sl(x)
-  hl <- hl(x)
+  hl <- slSex(sl,hl(x))     #hl with an artificial 'sex' field to consider 'sex' field in sl as a 'full' key field
   ca <- ca(x)
 
   #-----------------------------------------------------------------------------
@@ -724,16 +726,14 @@ isVal <- class(x)=="csDataVal"
   #part of tr that is linked to hh (ie not linked to ca), and index
   trhh <- tr[!indca,] ; trhh$N <- (1:nrow(tr))[!indca]
 
-
   #-----------------------------------------------------------------------------
   # Specified table is subset according to 'subset' parameter
   #-----------------------------------------------------------------------------
 
 	e <- substitute(subset)
-	df0 <- do.call(table, list(object=x))
+	df0 <- eval(parse('',text=table))#do.call(table, list(object=x))
 	r <- eval(e, df0, parent.frame())
   eval(parse('',text=paste(table, "<- df0[r,]")))
-  
 
   #-----------------------------------------------------------------------------
   # Keyfield indexes according to table hierarchy are defined in Up & Down tables
@@ -761,7 +761,7 @@ isVal <- class(x)=="csDataVal"
   #-----------------------------------------------------------------------------
   # Let's apply the subsetting "loop" 
   #-----------------------------------------------------------------------------
-    
+ 
     indSub <- FALSE
     #first, upward from 'table'...
     subs(table,Up)
@@ -771,11 +771,12 @@ isVal <- class(x)=="csDataVal"
       tr <- rbind.data.frame(trhh,trca)
       tr <- tr[order(tr$N),1:(ncol(tr)-1)]
     }
-    
+ 
     #and finally, downward from "tr" (for consistency)
     subs("tr",Down)
   
-  
+    if (nrow(hl)>0) {hl$sex <- hl$lsex ; hl <- hl[,-ncol(hl)]}                  #modif 08/12/2008 MM
+
   #-----------------------------------------------------------------------------
   # Output
   #-----------------------------------------------------------------------------
@@ -813,13 +814,14 @@ setMethod("subsetSpp", signature(x="csData"), function(x,subset,...){
 
 is.Val <- class(x)=="csDataVal"
   
-  #get idx
-	hlfk <- hl(x)[,c(1:14)]
+  hl <- slSex(sl(x),hl(x))                                                    #08/12/2008 modif MM
+  #get idx                                                                      #
+	hlfk <- hl[,c(1:14)]                                                          #
 	hlfk <- apply(hlfk,1,paste,collapse="")
 	hlfk <- gsub("[[:space:]]","",hlfk)
   
   # new idx
-	e <- substitute(subset)
+	e <- substitute(spp=="Solea solea")
 	df0 <- do.call("sl", list(object=x))
 	r <- eval(e, df0, parent.frame())
 	
@@ -827,7 +829,8 @@ is.Val <- class(x)=="csDataVal"
 	sl <- df0[r,]
 	slidx <- apply(sl[,1:14],1,paste,collapse="")
 	slidx <- gsub("[[:space:]]","",slidx)
-	hl <- hl(x)[hlfk %in% slidx,]	
+	Hl <- hl[hlfk %in% slidx,]	                                                  #08/12/2008 modif MM
+  Hl$sex <- Hl$lsex ; hl <- Hl[,-ncol(Hl)]                                      #
 
 	# output
 	if(nrow(sl)<1) 
