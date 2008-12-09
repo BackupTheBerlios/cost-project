@@ -144,10 +144,10 @@ tabl1$wt[is.na(tabl1$wt)] <- 0    #this means that species is absent (or not sam
 #ind is the sampling indicator in tabl1 (~Windex) 
 tabl1 <- tabl1[!is.na(tabl1$ind),]  
 
-#ADDED 10/10/2008 : if 'aggLev' = J, all FOs are considered to be sampled,so M_ik data is put in m_ik for these trips ###############################################################
+#ADDED 10/10/2008 : if 'aggLev' = T, all FOs are considered to be sampled,so M_ik data is put in m_ik for these trips ###############################################################
 comma <- paste(rep(",",length(dim(M_ik))-2),collapse="",sep="")                                                                                                                     #
-if (any(tabl1$aggLev%in%"J")) {                                                                                                                                                     #
- eval(parse('',text=paste("m_ik[as.character(tabl1$trpCode)[tabl1$aggLev%in%\"J\"],",comma,"] <- M_ik[as.character(tabl1$trpCode)[tabl1$aggLev%in%\"J\"],",comma,"]",sep="")))      #
+if (any(tabl1$aggLev%in%"T")) {                                                                                            #modif 09/12/2008                                                         #
+ eval(parse('',text=paste("m_ik[as.character(tabl1$trpCode)[tabl1$aggLev%in%\"T\"],",comma,"] <- M_ik[as.character(tabl1$trpCode)[tabl1$aggLev%in%\"T\"],",comma,"]",sep="")))      #
 }                                                                                                                                                                                   #
 
 #y_ikj = Total sampled weight by fishing day, by trip, by tech,time,space   
