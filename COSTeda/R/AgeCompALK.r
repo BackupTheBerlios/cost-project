@@ -231,12 +231,12 @@ gpTest <- grps=="nostrata"
   #-----------------------------------------------------------------------------
 
  
-eval(parse('',text=paste("xyplot(value~Length|",paste(c("Age",declStr),collapse="*"),",data = datat, groups = interaction(",grps,",source), type = rep(c(\"p\",\"l\"),each=ll),",
+eval(parse('',text=paste("print(xyplot(value~Length|",paste(c("Age",declStr),collapse="*"),",data = datat, groups = interaction(",grps,",source), type = rep(c(\"p\",\"l\"),each=ll),",
 "main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),par.strip.text=list(font=dots$font.lab),",
-"col=dots$l.col[1:ll],pch=dots$pch[1],cex=dots$p.cex[1],fill=dots$bg,lwd=dots$p.lwd[1],scales=list(font=dots$font.axis),distribute.type = TRUE,page=function(n) {dev.copy(x11) ; if (n==pageNb) dev.off()},",
+"col=dots$l.col[1:ll],pch=dots$pch[1],cex=dots$p.cex[1],fill=dots$bg,lwd=dots$p.lwd[1],scales=list(font=dots$font.axis),distribute.type = TRUE,",#page=function(n) {dev.copy(x11) ; if (n==pageNb) dev.off()},",
 "key=list(points=list(pch=c(rep(dots$pch[1],ll),NA,rep(15,lll+1)),fill=dots$bg,cex=dots$p.cex[1],lwd=dots$p.lwd[1],col=c(dots$l.col[1:ll],NA,strip.col[1:(lll+1)])),",
 "text=list(c(levels(datat$",grps,"),\"\",\"age\",declStr)),title=",c(paste("\"",grps,"\"",sep=""),"NULL")[c(!gpTest,gpTest)],
-",cex.title=0.8,space=show.legend,font=dots$font.lab,columns=1,border=TRUE))",sep="")))
+",cex.title=0.8,space=show.legend,font=dots$font.lab,columns=1,border=TRUE)))",sep="")))
 
 }
   
