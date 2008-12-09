@@ -1,4 +1,14 @@
-		CHANGES IN COSTcore VERSION 1.2-4
+		CHANGES IN COSTcore VERSION 1.2-5
+
+NEW FEATURES
+    o new format for objects based on FF_COST DEF . Version of 20081124. New data files.
+    o handling of cs_sex 'partial' key field issue in validity checks, subsetting,... methods
+    o modification of IO constructors
+DOCUMENTATION
+    o man updated according to new format
+BUG FIXES		
+     
+    CHANGES IN COSTcore VERSION 1.2-4
 
 NEW FEATURES
     o new format for objects according to modified DEF defined during the 2nd COST expert meeting
