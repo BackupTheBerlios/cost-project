@@ -8,12 +8,12 @@
 # need to have 'sampledFO' method from COSTdbe package --> will be inserted in COSTeda package but not exported #
 #                                                                                                               #
 #################################################################################################################
+extCatchCat <- COSTcore:::extCatchCat
 
-
-extCatchCat <- function(x) {
-sapply(x, function(x) substring(as.character(x),1,3))
-}
-
+#extCatchCat <- function(x) {
+#sapply(x, function(x) substring(as.character(x),1,3))
+#}
+#
 
 setGeneric("sampledFO", function(x,species,fraction="LAN",sampPar=TRUE,...){     #'sampPar' checks if given species is considered as automatically sampled (if TRUE, sppReg=Par <-> sppReg=All, i.e. includes sppReg="Par" in the analysis ) 
 	standardGeneric("sampledFO")
@@ -98,7 +98,7 @@ setGeneric("disCorrPlot", function(object,
                                    timeStrata=FALSE,              #
                                    spaceStrata=FALSE,             # stratification
                                    techStrata=FALSE,              #
-                                   reg=TRUE,                      #regression line or not
+                                   reg=TRUE,                      #displayed regression line or not
                                    show.legend="right",
                                    ...){                          #further graphical parameters
 	standardGeneric("disCorrPlot")}
@@ -145,7 +145,7 @@ if (aux=="landings") {
     sampHH$auxVar <- as.numeric(lanVal[apply(sampHH[,c("PSUid","SSUid")],1,paste,collapse=":-:")])
     sampHH$auxVar[is.na(sampHH$auxVar)] <- 0
   } else {
-    TAB <- merge(object@hl,object@sl[,c("PSUid","SSUid","TSUid","spp","sort","sex","wt","subSampWt")],all.x=TRUE,sort=FALSE)
+    TAB <- merge(slSex(object@sl,object@hl),object@sl[,c("PSUid","SSUid","TSUid","spp","sort","sex","wt","subSampWt")],all.x=TRUE,sort=FALSE)     #modif 09/12/2008 object@hl <-> slSex(object@sl,object@hl)
     TAB$nb <- TAB$lenNum*TAB$wt/TAB$subSampWt
     tab <- TAB[(TAB$spp%in%species) & (extCatchCat(TAB$sort)=="DIS"),]
     disVal <- tapply(tab$nb,list(apply(tab[,c("PSUid","SSUid")],1,paste,collapse=":-:")),sum,na.rm=TRUE)
@@ -170,7 +170,7 @@ if (aux=="landings") {
     sampHH$disVol[is.na(sampHH$disVol)] <- 0
     sampHH$auxVar <- sampHH$foDur
   } else {
-    TAB <- merge(object@hl,object@sl[,c("PSUid","SSUid","TSUid","spp","sort","sex","wt","subSampWt")],all.x=TRUE,sort=FALSE)
+    TAB <- merge(slSex(object@sl,object@hl),object@sl[,c("PSUid","SSUid","TSUid","spp","sort","sex","wt","subSampWt")],all.x=TRUE,sort=FALSE)      #modif 09/12/2008 
     TAB$nb <- TAB$lenNum*TAB$wt/TAB$subSampWt
     tab <- TAB[(TAB$spp%in%species) & (extCatchCat(TAB$sort)=="DIS"),]
     disVal <- tapply(tab$nb,list(apply(tab[,c("PSUid","SSUid")],1,paste,collapse=":-:")),sum,na.rm=TRUE)
