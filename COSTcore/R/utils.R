@@ -66,9 +66,14 @@ resample <- function(x, size, replace,...)
 
 
 
-#method for handle 'sex' conditional key field in SL : an artificial field is inserted in HL, matching SL sex field, and true HL sex field is moved down and renamed as 'lsex'
+#method for handle 'sex' conditional key field in SL : an new 'sex' field is inserted in HL, matching SL sex field, and true HL sex field is moved down and renamed as 'lsex'
 slSex <- function(slTab,hlTab) {
-slTab <- slTab[,1:14] ; slTab$lsex <- slTab$sex ; hlTab$N <- 1:nrow(hlTab)
+if (names(slTab)[1]!=names(hlTab)[1]) stop("tables must be consistent!!")
+ind <- NULL
+if (names(slTab)[1]=="sampType") ind <- 1:14 
+if (names(slTab)[1]=="PSUid") ind <- 1:15
+if (is.null(ind)) stop("wrong input tables!!") 
+slTab <- slTab[,ind] ; slTab$lsex <- slTab$sex ; hlTab$N <- 1:nrow(hlTab)
 hlTab <- merge(hlTab,slTab,all.x=TRUE) ; hlTab <- hlTab[order(hlTab$N),-match("N",names(hlTab))]
 sex <- as.character(hlTab$sex) 
 hlTab$sex <- as.character(hlTab$lsex)
@@ -76,7 +81,6 @@ hlTab$lsex <- sex
 rownames(hlTab) <- 1:nrow(hlTab)
 return(hlTab)
 }
-
 
 
 
