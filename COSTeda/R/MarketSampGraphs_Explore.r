@@ -1,11 +1,6 @@
 
 
 
-
-        
-
-
-
 #################################################################################################
 ##                                                                                             ##
 ## Plots of volume of landings and number of fish measured by time, technical and space strata ##
@@ -32,7 +27,9 @@ csRelativeValue <- function(df,Var,timeStrata,spaceStrata,techStrata,Cons=FALSE)
 
 #if df is a validated object...
 if (!Cons) {
-
+  
+  if (Var!="nbInd"){
+  
   HH <- hh(df) 
   #time stratification fields must be added to hh
   HH$month <- sapply(HH$date,function(x) as.numeric(strsplit(x,"-")[[1]][2]))
@@ -65,15 +62,26 @@ if (!Cons) {
                          )  
 
 } else {
-#if df is a consolidated object...
 
-  if (Var=="lenNum") {
-    tab <- hl(df)
-  } else {
-    tab <- sl(df)
-    tab$nbSamp <- 1}
+#Var=="nbInd", so ca table is what we need
+tab <- ca(df)
+tab$nbInd <- 1
+
 }
 
+} else {
+
+#if df is a consolidated object...
+  if (Var=="nbInd") {
+    tab <- ca(df)
+  } else {
+    if (Var=="lenNum") {
+      tab <- hl(df)
+    } else {
+      tab <- sl(df)
+      tab$nbSamp <- 1}
+  }
+}
 
 #internal procedure to calculate and report relative value within specified stratification
 dfRelativeValue <- function(tab,val,field,strat){
@@ -286,7 +294,7 @@ if (is.null(dots$main))
   #-----------------------------------------------------------------------------
 
 
-print(barchart(value~mod|strip,data=tab,scales=list(x=list(relation="free",rot=dots$rot[1]),font=dots$font.axis),main=list(dots$main,font=dots$font.main),
+print(barchart(value~mod|strip,data=tab,scales=list(x=list(relation="free",rot=dots$rot[1],cex=dots$cex.lab[1]),font=dots$font.axis),main=list(dots$main,font=dots$font.main),
                xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),par.strip.text=list(font=dots$font.lab),
                key =list(lines=list(pch=c(15,1)[indG],type=c("p","l")[indG],col=c(dots$p.bg[1],dots$l.col[1])[indG],lwd=c(2,dots$lwd[1])[indG],
                          cex=c(1.2,dots$cex[1])[indG],lty=c(1,dots$lty[1])[indG]),
