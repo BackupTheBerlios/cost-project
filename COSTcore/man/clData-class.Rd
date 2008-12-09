@@ -24,13 +24,16 @@ The creator function "clData" can be called to create objects from this class.
  \tab month \tab \code{numeric} \tab month \cr
  \tab area \tab \code{character} \tab area \cr
  \tab rect \tab \code{character} \tab statistical rectangle \cr 
- \tab spp \tab \code{character} \tab species \cr 
+ \tab subRect \tab \code{character} \tab statistical subrectangle \cr           %added 03/12/2008 MM
+ \tab taxon \tab \code{character} \tab scientific name \cr                      %modified 03/12/2008 MM
  \tab landCat \tab \code{character} \tab landing category \cr 
  \tab commCatScl \tab \code{character} \tab commercial category scale \cr
  \tab commCat \tab \code{character} \tab commercial category \cr
  \tab foCatNat \tab \code{character} \tab fishing operations category, national \cr
  \tab foCatEu5 \tab \code{character} \tab fishing operations category, european level 5 \cr
  \tab foCatEu6 \tab \code{character} \tab fishing operations category, european level 6 \cr
+ \tab harbour \tab \code{character} \tab landing harbour \cr                    %added 03/12/2008 MM 
+ \tab vslLenCat \tab \code{character} \tab vessel length categories \cr         %added 03/12/2008 MM
  \tab unallocCatchWt \tab \code{numeric} \tab unallocated catch weight \cr
  \tab misRepCatchWt \tab \code{numeric} \tab area misreported catch weight \cr
  \tab landWt \tab \code{numeric} \tab official landings weight \cr

@@ -23,9 +23,12 @@ The creator function "ceData" can be called to create objects from this class.
  \tab month \tab \code{numeric} \tab month \cr
  \tab area \tab \code{character} \tab area \cr
  \tab rect \tab \code{character} \tab statistical rectangle \cr 
+ \tab subRect \tab \code{character} \tab statistical subrectangle \cr           %added 03/12/2008 MM
  \tab foCatNat \tab \code{character} \tab fishing operations category, national \cr
  \tab foCatEu5 \tab \code{character} \tab fishing operations category, european level 5 \cr
  \tab foCatEu6 \tab \code{character} \tab fishing operations category, european level 6 \cr
+ \tab harbour \tab \code{character} \tab landing harbour \cr                    %added 03/12/2008 MM 
+ \tab vslLenCat \tab \code{character} \tab vessel length categories \cr         %added 03/12/2008 MM
  \tab trpNum \tab \code{numeric} \tab number of trips \cr
  \tab foNum \tab \code{numeric} \tab number of fishing operations \cr
  \tab foDur \tab \code{numeric} \tab duration of fishing operations \cr

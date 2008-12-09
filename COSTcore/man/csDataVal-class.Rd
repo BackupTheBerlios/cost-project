@@ -25,7 +25,8 @@ The creator function "csDataVal" can be called to create objects from this class
  \tab vslLen \tab \code{numeric} \tab vessel length-over-all \cr 
  \tab vslPwr \tab \code{numeric} \tab vessel power (kw)\cr 
  \tab vslSize \tab \code{numeric} \tab vessel size (GRT)\cr 
- \tab vsType \tab \code{character} \tab vessel type \cr 
+ \tab vslType \tab \code{character} \tab vessel type \cr 
+ \tab harbour \tab \code{character} \tab landing harbour \cr                    %added 03/12/2008 MM 
  \tab foNum \tab \code{numeric} \tab number of fishing operations \cr 
  \tab daysAtSea \tab \code{numeric} \tab effort in days at sea \cr 
  \tab vslId \tab \code{numeric} \tab vessel identifier \cr 
@@ -53,12 +54,13 @@ The creator function "csDataVal" can be called to create objects from this class
  \tab lonFin \tab \code{numeric} \tab longitude of hauling position in decimal degrees \cr
  \tab area \tab \code{character} \tab area \cr
  \tab rect \tab \code{character} \tab statistical rectangle \cr
+ \tab subRect \tab \code{character} \tab statistical subrectangle \cr           %added 03/12/2008 MM
  \tab foDep \tab \code{numeric} \tab fishing operation depth \cr
  \tab waterDep \tab \code{numeric} \tab water depth \cr
  \tab foCatNat \tab \code{character} \tab fishing operations category, national \cr
  \tab foCatEu5 \tab \code{character} \tab fishing operations category, european level 5 \cr
  \tab foCatEu6 \tab \code{character} \tab fishing operations category, european level 6 \cr
- \tab gear \tab \code{character} \tab gear \cr
+% \tab gear \tab \code{character} \tab gear \cr                                 %modified 03/12/2008 MM
  \tab meshSize \tab \code{numeric} \tab mesh size \cr
  \tab selDev \tab \code{character} \tab selectivity device \cr
  \tab meshSizeSelDev \tab \code{numeric} \tab mesh size in selectivity device \cr
@@ -72,12 +74,14 @@ The creator function "csDataVal" can be called to create objects from this class
  \tab trpCode \tab \code{character} \tab trip code \cr
  \tab staNum \tab \code{numeric} \tab station number \cr
  \tab spp \tab \code{character} \tab species \cr 
+% \tab sex \tab \code{character} \tab gender \cr                                 %added 03/12/2008 MM
  \tab catchCat \tab \code{character} \tab catch category \cr 
  \tab landCat \tab \code{character} \tab landing category \cr 
  \tab commCatScl \tab \code{character} \tab commercial category scale \cr
  \tab commCat \tab \code{character} \tab commercial category \cr
  \tab subSampCat \tab \code{character} \tab subsampling category \cr
- \tab valCode \tab \code{character} \tab validity code \cr 
+ \tab sex \tab \code{character} \tab gender \cr                                 %added 08/12/2008 MM
+% \tab valCode \tab \code{character} \tab validity code \cr 
  \tab wt \tab \code{numeric} \tab weight \cr 
  \tab subSampWt \tab \code{numeric} \tab subsample weight \cr 
  \tab lenCode \tab \code{character} \tab length code \cr
@@ -91,12 +95,13 @@ The creator function "csDataVal" can be called to create objects from this class
  \tab trpCode \tab \code{character} \tab trip code \cr
  \tab staNum \tab \code{numeric} \tab station number \cr
  \tab spp \tab \code{character} \tab species \cr 
- \tab sex \tab \code{character} \tab gender \cr 
+% \tab sex \tab \code{character} \tab gender \cr 
  \tab catchCat \tab \code{character} \tab catch category \cr 
  \tab landCat \tab \code{character} \tab landing category \cr 
  \tab commCatScl \tab \code{character} \tab commercial category scale \cr
  \tab commCat \tab \code{character} \tab commercial category \cr
  \tab subSampCat \tab \code{character} \tab subsampling category \cr
+ \tab sex \tab \code{character} \tab gender \cr                                 %added 08/12/2008 MM
  \tab lenCls \tab \code{numeric} \tab length class \cr
  \tab lenNum \tab \code{numeric} \tab frequency at length \cr
  \tab \tab \tab \cr
@@ -119,14 +124,17 @@ The creator function "csDataVal" can be called to create objects from this class
  \tab stock \tab \code{character} \tab stock \cr
  \tab area \tab \code{character} \tab area \cr
  \tab rect \tab \code{character} \tab statistical rectangle \cr
+ \tab subRect \tab \code{character} \tab statistical subrectangle \cr                         %added 03/12/2008 MM
  \tab lenCls \tab \code{numeric} \tab length class \cr
  \tab age \tab \code{numeric} \tab age \cr
  \tab fishId \tab \code{numeric} \tab individual identification \cr
  \tab lenCode \tab \code{character} \tab length code \cr
+ \tab ageMeth \tab \code{character} \tab methodology for estimating the age \cr               %added 03/12/2008 MM
  \tab plusGrp \tab \code{character} \tab plus group \cr
  \tab otoWt \tab \code{numeric} \tab otolith weight \cr
  \tab otoSide \tab \code{character} \tab otolith side \cr
  \tab indWt \tab \code{numeric} \tab individual weight \cr
+ \tab matMeth \tab \code{character} \tab methodology for estimating the maturity stage \cr    %added 03/12/2008 MM
  \tab matScale \tab \code{character} \tab maturity scale \cr
  \tab matStage \tab \code{character} \tab maturity stage \cr
 }
