@@ -110,7 +110,7 @@ setMethod("cstSummary", signature(object="clData"), function(object,
                                                              except=NULL,
                                                              ...){
 dat <- object@cl
-proc.cstSummary(dat,sizeMax,except,1:16)
+proc.cstSummary(dat,sizeMax,except,1:17)
 })
 
 
@@ -121,7 +121,7 @@ setMethod("cstSummary", signature(object="clDataVal"), function(object,
                                                                 except=NULL,
                                                                 ...){
 dat <- object@cl
-proc.cstSummary(dat,sizeMax,except,1:16)
+proc.cstSummary(dat,sizeMax,except,1:17)
 })
 
 
@@ -144,7 +144,7 @@ setMethod("cstSummary", signature(object="ceData"), function(object,
                                                              except=NULL,
                                                              ...){
 dat <- object@ce
-proc.cstSummary(dat,sizeMax,except,1:11)
+proc.cstSummary(dat,sizeMax,except,1:12)
 })
 
 
@@ -155,7 +155,7 @@ setMethod("cstSummary", signature(object="ceDataVal"), function(object,
                                                                 except=NULL,
                                                                 ...){
 dat <- object@ce
-proc.cstSummary(dat,sizeMax,except,1:11)
+proc.cstSummary(dat,sizeMax,except,1:12)
 })
 
 
@@ -223,8 +223,8 @@ if (biopar) {
   if (go) tab <- merge(sl(object),tab,by=c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum"),sort=FALSE,all.x=TRUE)
   if (all(allFields%in%names(tab))) go <- FALSE
 #4th step
-  if (go) tab <- merge(hl(object),tab,by=c("sampType","landCtry","vslFlgCtry","year","proj","trpCode",
-                                           "staNum","spp","catchCat","landCat","commCatScl","commCat","subSampCat"),sort=FALSE,all.x=TRUE)
+  if (go) tab <- merge(slSex(sl(object),hl(object)),tab,by=c("sampType","landCtry","vslFlgCtry","year","proj","trpCode",
+                                           "staNum","spp","catchCat","landCat","commCatScl","commCat","subSampCat","sex"),sort=FALSE,all.x=TRUE)
   TAB <- tab
   if (any(!allFields%in%names(TAB))) stop("some parameters don't match with tables!!") 
   }
