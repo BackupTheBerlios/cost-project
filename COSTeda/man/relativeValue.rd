@@ -24,8 +24,8 @@ An exploratory graphic to compare two objects can be made by applying \emph{plot
 \S4method{relativeValue}{csDataVal,strIni}(data,strDef,field="lenNum",\dots)
 \S4method{relativeValue}{clDataVal,missing}(data,field="landWt",\dots)
 \S4method{relativeValue}{clDataVal,strIni}(data,strDef,field="landWt",\dots)
-\S4method{relativeValue}{csDataVal,missing}(data,field="trpNum",\dots)
-\S4method{relativeValue}{csDataVal,strIni}(data,strDef,field="trpNum",\dots)
+\S4method{relativeValue}{ceDataVal,missing}(data,field="trpNum",\dots)
+\S4method{relativeValue}{ceDataVal,strIni}(data,strDef,field="trpNum",\dots)
 \S4method{relativeValue}{csDataCons,missing}(data,field="lenNum",\dots)
 \S4method{relativeValue}{clDataCons,missing}(data,field="landWt",\dots)
 \S4method{relativeValue}{ceDataCons,missing}(data,field="trpNum",\dots)
@@ -34,7 +34,7 @@ An exploratory graphic to compare two objects can be made by applying \emph{plot
 \arguments{
   \item{data}{An \emph{csDataVal/clDataVal/ceDataVal/csDataCons/clDatacons/ceDataCons} object.}
   \item{strDef}{Optionnal. A \emph{strIni} object. Specified stratification must match with 'data' parameter.}
-  \item{field}{A numerical field from \emph{data} (e.g "lenNum", "wt", "subSampWt" or "nbSamp" (number of samples) for 'cs', 
+  \item{field}{A numerical field from \emph{data} (e.g "lenNum", "wt", "subSampWt" or "nbSamp" (number of samples in sl table) and "nbInd" (number of individuals in ca table) for 'cs', 
   "landWt" for 'cl', or "trpNum" for 'ce').}
   \item{...}{Further arguments.}
 }
