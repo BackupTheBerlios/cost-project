@@ -31,3 +31,53 @@ setMethod("coerceDataFrameColumns", signature("data.frame", "data.frame"), funct
 	object	
 })
 
+
+
+## Added MM 04/12/2008
+#########
+
+# extCatchCat
+extCatchCat <- function(x) {
+sapply(x, function(x) substring(as.character(x),1,3))
+}
+
+# spdAgreg
+spdAgreg <- function(X,BY,FUN,...){
+FactCar <- sapply(BY,as.character)
+val <- apply(FactCar,1,function(x) paste(x,collapse=":-:"))
+valAg <- aggregate(X,list(val=val),FUN,...)
+tab <- as.data.frame(matrix(unlist(strsplit(as.character(valAg$val),":-:")),ncol=length(BY),byrow=TRUE))
+tab.ag <- data.frame(tab,valAg[,-1])
+namBY <- names(BY) ; namX <- names(X)
+if (is.null(namBY)) namBY <- rep("",length(BY)) ; if (is.null(namX)) namX <- rep("",length(X))
+namBY[namBY==""] <- paste("c.",1:sum(namBY==""),sep="") ; namX[namX==""] <- paste("v.",1:sum(namX==""),sep="")
+names(tab.ag) <- c(namBY,namX)
+return(tab.ag)}
+
+# As.num
+As.num <- function(x) as.numeric(as.character(x))
+
+# Need sample function that returns one value if give data with one value x,
+# rather than returning sample of vector 1:x , see help file for sample
+resample <- function(x, size, replace,...)
+  if(length(x) <= 1) { if(!missing(size) && size == 0) x[FALSE] else x
+  } else sample(x, size, replace,...)
+
+
+
+
+#method for handle 'sex' conditional key field in SL : an artificial field is inserted in HL, matching SL sex field, and true HL sex field is moved down and renamed as 'lsex'
+slSex <- function(slTab,hlTab) {
+slTab <- slTab[,1:14] ; slTab$lsex <- slTab$sex ; hlTab$N <- 1:nrow(hlTab)
+hlTab <- merge(hlTab,slTab,all.x=TRUE) ; hlTab <- hlTab[order(hlTab$N),-match("N",names(hlTab))]
+sex <- as.character(hlTab$sex) 
+hlTab$sex <- as.character(hlTab$lsex)
+hlTab$lsex <- sex
+rownames(hlTab) <- 1:nrow(hlTab)
+return(hlTab)
+}
+
+
+
+
+
