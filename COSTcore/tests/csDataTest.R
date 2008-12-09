@@ -21,7 +21,7 @@ setCon()
 zz <- startTest("csDataTest.txt")
 tagTest("csData testing ...")
 
-data(soleData)
+data(soleData)           
 checkRun(sole.cs <- csData(tr=tr[,-1], hh=hh[,-1], sl=sl[,-1], hl=hl[,-1], ca=ca[,-1]))
 checkTrue(is(sole.cs, "csData"))
 

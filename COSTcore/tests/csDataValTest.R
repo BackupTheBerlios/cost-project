@@ -24,8 +24,8 @@ tagTest("csDataVal testing ...")
 data(sole)
 
 # constructor
-checkRun(csv <- csDataVal(sole.cs))
-checkTrue(is(csv, "csDataVal"))
+checkRun(csv <- csDataVal(sole.cs))            
+checkTrue(is(csv, "csDataVal"))            
 
 # SUid creator
 #checkRun(lst <- createSUid(csv))
