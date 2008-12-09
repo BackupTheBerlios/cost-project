@@ -54,7 +54,8 @@ setClass("clData",
 			foCatNat=as.character(NA), # PK
 			foCatEu5=as.character(NA), # PK
 			foCatEu6=as.character(NA), # PK
-			harbour=as.character(NA),
+			harbour=as.character(NA), #PK     #modif MM 01/12/2008 (PK)
+			vslLenCat=as.character(NA), #PK   #modif MM 01/12/2008
 			unallocCatchWt=as.numeric(NA),
 			misRepCatchWt=as.numeric(NA),
 			landWt=as.numeric(NA),
@@ -103,6 +104,7 @@ setMethod("clData", signature("missing"), function(desc="Unknown stock", check=F
 #====================================================================
 # IO constructor
 #====================================================================
+
   #addition of a default format using colClasses to keep RECTANGLE and SUB_RECTANGLE as character 
 setMethod("clData", signature("character"), function(cl, desc="Unknown stock", check=FALSE, defColClasses=c(RECTANGLE="character",SUB_RECTANGLE="character"), ...){
 
@@ -121,6 +123,7 @@ setMethod("clData", signature("character"), function(cl, desc="Unknown stock", c
 	# create object and name columns properly 
 	clData(cl=cl, desc=desc)
 })
+
 
 #====================================================================
 # Accessor functions
