@@ -1,8 +1,9 @@
 #===============================================================================
 # Name           : bpBoot
 # Author         : Paz Sampedro (IEO, SPAIN)
-# Date (dd/mm/yy): 02/12/2008 14:18:43
-# Version        : v0.41
+# Date (dd/mm/yy): 09/12/2008 15:22:15
+# Version        : v0.5 (developed under R-2.8.0)
+#
 # Aim            : Bootstrap estimates of empirical weight-at-length/age,        
 #                  maturity-at-length/age, sex-ratio-at-length/age and their     
 #                  associated variances      
@@ -24,7 +25,7 @@ setGeneric("bpBoot", function(dbeOutput, # dbeOutput object
       })
 
 # Create and save method from the generic function "bpBoot"
-setMethod("bpBoot", signature("dbeOutput", "csDataCons"),function(dbeOutput,
+setMethod("bpBoot", signature(dbeOutput="dbeOutput", object="csDataCons"),function(dbeOutput,
                                                                   object,
                                                                   mat.scale=list(immature=c(0,1),mature=c(2:8)),
                                                                   sample.boot=FALSE,
@@ -88,7 +89,25 @@ df$nL <- NL ; names(df) <- c("lenCls","time","space","technical","nL")
 ca <- merge(ca,df,all.x=TRUE) ; ca$nL[is.na(ca$nL)] <- 0
 ca <- as.data.frame (ca)
 
+# Number of samples in ca
+samples.bio <- aggregate(ca$trpCode, list(ca$space,ca$time,ca$technical,ca$trpCode),length)
+samples.bio <- tapply(samples.bio$Group.4,list(samples.bio$Group.2, samples.bio$Group.1,samples.bio$Group.3),length)
+time <- rep(rownames(samples.bio),ncol(samples.bio)*dim(samples.bio)[3])
+space <- rep(colnames(samples.bio),nrow(samples.bio)*dim(samples.bio)[3])
+technical <- rep (unique(ca$technical),ncol(samples.bio)*nrow(samples.bio) )
+samples.bio <- data.frame(time,sort(space),technical,as.vector(samples.bio))
+names (samples.bio) <- c("time", "space", "technical", "value")
+samples.bio <- samples.bio[!is.na(samples.bio$value),] 
+dbeOutput@nSamp <- data.frame(time=samples.bio$time,space=samples.bio$space,technical=samples.bio$technical,value=samples.bio$value) 
 
+# Number of bio data in ca
+n.bio <- tapply (ca$bio, list(paste(ca$time, ca$space,ca$technical, sep=":")), length)
+n.bio2 <- as.data.frame(t(do.call("cbind",lapply(names(n.bio),function(x) strsplit(x,":")[[1]]))))
+n.bio2$value <- n.bio
+names (n.bio2) <- c("time", "space", "technical", "value")
+number.bio <- n.bio2[order(n.bio2$space,n.bio2$time),]
+dbeOutput@nMes <- data.frame(time=number.bio$time,space=number.bio$space,technical=number.bio$technical,value=number.bio$value)
+rownames(dbeOutput@nMes) <- NULL
 #! Bootstrap function
 
 bio.fun <- function(data,i,ind=NULL) 
@@ -209,7 +228,10 @@ else  # Resampling unit= sample
 
 # Add names to boot replicates
 colnames(bio.boot$t) <- names(bio.boot$t0)
+
 # Bootstrap variance estimates 
+
+# Function var for R-2.8.0
 var.boot <- apply(bio.boot$t,2,var,na.rm=T)
 # Variance values NA are transformed to 0
 var.boot[is.na(var.boot)] <- 0 
@@ -242,6 +264,8 @@ iter.length <- with(iter.length,iter.length[order(iter.length$technical,iter.len
 dbeOutput@lenStruc$estim <- data.frame(time=res.length$time,space=res.length$space,technical=res.length$technical,length=res.length$value,value=as.numeric(res.length$estimate))
 dbeOutput@lenStruc$rep <- data.frame(time=iter.length$time,space=iter.length$space,technical=iter.length$technical,length=iter.length$value,value=as.numeric(iter.length$value.iter),iter=iter.length$iter)
 dbeOutput@lenVar <- data.frame(time=res.length$time,space=res.length$space,technical=res.length$technical,length=res.length$value,value=as.numeric(res.length$variance))
+dbeOutput@lenNum$ci <- dbeCalc(dbeOutput,type="CI", vrbl="l",probs=c(0.025,0.975),replicates=T,update=F)
+dbeOutput@lenNum$cv <- dbeCalc(dbeOutput,type="CV", vrbl="l",probs=c(0.025,0.975),replicates=T,update=F)
 
 ## Results by age 
 if (nrow(age)!=0)
@@ -253,6 +277,8 @@ if (nrow(age)!=0)
   dbeOutput@ageStruc$estim <- data.frame(time=res.age$time,space=res.age$space,technical=res.age$technical,age=res.age$value,value=as.numeric(res.age$estimate)) 
   dbeOutput@ageStruc$rep <- data.frame(time=iter.age$time,space=iter.age$space,technical=iter.age$technical,age=iter.age$value,value=as.numeric(iter.age$value.iter),iter=iter.age$iter) 
   dbeOutput@ageVar <- data.frame(time=res.age$time,space=res.age$space,technical=res.age$technical,age=res.age$value,value=as.numeric(res.age$variance)) 
+  dbeOutput@ageNum$ci <- dbeCalc(dbeOutput,type="CI", vrbl="a",probs=c(0.025,0.975),replicates=T,update=F)
+  dbeOutput@ageNum$cv <- dbeCalc(dbeOutput,type="CV", vrbl="a",probs=c(0.025,0.975),replicates=T,update=F)
   }
 if (!dbeOutput@methodDesc%in%"bootstrap") warnings("'methodDesc' slot in 'dbeOutput' object will be updated!!")
 dbeOutput@methodDesc <- "bootstrap"
