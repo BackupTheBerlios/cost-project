@@ -6,9 +6,9 @@
 
 
 
-library(COSTcore)
+#library(COSTcore)
 
-
+As.num <- COSTcore:::As.num
 
 setGeneric("bpEstim", function(dbeOutput,             #dbeOutput object
                                object,                #csDataCons object
@@ -28,7 +28,7 @@ setMethod("bpEstim", signature(dbeOutput="dbeOutput",object="csDataCons"), funct
                                                                                     adjust=TRUE,
                                                                                     ...){
 
-As.num <- function(x) as.numeric(as.character(x))
+#As.num <- function(x) as.numeric(as.character(x))
 species <- dbeOutput@species
 if (all(is.na(species))) stop("no species in 'dbeOutput' object!!")  
 if ("all"%in%species) species <- unique(as.character(c(object@ca$spp,object@hl$spp)))
