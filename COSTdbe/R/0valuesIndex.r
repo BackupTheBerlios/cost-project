@@ -12,11 +12,11 @@
 #====================================================================
 
 
-
-extCatchCat <- function(x) {
-sapply(x, function(x) substring(as.character(x),1,3))
-}
-
+extCatchCat <- COSTcore:::extCatchCat
+#extCatchCat <- function(x) {
+#sapply(x, function(x) substring(as.character(x),1,3))
+#}
+#
 
 setGeneric("sampledFO", function(x,species,fraction="LAN",sampPar=TRUE,...){     #'sampPar' checks if given species is considered as automatically sampled (if TRUE, sppReg=Par <-> sppReg=All, i.e. includes sppReg="Par" in the analysis ) 
 	standardGeneric("sampledFO")
