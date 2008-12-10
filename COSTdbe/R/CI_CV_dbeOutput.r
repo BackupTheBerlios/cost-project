@@ -163,7 +163,7 @@ if (!identical(dim(dfEstim),dim(dfVar))) stop("tables are not matching!!")
 
 #both tables are merged
 names(dfVar)[ncol(dfVar)] <- "var"
-df <- merge(dfEstim,dfVar)
+df <- merge(dfEstim,dfVar,sort=FALSE)
   #is number of rows the same in df than in previous tables?
 if (!identical(nrow(dfEstim),nrow(df))) stop("tables are not matching!!") 
 
@@ -221,7 +221,7 @@ if (!identical(dim(dfEstim),dim(dfVar))) stop("tables are not matching!!")
 nam <- names(dfEstim)
 names(dfEstim)[ncol(dfEstim)] <- "estim"
 names(dfVar)[ncol(dfVar)] <- "var"
-df <- merge(dfEstim,dfVar)
+df <- merge(dfEstim,dfVar,sort=FALSE)
   #is number of rows the same in df than in previous tables?
 if (!identical(nrow(dfEstim),nrow(df))) stop("tables are not matching!!") 
 
