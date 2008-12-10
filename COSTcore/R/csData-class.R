@@ -373,12 +373,12 @@ setMethod("csData", signature("missing", "missing", "missing", "missing", "missi
 # IO constructor
 #====================================================================
   #addition of a default format using colClasses to keep RECTANGLE and SUB_RECTANGLE as character 
-setMethod("csData", signature("character", "character", "character", "character", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", check=FALSE,defcolClasses=c(RECTANGLE="character",SUB_RECTANGLE="character"), ...){
+setMethod("csData", signature("character", "character", "character", "character", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", check=FALSE, ...){
 
 	# read CSV files
 	# ToDo
 	tr <- read.csv(tr,...)
-	hh <- read.csv(hh,colClasses=defcolClasses,...)
+	hh <- read.csv(hh,colClasses=c(NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"character","character",NA,NA,NA,NA,NA,NA,NA,NA),...)
 	sl <- read.csv(sl,...)
 	hl <- read.csv(hl,...)
 
@@ -406,15 +406,15 @@ setMethod("csData", signature("character", "character", "character", "character"
 })
 
 
-setMethod("csData", signature("character", "character", "character", "character", "character"), function(tr, hh, sl, hl, ca, desc="Unknown stock", check=FALSE,defcolClasses=c(RECTANGLE="character",SUB_RECTANGLE="character"), ...){
+setMethod("csData", signature("character", "character", "character", "character", "character"), function(tr, hh, sl, hl, ca, desc="Unknown stock", check=FALSE, ...){
 
 	# read CSV files
 	# ToDo
 	tr <- read.csv(tr,...)
-	hh <- read.csv(hh,colClasses=defcolClasses,...)
+	hh <- read.csv(hh,colClasses=c(NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"character","character",NA,NA,NA,NA,NA,NA,NA,NA),...)
 	sl <- read.csv(sl,...)
 	hl <- read.csv(hl,...)
-	ca <- read.csv(ca,colClasses=defcolClasses,...)
+	ca <- read.csv(ca,colClasses=c(NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"character","character",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA),...)
 
 	# check names are correct
 	checkTRnms(tr)
