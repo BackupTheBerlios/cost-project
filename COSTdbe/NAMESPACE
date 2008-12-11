@@ -1,4 +1,4 @@
-import("methods","utils","graphics","lattice")
+import("utils","graphics","lattice")
 
 importClassesFrom("COSTcore")
 
