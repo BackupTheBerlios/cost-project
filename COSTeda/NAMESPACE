@@ -1,4 +1,4 @@
-import("methods","utils","graphics","lattice","nnet")
+import("utils","graphics","lattice","nnet")
 
 importClassesFrom("COSTcore")
 importFrom("COSTcore")
