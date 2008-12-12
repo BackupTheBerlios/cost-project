@@ -8,7 +8,7 @@
  sex-ratio-at-length, weight-at-age, maturity-at-age, sex-ratio-at-age and their associated variances. It requires a csDataCons object and a dbeOutput object.}
 
 \usage{
-bpBoot(dbeOutput,object,mat.scale=list(immature=c(0,1),mature=c(2:10)),sample.boot=FALSE,nboot=1000,\dots)
+bpBoot(dbeOutput,object,mat.scale=list(immature=c(0,1),mature=c(2:8)),sample.boot=FALSE,nboot=1000,\dots)          % modif 2:10 <-> 2:8
 }
 
 \arguments{
@@ -37,15 +37,16 @@ The results of this method are included as components of the object of class "db
 \seealso{\code{\link{dbeOutput},\link[COSTcore]{csDataCons},\link{dbePlot}}}
 
 \examples{
-# Mean weight-at-length/age and variance for IFREMER sole data
-# Estimates are made by quarter and area 
+## Mean weight-at-length/age and variance for IFREMER sole data
+## Estimates are made by quarter and area 
+#
+#data (sole)
+#sole.str <- strIni(timeStrata="quarter",spaceStrata="area")
+#sole.cons <- csDataCons(csDataVal(sole.cs),sole.str)
+#sole.dbeOutput <- dbeObject(desc="Results of design based estimates",species="Solea solea",
+#                            param="weight",strataDesc=sole.str,methodDesc="Bootstrap")
+#sole.Weight <- bpBoot(sole.dbeOutput,sole.cons, sample.boot=TRUE)         
+}                                                             % modif T <-> TRUE
 
-data (sole)
-sole.str <- strIni(timeStrata="quarter",spaceStrata="area")
-sole.cons <- csDataCons(csDataVal(sole.cs),sole.str)
-sole.dbeOutput <- dbeObject(desc="Results of design based estimates",species="Solea solea",param="weight",strataDesc=sole.str,methodDesc="Bootstrap")
-sole.Weight <- bpBoot(sole.dbeOutput,sole.cons, sample.boot=T)
-}
-
-\keyword{bootstrap}
+\keyword{design}%bootstrap}     %modif MM
 
