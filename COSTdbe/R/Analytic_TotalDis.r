@@ -15,8 +15,8 @@
 ################################################################################
 
 
-
-
+#COSTcore package function to insert a new 'sex' field in hl : SL$sex is therefore a full-time key field 
+slSex <- COSTcore:::slSex                                                                 #modif 11/12/2008
 
 
 #-------------------------------------------------------------------------------
@@ -66,15 +66,18 @@ if ("all"%in%species) species <- unique(as.character(csObject@sl$spp))
 
 #according to 'val' and available information, hauls are considered to be sampled or not --> 'sampledFO' method
 indSam <- sampledFO(csObject,species=species,fraction=fraction,sampPar=sampPar)
+
 if (val=="weight") indSam <- indSam$sampWt else indSam <- indSam$sampLg
 #sampled FOs are ...
 samFO <- csObject@hh[!is.na(indSam),c("PSUid","SSUid","time","space","technical")] ; samFO$ind <- 1   #specifies matrix dimensions
+nSamp <- aggregate(samFO$ind,list(technical=samFO$technical,space=samFO$space,time=samFO$time),sum)   #number of samples             #modif 11/12/2008
+names(nSamp)[ncol(nSamp)] <- "value"                                                                                                 #
 #so, values to be considered are ...
 if (val=="weight") {
   VAL <- csObject@sl
   VAL$vol <- VAL$wt/1000             # weights in kg
 } else {
-  VAL <- merge(csObject@hl,csObject@sl[,c("PSUid","SSUid","TSUid","spp","sort","sex","wt","subSampWt")],all.x=TRUE,sort=FALSE)
+  VAL <- merge(slSex(csObject@sl,csObject@hl),csObject@sl[,c("PSUid","SSUid","TSUid","spp","sort","sex","wt","subSampWt")],all.x=TRUE,sort=FALSE)     #modif 11/12/2008 csObject@hl <-> slSex(csObject@sl,csObject@hl)
   VAL$vol <- VAL$lenNum*VAL$wt/VAL$subSampWt
 }
 
@@ -148,7 +151,7 @@ vr <- switch(val,
         weight="totalWvar",
         number="totalNvar")
         
-        
+dbeOutp@nSamp <- nSamp[,c("time","space","technical","value")]                  #modif 11/12/2008
 slot(dbeOutp,est)$estim <- procRaise.format(yI)
 slot(dbeOutp,vr) <- procRaise.format(VyI)
 
@@ -193,12 +196,14 @@ indSam <- sampledFO(csObject,species=species,fraction=fraction,sampPar=sampPar)
 if (val=="weight") indSam <- indSam$sampWt else indSam <- indSam$sampLg
 #sampled FOs are ...
 samFO <- csObject@hh[!is.na(indSam),c("PSUid","SSUid","time","space","technical")] ; samFO$ind <- 1   #specifies matrix dimensions
+nSamp <- aggregate(samFO$ind,list(technical=samFO$technical,space=samFO$space,time=samFO$time),sum)   #number of samples             #modif 11/12/2008
+names(nSamp)[ncol(nSamp)] <- "value"                                                                                                 #
 #so, values to be considered are ...
 if (val=="weight") {
   VAL <- csObject@sl
   VAL$vol <- VAL$wt/1000                    #weights in kg
 } else {
-  VAL <- merge(csObject@hl,csObject@sl[,c("PSUid","SSUid","TSUid","spp","sort","sex","wt","subSampWt")],all.x=TRUE,sort=FALSE)
+  VAL <- merge(slSex(csObject@sl,csObject@hl),csObject@sl[,c("PSUid","SSUid","TSUid","spp","sort","sex","wt","subSampWt")],all.x=TRUE,sort=FALSE)
   VAL$vol <- VAL$lenNum*VAL$wt/VAL$subSampWt
 }
 
@@ -284,7 +289,7 @@ vr <- switch(val,
         weight="totalWvar",
         number="totalNvar")
         
-        
+dbeOutp@nSamp <- nSamp[,c("time","space","technical","value")]                  #modif 11/12/2008        
 slot(dbeOutp,est)$estim <- procRaise.format(yII)
 slot(dbeOutp,vr) <- procRaise.format(VyII)
 
@@ -335,12 +340,14 @@ indSam[is.na(csObject@hh$foDur)] <- NA
 
 #sampled FOs are ...
 samFO <- csObject@hh[!is.na(indSam),c("PSUid","SSUid","time","space","technical")] ; samFO$ind <- 1   #specifies matrix dimensions
+nSamp <- aggregate(samFO$ind,list(technical=samFO$technical,space=samFO$space,time=samFO$time),sum)   #number of samples             #modif 11/12/2008
+names(nSamp)[ncol(nSamp)] <- "value"                                                                                                 #
 #so, values to be considered are ...
 if (val=="weight") {
   VAL <- csObject@sl
   VAL$vol <- VAL$wt/1000          #weights in kg
 } else {
-  VAL <- merge(csObject@hl,csObject@sl[,c("PSUid","SSUid","TSUid","spp","sort","sex","wt","subSampWt")],all.x=TRUE,sort=FALSE)
+  VAL <- merge(slSex(csObject@sl,csObject@hl),csObject@sl[,c("PSUid","SSUid","TSUid","spp","sort","sex","wt","subSampWt")],all.x=TRUE,sort=FALSE)
   VAL$vol <- VAL$lenNum*VAL$wt/VAL$subSampWt
 }
 
@@ -440,7 +447,7 @@ vr <- switch(val,
         weight="totalWvar",
         number="totalNvar")
         
-        
+dbeOutp@nSamp <- nSamp[,c("time","space","technical","value")]                  #modif 11/12/2008        
 slot(dbeOutp,est)$estim <- procRaise.format(yIII)
 slot(dbeOutp,vr) <- procRaise.format(VyIII)
 
@@ -493,12 +500,14 @@ indSam <- (!is.na(indSamDis) & !is.na(indSamLan))   #only hauls where discards a
 
 #sampled FOs are ...
 samFO <- csObject@hh[indSam,c("PSUid","SSUid","time","space","technical")] ; samFO$ind <- 1   #specifies matrix dimensions
+nSamp <- aggregate(samFO$ind,list(technical=samFO$technical,space=samFO$space,time=samFO$time),sum)   #number of samples             #modif 11/12/2008
+names(nSamp)[ncol(nSamp)] <- "value"                                                                                                 #
 #so, values to be considered are ...
 if (val=="weight") {
   VAL <- csObject@sl
   VAL$vol <- VAL$wt/1000         #weights in kg
 } else {
-  VAL <- merge(csObject@hl,csObject@sl[,c("PSUid","SSUid","TSUid","spp","sort","sex","wt","subSampWt")],all.x=TRUE,sort=FALSE)
+  VAL <- merge(slSex(csObject@sl,csObject@hl),csObject@sl[,c("PSUid","SSUid","TSUid","spp","sort","sex","wt","subSampWt")],all.x=TRUE,sort=FALSE)
   VAL$vol <- VAL$lenNum*VAL$wt/VAL$subSampWt
 }
 
@@ -574,8 +583,10 @@ N <- tapply(ceObject@ce$trpNum,list(factor(CEstrat,levels=dimnames(yij)[[3]])),s
 #------
 CLt <- clObject@cl[clObject@cl$taxon%in%landSpp,]
 CLstrat <- paste(CLt$time,CLt$space,CLt$technical,sep=":-:")
-if (any(is.na(CLt$landWt))) warning("missing values for 'landWt' field in clObject!!")                ############## <<<<<---------<<<< for the moment, raising variable is only 'landWt'   
-X <- tapply(CLt$landWt,list(factor(CLstrat,levels=dimnames(yij)[[3]])),sum,na.rm=TRUE)                             # other numerical fields ('landMult',...) should be taken into account in the calculation                   
+if (any(is.na(CLt$landWt))) warning("missing values for 'landWt' field in clObject!!")                  
+CLt$landMult[is.na(CLt$landMult)] <- 1                                                                                         #modif 11/12/2008
+TotLand <- mapply(function(w,x,y,z) sum(c(w*x,y,z),na.rm=TRUE),CLt$landWt,CLt$landMult,CLt$unallocCatchWt,CLt$misRepCatchWt)   ## TotLand = OffLand*Multi + UnallocCat + MisallocCat 
+X <- tapply(TotLand,list(factor(CLstrat,levels=dimnames(yij)[[3]])),sum,na.rm=TRUE)                                              
 
 #so, estimate of the total volume is...
 yiBar <- apply(yij,c(1,3),sum,na.rm=TRUE)/mi 
@@ -607,7 +618,7 @@ vr <- switch(val,
         weight="totalWvar",
         number="totalNvar")
         
-        
+dbeOutp@nSamp <- nSamp[,c("time","space","technical","value")]                  #modif 11/12/2008        
 slot(dbeOutp,est)$estim <- procRaise.format(yIII)
 slot(dbeOutp,vr) <- procRaise.format(VyIII)
 
@@ -652,12 +663,14 @@ if (val=="weight") indSam <- indSam$sampWt else indSam <- indSam$sampLg
 samFO <- csObject@hh[!is.na(indSam),c("PSUid","SSUid","time","space","technical","date")] ; samFO$ind <- 1   #specifies matrix dimensions
 #unused levels are deleted
 samFO <- model.frame(PSUid~SSUid+time+space+technical+date+ind,data=samFO,drop.unused.level=TRUE)
+nSamp <- aggregate(samFO$ind,list(technical=samFO$technical,space=samFO$space,time=samFO$time),sum)   #number of samples             #modif 11/12/2008
+names(nSamp)[ncol(nSamp)] <- "value"                                                                                                 #
 #so, values to be considered are ...
 if (val=="weight") {
   VAL <- csObject@sl
   VAL$vol <- VAL$wt/1000             # weights in kg
 } else {
-  VAL <- merge(csObject@hl,csObject@sl[,c("PSUid","SSUid","TSUid","spp","sort","sex","wt","subSampWt")],all.x=TRUE,sort=FALSE)
+  VAL <- merge(slSex(csObject@sl,csObject@hl),csObject@sl[,c("PSUid","SSUid","TSUid","spp","sort","sex","wt","subSampWt")],all.x=TRUE,sort=FALSE)
   VAL$vol <- VAL$lenNum*VAL$wt/VAL$subSampWt
 }
 
@@ -753,7 +766,7 @@ vr <- switch(val,
         weight="totalWvar",
         number="totalNvar")
         
-        
+dbeOutp@nSamp <- nSamp[,c("time","space","technical","value")]                  #modif 11/12/2008        
 slot(dbeOutp,est)$estim <- procRaise.format(yIV)
 slot(dbeOutp,vr) <- procRaise.format(VyIV)
 
@@ -851,8 +864,8 @@ procRaise.landings(csObject,ceObject,clObject,dbeOutput,landSpp=landSpp,val=val,
 #library(COSTcore)
 #
 #source("C:/Documents and Settings/mmerzere/Bureau/0valuesIndex.r")
-#
-#consolidated datasets are built for testing 
+
+##consolidated datasets are built for testing 
 #strDef <- strIni(timeStrata="quarter",techStrata="foCatEu5")
 #csObject <- csDataCons(csDataVal(sole.cs),strDef)
 #clObject <- clDataCons(clDataVal(sole.cl),strDef)
@@ -884,6 +897,6 @@ procRaise.landings(csObject,ceObject,clObject,dbeOutput,landSpp=landSpp,val=val,
 ##raising by total landings
 #newObj5 <- totVolume(obj,csObject,ceObject,clObject)
 #
-
+#
 
 
