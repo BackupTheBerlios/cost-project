@@ -1,8 +1,8 @@
 #===============================================================================
 # Name           : bpBoot
 # Author         : Paz Sampedro (IEO, SPAIN)
-# Date (dd/mm/yy): 09/12/2008 15:22:15
-# Version        : v0.5 (developed under R-2.8.0)
+# Date (dd/mm/yy): 12/12/2008 10:42:06
+# Version        : v0.5 
 #
 # Aim            : Bootstrap estimates of empirical weight-at-length/age,        
 #                  maturity-at-length/age, sex-ratio-at-length/age and their     
@@ -20,9 +20,9 @@ setGeneric("bpBoot", function(dbeOutput, # dbeOutput object
                               sample.boot=FALSE, # If FALSE, resampling unit= individual fish
                                                  #    TRUE, resampling unit=sample 
                               nboot=1000, # Number of bootstrap replicates
-                              ...){
-      standardGeneric("bpBoot")
-      })
+                             ...){
+     standardGeneric("bpBoot")
+     },package="COSTdbe")
 
 # Create and save method from the generic function "bpBoot"
 setMethod("bpBoot", signature(dbeOutput="dbeOutput", object="csDataCons"),function(dbeOutput,
@@ -232,7 +232,8 @@ colnames(bio.boot$t) <- names(bio.boot$t0)
 # Bootstrap variance estimates 
 
 # Function var for R-2.8.0
-var.boot <- apply(bio.boot$t,2,var,na.rm=T)
+# bio.boot$t <- bio.boot$t [,!apply(is.na(bio.boot$t),2,all)]
+var.boot <- apply(bio.boot$t,2,var,use="pairwise.complete.obs")
 # Variance values NA are transformed to 0
 var.boot[is.na(var.boot)] <- 0 
 # Data.frame with original estimates and bootstrap variance
