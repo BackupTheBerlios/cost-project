@@ -23,5 +23,6 @@ exportMethods(
 	"propMissLgthCons",
 	"sampStrDef",
 	"bpEstim",
-	"dbeCalc"
+	"dbeCalc",
+	"bpBoot"
 )
