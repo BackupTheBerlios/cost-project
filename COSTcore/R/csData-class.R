@@ -373,7 +373,7 @@ setMethod("csData", signature("missing", "missing", "missing", "missing", "missi
 # IO constructor
 #====================================================================
   #addition of a default format using colClasses to keep RECTANGLE and SUB_RECTANGLE as character 
-setMethod("csData", signature("character", "character", "character", "character", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", check=FALSE, ...){
+setMethod("csData", signature("character", "character", "character", "character", "missing"), function(tr, hh, sl, hl, desc="Unknown stock", check=FALSE,...){
 
 	# read CSV files
 	# ToDo
@@ -406,7 +406,7 @@ setMethod("csData", signature("character", "character", "character", "character"
 })
 
 
-setMethod("csData", signature("character", "character", "character", "character", "character"), function(tr, hh, sl, hl, ca, desc="Unknown stock", check=FALSE, ...){
+setMethod("csData", signature("character", "character", "character", "character", "character"), function(tr, hh, sl, hl, ca, desc="Unknown stock", check=FALSE,...){
 
 	# read CSV files
 	# ToDo
