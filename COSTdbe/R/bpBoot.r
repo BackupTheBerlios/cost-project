@@ -9,8 +9,8 @@
 #                  associated variances      
 #===============================================================================
 
-# Load library
-library(boot)
+# Load library     
+#library(boot)
 
 # Create generic function "bpBoot"
 setGeneric("bpBoot", function(dbeOutput, # dbeOutput object
