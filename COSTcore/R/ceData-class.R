@@ -106,11 +106,11 @@ setMethod("ceData", signature("missing"), function(desc="Unknown stock", check=F
 #====================================================================
 
   #addition of a default format using colClasses to keep RECTANGLE and SUB_RECTANGLE as character                                                                      
-setMethod("ceData", signature("character"), function(ce, desc="Unknown stock", check=FALSE, ...){
+setMethod("ceData", signature("character"), function(ce, desc="Unknown stock", check=FALSE,...){
 
 	# read CSV files
 	# ToDo
-	ce <- read.csv(ce,colClasses=c(NA,NA,NA,NA,NA,NA,"character","character", NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA),...)
+	ce <- read.csv(ce,colClasses=c(NA,NA,NA,NA,NA,NA,"character","character",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA),...)
 
 	# check names are correct
 	checkCEnms(ce)
