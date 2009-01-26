@@ -1,6 +1,6 @@
 # SpatialPlots_Main 
 # the main spatial plotting functions
-# ACP 21/4/08
+# ACP 21/1/09
 #
 # includes 
 #   space.plot
@@ -207,7 +207,7 @@ setGeneric("strataSpacePlot")
 `space.plot` <-
 function(variable,SpaceStrat,func,
 xlim=NULL,ylim=NULL,zlim=NULL,xlab=NULL,ylab=NULL,breaks=NULL,
-maptype="image",plotmap=TRUE,overlay=FALSE,
+maptype="image",plotmap=TRUE,overlay=FALSE,squaremap=FALSE,
 area.lines=FALSE,depths=FALSE,statrects=FALSE,fcoast=FALSE,landmass=FALSE,
 pch=1,colour=TRUE,
 col.coast="blue",col.cont="grey",col.pch="red",col.rect="grey",col.land="white",
@@ -223,7 +223,9 @@ cex.max.bubble=2,threshold=0,digits.text=0,cex.text=1,
 # statsqs or ICES areas and plots out the 
 # spatial information gruoped by func
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-par(pty="s")
+par(pty="m")
+if(squaremap==TRUE)par(pty="s")
+#library(COSTcore)
 data(NHcoast)
 data(finecoast)
 data(alldepths)
@@ -234,7 +236,23 @@ data(GSAareas)
 data(code.list)
 data(ICESAreaRects)
 #print("GSA version")
-doGSAs <-doFRS <-doICES <-FALSE
+doGSAs <-doFRS <-doICES <-novals<-FALSE
+if(all(c(missing(variable),missing(SpaceStrat),missing(func))))
+{
+novals <-TRUE
+SpaceStrat <-"12G3"
+variable <-0.1
+func <-sum
+if(is.null(xlim))
+{
+xlim <-c(-20,20)
+}
+if(is.null(ylim))
+{
+ylim <-c(44,64)
+}
+
+}
 if(!is.null(breaks)&&substitute(breaks)=="commonbreaks")options(warn=-1)
 if(!(maptype %in% c("image","contour","bubble","values"))) 
 stop("maptype must be one of: image, contour, bubble, or values")
@@ -289,7 +307,7 @@ doGSAs <-TRUE
 GSAnames <-SpaceStrat
 GSAvar <-variable
 GSAfunc <-func
-SpaceStrat <-"10F6"
+SpaceStrat <-"12G3"
 variable <-0.1
 func <-sum
 }
@@ -354,12 +372,33 @@ ylen <-maxy-miny
 midx <-minx+xlen/2
 midy <-miny+ylen/2
 bigside <-max(xlen,ylen*2)
+
+if(squaremap==TRUE)
+{
 lowx <-midx-bigside/2
 hix <-midx+bigside/2
 lowy <-midy-bigside/4
 hiy <-midy+bigside/4
 areax <-c(lowx-0.5,hix+0.5)
 areay <-c(lowy-0.25,hiy+0.25)
+}
+if(squaremap==FALSE)
+{
+lowx <-midx-xlen/2
+hix <-midx+xlen/2
+lowy <-midy-ylen/2
+hiy <-midy+ylen/2
+areax <-c(lowx-0.01,hix+0.01)
+areay <-c(lowy-0.01,hiy+0.01)
+}
+#print(areax)
+#print(areay)
+if(areax[1]<(-50))stop("min x limit less than -50W")
+if(areax[2]>70)stop("max x limit greater than 70E")
+if(areay[1]<0)stop("min y limit less than 0")
+if(areay[2]>90)stop("max y limit greater than 90")
+
+
 extremes <-c(-30 <areax[1],33.5>areax[2],
 #max(newcoast$lon,na.rm=T)>areax[2],
 min(newcoast$lat,na.rm=T)<areay[1],max(newcoast$lat,na.rm=T)>areax[2])
@@ -598,7 +637,8 @@ text(lls$lon,lls$lat,vals,col=col.text,cex=cex.text)
 
 if(maptype=="bubble"&plotmap)
 {
-lls <-convert.statsq.lat.lon(as.factor(names(valpercell)))
+#print(as.factor(names(valpercell)))
+if(is.statsq(SpaceStrat)) lls <-convert.statsq.lat.lon(as.factor(names(valpercell)))
 if(!is.statsq(SpaceStrat)) lls <-convert.icesarea.lat.lon(as.factor(names(valpercell)))
 if(doFRS==TRUE)
 {
@@ -620,6 +660,9 @@ if(!all(extremes))landmass.polygons(col.land,border=col.coast)
 points(lls$lon,lls$lat,col=col.pch,cex=size,pch=pch)
 
 }
+
+#if(!all(extremes)|(novals==TRUE))landmass.polygons(col.land,border=col.coast)
+if(!all(extremes)|(novals==TRUE))polygon(x=c(13,13,14,14),y=c(41.5,42,42,41.5),col=col.land,border=col.land)
 
 if(scale)
 {
