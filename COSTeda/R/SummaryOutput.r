@@ -191,7 +191,7 @@ setGeneric("disInfo", function(object,...){
 
 
 
-setMethod("disInfo", signature("csDataVal"), function(object,path,field,by,fun,...,biopar=FALSE,title="",append=TRUE) {
+setMethod("disInfo", signature("csDataVal"), function(object,path,field,by,fun,...,biopar=FALSE,transpose=FALSE,title="",append=TRUE) {
 
 if (missing(path)) stop("Missing 'path' parameter!!")
 if (missing(field)) stop("Missing 'field' parameter!!")
@@ -236,6 +236,7 @@ if (length(field)==1) {
   eval(parse('',text=paste("calc <- tapply(Field,list(",paste("TAB$",by,collapse=",",sep=""),"),fun,...)",sep="")))
 }
 
+if (transpose) calc <- t(calc)
 #Report
 sink(file=path,append=append)
     cat("\n") 		
@@ -255,7 +256,7 @@ invisible(calc)
 
 
 
-setMethod("disInfo", signature("clDataVal"), function(object,path,field,by,fun,...,title="",append=TRUE) {
+setMethod("disInfo", signature("clDataVal"), function(object,path,field,by,fun,...,transpose=FALSE,title="",append=TRUE) {
 
 if (missing(path)) stop("Missing 'path' parameter!!")
 if (missing(field)) stop("Missing 'field' parameter!!")
@@ -267,6 +268,8 @@ tab <- cl(object)
 allFields <- c(field,by)
 if (!all(allFields%in%names(tab))) stop("Fields don't match with 'cl' format!!")
 eval(parse('',text=paste("calc <- tapply(tab$",field,",list(",paste("tab$",by,collapse=",",sep=""),"),fun,...)",sep="")))
+
+if (transpose) calc <- t(calc)
 #Report
 sink(file=path,append=append)
     cat("\n") 		
@@ -287,7 +290,7 @@ invisible(calc)
 
 
 
-setMethod("disInfo", signature("ceDataVal"), function(object,path,field,by,fun,...,title="",append=TRUE) {
+setMethod("disInfo", signature("ceDataVal"), function(object,path,field,by,fun,...,transpose=FALSE,title="",append=TRUE) {
 
 if (missing(path)) stop("Missing 'path' parameter!!")
 if (missing(field)) stop("Missing 'field' parameter!!")
@@ -299,6 +302,8 @@ tab <- ce(object)
 allFields <- c(field,by)
 if (!all(allFields%in%names(tab))) stop("Fields don't match with 'ce' format!!")
 eval(parse('',text=paste("calc <- tapply(tab$",field,",list(",paste("tab$",by,collapse=",",sep=""),"),fun,...)",sep="")))
+
+if (transpose) calc <- t(calc)
 #Report
 sink(file=path,append=append)
     cat("\n") 		
@@ -329,7 +334,7 @@ invisible(calc)
 
 
 
-setMethod("disInfo", signature("csDataCons"), function(object,path,field,by,fun,...,biopar=FALSE,title="",append=TRUE) {   #by only contains "time","space" or/and "technical
+setMethod("disInfo", signature("csDataCons"), function(object,path,field,by,fun,...,biopar=FALSE,transpose=FALSE,title="",append=TRUE) {   #by only contains "time","space" or/and "technical
 
 if (missing(path)) stop("Missing 'path' parameter!!")
 if (missing(field)) stop("Missing 'field' parameter!!")
@@ -363,6 +368,7 @@ if (length(field)==1) {
   eval(parse('',text=paste("calc <- tapply(Field,list(",paste("TAB$",by,collapse=",",sep=""),"),fun,...)",sep="")))
 }
 
+if (transpose) calc <- t(calc)
 #Report
 sink(file=path,append=append)
     cat("\n") 		
@@ -383,7 +389,7 @@ invisible(calc)
 
 
 
-setMethod("disInfo", signature("clDataCons"), function(object,path,field,by,fun,...,title="",append=TRUE) {   #by only contains "time","space" or/and "technical
+setMethod("disInfo", signature("clDataCons"), function(object,path,field,by,fun,...,transpose=FALSE,title="",append=TRUE) {   #by only contains "time","space" or/and "technical
 
 if (missing(path)) stop("Missing 'path' parameter!!")
 if (missing(field)) stop("Missing 'field' parameter!!")
@@ -399,6 +405,8 @@ TAB <- cl(object)
 if (!field%in%names(TAB)) stop("'field' parameter doesn't match with CL table!!") 
 
 eval(parse('',text=paste("calc <- tapply(TAB$",field,",list(",paste("TAB$",by,collapse=",",sep=""),"),fun,...)",sep="")))
+
+if (transpose) calc <- t(calc)
 #Report
 sink(file=path,append=append)
     cat("\n") 		
@@ -417,7 +425,7 @@ invisible(calc)
 
 
 
-setMethod("disInfo", signature("ceDataCons"), function(object,path,field,by,fun,...,title="",append=TRUE) {   #by only contains "time","space" or/and "technical
+setMethod("disInfo", signature("ceDataCons"), function(object,path,field,by,fun,...,transpose=FALSE,title="",append=TRUE) {   #by only contains "time","space" or/and "technical
 
 if (missing(path)) stop("Missing 'path' parameter!!")
 if (missing(field)) stop("Missing 'field' parameter!!")
@@ -433,6 +441,8 @@ TAB <- ce(object)
 if (!field%in%names(TAB)) stop("'field' parameter doesn't match with CE table!!") 
 
 eval(parse('',text=paste("calc <- tapply(TAB$",field,",list(",paste("TAB$",by,collapse=",",sep=""),"),fun,...)",sep="")))
+
+if (transpose) calc <- t(calc)
 #Report
 sink(file=path,append=append)
     cat("\n") 		
@@ -449,10 +459,19 @@ invisible(calc)
 
 
 
+
+
 # CS/CL/CE consistency (presence of values of a given field in each specified table)
 
-tabConsist <- function(lTab,field) {                 #lTab is a list containing various COST objects
+tabConsist <- function(lTab,field,nb=FALSE) {                 #lTab is a list containing various COST objects
 
+timeField <- function(tab) {
+month <- sapply(tab$date,function(x) as.numeric(strsplit(x,"-")[[1]][2]))
+quarter <- ceiling(month/3)
+semester <- ceiling(quarter/2)
+return(data.frame(month=month,quarter=quarter,semester=semester))
+}
+                             
 newLtab <- NULL
 
 #test on objects classes
@@ -477,6 +496,9 @@ NAMES <- paste(rep(NAM,reit[clas]),at,namTab,sep="")
 
 #tables in lTab are split and put in a list
 eval(parse('',text=paste("newLtab <- list(",paste(NAMES,"=lTab[[",rep(1:length(NAM),reit[clas]),"]]@",namT,collapse=",",sep=""),")",sep="")))
+#and time fields are added
+#first, time field are added in hh table
+invisible(sapply(1:length(newLtab), function(x) if ("date"%in%names(newLtab[[x]])) newLtab[[x]] <<- cbind.data.frame(newLtab[[x]],timeField(newLtab[[x]]))))   #added 19/01/2009
 
 #test the presence of specified field in the tables, and remove the table if no
 n <- length(newLtab)
@@ -487,10 +509,13 @@ if (length(newLtab)==0) stop("specified field cannot be found in input objects!!
 lValues <- do.call("list",lapply(newLtab,function(x) unique(x[,field])))
 lValues <- sort(na.omit(unique(unlist(lValues))))
 
-#presence of each value in each table for the specified field (Y/N)
-tab <- do.call("rbind",lapply(1:length(newLtab),function(x) lValues%in%newLtab[[x]][,field]))
+#... presence of each value in each table for the specified field (Y/N)
+tab <- TAB <- do.call("rbind",lapply(1:length(newLtab),function(x) lValues%in%newLtab[[x]][,field]))
+#... or number of occurence of each value in each table                                                                    #added 19/01/2009
+if (nb) tab <- do.call("rbind",lapply(1:length(newLtab),function(x) table(factor(newLtab[[x]][,field],levels=lValues))))   #                                                                                                                #
+
 dimnames(tab) <- list(names(newLtab),lValues)
-tab[tab] <- "x" ; tab[tab=="FALSE"] <- ""
+if (!nb) tab[tab] <- "x" ; tab[TAB=="FALSE"] <- ""                                                                         #
 
 return(as.table(tab))
 }
