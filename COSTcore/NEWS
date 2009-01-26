@@ -1,3 +1,12 @@
+		CHANGES IN COSTcore VERSION 1.2-6
+
+NEW FEATURES
+    o 'code.list' .rda file modified ($aggLev, $foCatEu5, $foCatEu6)
+    o 'ceDataCons' method : when 'techStrata=="commCat"', warning message and empty output object
+    o 'subset' method : empty tables (sl, hl) allowed in output cs object  
+DOCUMENTATION
+BUG FIXES		
+
 		CHANGES IN COSTcore VERSION 1.2-5
 
 NEW FEATURES
