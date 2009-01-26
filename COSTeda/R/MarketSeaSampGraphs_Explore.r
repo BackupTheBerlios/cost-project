@@ -28,12 +28,12 @@ if (is.na(timeStrata)) timeStrata <- NULL
 if (is.na(spaceStrata)) spaceStrata <- NULL
 if (is.na(techStrata)) techStrata <- NULL
 
-#only sea sampling data is kept                                                          
+##only sea sampling data is kept                                                # modif 26/01/2009 : all data is kept          
 op.sub <- object@hh 
-  op.sub <- op.sub[op.sub$sampType=="S",]     
+#  op.sub <- op.sub[op.sub$sampType=="S",]                                      #
 capt.sub <- object@sl  
-  capt.sub <- capt.sub[capt.sub$sampType=="S",] 
-if (nrow(op.sub)==0) stop("no sea sampling data!!")  
+#  capt.sub <- capt.sub[capt.sub$sampType=="S",]                                #
+#if (nrow(op.sub)==0) stop("no sea sampling data!!")                            #
 
 #if species parameter is missing, one species from sl table has to be chosen
 if (missing(species)) {
