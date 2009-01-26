@@ -781,13 +781,21 @@ isVal <- class(x)=="csDataVal"
   # Output
   #-----------------------------------------------------------------------------
 
- 	if(nrow(tr)<1) res <- csData(desc=x@desc)
- 	else if ((nrow(hh)<1) & (nrow(ca)>0)) res <- csData(tr=tr,ca=ca,desc=x@desc)
- 	      else if(nrow(hh)<1) res <- csData(tr=tr,desc=x@desc)
-             else if(nrow(sl)<1) res <- csData(tr=tr, hh=hh,desc=x@desc)
-                  else if(nrow(hl)<1) res <- csData(tr=tr, hh=hh, sl=sl,desc=x@desc)
-	                     else if(nrow(ca)<1) res <- csData(tr=tr, hh=hh, sl=sl, hl=hl,desc=x@desc)
-	                          else res <- csData(tr=tr, hh=hh, sl=sl, hl=hl, ca=ca,desc=x@desc)
+# if(nrow(tr)<1) res <- csData(desc=x@desc)                                                              #modif 19/01/2009
+# 	else if ((nrow(hh)<1) & (nrow(ca)>0)) res <- csData(tr=tr,ca=ca,desc=x@desc)                         #
+# 	      else if(nrow(hh)<1) res <- csData(tr=tr,desc=x@desc)                                           #
+#             else if(nrow(sl)<1) res <- csData(tr=tr, hh=hh,desc=x@desc)                                #
+#                  else if(nrow(hl)<1) res <- csData(tr=tr, hh=hh, sl=sl,desc=x@desc)                    #
+#	                     else if(nrow(ca)<1) res <- csData(tr=tr, hh=hh, sl=sl, hl=hl,desc=x@desc)         #
+#	                          else res <- csData(tr=tr, hh=hh, sl=sl, hl=hl, ca=ca,desc=x@desc)            #
+#                                                                                                        #
+                                                                                                         #
+ if(nrow(tr)<1) tr <- csData()@tr                                                                        #
+ if(nrow(hh)<1) hh <- csData()@hh                                                                        #
+ if(nrow(sl)<1) sl <- csData()@sl                                                                        #
+ if(nrow(hl)<1) hl <- csData()@hl                                                                        #
+ if(nrow(ca)<1) ca <- csData()@ca                                                                        #
+res <- csData(tr=tr,hh=hh,sl=sl,hl=hl,ca=ca,desc=x@desc)                                                 #
 
 if (isVal) res <- csDataVal(res)
 return(res)
@@ -833,10 +841,10 @@ is.Val <- class(x)=="csDataVal"
   Hl$sex <- Hl$lsex ; hl <- Hl[,-ncol(Hl)]                                      #
 
 	# output
-	if(nrow(sl)<1) 
-    stop("No data kept from subsetting process!!")
-	else 
-    res <- csData(tr=tr(x), hh=hh(x), sl=sl, hl=hl, ca=ca(x),desc=x@desc)
+	if(nrow(sl)<1) {sl <- csData()@sl                                             #modif 19/01/2009
+                  warning("No data kept from subsetting process!!")}            #
+  if(nrow(hl)<1) {hl <- csData()@hl}                                            #
+  res <- csData(tr=tr(x), hh=hh(x), sl=sl, hl=hl, ca=ca(x),desc=x@desc)         #
 
 if (is.Val) res <- csDataVal(res)
 return(res)
