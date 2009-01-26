@@ -240,14 +240,20 @@ if (!is.na(spRec[1])) CE <- recFun(CE,"space",spRec)
         #-------
         # Technical stratification
         #-------
-
+empty <- FALSE                                                                  #modif 19/01/2009
 if (is.na(techStrata)) {
   CE$technical <- "all" 
   tcRec <- as.list(NA)
 } else {
-  if (techStrata=="commCat") stop("effort object do not match with market category sampling strategy")
-  CE$technical <- CE[,techStrata]} 
-      
+  if (techStrata=="commCat") {warning("effort object does not match with market category sampling strategy.\n'commCat' information is unavailable. Output object will be empty!")  #modif 19/01/2009
+                              empty <- TRUE                                                                 #
+  } else {                                                                                                  #
+  CE$technical <- CE[,techStrata]}                                                                          #
+  }                                                                                                         #
+                                                                                                            #
+if (empty) {                                                                                                #
+new("ceDataCons",desc=desc)                                                                                 #
+} else {                                                                                                    #
 if (!is.na(tcRec[1])) CE <- recFun(CE,"technical",tcRec)      
 
  
@@ -263,6 +269,7 @@ csc <- new("ceDataCons")
 ce <- CE[,match(names(csc@ce),names(CE))]
 rownames(ce) <- 1:nrow(ce)  
 new("ceDataCons",desc=desc,ce=coerceCons(ce,csc@ce))
+}
 })
 
 
