@@ -14,7 +14,8 @@
 \description{
 This method calculates relative values of a population level variable (if input object class is \emph{clDataVal/clDataCons/ceDataVal/ceDataCons}),
 or a sampling level variable (if input object class is \emph{csDataVal/csDataCons}).
-Calculation can be done within time, space and/or technical stratification. 
+Calculation can be done within time, space and/or technical stratification. This stratification (as well as an optionnal strata recoding process) 
+is defined by \emph{strDef} parameter for input validated objects. 
 Output is an \emph{edaResult} object with \emph{desc=}"csRelativeValue" or "clceRelativeValue".
 An exploratory graphic to compare two objects can be made by applying \emph{plot} function. (see plot.edaResult)
 }
@@ -32,8 +33,8 @@ An exploratory graphic to compare two objects can be made by applying \emph{plot
 }
 
 \arguments{
-  \item{data}{An \emph{csDataVal/clDataVal/ceDataVal/csDataCons/clDatacons/ceDataCons} object.}
-  \item{strDef}{Optionnal. A \emph{strIni} object. Specified stratification must match with 'data' parameter.}
+  \item{data}{A \emph{csDataVal/clDataVal/ceDataVal/csDataCons/clDatacons/ceDataCons} object.}
+  \item{strDef}{Optionnal. A \emph{strIni} object describing stratification and recoding parameters. Specified stratification must match with 'data' parameter.}
   \item{field}{A numerical field from \emph{data} (e.g "lenNum", "wt", "subSampWt" or "nbSamp" (number of samples in sl table) and "nbInd" (number of individuals in ca table) for 'cs', 
   "landWt" for 'cl', or "trpNum" for 'ce').}
   \item{...}{Further arguments.}
@@ -41,6 +42,8 @@ An exploratory graphic to compare two objects can be made by applying \emph{plot
 
 
 \author{Mathieu Merzereaud}
+
+\seealso{\code{\link[COSTcore]{strIni}}}
 
 \examples{
 data(sole)

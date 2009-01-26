@@ -15,12 +15,12 @@ Tapply-like methods to display information from validated and consolidated objec
 }
 
 \usage{
-\S4method{disInfo}{csDataVal}(object,path,field,by,fun,...,biopar=FALSE,title="",append=TRUE)
-\S4method{disInfo}{csDataCons}(object,path,field,by,fun,...,biopar=FALSE,title="",append=TRUE)
-\S4method{disInfo}{clDataVal}(object,path,field,by,fun,...,title="",append=TRUE)
-\S4method{disInfo}{clDataCons}(object,path,field,by,fun,...,title="",append=TRUE)
-\S4method{disInfo}{ceDataVal}(object,path,field,by,fun,...,title="",append=TRUE)
-\S4method{disInfo}{ceDataCons}(object,path,field,by,fun,...,title="",append=TRUE)
+\S4method{disInfo}{csDataVal}(object,path,field,by,fun,...,biopar=FALSE,transpose=FALSE,title="",append=TRUE)
+\S4method{disInfo}{csDataCons}(object,path,field,by,fun,...,biopar=FALSE,transpose=FALSE,title="",append=TRUE)
+\S4method{disInfo}{clDataVal}(object,path,field,by,fun,...,transpose=FALSE,title="",append=TRUE)
+\S4method{disInfo}{clDataCons}(object,path,field,by,fun,...,transpose=FALSE,title="",append=TRUE)
+\S4method{disInfo}{ceDataVal}(object,path,field,by,fun,...,transpose=FALSE,title="",append=TRUE)
+\S4method{disInfo}{ceDataCons}(object,path,field,by,fun,...,transpose=FALSE,title="",append=TRUE)
 }
 
 \arguments{
@@ -31,6 +31,7 @@ Tapply-like methods to display information from validated and consolidated objec
   \item{fun}{Function to be applied.}
   \item{...}{Further arguments to function to be applied.}
   \item{biopar}{If \code{TRUE}, calculation is made upon 'ca' table. If \code{FALSE}, calculation is done upon 'tr', 'hh', 'sl' and 'hl' table.}
+  \item{transpose}{If \code{TRUE}, output array is transposed.}
   \item{title}{Title to be written on .txt output file.}
   \item{append}{If \code{TRUE}, output will be appended to .txt file. If \code{FALSE}, file will be overwritten.}
 }
@@ -56,16 +57,16 @@ data(sole)
 sole.cs.val <- csDataVal(sole.cs)
 
 ##Change path before run
-
+#
 #Path <- "C:/draft.txt"
 #disInfo(sole.cs.val,Path,"lenNum","lenCls",sum,na.rm=TRUE,
 #        title="Measured numbers at length",append=FALSE)
-#disInfo(sole.cs.val,Path,"wt",c("quarter","gear"),sum,na.rm=TRUE,
-#        title="Total sampled weights by quarter and gear")
-#disInfo(sole.cs.val,Path,"wt","gear",sum,na.rm=TRUE,
-#        title="Total sampled weights by gear")
-#disInfo(sole.cs.val,Path,"subSampWt",c("quarter","gear","area"),sum,na.rm=TRUE,
-#        title="Measured weights by quarter, gear and area")
+#disInfo(sole.cs.val,Path,"wt",c("quarter","foCatEu5"),sum,na.rm=TRUE,
+#        title="Total sampled weights by quarter and metier")
+#disInfo(sole.cs.val,Path,"wt","foCatEu5",sum,na.rm=TRUE,
+#        title="Total sampled weights by metier")
+#disInfo(sole.cs.val,Path,"subSampWt",c("quarter","foCatEu5","area"),sum,na.rm=TRUE,
+#        title="Measured weights by quarter, metier and area")
 #disInfo(sole.cs.val,Path,c("trpCode","staNum"),c("quarter"),
 #        function(x) length(unique(x)),title="Total FO numbers of sampled trips by quarter")
 #disInfo(sole.cs.val,Path,c("trpCode","staNum","landCat"),c("quarter"),

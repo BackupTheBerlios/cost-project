@@ -36,7 +36,8 @@ Only sea sampling data is computed.
 
 \examples{
 data(sole)  
-obj <- landisVol(sole.cs,species="Solea solea")
+df <- subset(sole.cs,sampType=="S")  #only sea sampling data is kept
+obj <- landisVol(df,species="Solea solea")
 }
 
 \keyword{methods}

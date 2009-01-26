@@ -112,10 +112,11 @@ plot(dlt,strat1="techStrata",strat2="timeStrata")
 
 
 #desc="landisVol"
-ldV <- landisVol(sole.cs,strIni(techStrata="foCatEu5",timeStrata="quarter"),
+df <- subset(sole.cs,sampType=="S")  #only sea sampling data is kept
+ldV <- landisVol(df,strIni(techStrata="foCatEu5",timeStrata="quarter"),
                  species="Solea solea")
 
-plot(ldV)
+plot(ldV,rot=20,cex.lab=0.8)
 plot(ldV,groups="techStrata")
 plot(ldV,type="FO")
 
