@@ -23,9 +23,19 @@
 #-------------------------------------------------------------------------------
 
 
-csRelativeValue <- function(df,Var,timeStrata,spaceStrata,techStrata,Cons=FALSE){
+csRelativeValue <- function(df,Var,timeStrata,spaceStrata,techStrata,Cons=FALSE,tpRec=NA,spRec=NA,tcRec=NA){              #modif 20/01/2009
+                                                                                                                 #
+#recoding procedure                                                                                              #
+recFun <- function(df,field,rec) {                                                                               #
+  Typ <- class(df[,field])                                                                                       #
+  fc <- factor(df[,field])                                                                                       #
+  Lev <- levels(fc)[!levels(fc)%in%rec$from]                                                                     #
+  df[,field] <- factor(fc,levels=c(Lev,rec$from),labels=c(Lev,rec$to))                                           #
+  eval(parse('',text=paste("df[,field] <- as.",Typ,"(as.character(df[,field]))",sep="")))                        #
+  return(df)                                                                                                     #
+}                                                                                                                #
 
-#if df is a validated object...
+#if df is a validated object, recoding is made...
 if (!Cons) {
   
   if (Var!="nbInd"){
@@ -68,12 +78,16 @@ tab <- ca(df)
 tab$nbInd <- 1
 
 }
+if (!is.na(tpRec[1])) tab <- recFun(tab,timeStrata,tpRec)                       #modif 20/01/2009
+if (!is.na(spRec[1])) tab <- recFun(tab,spaceStrata,spRec)                      #
+if (!is.na(tcRec[1])) tab <- recFun(tab,techStrata,tcRec)                       #
 
 } else {
 
 #if df is a consolidated object...
   if (Var=="nbInd") {
     tab <- ca(df)
+    tab$nbInd <- 1                                                              #modif 20/01/2009
   } else {
     if (Var=="lenNum") {
       tab <- hl(df)
@@ -110,13 +124,13 @@ if (!is.null(result)) {
 if (!is.null(result)) {
   rownames(result) <- 1:nrow(result) 
 #levels of mod field are redefined (ordered) 
-    #to prevent wrong numerical testing (ex for 'rect' :"37E9")                 #modif 08/09/2008
-    modal <- gsub("E","p",as.character(result$mod))                             #
-    modal <- gsub("e","p",modal)                                                #
-    modal <- gsub("D","p",modal)                                                #
-    modal <- gsub("d","p",modal)                                                #
-  num <- suppressWarnings(as.numeric(modal))
-  lev <- c(as.character(unique(sort(num[!is.na(num)]))),         #numerical modalities are sorted numerically
+  #to prevent wrong numerical testing (ex for 'rect' :"37E9")                 #modif 08/09/2008
+  modal <- gsub("E","p",as.character(result$mod))                             #
+  modal <- gsub("e","p",modal)                                                #
+  modal <- gsub("D","p",modal)                                                #
+  modal <- gsub("d","p",modal)                                                #
+num <- suppressWarnings(as.numeric(modal))
+lev <- c(as.character(unique(sort(num[!is.na(num)]))),         #numerical modalities are sorted numerically
            unique(sort(as.character(result$mod)[is.na(num)])))   #character modalities are sorted
   result$mod <- factor(result$mod,levels=lev)
 }
@@ -137,10 +151,26 @@ return(new("edaResult",desc="csRelativeValue",outPut=result))
 #-------------------------------------------------------------------------------
 
 
-clceRelativeValue <- function(df,Var,timeStrata,spaceStrata,techStrata){  #here, df=df@ce or df@cl
+clceRelativeValue <- function(df,Var,timeStrata,spaceStrata,techStrata,Cons=FALSE,tpRec=NA,spRec=NA,tcRec=NA){  #here, df=df@ce or df@cl          #modif 20/01/2009
+                                                                                                                              #
+#recoding procedure                                                                                                           #
+recFun <- function(df,field,rec) {                                                                                            #
+  Typ <- class(df[,field])                                                                                                    #
+  fc <- factor(df[,field])                                                                                                    #
+  Lev <- levels(fc)[!levels(fc)%in%rec$from]                                                                                  #
+  df[,field] <- factor(fc,levels=c(Lev,rec$from),labels=c(Lev,rec$to))                                                        #
+  eval(parse('',text=paste("df[,field] <- as.",Typ,"(as.character(df[,field]))",sep="")))                                     #
+  return(df)                                                                                                                  #
+}                                                                                                                             #
 
 #a time stratification field is missing in cl/ce table, so we add it to df
 df$semester <- ceiling(df$quarter/2)
+
+if (!Cons) { #recoding process                                                  #modif 20/01/2009
+  if (!is.na(tpRec[1])) df <- recFun(df,timeStrata,tpRec)                       #
+  if (!is.na(spRec[1])) df <- recFun(df,spaceStrata,spRec)                      #
+  if (!is.na(tcRec[1])) df <- recFun(df,techStrata,tcRec)                       #
+}                                                                               #
 
 #internal procedure to calculate and report relative volume within specified stratification
 dfRelativeValue <- function(tab,val,field,strat){
@@ -373,7 +403,7 @@ setMethod("relativeValue", signature("csDataVal","strIni"), function(data,
                                                                      field="lenNum",     #or "wt", "subSampWt", "nbSamp" (number of samples)
                                                                      ...){
 
-csRelativeValue(data,field,strDef@timeStrata,strDef@spaceStrata,strDef@techStrata)
+csRelativeValue(data,field,strDef@timeStrata,strDef@spaceStrata,strDef@techStrata,tpRec=strDef@tpRec,spRec=strDef@spRec,tcRec=strDef@tcRec)
 
 })
                                                                                
@@ -397,7 +427,7 @@ setMethod("relativeValue", signature("clDataVal","strIni"), function(data,
                                                                      field="landWt",    
                                                                      ...){
 
-clceRelativeValue(data@cl,field,strDef@timeStrata,strDef@spaceStrata,strDef@techStrata)
+clceRelativeValue(data@cl,field,strDef@timeStrata,strDef@spaceStrata,strDef@techStrata,tpRec=strDef@tpRec,spRec=strDef@spRec,tcRec=strDef@tcRec)
 
 })   
 
@@ -420,7 +450,7 @@ setMethod("relativeValue", signature("ceDataVal","strIni"), function(data,
                                                                      field="trpNum",    
                                                                      ...){
 
-clceRelativeValue(data@ce,field,strDef@timeStrata,strDef@spaceStrata,strDef@techStrata)
+clceRelativeValue(data@ce,field,strDef@timeStrata,strDef@spaceStrata,strDef@techStrata,tpRec=strDef@tpRec,spRec=strDef@spRec,tcRec=strDef@tcRec)
 
 })   
 
@@ -448,7 +478,7 @@ setMethod("relativeValue", signature("clDataCons","missing"), function(data,
                                                                        field="landWt",    
                                                                        ...){
 
-clceRelativeValue(data@cl,field,"time","space","technical")
+clceRelativeValue(data@cl,field,"time","space","technical",Cons=TRUE)
 
 })         
 
@@ -459,7 +489,7 @@ setMethod("relativeValue", signature("ceDataCons","missing"), function(data,
                                                                        field="trpNum",    
                                                                        ...){
 
-clceRelativeValue(data@ce,field,"time","space","technical")
+clceRelativeValue(data@ce,field,"time","space","technical",Cons=TRUE)
 
 })         
   
