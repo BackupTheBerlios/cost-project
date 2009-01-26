@@ -592,22 +592,45 @@ invisible(df)
 }
 
 #-------------------------------------------------------------------------------
-# Length distribution for one trip, one species
+# Length distribution for one species (modified 19/01/2009)
 #-------------------------------------------------------------------------------
 
 
 lenDisPlotFun <- function(x,        # a csData or csDataVal object
-                          trpCode,
                           species,
                           fraction="LAN",
-                          staNum="all",       # "allSum" can also be chosen
+                          trpCode="all",     #a vector of trips
+                          level="trip",      # or "fo" (trip level or fo level)
                           ...){      
                                                   
-if (length(species)!=1) stop("One species is to be specified!!")
-if (length(trpCode)!=1) stop("One trip code is to be specified !!")
+if (length(species)!=1) 
+  stop("One species is to be specified!!")
+
+if (!all(fraction%in%c("LAN","DIS"))) 
+  stop("Wrong 'fraction' parameter!!")
+
+if (length(level)!=1) 
+  stop("Wrong 'level' parameter!!")
+
+if (!level%in%c("trip","fo")) 
+  stop("Wrong 'level' parameter!!")
+#if (length(trpCode)!=1) stop("One trip code is to be specified !!")
+
+if ("all"%in%trpCode) 
+  trpCode <- unique(sl(x)$trpCode) 
 trpCode <- as.character(trpCode)
-staNum <- as.character(staNum)
-if ("all"%in%staNum) staNum <- "all" 
+#staNum <- as.character(staNum)
+
+if (level=="trip") {
+  title.lev <- "trip"
+  panel.ind<- FALSE
+} else {
+ title.lev <- "fishing operation"
+ panel.ind <- TRUE
+} 
+
+title.frac <- paste("\"",fraction,"\" fraction",sep="")
+if (length(title.frac)>1) title.frac <- "total catch" 
 
 data(GraphsPar,envir=environment())                                                                                                                       
 object <- hl(x)
@@ -630,39 +653,43 @@ sapply(names(gp),function(x)
                     eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
   dots$xlab <- "Length"
-if (is.null(dots$ylab)) 
+if (is.null(dots$ylab))                           
   dots$ylab <- "Number" 
 if (is.null(dots$main)) 
-  dots$main <- paste("Length Distributions by samples for trip",trpCode) 
+  dots$main <- paste("Length distribution of ",title.frac," of \"",species,"\" species by ",title.lev,sep="") 
 
 df <- object[(object$trpCode%in%trpCode)&(object$catchCat%in%fraction)&(object$spp%in%species),]
 if (nrow(df)==0) stop("No data for specified trip code and fraction!!")
-if ("all"%in%staNum) {
-  staNum <- unique(as.character(df$staNum))
-} else {                                                          
-  if ("allSum"%in%staNum) df$staNum <- staNum <- "all" }            
+#if ("all"%in%staNum) {
+#  staNum <- unique(as.character(df$staNum))
+#} else {                                                          
+#  if ("allSum"%in%staNum) df$staNum <- staNum <- "all" }            
 
-df <- df[df$staNum%in%staNum,]
-df$staNum <- factor(df$staNum)
-if (nrow(df)==0) stop("No data for specified station number!!")
+#df <- df[df$staNum%in%staNum,]
+#df$staNum <- factor(df$staNum)
+#if (nrow(df)==0) stop("No data for specified station number!!")
+df$trpCode <- paste("Trip #",df$trpCode,sep="")
+df$staNum <- paste("FO #",df$staNum,sep="")
+
 #empty length classes are considered
 df$lenCls <- factor(df$lenCls,levels=seq(min(df$lenCls),max(df$lenCls),by=ste))  
-LD <- tapply(df$lenNum,list(staNum=df$staNum,lenCls=df$lenCls),sum,na.rm=TRUE)
-LD[is.na(LD)] <- 0
-ll <- dimnames(LD)
+eval(parse('',text=paste("LD <- aggregate(df$lenNum,list(lenCls=df$lenCls,","staNum=df$staNum,"[panel.ind],"trpCode=df$trpCode),sum,na.rm=TRUE)",sep="")))
+LD[is.na(LD)] <- 0 ; LD <- LD[,c(rev(1:(ncol(LD)-1)),ncol(LD))]
+names(LD)[ncol(LD)] <- "val"
+#ll <- dimnames(LD)
+#
+#DF <- data.frame(staNum=rep(ll$staNum,ncol(LD)),
+#                 lenCls=rep(ll$lenCls,each=nrow(LD)),
+#                 val=as.numeric(LD))
+#                 
+#if (!DF$staNum[1]=="all") DF$staNum <- factor(DF$staNum,levels=as.character(sort(as.numeric(levels(DF$staNum)))))
 
-DF <- data.frame(staNum=rep(ll$staNum,ncol(LD)),
-                 lenCls=rep(ll$lenCls,each=nrow(LD)),
-                 val=as.numeric(LD))
-                 
-if (!DF$staNum[1]=="all") DF$staNum <- factor(DF$staNum,levels=as.character(sort(as.numeric(levels(DF$staNum)))))
+eval(parse('',text=paste("print(barchart(val~lenCls|trpCode","*staNum"[panel.ind],",data=LD,ylim=c(0,max(LD$val)*1.05),scales=list(x=list(rot=dots$rot,cex=dots$cex.axis),",
+                         "font=dots$font.axis),main=list(dots$main,font=dots$font.main),",
+                         "xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),",
+                         "par.strip.text=list(font=dots$font.lab),col=dots$p.bg,fill=dots$p.bg,drop.unused.levels=FALSE))",sep="")))  
 
-print(barchart(val~lenCls|staNum,data=DF,ylim=c(0,max(DF$val)*1.05),scales=list(x=list(rot=dots$rot,cex=dots$cex.axis),
-               font=dots$font.axis),main=list(dots$main,font=dots$font.main),
-               xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),
-               par.strip.text=list(font=dots$font.lab),col=dots$p.bg,fill=dots$p.bg))  
-
-invisible(DF)
+invisible(LD)
 }
   
 
@@ -749,10 +776,10 @@ deltCalcFun(data,species=species,fraction=fraction,strategy=strategy,timeStrata=
 
 
 setGeneric("lenDisPlot", function(x,
-                                  trpCode,
                                   species,
                                   fraction="LAN",
-                                  staNum="all",
+                                  trpCode="all",
+                                  level="trip",
                                   ...){
 	standardGeneric("lenDisPlot")
 })
@@ -764,13 +791,13 @@ setGeneric("lenDisPlot", function(x,
 
 
 setMethod("lenDisPlot",signature("csData"), function(x,
-                                                     trpCode,
                                                      species,
                                                      fraction="LAN",
-                                                     staNum="all",       
+                                                     trpCode="all",
+                                                     level="trip",
                                                      ...){      
 
-lenDisPlotFun(x,trpCode=trpCode,species=species,fraction=fraction,staNum=staNum)
+lenDisPlotFun(x,species=species,fraction=fraction,trpCode=trpCode,level=level)
 
 })
   
@@ -780,13 +807,13 @@ lenDisPlotFun(x,trpCode=trpCode,species=species,fraction=fraction,staNum=staNum)
 
 
 setMethod("lenDisPlot",signature("csDataVal"), function(x,
-                                                     trpCode,
-                                                     species,
-                                                     fraction="LAN",
-                                                     staNum="all",       
-                                                     ...){      
+                                                        species,
+                                                        fraction="LAN",
+                                                        trpCode="all",
+                                                        level="trip",
+                                                        ...){      
 
-lenDisPlotFun(x,trpCode=trpCode,species=species,fraction=fraction,staNum=staNum)
+lenDisPlotFun(x,species=species,fraction=fraction,trpCode=trpCode,level=level)
 
 })
 
