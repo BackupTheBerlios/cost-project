@@ -50,12 +50,17 @@ procRaise.trip <- function(csObject,                      #consolidated CS table
                            ...) {
 
 
-fraction <- "DIS"
+fraction <- dbeOutp@catchCat[1]
 
-if (dbeOutp@catchCat!=fraction) {
-  warnings("'dbeOutput' object doesn't match the method!! 'catchCat' slot will be updated!")
-  dbeOutp@catchCat <- "DIS"}
-  
+if (length(dbeOutp@catchCat)>1) {
+  warning("only the first specified catch category will be considered!!")
+}
+
+if (!fraction%in%c("DIS","LAN")) {
+  warning("wrong 'catchCat' slot!!")
+}
+
+
 if (dbeOutp@methodDesc!="analytical") {
   warnings("'dbeOutput' object doesn't match the method!! 'methodDesc' slot will be updated!")
   dbeOutp@methodDesc <- "analytitcal"}
@@ -176,11 +181,15 @@ procRaise.fo <- function(csObject,                      #consolidated CS table
                          sampPar=TRUE,                  #'sampPar' checks if given species is considered to be automatically sampled
                          ...) {
 
-fraction <- "DIS"
+fraction <- dbeOutp@catchCat[1]
 
-if (dbeOutp@catchCat!=fraction) {
-  warnings("'dbeOutput' object doesn't match the method!! 'catchCat' slot will be updated!")
-  dbeOutp@catchCat <- "DIS"}
+if (length(dbeOutp@catchCat)>1) {
+  warning("only the first specified catch category will be considered!!")
+}
+
+if (!fraction%in%c("DIS","LAN")) {
+  warning("wrong 'catchCat' slot!!")
+}
   
 if (dbeOutp@methodDesc!="analytical") {
   warnings("'dbeOutput' object doesn't match the method!! 'methodDesc' slot will be updated!")
@@ -316,11 +325,15 @@ procRaise.time <- function(csObject,                      #consolidated CS table
                            sampPar=TRUE,                  #'sampPar' checks if given species is considered to be automatically sampled
                            ...) {
 
-fraction <- "DIS"
+fraction <- dbeOutp@catchCat[1]
 
-if (dbeOutp@catchCat!=fraction) {
-  warnings("'dbeOutput' object doesn't match the method!! 'catchCat' slot will be updated!")
-  dbeOutp@catchCat <- "DIS"}
+if (length(dbeOutp@catchCat)>1) {
+  warning("only the first specified catch category will be considered!!")
+}
+
+if (!fraction%in%c("DIS","LAN")) {
+  warning("wrong 'catchCat' slot!!")
+}
   
 if (dbeOutp@methodDesc!="analytical") {
   warnings("'dbeOutput' object doesn't match the method!! 'methodDesc' slot will be updated!")
@@ -476,9 +489,15 @@ procRaise.landings <- function(csObject,                      #consolidated CS t
                                ...) {
 
 
-if (dbeOutp@catchCat!="DIS") {
-  warnings("'dbeOutput' object doesn't match the method!! 'catchCat' slot will be updated!")
-  dbeOutp@catchCat <- "DIS"}
+fraction <- dbeOutp@catchCat[1]
+
+if (length(dbeOutp@catchCat)>1) {
+  warning("only the first specified catch category will be considered!!")
+}
+
+if (!fraction%in%c("DIS","LAN")) {
+  warning("wrong 'catchCat' slot!!")
+}
   
 if (dbeOutp@methodDesc!="analytical") {
   warnings("'dbeOutput' object doesn't match the method!! 'methodDesc' slot will be updated!")
@@ -492,7 +511,7 @@ if ("all"%in%landSpp) landSpp <- species
 
 #according to 'val' and available information, hauls are considered to be sampled or not.
 #Since both fraction must be sampled in that case,...
-indSamDis <- sampledFO(csObject,species=species,fraction="DIS",sampPar=sampPar)
+indSamDis <- sampledFO(csObject,species=species,fraction=fraction,sampPar=sampPar)
 if (val=="weight") indSamDis <- indSamDis$sampWt else indSamDis <- indSamDis$sampLg
 indSamLan <- sampledFO(csObject,species=landSpp,fraction="LAN",sampPar=sampPar)
 if (val=="weight") indSamLan <- indSamLan$sampWt else indSamLan <- indSamLan$sampLg
@@ -513,7 +532,7 @@ if (val=="weight") {
 
 LAN <- VAL
 VAL <- VAL[VAL$spp%in%species,] ; VAL <- merge(VAL,samFO,all.x=TRUE)
-VAL <- VAL[extCatchCat(VAL$sort)%in%"DIS" & !is.na(VAL$ind),]
+VAL <- VAL[extCatchCat(VAL$sort)%in%fraction & !is.na(VAL$ind),]
 if (nrow(VAL)==0) stop("no available discards sampling data for specified parameters!!")
 #stratification field is built from 'time', 'space' and 'technical' fields for each df
 VALstrat <- paste(VAL$time,VAL$space,VAL$technical,sep=":-:")
@@ -643,12 +662,16 @@ procRaise.fd <- function(csObject,                      #consolidated CS table
                          sampPar=TRUE,                  #'sampPar' checks if given species is considered as automatically sampled
                          ...) {
     
-fraction <- "DIS"
+fraction <- dbeOutp@catchCat[1]
 
-if (dbeOutp@catchCat!=fraction) {
-  warnings("'dbeOutput' object doesn't match the method!! 'catchCat' slot will be updated!")
-  dbeOutp@catchCat <- "DIS"}
-  
+if (length(dbeOutp@catchCat)>1) {
+  warning("only the first specified catch category will be considered!!")
+}
+
+if (!fraction%in%c("DIS","LAN")) {
+  warning("wrong 'catchCat' slot!!")
+}
+ 
 if (dbeOutp@methodDesc!="analytical") {
   warnings("'dbeOutput' object doesn't match the method!! 'methodDesc' slot will be updated!")
   dbeOutp@methodDesc <- "analytitcal"}
