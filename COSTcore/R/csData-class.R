@@ -731,8 +731,8 @@ isVal <- class(x)=="csDataVal"
   #-----------------------------------------------------------------------------
 
 	e <- substitute(subset)
-	df0 <- eval(parse('',text=table))#do.call(table, list(object=x))
-	r <- eval(e, df0, parent.frame())
+	df0 <- eval(parse('',text=table))#do.call(table, list(object=x))  
+	r <- eval(e, df0, parent.frame(n=2))
   eval(parse('',text=paste(table, "<- df0[r,]")))
 
   #-----------------------------------------------------------------------------
@@ -831,7 +831,7 @@ is.Val <- class(x)=="csDataVal"
   # new idx
 	e <- substitute(spp=="Solea solea")
 	df0 <- do.call("sl", list(object=x))
-	r <- eval(e, df0, parent.frame())
+	r <- eval(e, df0, parent.frame(n=2))
 	
 	# subset
 	sl <- df0[r,]
