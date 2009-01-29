@@ -1010,11 +1010,11 @@ setMethod("subset", signature(x="csDataCons"), function(x,subset,...){
    
     # subset each table
     e <- substitute(subset)
-    tr <- tr(x)[eval(e,tr(x), parent.frame()),]
-    hh <- hh(x)[eval(e,hh(x), parent.frame()),]
-    sl <- sl(x)[eval(e,sl(x), parent.frame()),]
-    hl <- hl(x)[eval(e,hl(x), parent.frame()),]
-    ca <- ca(x)[eval(e,ca(x), parent.frame()),]
+    tr <- tr(x)[eval(e,tr(x), parent.frame(n=2)),]
+    hh <- hh(x)[eval(e,hh(x), parent.frame(n=2)),]
+    sl <- sl(x)[eval(e,sl(x), parent.frame(n=2)),]
+    hl <- hl(x)[eval(e,hl(x), parent.frame(n=2)),]
+    ca <- ca(x)[eval(e,ca(x), parent.frame(n=2)),]
 
     new("csDataCons",tr=tr,hh=hh,sl=sl,hl=hl,ca=ca)
 })
