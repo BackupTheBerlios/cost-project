@@ -216,7 +216,7 @@ setMethod("subset", signature(x="clData"), function(x,subset,...){
 is.Val <- class(x)=="clDataVal"
 	e <- substitute(subset)
 	df0 <- cl(x)	
-	r <- eval(e, df0, parent.frame())
+	r <- eval(e, df0, parent.frame(n=2))
 	res <- clData(df0[r,])
 if (is.Val) res <- clDataVal(res)
 return(res)
