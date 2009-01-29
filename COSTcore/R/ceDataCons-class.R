@@ -378,7 +378,7 @@ setMethod("rbind2", signature(x="ceDataCons", y="ceDataCons"), function(x,y){
 setMethod("subset", signature(x="ceDataCons"), function(x,subset,...){
 	e <- substitute(subset)
 	df0 <- ce(x)	
-	r <- eval(e, df0, parent.frame())
+	r <- eval(e, df0, parent.frame(n=2))
 	new("ceDataCons", df0[r,])
 })
 
