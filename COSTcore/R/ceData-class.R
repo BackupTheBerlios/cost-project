@@ -235,7 +235,7 @@ setMethod("subset", signature(x="ceData"), function(x,subset,...){
 is.Val <- class(x)=="ceDataVal"  
   e <- substitute(subset)
 	df0 <- ce(x)	
-	r <- eval(e, df0, parent.frame())
+	r <- eval(e, df0, parent.frame(n=2))
 	res <- ceData(df0[r,])
 if (is.Val) res <- ceDataVal(res)
 return(res)
