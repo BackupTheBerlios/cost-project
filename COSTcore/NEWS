@@ -6,7 +6,8 @@ NEW FEATURES
     o 'subset' method : empty tables (sl, hl) allowed in output cs object  
 DOCUMENTATION
 BUG FIXES		
-
+    o bug with 'subset' methods fixed (frame issue) 
+    
 		CHANGES IN COSTcore VERSION 1.2-5
 
 NEW FEATURES
