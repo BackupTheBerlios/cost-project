@@ -10,22 +10,23 @@
 
 As.num <- COSTcore:::As.num
 
-setGeneric("bpEstim", function(dbeOutput,             #dbeOutput object
-                               object,                #csDataCons object
-                               adjust=TRUE,           #if FALSE, estimates at age are calculated directly fom ca table 
-                               ...){                  #     (length distribution in ca is representative of ld in the catch)
-                                                      #if TRUE, hl information is used to adjust estimates at age
-  standardGeneric("bpEstim")                          #     (length distribution in ca is not representative of ld in the catch)
+setGeneric("bpEstim", function(dbeOutput,                                       #dbeOutput object
+                               object,                                          #csDataCons object
+                               adjust=TRUE,                                     #if FALSE, estimates at age are calculated directly fom ca table 
+                                                                                #     (length distribution in ca is representative of ld in the catch)
+                                                                                #if TRUE, hl information is used to adjust estimates at age
+                                                                                #     (length distribution in ca is not representative of ld in the catch)
+                               immature.scale=1,                                #numeric or character specifying immature stages
+                               ...){
 
-})
-
-
-
+  standardGeneric("bpEstim")
+}) 
 
 
 setMethod("bpEstim", signature(dbeOutput="dbeOutput",object="csDataCons"), function(dbeOutput,
                                                                                     object,
                                                                                     adjust=TRUE,
+                                                                                    immature.scale=1,
                                                                                     ...){
 
 #As.num <- function(x) as.numeric(as.character(x))
@@ -58,8 +59,12 @@ if (!is.null(CA)) ca <- CA
 #-------------------------------------------------------------------------------
 #recoding of specified biological parameter --> 'bio'
 #-------------------------------------------------------------------------------
+immat.index <- as.character(ca$matStage)%in%as.character(immature.scale)        #'matStage' recoding in ca from 'immature.scale' parameter  #modif 29/01/2009
+ca$matStage[!is.na(ca$matStage)] <- "2" #mature                                                                                             #
+ca$matStage[immat.index] <- "1"         #immature                                                                                           #
 
 type <- dbeOutput@param
+
 bio <- switch(type,
               maturity = As.num(cut(As.num(ca$matStage),c(0,1.5,50),labels=c(0,1))),
               sex = As.num(factor(ca$sex,levels=c("F","M"),labels=c("1","0"))),
@@ -141,7 +146,7 @@ if (adjust) {
 ################################################################################
 
 MeanAtL <- tapply(ca$bio,list(ca$lenCls,ca$time,ca$space,ca$technical),mean,na.rm=TRUE)
-VarAtL <- tapply(ca$bio,list(ca$lenCls,ca$time,ca$space,ca$technical),var,na.rm=TRUE)
+VarAtL <- tapply(ca$bio,list(ca$lenCls,ca$time,ca$space,ca$technical),function(x) (var(x,na.rm=TRUE)/sum(!is.na(x))))       #modif 29/01/2009 s2 --> s2/n
 
 
 if (adjust) {
@@ -155,15 +160,15 @@ if (adjust) {
   ca <- merge(ca,DFa,all.x=TRUE)
 
   VarAtA.Num <- tapply(ca$w*((ca$bio-ca$MatA)^2),list(ca$age,ca$time,ca$space,ca$technical),sum,na.rm=TRUE)
-  VarAtA.Den <- tapply(ca$w,list(ca$age,ca$time,ca$space,ca$technical),sum,na.rm=TRUE)-1  
-  VarAtA <- VarAtA.Num/VarAtA.Den
-  #Nan values are in fact 0 values for variance (one fish in the stratum)
-  VarAtA[is.nan(VarAtA)] <- 0
+  VarAtA.Den <- tapply(ca$w,list(ca$age,ca$time,ca$space,ca$technical),sum,na.rm=TRUE)                                      #modif 29/01/2009 s2 --> s2/sum(wi)
+  VarAtA <- VarAtA.Num/(VarAtA.Den*(VarAtA.Den-1))                                                                          #
+  #Nan values are in fact NA values for variance (one fish in the stratum)                                                  #
+  VarAtA[is.nan(VarAtA)] <- NA                                                                                              #
 
 } else {
 
   MeanAtA <- tapply(ca$bio,list(ca$age,ca$time,ca$space,ca$technical),mean,na.rm=TRUE)
-  VarAtA <- tapply(ca$bio,list(ca$age,ca$time,ca$space,ca$technical),var,na.rm=TRUE)
+  VarAtA <- tapply(ca$bio,list(ca$age,ca$time,ca$space,ca$technical),function(x) (var(x,na.rm=TRUE)/sum(!is.na(x))))        #modif 29/01/2009 s2 --> s2/n
 
 }
 
@@ -204,7 +209,7 @@ return(dbeOutput)
 ###############
 ### Example ###
 ###############
-
+#
 #strDef <- strIni(timeStrata="quarter",spaceStrata="area")
 #object <- csDataCons(csDataVal(sole.cs),strDef)
 ##dbeOutput initial object
@@ -221,7 +226,7 @@ return(dbeOutput)
 #lSex <- bpEstim(dbeOutput3,object)
 #dbePlot(lSex,Slot="lenStruc",step=10,ylab="Sex ratio")
 #
-
+#
 
 
 
