@@ -23,8 +23,10 @@ demersal.sampling.lines(doarea,nos=FALSE,...)
 
 \author{Alastair Pout\email{a.pout@marlab.ac.uk}}
 %\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
-\examples{
-}
+
+%\examples{
+%}
+
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{aplot}
