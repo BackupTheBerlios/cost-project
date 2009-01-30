@@ -75,8 +75,9 @@ indSam <- sampledFO(csObject,species=species,fraction=fraction,sampPar=sampPar)
 if (val=="weight") indSam <- indSam$sampWt else indSam <- indSam$sampLg
 #sampled FOs are ...
 samFO <- csObject@hh[!is.na(indSam),c("PSUid","SSUid","time","space","technical")] ; samFO$ind <- 1   #specifies matrix dimensions
-nSamp <- aggregate(samFO$ind,list(technical=samFO$technical,space=samFO$space,time=samFO$time),sum)   #number of samples             #modif 11/12/2008
-names(nSamp)[ncol(nSamp)] <- "value"                                                                                                 #
+samTrip <- unique(samFO[,c("PSUid","time","space","technical","ind")])                                                                   #modif 29/01/2009
+nSamp <- aggregate(samTrip$ind,list(technical=samTrip$technical,space=samTrip$space,time=samTrip$time),sum)   #number of samples (trips) #        
+names(nSamp)[ncol(nSamp)] <- "value"                                                                                                     #
 #so, values to be considered are ...
 if (val=="weight") {
   VAL <- csObject@sl
@@ -353,7 +354,8 @@ indSam[is.na(csObject@hh$foDur)] <- NA
 
 #sampled FOs are ...
 samFO <- csObject@hh[!is.na(indSam),c("PSUid","SSUid","time","space","technical")] ; samFO$ind <- 1   #specifies matrix dimensions
-nSamp <- aggregate(samFO$ind,list(technical=samFO$technical,space=samFO$space,time=samFO$time),sum)   #number of samples             #modif 11/12/2008
+samTrip <- unique(samFO[,c("PSUid","time","space","technical","ind")])                                                                   #modif 29/01/2009
+nSamp <- aggregate(samTrip$ind,list(technical=samTrip$technical,space=samTrip$space,time=samTrip$time),sum)   #number of samples (trips) #        
 names(nSamp)[ncol(nSamp)] <- "value"                                                                                                 #
 #so, values to be considered are ...
 if (val=="weight") {
@@ -519,7 +521,8 @@ indSam <- (!is.na(indSamDis) & !is.na(indSamLan))   #only hauls where discards a
 
 #sampled FOs are ...
 samFO <- csObject@hh[indSam,c("PSUid","SSUid","time","space","technical")] ; samFO$ind <- 1   #specifies matrix dimensions
-nSamp <- aggregate(samFO$ind,list(technical=samFO$technical,space=samFO$space,time=samFO$time),sum)   #number of samples             #modif 11/12/2008
+samTrip <- unique(samFO[,c("PSUid","time","space","technical","ind")])                                                                   #modif 29/01/2009
+nSamp <- aggregate(samTrip$ind,list(technical=samTrip$technical,space=samTrip$space,time=samTrip$time),sum)   #number of samples (trips) #        
 names(nSamp)[ncol(nSamp)] <- "value"                                                                                                 #
 #so, values to be considered are ...
 if (val=="weight") {
@@ -686,7 +689,8 @@ if (val=="weight") indSam <- indSam$sampWt else indSam <- indSam$sampLg
 samFO <- csObject@hh[!is.na(indSam),c("PSUid","SSUid","time","space","technical","date")] ; samFO$ind <- 1   #specifies matrix dimensions
 #unused levels are deleted
 samFO <- model.frame(PSUid~SSUid+time+space+technical+date+ind,data=samFO,drop.unused.level=TRUE)
-nSamp <- aggregate(samFO$ind,list(technical=samFO$technical,space=samFO$space,time=samFO$time),sum)   #number of samples             #modif 11/12/2008
+samDay <- unique(samFO[,c("PSUid","date","time","space","technical","ind")])                                                                   #modif 29/01/2009
+nSamp <- aggregate(samDay$ind,list(technical=samDay$technical,space=samDay$space,time=samDay$time),sum)   #number of samples (fishing days)    #        
 names(nSamp)[ncol(nSamp)] <- "value"                                                                                                 #
 #so, values to be considered are ...
 if (val=="weight") {
