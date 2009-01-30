@@ -31,6 +31,6 @@ If calculation is made from estimates, normal distribution of total estimates is
 \seealso{\code{\link{dbeOutput}}, \code{\link{dbePlot}}, \code{\link{quantile}}
 }
 
-\examples{
-}
+%\examples{
+%}
 \keyword{methods}

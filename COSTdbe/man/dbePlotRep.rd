@@ -33,7 +33,7 @@ If \emph{KurtSkew} is TRUE, skewness and kurtosis values at length/age are calcu
 \seealso{\code{\link{dbeOutput}}
 }
 
-\examples{
+%\examples{
 %to do 
-}
+%}
 \keyword{methods}

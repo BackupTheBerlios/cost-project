@@ -21,7 +21,7 @@ dbeCorrPlot(object,dispKey=TRUE,\dots)
 \seealso{\code{\link{dbeOutput}}
 }
 
-\examples{
+%\examples{
 %to do 
-}
+%}
 \keyword{methods}

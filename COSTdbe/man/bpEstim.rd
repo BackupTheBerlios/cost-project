@@ -8,7 +8,7 @@ This method implements analytical estimates of empirical weight-at-length/age, m
 }                                                                                                                                           
 
 \usage{
-bpEstim(dbeOutput,object,adjust=TRUE,\dots)
+bpEstim(dbeOutput,object,adjust=TRUE,immature.scale=1,\dots)
 }
 
 \arguments{
@@ -16,6 +16,7 @@ bpEstim(dbeOutput,object,adjust=TRUE,\dots)
   \item{object}{A \emph{csDataCons} object.}
   \item{adjust}{Logical. If FALSE, length distribution in \emph{object}'s CA table is supposed to be representative of the catch (all calculations are made within CA). 
 If TRUE (default value), previous assumption is rejected, and estimates-at-age are calculated by injecting \emph{object}'s HL information.}
+  \item{immature.scale}{Numeric or character. Specifies the value(s) in \emph{matStage} field (from ca table in \emph{object}) for which the individuals are defined as immature.}
   \item{...}{Further arguments.}
 }
 
