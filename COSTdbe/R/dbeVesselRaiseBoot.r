@@ -1,6 +1,7 @@
 # dbeVesselRaiseBoot.r
+# development version
 
-# updated 21 Jan 2009
+# updated 30 Jan 2009
 # David Maxwell
 
 # Code to reproduce and bootstrap traditional 'vessel raising' approach to estimate
@@ -30,17 +31,21 @@
 # Currently not dealing with cases where landings are not identified by species, i.e. only estimates where taxon=spp
 
 
-# Task list
+# Task list / Possible Enhancements
 
 # Issue Warning/error if no ALK for a strata with LD
 # Check handling of NAs in strata definitions
 # Check the use of gap filling in ALK
+# Option to set.seed for random number generation
 # Label plus group in output? Can subsequent functions deal with character value in age vector?
 # Implement resampling of otoliths?
 # Methods when sex and/or species available in age data but are unsexed and taxon in length data and/or landings.
 # This is weighted (by landings) combination of vessels LDs, consider unweighted combination
 # Look to reduce duplication by sharing code used here and in other raising functions
 # check/improve speed
+
+
+
 
 
 # Requires hidden functions from COSTcore:
@@ -427,6 +432,24 @@ ld.df = dbeOutp@lenStruc$rep = data.frame  (time =  unlist(lapply(ld.list, FUN =
                                 value =  unlist(lapply(ld.list, FUN = function(x) {x[,"Nl"]})),
                                 iter =  unlist(lapply(ld.list, FUN = function(x) {x[,"iter"]}))  )
 
+# sum over length classes to give estimate of total N for each iteration
+ld.sumiter = spdAgreg (list (value=ld.df$value), BY = list(time=ld.df$time, space=ld.df$space, technical=ld.df$technical, iter=ld.df$iter), sum)
+# reorder columns
+ld.sumiter = ld.sumiter[, c("time","space","technical","value","iter")]
+# if want to sort rows differently
+# ld.sumiter = ld.sumiter [order(ld.sumiter$iter, ld.sumiter$time, ld.sumiter$space, ld.sumiter$technical),]
+#dimnames(ld.sumiter)[[1]] = 1:dim(ld.sumiter)[[1]]
+dbeOutp@totalN$rep = ld.sumiter
+
+# drop original estimates from ld.sumiter to calculate bootstrap mean & var
+ld.sumiter$iter = As.num(ld.sumiter$iter)
+ld.sumiter = ld.sumiter[ld.sumiter$iter > 0,]
+# mean across iterations of total N
+dbeOutp@totalN$estim = spdAgreg (list (value=ld.sumiter$value), BY = list(time=ld.sumiter$time, space=ld.sumiter$space, technical=ld.sumiter$technical), mean)
+# variance across iterations of total N
+dbeOutp@totalNvar = spdAgreg (list (value=ld.sumiter$value), BY = list(time=ld.sumiter$time, space=ld.sumiter$space, technical=ld.sumiter$technical), var)
+
+# drop original estimates from ld.df to calculate bootstrap mean & var
 ld.df = ld.df[ld.df$iter > 0,]
 ld.mean = spdAgreg (list (value=ld.df$value), BY = list(time=ld.df$time, space=ld.df$space, technical=ld.df$technical, length=ld.df$length), mean)
 ld.mean$length = As.num(ld.mean$length)
@@ -441,18 +464,6 @@ dimnames(ld.var)[[1]] = 1:(dim(ld.var)[1])
 
 dbeOutp@lenStruc$estim = ld.mean
 dbeOutp@lenVar = ld.var
-
-# sum over length classes to give estimate of total N for each iteration
-ld.sumiter = spdAgreg (list (value=ld.df$value), BY = list(time=ld.df$time, space=ld.df$space, technical=ld.df$technical, iter=ld.df$iter), sum)
-# may want to sort output by iteration
-#ld.sumiter = ld.sumiter [order(ld.sumiter$iter, ld.sumiter$time, ld.sumiter$space, ld.sumiter$technical),]
-#dimnames(ld.sumiter)[[1]] = 1:dim(ld.sumiter)[[1]]
-dbeOutp@totalN$rep = ld.sumiter[, c("time","space","technical","value","iter")]
-
-# mean across iterations of total N
-dbeOutp@totalN$estim = spdAgreg (list (value=ld.sumiter$value), BY = list(time=ld.sumiter$time, space=ld.sumiter$space, technical=ld.sumiter$technical), mean)
-# variance across iterations of total N
-dbeOutp@totalNvar = spdAgreg (list (value=ld.sumiter$value), BY = list(time=ld.sumiter$time, space=ld.sumiter$space, technical=ld.sumiter$technical), var)
 
 # Total weight, adjusted by landing multiplier to official landings weight
 # taken from CL records not estimated
@@ -489,10 +500,6 @@ LEM.dbeOut = dbeObject(desc="Example",species="Microstomus kitt",param="landings
 
 # Run vesselRaise function, B set to a very low number of iterations for demonstration only
 LEM.dbeOut = vesselRaise.boot (csObject = LEM.CScon, clObject = LEM.CLcon, dbeOutp = LEM.dbeOut, B = 3 )
-LEM.dbeOut
-
-
-
 
 
 
