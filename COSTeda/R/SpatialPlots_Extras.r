@@ -1,6 +1,6 @@
-# SpatialPlots
+# SpatialPlots_Extras
 # functions for spatial plotting 
-# ACP 21/4/08
+# ACP 21/1/09
 # includes:  
 #   mergecsData
 #   layout.matrix
@@ -12,8 +12,15 @@
 #   convert.statsq.icesarea
 #   ices.division.lines
 #   ices.division.names
-
-
+#   subSetSpp
+#   subSetTrip
+#   subSetProj
+#   subSetTarget
+#   subSetGear
+#   convert.samplingarea.statsq 
+#   convert.statsq.samplingarea 
+#   demersal.sampling.lines 
+#   .convert.samplingarea.lat.lon
 
 
 `mergecsData` <-
@@ -88,9 +95,9 @@ csobj@ca$foCatEu6 <-csobj@tr$foCatEu6[caindex]
 #csobj@ca$yearfromdate <-as.numeric(substr(csobj@ca$date,1,4))
 #csobj@ca$monthfromdate <-as.numeric(substr(csobj@ca$date,6,7))
 
-#csobj@hh$quarter <-as.numeric(substr(quarters(as.POSIXlt(csobj@hh$date)),2,3))
-#csobj@hh$month <-as.POSIXlt(csobj@hh$date)$mon+1
-#csobj@hh$yearfromdate <-as.numeric(substr(csobj@hh$date,1,4))
+csobj@hh$quarter <-as.numeric(substr(quarters(as.POSIXlt(csobj@hh$date)),2,3))
+csobj@hh$month <-as.POSIXlt(csobj@hh$date)$mon+1
+csobj@hh$yearfromdate <-as.numeric(substr(csobj@hh$date,1,4))
 
 return(csobj)
 }
@@ -195,9 +202,7 @@ function(colour="lightgrey",border="grey",...)
 data(NHcoast)
 data(landmasses)
 NHcoast$string[24171:24335] <-722
-
-lon <- lat <- NULL  #MM add 27/10/2008 'no visible binding for global variable' 
-
+lon <-lat <-NULL
 alllandmasses <-c("africa","andros","anglesey","arran","baliaricsC","baliaricsW","baltic1",
      "baltic2","baltic3","baltic4","bear","cephalonia","chios","corsica",
 "crete","cyprus","dutch1","dutch2","dutch3","dutch4",
@@ -320,6 +325,7 @@ function(areas)
 # of an ICES area 
 # needs data frame ICESAreaRects
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#ICESAreaRects <-NULL
 data(ICESAreaRects)
 areas <-toupper(as.character(areas))
 uniarea <-unique(areas)
@@ -328,7 +334,7 @@ a$statsq <-toupper(as.character(a$statsq))
 a$division <-toupper(as.character(a$division))
 a$subdivision <-toupper(as.character(a$subdivision))
 a$subarea <-toupper(as.character(a$subarea))
-b <-stack(a,select=c("subarea","division","subdivision"))  # MM added 27/10/2008  'no visible binding for global variable'
+b <-stack(a,select=c("subarea","division","subdivision"))
 b$statsq <-rep(a$statsq,3)
 statsqs <-as.character(b$statsq[which(!is.na(match(b$values,areas)))])
 parentarea <-as.character(b$values[which(!is.na(match(b$values,areas)))])
@@ -348,12 +354,12 @@ function(icesarea)
 # of an ICES area
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 lons <-c(3,3,2.5,-9,-15,-15,-15,-10.5,-19,3,-5,-11,-10.5,-7,-7,-3.5,0,3,-18,-35,-28,-28,-3.5,
--2,-8,-6,-14.25,-14.25,-10,40,-12)
+-2,-8,-6,-14.25,-14.25,-10,40,-12,-3.5)
 lats <-c(52,55.5,59.5,58,58,53.5,50.5,61.5,67,67,53.75,53.5,50.5,51,49,49.5,50.25,78,72.5,62,54,43,47
-,45,46,44,46,40,40,78,61.5)
+,45,46,44,46,40,40,78,61.5,49.75)
 areas <-c("IVc","IVb","IVa","VIa","VIb","VIIc","VIIk","Vb","Va","IIa","VIIa","VIIb","VIIj","VIIg",
 "VIIh","VIIc","VIId","IIb","XIVa","XIVb","XII","X","VIIIa","VIIIb","VIIId","VIIIc","VIIIe"
-,"IXb","IXa","I","Vb1")
+,"IXb","IXa","I","Vb1","VIIe")
 
 index <-match(icesarea,areas)
 if(any(is.na(index)))warning("some of the ices areas not recognised")
@@ -635,7 +641,7 @@ text(c(3,3,2.5,-9,-15,-15,-15,-10.5,-19,3,-5,-11,-10.5,-7,-7,-3.5,0,3,-18,-35,-2
 c(52,55.5,59.5,58,58,53.5,50.5,61.5,67,67,53.75,53.5,50.5,51,49,49.5,50.25,78,72.5,62,54,43,47
 ,45,46,44,46,40,40,78),
 c("IVc","IVb","IVa","VIa","VIb","VIIc","VIIk","Vb","Va","IIa","VIIa","VIIb","VIIj","VIIg",
-"VIIh","VIIc","VIId","IIb","XIVa","XIVb","XII","X","VIIIa","VIIIb","VIIId","VIIIc","VIIIe"
+"VIIh","VIIe","VIId","IIb","XIVa","XIVb","XII","X","VIIIa","VIIIb","VIIId","VIIIc","VIIIe"
 ,"IXb","IXa","I"))
 par(cex=1)
 }
@@ -654,7 +660,7 @@ index <-which(code.list$spp$X3A_CODE==spp)
 if(length(index)>1)stop("More than one species for this code, try the scientific name")
 spp <-as.character(code.list$spp$Scientific_name[index] )
 }
-if(class(costobj)=="csData")
+if(class(costobj)%in% c("csData","csDataVal"))
 {
 costobj@ca <- costobj@ca[which(costobj@ca$spp==spp),]   
 costobj@hl <- costobj@hl[which(costobj@hl$spp==spp),]
@@ -665,7 +671,7 @@ cat("New data set consists of",length(costobj@hl$spp),"length records","\n")
 cat("and",length(costobj@ca$spp),"age or maturity records","\n") 
 }
 
-if(class(costobj)=="clData")
+if(class(costobj)%in% c("clData","clDataVal"))
 {
 costobj@cl <- costobj@cl[which(costobj@cl$taxon==spp),]   
 fishname <-as.character(code.list$spp$English_name[code.list$spp$Scientific_name==spp])
@@ -676,6 +682,231 @@ return(costobj)
 }
 
 #-------end of subSetSpp--------------------------------------------
+
+subSetTrip <-function(costobj,trpCode) 
+{
+library(COSTcore)
+if ((class(costobj) %in% c("csData","csDataVal"))==FALSE)stop("COST object is not of csData class")
+
+if (all(trpCode %in% costobj@tr$trpCode)==FALSE)
+{
+stop("Trip code not recognised in the specified cost object")
+}
+costobj@tr <- costobj@tr[which(costobj@tr$trpCode %in% trpCode),]
+costobj@hh <- costobj@hh[which(costobj@hh$trpCode %in% trpCode),]
+costobj@sl <- costobj@sl[which(costobj@sl$trpCode %in% trpCode),]
+costobj@hl <- costobj@hl[which(costobj@hl$trpCode %in% trpCode),]
+costobj@ca <- costobj@ca[which(costobj@ca$trpCode %in% trpCode),]
+        cat("csData subset by trpCode", trpCode, "\n")
+        cat("New data set consists of", length(costobj@tr$trpCode), 
+            "trip records", "\n")
+        cat(length(costobj@hl$trpCode), "length records","\n")
+        cat("and", length(costobj@ca$trpCode), "age records","\n")
+    
+    return(costobj)
+}
+# --------------end of subSetTrip------------------------------
+
+subSetProj <-function(costobj,proj) 
+{
+    library(COSTcore)
+if ((class(costobj) %in% c("csData","csDataVal"))==FALSE)stop("COST object is not of csData class")
+
+
+if (all(proj %in% costobj@tr$proj)==FALSE)
+{
+stop("Project not recognised in the specified cost object")
+}
+costobj@tr <- costobj@tr[which(costobj@tr$proj %in% proj),]
+costobj@hh <- costobj@hh[which(costobj@hh$proj %in% proj),]
+costobj@sl <- costobj@sl[which(costobj@sl$proj %in% proj),]
+costobj@hl <- costobj@hl[which(costobj@hl$proj %in% proj),]
+costobj@ca <- costobj@ca[which(costobj@ca$proj %in% proj),]
+        cat("csData subset by project", proj, "\n")
+        cat("New data set consists of", length(costobj@tr$proj), 
+            "trip records", "\n")
+        cat(length(costobj@hl$proj), "length records","\n")
+        cat("and", length(costobj@ca$proj), "age records","\n")
+    
+    return(costobj)
+}
+
+
+#--------------end of subSetProj-----------------------
+
+
+subSetTarget <-function(costobj,assemblage) 
+{
+library(COSTcore)
+if (class(costobj) %in% c("csData","csDataVal"))
+{
+#stop("COST object is not of csData class")
+
+if (all(is.na(costobj@hh$foCatEu5)))stop("Field $foCatEu5 entirely NA")
+if (any(is.na(costobj@hh$foCatEu5)|costobj@hh$foCatEu5==""))
+{
+index <-c(which(is.na(costobj@hh$foCatEu5)),which(costobj@hh$foCatEu5==""))
+trips <-costobj@hh$trpCode[-index]
+warning(paste("$foCatEu5 contained",length(index), "missing values or NA's"))
+costobj@tr <- costobj@tr[which(costobj@tr$trpCode %in% trips),]
+costobj@hh <- costobj@hh[which(costobj@hh$trpCode %in% trips),]
+costobj@sl <- costobj@sl[which(costobj@sl$trpCode %in% trips),]
+costobj@hl <- costobj@hl[which(costobj@hl$trpCode %in% trips),]
+costobj@ca <- costobj@ca[which(costobj@ca$trpCode %in% trips),]
+} 
+
+
+x <-strsplit(costobj@hh$foCatEu5, "_",fixed=T)
+x2 <-matrix(unlist(x),length(x),length(x[[1]]),byrow=T)
+tfish <-x2[,2]
+
+
+if (all(assemblage %in% tfish)==FALSE)
+{
+stop("Target assemblage not recognised in the specified cost object")
+}
+
+trips <-costobj@hh$trpCode[which(tfish %in% assemblage)]
+
+costobj@tr <- costobj@tr[which(costobj@tr$trpCode %in% trips),]
+costobj@hh <- costobj@hh[which(costobj@hh$trpCode %in% trips),]
+costobj@sl <- costobj@sl[which(costobj@sl$trpCode %in% trips),]
+costobj@hl <- costobj@hl[which(costobj@hl$trpCode %in% trips),]
+costobj@ca <- costobj@ca[which(costobj@ca$trpCode %in% trips),]
+        cat("csData subset by target assemblage", assemblage, "\n")
+        cat("New data set consists of", length(costobj@tr$proj), 
+            "trip records", "\n")
+cat(length(costobj@hh$proj), "haul records","\n")
+        cat(length(costobj@hl$proj), "length records","\n")
+        cat("and", length(costobj@ca$proj), "age records","\n")
+}
+
+if (class(costobj) %in%c("clData","clDataVal"))
+{
+if (all(is.na(costobj@cl$foCatEu5)))stop("Field $foCatEu5 entirely NA")
+if (any(is.na(costobj@cl$foCatEu5)|costobj@cl$foCatEu5==""))
+{
+index <-c(which(is.na(costobj@cl$foCatEu5)),which(costobj@cl$foCatEu5==""))
+warning(paste("$foCatEu5 contained",length(index), "missing values or NA's"))
+costobj@cl <- costobj@cl[-index,]
+} 
+x <-strsplit(costobj@cl$foCatEu5, "_",fixed=T)
+x2 <-matrix(unlist(x),length(x),length(x[[1]]),byrow=T)
+tfish <-x2[,2]
+index2 <-which(tfish %in% assemblage)
+costobj@cl <- costobj@cl[index2,]
+        cat("clData subset by target assemblage", assemblage, "\n")
+        cat("New data set consists of", length(costobj@cl$foCatEu5), 
+            "records", "\n")
+}
+
+if (class(costobj) %in%c("ceData","ceDataVal"))
+{
+if (all(is.na(costobj@ce$foCatEu5)))stop("Field $foCatEu5 entirely NA")
+if (any(is.na(costobj@ce$foCatEu5)|costobj@ce$foCatEu5==""))
+{
+index <-c(which(is.na(costobj@ce$foCatEu5)),which(costobj@ce$foCatEu5==""))
+warning(paste("$foCatEu5 contained",length(index), "missing values or NA's"))
+costobj@ce <- costobj@ce[-index,]
+} 
+x <-strsplit(costobj@ce$foCatEu5, "_",fixed=T)
+x2 <-matrix(unlist(x),length(x),length(x[[1]]),byrow=T)
+tfish <-x2[,2]
+index2 <-which(tfish %in% assemblage)
+costobj@ce <- costobj@ce[index2,]
+        cat("ceData subset by target assemblage", assemblage, "\n")
+        cat("New data set consists of", length(costobj@ce$foCatEu5), 
+            "records", "\n")
+}    
+    return(costobj)
+}
+
+#----------------end of subSetTarget--------------------------
+subSetGear <-function(costobj,gear) 
+{
+library(COSTcore)
+if (class(costobj) %in% c("csData","csDataVal"))
+{
+if (all(is.na(costobj@hh$foCatEu5)))stop("Field $foCatEu5 entirely NA")
+if (any(is.na(costobj@hh$foCatEu5)|costobj@hh$foCatEu5==""))
+{
+index <-c(which(is.na(costobj@hh$foCatEu5)),which(costobj@hh$foCatEu5==""))
+trips <-costobj@hh$trpCode[-index]
+warning(paste("$foCatEu5 contained",length(index), "missing values or NA's"))
+costobj@tr <- costobj@tr[which(costobj@tr$trpCode %in% trips),]
+costobj@hh <- costobj@hh[which(costobj@hh$trpCode %in% trips),]
+costobj@sl <- costobj@sl[which(costobj@sl$trpCode %in% trips),]
+costobj@hl <- costobj@hl[which(costobj@hl$trpCode %in% trips),]
+costobj@ca <- costobj@ca[which(costobj@ca$trpCode %in% trips),]
+} 
+
+x <-strsplit(costobj@hh$foCatEu5, "_",fixed=T)
+x2 <-matrix(unlist(x),length(x),length(x[[1]]),byrow=T)
+geartype <-x2[,1]
+
+
+if (all(gear %in% geartype)==FALSE)
+{
+stop("Gear type not recognised in the specified cost object")
+}
+
+trips <-costobj@hh$trpCode[which(geartype %in% gear)]
+
+costobj@tr <- costobj@tr[which(costobj@tr$trpCode %in% trips),]
+costobj@hh <- costobj@hh[which(costobj@hh$trpCode %in% trips),]
+costobj@sl <- costobj@sl[which(costobj@sl$trpCode %in% trips),]
+costobj@hl <- costobj@hl[which(costobj@hl$trpCode %in% trips),]
+costobj@ca <- costobj@ca[which(costobj@ca$trpCode %in% trips),]
+        cat("csData subset by gear type", gear, "\n")
+        cat("New data set consists of", length(costobj@tr$proj), 
+            "trip records", "\n")
+cat(length(costobj@hh$proj), "haul records","\n")
+        cat(length(costobj@hl$proj), "length records","\n")
+        cat("and", length(costobj@ca$proj), "age records","\n")
+}
+
+if (class(costobj) %in% c("clData","clDataVal"))
+{
+if (all(is.na(costobj@cl$foCatEu5)))stop("Field $foCatEu5 entirely NA")
+if (any(is.na(costobj@cl$foCatEu5)|costobj@cl$foCatEu5==""))
+{
+index <-c(which(is.na(costobj@cl$foCatEu5)),which(costobj@cl$foCatEu5==""))
+warning(paste("$foCatEu5 contained",length(index), "missing values or NA's"))
+costobj@cl <- costobj@cl[-index,]
+} 
+x <-strsplit(costobj@cl$foCatEu5, "_",fixed=T)
+x2 <-matrix(unlist(x),length(x),length(x[[1]]),byrow=T)
+geartype <-x2[,1]
+index2 <-which(geartype %in% gear)
+costobj@cl <- costobj@cl[index2,]
+        cat("clData subset by gear type", gear, "\n")
+        cat("New data set consists of", length(costobj@cl$foCatEu5), 
+            "records", "\n")
+}
+
+if (class(costobj) %in% c("ceData","ceDataVal"))
+{
+if (all(is.na(costobj@ce$foCatEu5)))stop("Field $foCatEu5 entirely NA")
+if (any(is.na(costobj@ce$foCatEu5)|costobj@ce$foCatEu5==""))
+{
+index <-c(which(is.na(costobj@ce$foCatEu5)),which(costobj@ce$foCatEu5==""))
+warning(paste("$foCatEu5 contained",length(index), "missing values or NA's"))
+costobj@ce <- costobj@ce[-index,]
+} 
+x <-strsplit(costobj@ce$foCatEu5, "_",fixed=T)
+x2 <-matrix(unlist(x),length(x),length(x[[1]]),byrow=T)
+geartype <-x2[,1]
+index2 <-which(geartype %in% gear)
+costobj@ce <- costobj@ce[index2,]
+        cat("ceData subset by gear type", gear, "\n")
+        cat("New data set consists of", length(costobj@ce$foCatEu5), 
+            "records", "\n")
+}   
+    return(costobj)
+}
+#-------------------end of subSetGear----------------------
+
+
 
 convert.samplingarea.statsq <-function(areacode,samplingarea="Demersal")
 {
