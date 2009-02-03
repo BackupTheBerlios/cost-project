@@ -829,7 +829,7 @@ is.Val <- class(x)=="csDataVal"
 	hlfk <- gsub("[[:space:]]","",hlfk)
   
   # new idx
-	e <- substitute(spp=="Solea solea")
+	e <- substitute(subset)
 	df0 <- do.call("sl", list(object=x))
 	r <- eval(e, df0, parent.frame(n=2))
 	
