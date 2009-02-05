@@ -1,6 +1,6 @@
 # dbeVesselRaiseAn.r
 
-# updated 02 Feb 2009
+# updated 05 Feb 2009
 # David Maxwell
 
 # Code to reproduce and bootstrap traditional 'vessel raising' approach to estimate
@@ -33,11 +33,8 @@
 
 # Issue Warning/error if no ALK for a strata with LD
 # Check handling of NAs in strata definitions
-# Decide how to estimate variance of total N
-
 # Label plus group in output? Can subsequent functions deal with character value in age vector?
 # Methods when sex and/or species available in age data but are unsexed and taxon in length data and/or landings.
-# This is weighted (by landings) combination of vessels LDs, consider unweighted combination
 # Look to reduce duplication by sharing code used here and in other raising functions
 
 
@@ -54,8 +51,6 @@ As.num <- COSTcore:::As.num
 ############### CALCULATIONS ##################
 
 
-
-
 setGeneric("vesselRaise.an", function(csObject,        #consolidated CS table
                                 clObject,                #consolidated CL table (same stratification as csObject)
                                 dbeOutp,                 #'dbeOutput' object with descriptive fields
@@ -64,8 +59,6 @@ setGeneric("vesselRaise.an", function(csObject,        #consolidated CS table
   standardGeneric("vesselRaise.an")
 
 })
-
-
 
 setMethod("vesselRaise.an", signature(csObject="csDataCons", clObject="clDataCons", dbeOutp="dbeOutput"),
 
@@ -189,11 +182,13 @@ tb <- unique(hlsl[,varnames])
 tb$raisedNum = spdAgreg(list(raisedNum = hlsl$raisedNum), BY=list(hlsl$PSUid, hlsl$SSUid, hlsl$TSUid, hlsl$time, hlsl$space, hlsl$technical, hlsl$sampType,
  hlsl$landCtry, hlsl$vslFlgCtry, hlsl$proj, hlsl$trpCode, hlsl$staNum, hlsl$spp, hlsl$lenCls, hlsl$lenCode), sum )[,"raisedNum"]
 
-# is this needed
 # Need to Check handling of NAs in strata definitions
 if (all(is.na(tb$time))) tb$time <- ""
 if (all(is.na(tb$space))) tb$space <- ""
 if (all(is.na(tb$technical))) tb$technical <- ""
+
+# sum across length groups to give Total raised numbers by PSUid
+nbyPSU = spdAgreg(list(raisedNum=tb$raisedNum), BY=list( PSUid = tb$PSUid, time=tb$time, space=tb$space, technical=tb$technical), sum )
 
 
 # Total Landed Weight All Landings
@@ -254,20 +249,52 @@ lwtsam = spdAgreg(list(lwtsam=tbwt$wt), BY=list( PSUid = tbwt$PSUid), sum )
 # convert landed weight of sampled vessels from g to kg to match total landed weight
 lwtsam$lwtsam = lwtsam$lwtsam/1000
 
-# merge with raised numbers for each sampled vessel
+# merge landed weight with total numbers for each sampled vessel (to calculate totalNvar)
+tbPSU = merge(nbyPSU, lwtsam)
+# calculate numbers per unit weight by PSUid, m_i
+tbPSU$numperkg = tbPSU$raisedNum / tbPSU$lwtsam
+# calculate mean numbers per unit weight, m, for each strata as sum of numbers / sum of weight
+# St in variable names for Strata
+tbAll = spdAgreg(list(raisedNumSt=tbPSU$raisedNum, lwtsamSt=tbPSU$lwtsam),
+  BY=list( time = tbPSU$time, space = tbPSU$space, technical = tbPSU$technical), sum )
+tbAll$mnperkgSt = tbAll$raisedNumSt / tbAll$lwtsamSt
+# combine m_i with m,
+tbAllvar = merge(tbPSU, tbAll)
+# contribution to variance
+tbAllvar$contrib = (tbAllvar$numperkg - tbAllvar$mnperkgSt)^2
+# sum within strata and length classes
+ldAll.df = spdAgreg(list(raisedNum=tbAllvar$raisedNum, SSmi = tbAllvar$contrib),
+ BY=list( time = tbAllvar$time, space = tbAllvar$space, technical = tbAllvar$technical), sum )
+# divide total of Sum of squares contributions by n-1 to give variance
+# NaN generated if only one sample in a stratum
+ldAll.df = merge(ldAll.df, nLen.df)
+ldAll.df$varmi = ldAll.df$SSmi / (ldAll.df$nLen - 1)
+# will scale varmi up to varN in code below as same multipliers need to be calculated for VarNl
+
+
+# merge landed weight with raised numbers by length for each sampled vessel (to calculate N & var at length)
 tb = merge (tb, lwtsam)
-# calculate numbers per unit weight, m_il
+# calculate numbers per unit weight by length group, m_il
 tb$numperkg = tb$raisedNum / tb$lwtsam
+
 # to calculate m_l the mean of m_il by strata including zeroes when a vessel caught none at that length,
 # sum by strata then divide by number of vessels sampled
-tbper = spdAgreg(list(sumperkg=tb$numperkg),
+
+## Approach if use m_l unweighted mean of numbers per kg
+#tbper = spdAgreg(list(sumperkg=tb$numperkg),
+# BY=list( time = tb$time, space = tb$space, technical = tb$technical, lenCls = tb$lenCls), sum )
+#tbper = merge(tbper, nLen.df)
+#tbper$mnperkg = tbper$sumperkg / tbper$nLen
+
+## Approach if use m_l weighted mean of numbers per kg, i.e. sum of raised numbers over samples / sum of sample weights
+tbper = spdAgreg(list(sumN=tb$raisedNum),
  BY=list( time = tb$time, space = tb$space, technical = tb$technical, lenCls = tb$lenCls), sum )
-tbper = merge(tbper, nLen.df)
-tbper$mnperkg = tbper$sumperkg / tbper$nLen
+
+tbper = merge(tbper, tbAll[,c("time","space","technical","lwtsamSt")])
+tbper$mnperkg = tbper$sumN / tbper$lwtsamSt
 
 # combine m_il with m_l,
 tbvar = merge(tb, tbper)
-
 # contribution to variance
 tbvar$contrib = (tbvar$numperkg - tbvar$mnperkg)^2
 
@@ -298,36 +325,43 @@ ld.df = ld.df [, c("time", "space", "technical", "lenCls", "raisedNum", "nLen", 
 names(ld.df)[names(ld.df)=="raisedNum"] <- "nl"
 
 # Total landed weight all sampled trips by time, space and technical, converted to kg
-lwt = spdAgreg(list(lwtOfSampled=tbwt$wt / 1000),
- BY=list( time = tbwt$time, space = tbwt$space, technical = tbwt$technical), sum )
+#lwt = spdAgreg(list(lwtOfSampled=tbwt$wt / 1000),
+# BY=list( time = tbwt$time, space = tbwt$space, technical = tbwt$technical), sum )
 
 # Total landed weight of each sampled trip, converted to kg
-lwtbyPSU = spdAgreg(list(lwtOfSampled=tbwt$wt / 1000),
- BY=list( time = tbwt$time, space = tbwt$space, technical = tbwt$technical, PSUid = tbwt$PSUid), sum )
+#lwtbyPSU = spdAgreg(list(lwtOfSampled=tbwt$wt / 1000),
+# BY=list( time = tbwt$time, space = tbwt$space, technical = tbwt$technical, PSUid = tbwt$PSUid), sum )
 
 # squared total landed weight of each sampled trip, summed by time, space and technical
-lwtSS = spdAgreg(list(lwtSS = lwtbyPSU$lwtOfSampled^2),
- BY=list( time = lwtbyPSU$time, space = lwtbyPSU$space, technical = lwtbyPSU$technical), sum )
+lwtSS = spdAgreg(list(lwtSS = tbPSU$lwtsam^2),
+ BY=list( time = tbPSU$time, space = tbPSU$space, technical = tbPSU$technical), sum )
 
-lwt = merge(lwt, lwtSS)
+tbAll = merge(tbAll, lwtSS)
 # combine landed weight all vessels with landed weight sampled vessels
 
 # For now ignore proj field, may need to aggregate lwt across proj
 # For now ignore sampType field and sex fields in lwt
 # For now ignore landCat, commCatScl, commCat, landValue in CLagg
-#lwtBoth = merge( lwt [, c("time", "space", "technical", "landCtry", "vslFlgCtry", "spp", "lwtOfSampled")],
-#      CLagg [, c("landCtry", "vslFlgCtry", "time", "space", "technical", "adjlwtOfAll")] )
 
-lwtBoth = merge (lwt, CLagg)
+lwtBoth = merge (tbAll, CLagg)
+
+# combine landed weights with total numbers
+# (note two columns with same values raisedNum and raisedNumSt could drop one)
+ldAll.df = merge (ldAll.df, lwtBoth, by=c("time", "space", "technical") )
+# raise total numbers from sampled vessels to total numbers (N) for total landed weight
+ldAll.df$N = ldAll.df$raisedNumSt * ldAll.df$adjlwtOfAll / ldAll.df$lwtsamSt
+# raise variance of total numbers for a sampled vessel to variance (varN) of numbers for total landed weight
+ldAll.df$varN = ldAll.df$varmi * ldAll.df$lwtSS * ldAll.df$adjlwtOfAll^2 / ldAll.df$lwtsamSt^2
+
 
 # combine landed weights with length distribution
 ld.df = merge (ld.df, lwtBoth)
 
 # raise estimated numbers at length (nl) from sampled vessels to numbers (Nl) for total landed weight
-ld.df$Nl = ld.df$nl * ld.df$adjlwtOfAll / ld.df$lwtOfSampled
+ld.df$Nl = ld.df$nl * ld.df$adjlwtOfAll / ld.df$lwtsamSt
 
-# raise variance (varnl) of numbers at length from sampled vessels to variance (varNl) for numbers for total landed weight
-ld.df$varNl = ld.df$varnl * ld.df$lwtSS * ld.df$adjlwtOfAll^2 / ld.df$lwtOfSampled^2
+# raise variance (varnl) of numbers at length for a sampled vessel to variance (varNl) for numbers for total landed weight
+ld.df$varNl = ld.df$varnl * ld.df$lwtSS * ld.df$adjlwtOfAll^2 / ld.df$lwtsamSt^2
 
 # sum of technical strata for each time, space combination, leave NaN's in
 ld.df2 = spdAgreg(list(Nl=ld.df$Nl, varNl=ld.df$varNl),  BY=list( time = ld.df$time, space = ld.df$space, lenCls = ld.df$lenCls), function(x){sum(x, na.rm=F)} )
@@ -392,14 +426,18 @@ dbeOutp@lenStruc$estim =  data.frame  (time =  ld.out$time, space = ld.out$space
 dbeOutp@lenVar = data.frame  (time =  ld.out$time, space = ld.out$space,
                                       technical = ld.out$technical, length = ld.out$lenCls,
                                       value = ld.out$varNl  )
+# total N
+dbeOutp@totalN$estim = data.frame  (time =  ldAll.df$time, space = ldAll.df$space,
+                                      technical = ldAll.df$technical, value = ldAll.df$N  )
+# Alternatively you can sum over length classes to give the same estimate of total N
+#spdAgreg (list (value=ld.out$Nl), BY = list(time=ld.out$time, space=ld.out$space, technical=ld.out$technical), sum)
 
-# sum over length classes to give estimate of total N
-dbeOutp@totalN$estim = spdAgreg (list (value=ld.out$Nl), BY = list(time=ld.out$time, space=ld.out$space, technical=ld.out$technical), sum)
+# variance of total N calculated from mean numbers per kg by trip
+dbeOutp@totalNvar =  data.frame  (time =  ldAll.df$time, space = ldAll.df$space,
+                                      technical = ldAll.df$technical, value = ldAll.df$varN  )
 
-# variance of total N , calculated as sum of variance of numbers at length, assuming independene of length classes and strata.
-# dbeOutp@totalNvar = spdAgreg (list (value=ld.out$varNl), BY = list(time=ld.out$time, space=ld.out$space, technical=ld.out$technical), sum)
-# commented out as
-# Better alternative may be to calculate from mean numbers per kg by trip not separated into length classes
+# Note it is different to the sum across length groups of the variance of numbers at length, assuming independene of length classes.
+# spdAgreg (list (value=ld.out$varNl), BY = list(time=ld.out$time, space=ld.out$space, technical=ld.out$technical), sum)
 
 
 # Total weight, adjusted by landing multiplier to official landings weight
@@ -419,10 +457,10 @@ return(dbeOutp)
  
 ##################################################################
 
-# arguments to test code without calling the function
-#csObject = CScon
-#clObject = CLcon
-#dbeOutp = example.dbeOut
+# arguments to test the code line by line, without calling the function
+#csObject = LEM.CScon
+#clObject = LEM.CLcon
+#dbeOutp = LEM.dbeOut.an
 #age.plus = -1
 
 # library(COSTdbe)
