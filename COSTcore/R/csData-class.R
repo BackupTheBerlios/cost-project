@@ -518,6 +518,7 @@ setMethod("head", signature("csData"), function(x, ...){
 	}
 )
 
+
 setMethod("tail", signature("csData"), function(x, ...){
   object <- new("csData",desc=x@desc)
   object@tr <- tail(x@tr)

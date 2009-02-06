@@ -158,7 +158,10 @@ setMethod("desc", signature("ceData"), function(object, ...){
 # 'Head' and 'Tail' functions
 #====================================================================
 
-if (!isGeneric("head")) setGeneric("head")
+setGeneric("head", function(x, ...){
+	standardGeneric("head")
+	}
+)
 
 setMethod("head", signature("ceData"), function(x, ...){
   object <- new("ceData",desc=x@desc)
@@ -167,7 +170,10 @@ setMethod("head", signature("ceData"), function(x, ...){
 	}
 )
 
-if (!isGeneric("tail")) setGeneric("tail")
+setGeneric("tail", function(x, ...){
+	standardGeneric("tail")
+	}
+)
 
 setMethod("tail", signature("ceData"), function(x, ...){
   object <- new("ceData",desc=x@desc)
@@ -180,7 +186,10 @@ setMethod("tail", signature("ceData"), function(x, ...){
 # 'summary' function
 #====================================================================
 
-if (!isGeneric("summary")) setGeneric("summary")
+setGeneric("summary", function(object, ...){
+	standardGeneric("summary")
+	}
+)
 
 setMethod("summary", signature("ceData"), function(object, ...){
   ll <- list()
@@ -194,8 +203,6 @@ setMethod("summary", signature("ceData"), function(object, ...){
 #====================================================================
 # 'dim' function
 #====================================================================
-
-if (!isGeneric("dim")) setGeneric("dim")
 
 setMethod("dim", signature("ceData"), function(x){
 	return(dim(x@ce))  
@@ -227,8 +234,6 @@ setMethod("rbind2", signature(x="ceData", y="ceData"), function(x,y){
 #====================================================================
 # subset
 #====================================================================
-
-if (!isGeneric("subset")) setGeneric("subset")
 
 setMethod("subset", signature(x="ceData"), function(x,subset,...){
 	

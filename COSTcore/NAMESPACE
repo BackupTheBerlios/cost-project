@@ -1,6 +1,5 @@
-import("methods", "utils")
-export(
-	"checkIdentical",
+#import("methods", "utils")
+export("checkIdentical",
 	"checkFail",
 	"checkRun",
 	"checkTrue",
