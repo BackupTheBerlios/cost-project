@@ -1,6 +1,6 @@
 #===================================
 #
-# EJ, 24/09/2007
+# EJ, 24/09/2007, 09/02/2009
 # ceData-class
 #
 #===================================
@@ -79,21 +79,16 @@ setMethod("ceData", signature("data.frame"), function(ce, desc="Unknown stock", 
 	ce <- coerceDataFrameColumns(ce, ce0)
 	#check
 	if (check) check.fields(new("ceData", ce=ce, desc=desc))
-  # object
+	# object
 	new("ceData", ce=ce, desc=desc)
 })
 
 setMethod("ceData", signature("matrix"), function(ce, desc="Unknown stock", check=FALSE, ...){
 	# coerce to data.frame
 	ce <- as.data.frame(ce)
-	
-  #check
+	#check
 	if (check) check.fields(ceData(ce, desc))
-
 	# create object and name columns properly 
-#	obj <- new("ceData")
-#	names(ce) <- names(obj@ce)
-#	new("ceData", ce=ce, desc=desc)
 	ceData(ce, desc)
 })
 
@@ -119,11 +114,8 @@ setMethod("ceData", signature("character"), function(ce, desc="Unknown stock", c
 	ce <- ce[,-1]
 
 	# create object and name columns properly 
-#	obj <- new("ceData")
-#	names(ce) <- names(obj@ce)
-#	new("ceData", ce=ce, desc=desc)
 
-  #check
+    #check
 	if (check) check.fields(ceData(ce=ce, desc=desc))
 
 	ceData(ce=ce, desc=desc)
@@ -158,20 +150,10 @@ setMethod("desc", signature("ceData"), function(object, ...){
 # 'Head' and 'Tail' functions
 #====================================================================
 
-setGeneric("head", function(x, ...){
-	standardGeneric("head")
-	}
-)
-
 setMethod("head", signature("ceData"), function(x, ...){
   object <- new("ceData",desc=x@desc)
   object@ce <- head(x@ce)
   return(object)  
-	}
-)
-
-setGeneric("tail", function(x, ...){
-	standardGeneric("tail")
 	}
 )
 
@@ -186,11 +168,6 @@ setMethod("tail", signature("ceData"), function(x, ...){
 # 'summary' function
 #====================================================================
 
-setGeneric("summary", function(object, ...){
-	standardGeneric("summary")
-	}
-)
-
 setMethod("summary", signature("ceData"), function(object, ...){
   ll <- list()
   ll$desc <- object@desc
@@ -198,7 +175,6 @@ setMethod("summary", signature("ceData"), function(object, ...){
   return(ll)  
 	}
 )
-
 
 #====================================================================
 # 'dim' function
@@ -209,20 +185,7 @@ setMethod("dim", signature("ceData"), function(x){
 })
 
 #====================================================================
-# 'is.' function
-#====================================================================
-
-#setGeneric("is.ceData", function(object){
-#	standardGeneric("is.ceData")
-#})
-
-
-#setMethod("is.ceData","ANY", function(object){
-#	return(is(object)[1]=="ceData")
-#})
-
-#====================================================================
-# rbind
+# rbind2
 #====================================================================
 
 setMethod("rbind2", signature(x="ceData", y="ceData"), function(x,y){
@@ -236,17 +199,14 @@ setMethod("rbind2", signature(x="ceData", y="ceData"), function(x,y){
 #====================================================================
 
 setMethod("subset", signature(x="ceData"), function(x,subset,...){
-	
-is.Val <- class(x)=="ceDataVal"  
-  e <- substitute(subset)
+	is.Val <- class(x)=="ceDataVal"  
+	e <- substitute(subset)
 	df0 <- ce(x)	
 	r <- eval(e, df0, parent.frame(n=2))
 	res <- ceData(df0[r,])
-if (is.Val) res <- ceDataVal(res)
-return(res)
+	if (is.Val) res <- ceDataVal(res)
+	return(res)
 })
-
-
 
 #====================================================================
 # replacement

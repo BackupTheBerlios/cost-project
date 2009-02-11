@@ -107,28 +107,13 @@ setClass("strIni",representation(timeStrata="character",
 # Class constructor
 #====================================================================
 
-strIni <- function(timeStrata=as.character(NA),
-                   spaceStrata=as.character(NA),
-                   techStrata=as.character(NA),
-                   tpRec=as.list(NA),             #ex: tpRec=list(from=c("1","2","3","4"),to=c("5","5","6","6"))
-                   spRec=as.list(NA),
-                   tcRec=as.list(NA)){   
+strIni <- function(timeStrata=as.character(NA), spaceStrata=as.character(NA), techStrata=as.character(NA), tpRec=as.list(NA), spRec=as.list(NA), tcRec=as.list(NA)){   
 
-if (is.na(techStrata)==FALSE & techStrata%in%c("vslLen","vslPwr","vslSize")) 
-  warning(paste("Check that original '",techStrata,"' field in 'tr' table has been categorized into a moderate number of levels. (see 'cut' function)",sep=""))   
+	if (is.na(techStrata)==FALSE & techStrata%in%c("vslLen", "vslPwr", "vslSize")) 
+		warning(paste("Check that original '", techStrata, "' field in 'tr' table has been categorized into a moderate number of levels. (see 'cut' function)", sep=""))   
 
-new("strIni",timeStrata=timeStrata,
-             spaceStrata=spaceStrata,
-             techStrata=techStrata,
-             tpRec=tpRec,
-             spRec=spRec,
-             tcRec=tcRec)                      
+	new("strIni",timeStrata=timeStrata, spaceStrata=spaceStrata, techStrata=techStrata, tpRec=tpRec, spRec=spRec, tcRec=tcRec)                      
 }
-
-
-
-
-
 
 ##====================================================================
 ## Class constructor
@@ -169,130 +154,105 @@ new("strIni",timeStrata=timeStrata,
 #	new("ceDataCons", desc=desc)
 #})
 
-
-setGeneric("ceDataCons", function(object,objStrat,...){
+setGeneric("ceDataCons", function(object, objStrat,...){
 	standardGeneric("ceDataCons")
 	}
 )
-		
 
-setMethod("ceDataCons", signature("ceDataVal","strIni"), function(object,
-                                                                  objStrat,
-                                                                  desc="Unknown stock",
-                                                                  ...){  
+setMethod("ceDataCons", signature("ceDataVal","strIni"), function(object, objStrat, desc="Unknown stock", ...){  
 
-timeStrata <- objStrat@timeStrata                # <<<- to make the code clearer, but maybe it's not the thing to do
-spaceStrata <- objStrat@spaceStrata              #
-techStrata <- objStrat@techStrata                #
-tpRec <- objStrat@tpRec                          #
-spRec <- objStrat@spRec                          #
-tcRec <- objStrat@tcRec                          #
-                                                 #
-CE <- object@ce                                  #####
-Semester <- ceiling(CE$quarter/2)      
-                                                                                                  #<<- 22/09/2008 update : addition of quarter in 'month' information 
-CE$month <- paste(as.character(CE$year),as.character(CE$quarter),as.character(CE$month),sep=" - ")#<<- 22/07/2008 update : addition of year information to "time" field                
-CE$quarter <- paste(as.character(CE$year),as.character(CE$quarter),sep=" - ")                     #
-CE$semester <- paste(as.character(CE$year),as.character(Semester),sep=" - ")                      #
+	timeStrata <- objStrat@timeStrata 
+	spaceStrata <- objStrat@spaceStrata
+	techStrata <- objStrat@techStrata  
+	tpRec <- objStrat@tpRec
+	spRec <- objStrat@spRec
+	tcRec <- objStrat@tcRec
+	
+	CE <- object@ce
+	Semester <- ceiling(CE$quarter/2)      
+                                                                                                  		# addition of quarter in 'month' information 
+	CE$month <- paste(as.character(CE$year), as.character(CE$quarter), as.character(CE$month), sep=" - ")
+	# addition of year information to "time" field                
+	CE$quarter <- paste(as.character(CE$year), as.character(CE$quarter), sep=" - ")
+	CE$semester <- paste(as.character(CE$year), as.character(Semester), sep=" - ")
+	
+	#-------------------------------------------------------------------------------
+	# Addition of fields
+	#-------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
-# Addition of fields
-#-------------------------------------------------------------------------------
+    #-------------------------------------------------------------------------------
+    # based on the user specification and the post-stratification specified in strIni
+    #-------------------------------------------------------------------------------
 
-    #---------------------------------------------------------------------------
-    # based on the user specification and the post-stratification specified in the strIni object
-    #---------------------------------------------------------------------------
-
-#recoding procedure
-recFun <- function(df,field,rec) {                  # <<<- there's surely a more simple way to do this
-  Typ <- class(df[,field]) 
-  fc <- factor(df[,field]) 
-  Lev <- levels(fc)[!levels(fc)%in%rec$from]
-  df[,field] <- factor(fc,levels=c(Lev,rec$from),labels=c(Lev,rec$to))
-  eval(parse('',text=paste("df[,field] <- as.",Typ,"(as.character(df[,field]))",sep="")))
-  return(df)
-}
+	#recoding procedure
+	recFun <- function(df,field,rec) {
+		Typ <- class(df[,field]) 
+		fc <- factor(df[,field]) 
+		Lev <- levels(fc)[!levels(fc)%in%rec$from]
+		df[,field] <- factor(fc,levels=c(Lev,rec$from),labels=c(Lev,rec$to))
+		eval(parse('',text=paste("df[,field] <- as.",Typ,"(as.character(df[,field]))",sep="")))
+		return(df)
+	}
   
-        #-------
-        # Time stratification
-        #-------
-
-if (is.na(timeStrata)) {
-  CE$time <- "all" 
-  tpRec <- as.list(NA)
-} else {
-  CE$time <- CE[,timeStrata]} 
+	# Time stratification
+	if (is.na(timeStrata)) {
+		CE$time <- "all" 
+		tpRec <- as.list(NA)
+	} else {
+		CE$time <- CE[,timeStrata]} 
       
-if (!is.na(tpRec[1])) CE <- recFun(CE,"time",tpRec)      
+	if(!is.na(tpRec[1])) CE <- recFun(CE,"time",tpRec)      
 
-        #-------
-        # Space stratification
-        #-------
+	# Space stratification
+	if (is.na(spaceStrata)) {
+		CE$space <- "all" 
+		spRec <- as.list(NA)
+	} else {
+		CE$space <- CE[,spaceStrata]} 
+		  
+	if (!is.na(spRec[1])) CE <- recFun(CE,"space",spRec)      
 
-if (is.na(spaceStrata)) {
-  CE$space <- "all" 
-  spRec <- as.list(NA)
-} else {
-  CE$space <- CE[,spaceStrata]} 
-      
-if (!is.na(spRec[1])) CE <- recFun(CE,"space",spRec)      
+	# Technical stratification
+	empty <- FALSE
+	if (is.na(techStrata)) {
+		CE$technical <- "all" 
+		tcRec <- as.list(NA)
+	} else {
+		if (techStrata=="commCat"){
+			warning("effort object does not match with market category sampling strategy.\n'commCat' information is unavailable. Output object will be empty!")  
+			empty <- TRUE
+		} else {
+			CE$technical <- CE[,techStrata]}
+	}
 
-        #-------
-        # Technical stratification
-        #-------
-empty <- FALSE                                                                  #modif 19/01/2009
-if (is.na(techStrata)) {
-  CE$technical <- "all" 
-  tcRec <- as.list(NA)
-} else {
-  if (techStrata=="commCat") {warning("effort object does not match with market category sampling strategy.\n'commCat' information is unavailable. Output object will be empty!")  #modif 19/01/2009
-                              empty <- TRUE                                                                 #
-  } else {                                                                                                  #
-  CE$technical <- CE[,techStrata]}                                                                          #
-  }                                                                                                         #
-                                                                                                            #
-if (empty) {                                                                                                #
-new("ceDataCons",desc=desc)                                                                                 #
-} else {                                                                                                    #
-if (!is.na(tcRec[1])) CE <- recFun(CE,"technical",tcRec)      
+	if(empty){
+		new("ceDataCons",desc=desc)
+	} else {
+		if (!is.na(tcRec[1])) CE <- recFun(CE,"technical",tcRec)      
 
  
-#-------------------------------------------------------------------------------
-# Creation of the CONSOLIDATED object
-#-------------------------------------------------------------------------------
+	#-------------------------------------------------------------------------------
+	# Creation of the CONSOLIDATED object
+	#-------------------------------------------------------------------------------
 
     #---------------------------------------------------------------------------
     # selection of the appropriate fields (selection of the new stratification fields instead of the original)
     #---------------------------------------------------------------------------
 
-csc <- new("ceDataCons")
-ce <- CE[,match(names(csc@ce),names(CE))]
-rownames(ce) <- 1:nrow(ce)  
-new("ceDataCons",desc=desc,ce=coerceCons(ce,csc@ce))
-}
+		csc <- new("ceDataCons")
+		ce <- CE[,match(names(csc@ce),names(CE))]
+		rownames(ce) <- 1:nrow(ce)  
+		new("ceDataCons",desc=desc,ce=coerceCons(ce,csc@ce))
+	}
 })
 
-
-
-
-
 setMethod("ceDataCons", signature("ceDataVal","missing"), function(object,desc="Unknown stock", ...){
-
 	ceDataCons(object,strIni(),desc=desc,...)
 })
 
-
-
-
-
 setMethod("ceDataCons", signature("missing","missing"), function(desc="Unknown stock", ...){
-
 	new("ceDataCons", desc=desc)
 })	
-
-
-
-
 
 #====================================================================
 # Accessor functions
@@ -312,14 +272,12 @@ setMethod("desc", signature("ceDataCons"), function(object, ...){
 # 'Head' and 'Tail' functions
 #====================================================================
 
-
 setMethod("head", signature("ceDataCons"), function(x, ...){
   object <- new("ceDataCons",desc=x@desc)
   object@ce <- head(x@ce)
   return(object)  
 	}
 )
-
 
 setMethod("tail", signature("ceDataCons"), function(x, ...){
   object <- new("ceDataCons",desc=x@desc)
