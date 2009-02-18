@@ -128,15 +128,20 @@ nAgeSamples = tapply (CA$PSU, list(time = CA$time, space = CA$space), function(x
 nAge.vec = as.vector(nAgeSamples)
 nAge.vec = nAge.vec[!is.na(nAge.vec)]
 #identify start and end positions for each set strata ids - !Take care, this does not match the order of Strat in ageids!
-start.pos = c(1, (cumsum(nAge.vec)[-length(nAge.vec)]) +1 )
-end.pos = cumsum(nAge.vec)
+###start.pos = c(1, (cumsum(nAge.vec)[-length(nAge.vec)]) +1 )
+###end.pos = cumsum(nAge.vec)
 
 # PSUids for each strata combination
 ageids = unique( CA [,c( "PSUid", "time","space")] )
 ageids$Strat = paste (ageids$time, ageids$space, sep=":=:")
+start.pos <- tapply(1:nrow(ageids),list(ageids$Strat),min, na.rm=TRUE)     ### <---- avoid the need to use this nAge.vec
+end.pos <- tapply(1:nrow(ageids),list(ageids$Strat),max, na.rm=TRUE)
+n.PSUid <- (end.pos+1)-start.pos
+
 # tapply to match production of nAge.vec, may be an easier way?
-uStrat = as.vector (tapply(ageids$Strat, list(time = ageids$time, space = ageids$space), function(x){unique(x)} ) )
-uStrat = uStrat[!is.na (uStrat)]
+###uStrat = as.vector (tapply(ageids$Strat, list(time = ageids$time, space = ageids$space), function(x){unique(x)} ) )
+###uStrat = uStrat[!is.na (uStrat)]
+uStrat <- unique(ageids$Strat)   ### <----  To have the full consistency fith the order of the names for all the objects
 # sample new set of PSUid for each strata combination - stratified bootstrap resampling - may be able to use boot function instead
 bootAgePSUid = matrix (NA, nrow = dim(ageids)[1], ncol=B+1)
 dimnames(bootAgePSUid) = list(NULL, c("orig", paste("iter.",1:B,sep="")))
@@ -147,8 +152,10 @@ bootAgePSUid[,1] = ageids$PSUid
 # assigning to all columns using size = nAge.vec[i] * B, instead of using loop by iteration 1 to B
   for ( i in 1:length(uStrat) ){
 # need to check order of nAge.vec and uStrat matches
-  bootAgePSUid [ start.pos[i]:end.pos[i], -1] = resample (ageids$PSUid [ ageids$Strat == uStrat[i] ], size = nAge.vec[i] * B, replace=T )
+###  bootAgePSUid [ start.pos[i]:end.pos[i], -1] = resample (ageids$PSUid [ ageids$Strat == uStrat[i] ], size = nAge.vec[i] * B, replace=T )
+  bootAgePSUid [ start.pos[i]:end.pos[i], -1] = resample (ageids$PSUid [ ageids$Strat == uStrat[i] ], size = n.PSUid[i] * B, replace=T )
   }
+
 
 # length sampling
 HH = hh(csObject)
@@ -169,10 +176,15 @@ end.pos = cumsum(nLen.vec)
 # PSUids for each strata combination
 lenids = unique( HH [,c( "PSUid", "time","space","technical")] )
 lenids$Strat = paste (lenids$time, lenids$space, lenids$technical, sep=":=:")
-# may be an easier way?
-uStrat = as.vector (tapply(lenids$Strat, list(time = lenids$time, space = lenids$space, technical = lenids$technical),
-       function(x){unique(x)} ) )
-uStrat = uStrat[!is.na (uStrat)]
+# may be an easier way?        ### let's do it like for the ages
+start.pos <- tapply(1:nrow(lenids),list(lenids$Strat),min, na.rm=TRUE)     ### <---- avoid the need to use this nLen.vec
+end.pos <- tapply(1:nrow(lenids),list(lenids$Strat),max, na.rm=TRUE)
+n.PSUid <- (end.pos+1)-start.pos
+
+###uStrat = as.vector (tapply(lenids$Strat, list(time = lenids$time, space = lenids$space, technical = lenids$technical),
+###       function(x){unique(x)} ) )
+###uStrat = uStrat[!is.na (uStrat)]
+uStrat <- unique(lenids$Strat)   ### <----  To have the full consistency fith the order of the names for all the objects
 # sample new set of PSUid for each strata combination - stratified bootstrap resampling - may be able to use boot function instead
 bootLenPSUid = matrix (NA, nrow = dim(lenids)[1], ncol=B+1)
 dimnames(bootLenPSUid) = list(NULL, c("orig", paste("iter.",1:B,sep="")))
@@ -183,7 +195,9 @@ bootLenPSUid[,1] = lenids$PSUid
 # assigning to all columns using size = nAge.vec[i] * B, instead of using loop by iteration 1 to B
 for ( i in 1:length(uStrat) ){
 # order of nLen.vec and uStrat needs to match
-  bootLenPSUid [ start.pos[i]:end.pos[i], -1] = resample (lenids$PSUid [ lenids$Strat == uStrat[i] ], size = nLen.vec[i] * B, replace=T )
+###  bootLenPSUid [ start.pos[i]:end.pos[i], -1] = resample (lenids$PSUid [ lenids$Strat == uStrat[i] ], size = nLen.vec[i] * B, replace=T )
+  bootLenPSUid [ start.pos[i]:end.pos[i], -1] = resample (lenids$PSUid [ lenids$Strat == uStrat[i] ], size = n.PSUid[i] * B, replace=T )
+
   }
 
 
@@ -234,13 +248,15 @@ tblan = CL
 # apply landing multiplier, unallocated and misreported weights to official landings weight following FishFrame definition
 # Total Landings = Official Landings * Multiplier + Unallocated Catch + Misallocated Catch
 # if values are NA assume multiplier is 1 and amount to add is 0
+### THIS SHOULD BE A GENERIC FUNCTION FOR ALL DBE AND MBE
+
   tblan$landMult[is.na(tblan$landMult)] = 1
   tblan$unallocCatchWt [is.na(tblan$unallocCatchWt)] = 0
   tblan$misRepCatchWt [is.na(tblan$misRepCatchWt)] = 0
   tblan$adjlandWt = tblan$landWt * tblan$landMult + tblan$unallocCatchWt + tblan$misRepCatchWt
 
 # 2) The Landings Value corresponds to the Official Landings, so we should find
-#        Total Value = Total Landings * Landings Value / Official Landings
+#        Total Value = Total Landings * Landings Value / Official Landings 
   tblan$adjlandValue = tblan$adjlandWt * tblan$landValue / tblan$landWt
 
 # aggregrate landed weight (all vessels) by time, space and technical strata
@@ -499,7 +515,7 @@ data("LEMexample")
 LEM.dbeOut = dbeObject(desc="Example",species="Microstomus kitt",param="landings",strataDesc=LEM.strat, catchCat="LAN",methodDesc="bootstrap samples")
 
 # Run vesselRaise function, B set to a very low number of iterations for demonstration only
-LEM.dbeOut = vesselRaise.boot (csObject = LEM.CScon, clObject = LEM.CLcon, dbeOutp = LEM.dbeOut, B = 3 )
+LEM.dbeOut = vesselRaise.boot (csObject = LEM.CScon, clObject = LEM.CLcon, dbeOutp = LEM.dbeOut, B = 30 )
 
 
 
