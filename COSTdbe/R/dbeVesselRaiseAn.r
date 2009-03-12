@@ -39,13 +39,13 @@
 
 
 
-# Requires hidden functions from COSTcore:
-# resample, spdAgreg, extCatchCat, As.num
+## Requires hidden functions from COSTcore: see 'AAoutcomeObject.r' 
+## resample, spdAgreg, extCatchCat, As.num
 resample <- COSTcore:::resample
 spdAgreg <- COSTcore:::spdAgreg
 extCatchCat <- COSTcore:::extCatchCat
 As.num <- COSTcore:::As.num
-
+#
 
 
 ############### CALCULATIONS ##################
@@ -457,29 +457,29 @@ return(dbeOutp)
  
 ##################################################################
 
-# arguments to test the code line by line, without calling the function
-#csObject = LEM.CScon
-#clObject = LEM.CLcon
-#dbeOutp = LEM.dbeOut.an
-#age.plus = -1
-
-# library(COSTdbe)
-# load example data set
-# data function should work when data set is part of COSTdbe package
-# use load("pathname/LEMexample.rdata") if have the example file separately
-data("LEMexample")
-# Setup object for output
-# note strat defined above when creating consolidated object
-LEM.dbeOut.an = dbeObject(desc="Example",species="Microstomus kitt",param="landings",strataDesc=LEM.strat, catchCat="LAN",methodDesc="analytical")
-
-# Run vesselRaise function
-LEM.dbeOut.an = vesselRaise.an (csObject = LEM.CScon, clObject = LEM.CLcon, dbeOutp = LEM.dbeOut.an)
-LEM.dbeOut.an
-
-# CV, see function dbeCalc for full implementation of calculating CV and confidence intervals
-100*sqrt(LEM.dbeOut.an@ageVar$value)/LEM.dbeOut.an@ageStruc$estim$value
-
-
+## arguments to test the code line by line, without calling the function
+##csObject = LEM.CScon
+##clObject = LEM.CLcon
+##dbeOutp = LEM.dbeOut.an
+##age.plus = -1
+#
+## library(COSTdbe)
+## load example data set
+## data function should work when data set is part of COSTdbe package
+## use load("pathname/LEMexample.rdata") if have the example file separately
+#data("LEMexample")
+## Setup object for output
+## note strat defined above when creating consolidated object
+#LEM.dbeOut.an = dbeObject(desc="Example",species="Microstomus kitt",param="landings",strataDesc=LEM.strat, catchCat="LAN",methodDesc="analytical")
+#
+## Run vesselRaise function
+#LEM.dbeOut.an = vesselRaise.an (csObject = LEM.CScon, clObject = LEM.CLcon, dbeOutp = LEM.dbeOut.an)
+#LEM.dbeOut.an
+#
+## CV, see function dbeCalc for full implementation of calculating CV and confidence intervals
+#100*sqrt(LEM.dbeOut.an@ageVar$value)/LEM.dbeOut.an@ageStruc$estim$value
+#
+#
 
 
 
