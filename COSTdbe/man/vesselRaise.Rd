@@ -3,6 +3,9 @@
 \alias{Vessel raising}
 \alias{vesselRaise.boot}
 \alias{vesselRaise.an}
+\alias{vesselRaise.boot,csDataCons,clDataCons,dbeOutput-method}                             %modif MM
+\alias{vesselRaise.an,csDataCons,clDataCons,dbeOutput-method}                               %modif MM
+
 
 \title{Estimate numbers-at-age and numbers-at-length}
 \description{
@@ -13,11 +16,10 @@ vesselRaise.boot provides variance estimates by bootstrapping the age and length
 }
 
 \usage{
+vesselRaise.an(csObject, clObject, dbeOutp, age.plus = -1)                                    %modif MM
 vesselRaise.boot(csObject, clObject, dbeOutp, B, age.plus = -1, bootMethod = "samples")
 }
-\usage{
-vesselRaise.an(csObject, clObject, dbeOutp, age.plus = -1)
-}
+
 \arguments{
   \item{csObject}{A \emph{csDataCons} object of sampling data}
   \item{clObject}{A \emph{clDataCons} object of landings data}
@@ -47,6 +49,7 @@ If the multiplier field is NA it is assumed to be one, if unallocated catch and 
   \item{totalN}{Total numbers. For vesselRaise.boot bootstrap replicates are also given and iter=0 contains estimates from the original data.}
   \item{totalNvar}{Variance of total numbers.}
   \item{totalW}{Total landed weight (kg)}
+}
 
 
 \references{ \url{http://wwz.ifremer.fr/cost} }
@@ -55,7 +58,7 @@ If the multiplier field is NA it is assumed to be one, if unallocated catch and 
 You should check the number of samples and age-length data are suitable before calculating estimates. vesselRaise.an stops if there are length classes with no age information. vesselRaise.boot fills in gaps that are 1 or 2 length groups wide with ages from surrounding length groups, see alkLgthRec(type="fillMiss", value=2).
  %~Make other sections like Warning with \section{Warning }{....} ~
 }
-\seealso{ \code{\link{dbeOutput}, \link[COSTcore]{csDataCons}, \link[COSTcore]{clDataCons}, \link{dbeCalc}, \link{alkLgthRec} }
+\seealso{ \code{\link{dbeOutput}, \link[COSTcore]{csDataCons}, \link[COSTcore]{clDataCons}, \link{dbeCalc}, \link{alkLgthRec} }}
 \examples{
 # load example data set
 data("LEMexample")

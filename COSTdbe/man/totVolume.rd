@@ -3,9 +3,9 @@
 \alias{totVolume,dbeOutput,csDataCons,ceDataCons,missing-method}
 \alias{totVolume,dbeOutput,csDataCons,ceDataCons,clDataCons-method}
 \docType{methods}
-\title{Estimation of total volume of discards (weight or number)}
+\title{Estimation of total volume of discards (weight, number or number-at-length)}
 \description{
-Generic function to estimate total volume of discards (weight or number) based on various raising methods.
+Generic function to estimate total volume of discards (weight, number or number-at-length) based on various raising methods.
 }
 
 \usage{
@@ -21,7 +21,7 @@ totVolume(dbeOutput,csObject,ceObject,clObject,\dots)
   \item{type}{Specification of the raising method : \code{"trip"} (default value) for raising by trip, \code{"fo"} for raising by fishing operations, 
 \code{"fd"} for raising by fishing days,\code{"landings"} for ratio-to-total landings raising method, and \code{"time"} for ratio-to-fishing duration 
 raising method.}
-  \item{val}{Estimated parameter. To be chosen between \code{"weight"} (default value) and \code{"number"}.}
+  \item{val}{Estimated parameter. To be chosen between \code{"weight"} (default value), \code{"number"} and \code{"nAtLength"}.}
   \item{sampPar}{logical specifying if given species is considered to be automatically sampled during the sampling process (default value is \code{TRUE}).}
   \item{landSpp}{character vector describing the species considered in the 'volume of landings' variable if chosen raising method is ratio-to-landings (see 'clObject' description).}  
 }
