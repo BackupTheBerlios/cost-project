@@ -9,7 +9,7 @@
 #library(COSTcore)
 
 As.num <- COSTcore:::As.num
-
+            
 setGeneric("bpEstim", function(dbeOutput,                                       #dbeOutput object
                                object,                                          #csDataCons object
                                adjust=TRUE,                                     #if FALSE, estimates at age are calculated directly fom ca table 
