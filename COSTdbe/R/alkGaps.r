@@ -483,7 +483,8 @@ strLC <- strLChl(object)
   if (preview) {
     viewGapsAlk(alk,strLC)
   }
-    
+
+val <- NULL    
   eval(parse('',text=paste("val <- gapsRm(alk,type=type,","value=value,"[!ms],"preview=FALSE,postview=FALSE)",sep="")))
   #val$lgthCls defines the new length classes in object@ca & object@hl 
 
