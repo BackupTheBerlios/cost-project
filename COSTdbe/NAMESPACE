@@ -13,6 +13,8 @@ exportClasses(
 )
 
 exportMethods(
+  "vesselRaise.an",
+  "vesselRaise.boot",
 	"totVolume",
 	"dbePlot",
 	"dbePlotRep",
