@@ -48,13 +48,13 @@
 
 
 
-# Requires hidden functions from COSTcore:
-# resample, spdAgreg, extCatchCat, As.num
+## Requires hidden functions from COSTcore:
+## resample, spdAgreg, extCatchCat, As.num
 resample <- COSTcore:::resample
 spdAgreg <- COSTcore:::spdAgreg
 extCatchCat <- COSTcore:::extCatchCat
 As.num <- COSTcore:::As.num
-
+#
 # Uses the following hidden functions in COSTdbe, they should be available without assigning them
 #propMissLgth <- COSTdbe:::propMissLgth
 #fillMissFun <- COSTdbe:::fillMissFun
@@ -507,17 +507,17 @@ return(dbeOutp)
 
 ## Example
 
-# load example data set
-# library(COSTdbe)
-data("LEMexample")
-# Setup object for output
-# strat was defined when creating consolidated object
-LEM.dbeOut = dbeObject(desc="Example",species="Microstomus kitt",param="landings",strataDesc=LEM.strat, catchCat="LAN",methodDesc="bootstrap samples")
-
-# Run vesselRaise function, B set to a very low number of iterations for demonstration only
-LEM.dbeOut = vesselRaise.boot (csObject = LEM.CScon, clObject = LEM.CLcon, dbeOutp = LEM.dbeOut, B = 30 )
-
-
+## load example data set
+## library(COSTdbe)
+#data("LEMexample")
+## Setup object for output
+## strat was defined when creating consolidated object
+#LEM.dbeOut = dbeObject(desc="Example",species="Microstomus kitt",param="landings",strataDesc=LEM.strat, catchCat="LAN",methodDesc="bootstrap samples")
+#
+## Run vesselRaise function, B set to a very low number of iterations for demonstration only
+#LEM.dbeOut = vesselRaise.boot (csObject = LEM.CScon, clObject = LEM.CLcon, dbeOutp = LEM.dbeOut, B = 30 )
+#
+#
 
 
 
