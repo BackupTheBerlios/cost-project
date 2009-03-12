@@ -1,10 +1,10 @@
 Package: COSTdbe
 Title: Design-based estimates package for COST.
-Version: 0.1-5
+Version: 0.1-6
 Date: 2009
 Author: COST Team and various contributors.
 Description: ToDo
-Depends: R(>= 2.7.2), COSTcore, lattice, boot
+Depends: R(>= 2.8.1), COSTcore, lattice, boot, methods
 Maintainer: John Doe <johndoe@nowhere.com>
 License: GPL 2 or above
 LazyLoad: Yes
