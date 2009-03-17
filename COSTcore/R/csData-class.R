@@ -444,6 +444,108 @@ setMethod("csData", signature("character", "character", "character", "character"
 
 
 
+setMethod("csData", signature("character", "character", "character", "missing", "missing"), function(tr, hh, sl, desc="Unknown stock", check=FALSE,...){
+
+	# read CSV files
+	# ToDo
+	tr <- read.csv(tr,...)
+	hh <- read.csv(hh,colClasses=c(NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"character","character",NA,NA,NA,NA,NA,NA,NA,NA),...)
+	sl <- read.csv(sl,...)
+
+	# check names are correct
+	checkTRnms(tr)
+	checkHHnms(hh)
+	checkSLnms(sl)
+
+	# remove record type 
+	tr <- tr[,-1]
+	hh <- hh[,-1]
+	sl <- sl[,-1]
+
+	# create object and name columns properly 
+	obj <- new("csData")
+	names(tr) <- names(obj@tr)
+	names(hh) <- names(obj@hh)
+	names(sl) <- names(obj@sl)
+	#check
+  if (check) check.fields(csData(tr=tr, hh=hh, sl=sl, desc=desc))
+  csData(tr=tr, hh=hh, sl=sl, desc=desc)
+})
+
+
+
+setMethod("csData", signature("character", "character", "missing", "missing", "missing"), function(tr, hh, desc="Unknown stock", check=FALSE,...){
+
+	# read CSV files
+	# ToDo
+	tr <- read.csv(tr,...)
+	hh <- read.csv(hh,colClasses=c(NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"character","character",NA,NA,NA,NA,NA,NA,NA,NA),...)
+
+	# check names are correct
+	checkTRnms(tr)
+	checkHHnms(hh)
+
+	# remove record type 
+	tr <- tr[,-1]
+	hh <- hh[,-1]
+
+	# create object and name columns properly 
+	obj <- new("csData")
+	names(tr) <- names(obj@tr)
+	names(hh) <- names(obj@hh)
+	#check
+  if (check) check.fields(csData(tr=tr, hh=hh, desc=desc))
+  csData(tr=tr, hh=hh, desc=desc)
+})
+
+
+setMethod("csData", signature("character", "missing", "missing", "missing", "missing"), function(tr, desc="Unknown stock", check=FALSE,...){
+
+	# read CSV files
+	# ToDo
+	tr <- read.csv(tr,...)
+
+	# check names are correct
+	checkTRnms(tr)
+
+	# remove record type 
+	tr <- tr[,-1]
+
+	# create object and name columns properly 
+	obj <- new("csData")
+	names(tr) <- names(obj@tr)
+	#check
+  if (check) check.fields(csData(tr=tr, desc=desc))
+  csData(tr=tr, desc=desc)
+})
+
+
+setMethod("csData", signature("character", "missing", "missing", "missing", "character"), function(tr, hh, sl, hl, ca, desc="Unknown stock", check=FALSE,...){
+
+	# read CSV files
+	# ToDo
+	tr <- read.csv(tr,...)
+	ca <- read.csv(ca,colClasses=c(NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"character","character",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA),...)
+
+	# check names are correct
+	checkTRnms(tr)
+  checkCAnms(ca)
+
+	# remove record type 
+	tr <- tr[,-1]
+  ca <- ca[,-1]
+
+	# create object and name columns properly 
+	obj <- new("csData")
+	names(tr) <- names(obj@tr)
+	names(ca) <- names(obj@ca)
+	#check
+  if (check) check.fields(csData(tr=tr, ca=ca, desc=desc))	
+	csData(tr=tr, ca=ca, desc=desc)
+})
+
+
+
 #====================================================================
 # Accessor functions
 #====================================================================
