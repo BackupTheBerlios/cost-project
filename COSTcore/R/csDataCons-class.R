@@ -501,7 +501,7 @@ tpRec <- objStrat@tpRec                        #
 spRec <- objStrat@spRec                        #
 tcRec <- objStrat@tcRec                        #
                                                #
-HH <- object@hh                                ####
+HH <- HHca <- object@hh                                ####
 
 
 #-------------------------------------------------------------------------------
@@ -509,11 +509,17 @@ HH <- object@hh                                ####
 #-------------------------------------------------------------------------------
 
     #---------------------------------------------------------------------------
-    # if technical stratification is Commercial category, "technical" field in hh and tr is to be filled with NAs, so a NA field named 'commCat' is created in tr & hh 
+    # if technical stratification is Commercial category, sampType must be "M" or "D", and HH lines are duplicated according to sampled category  
     #---------------------------------------------------------------------------
     
 cc <- is.na(techStrata)==FALSE & techStrata=="commCat"
-if (cc) HH$commCat <- NA
+
+if (cc) {
+
+if (!all(HH$sampType%in%c("M","D"))) stop("for cc strategy, all data must be market sampling data!!")
+HH <- merge(HH,unique(object@sl[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","spp","catchCat","landCat","commCatScl","commCat")]))
+
+}
 
     #---------------------------------------------------------------------------
     # if tech strata = vslPwr, vslSize, vslLen, vslType
@@ -622,7 +628,7 @@ sl <- merge(object@sl,HH[,c("sampType",
                      "space",
                      "technical",
                      "PSUid",
-                     "SSUid")],sort=FALSE,all.x=TRUE)
+                     "SSUid","commCat"[cc])],sort=FALSE,all.x=TRUE)
       
     #---------------------------------------------------------------------------
     # creation of the sorting stratification : concatenation of 5 fields related to the categorisation 
@@ -642,11 +648,11 @@ sl <- sl[order(sl$PSUid,sl$SSUid),]
 
 #TSUid creation has been simplified by supposing that commCatScl is unique per species             #<<- 30/06/2008 update : only CC defines TSUid
                              
-if (cc) {                                                                                          #<<- 30/06/2008 update : if techStrata!="commCat", then TSUid = NA
+#if (cc) {                                                                                          #<<- 30/06/2008 update : if techStrata!="commCat", then TSUid = NA
   sl$TSUid <- sl$commCat                                                                           #
-} else {                                                                                           #
-  sl$TSUid <- NA                                                                                   #
-}                                                                                                  #
+#} else {                                                                                           #
+#  sl$TSUid <- NA                                                                                   #
+#}                                                                                                  #
   
 #-------------------------------------------------------------------------------
 # Addition of fields in HL
@@ -687,6 +693,7 @@ hl <- hl[order(hl$PSUid,hl$SSUid,hl$TSUid),]
 # Addition of fields in CA
 #-------------------------------------------------------------------------------
 
+if (!cc) {
     #---------------------------------------------------------------------------
     # merge CA and HH by the keyfields to include PSUid, SSUid, time, space and technical fields in CA
     #---------------------------------------------------------------------------
@@ -713,6 +720,13 @@ ca <- merge(object@ca,HH[,c("sampType",
 #we order by ca$PSUid to put unlinked ca datas together at the bottom of the table
 ca <- ca[order(ca$PSUid),]  
 index <- is.na(ca$PSUid)
+
+} else {
+
+ca <- object@ca ; ca$time <- ca$space <- ca$technical <- ca$PSUid <- ca$SSUid <- NA 
+index <- rep(TRUE,nrow(ca))
+
+}
 
         #------- 
         # creation of time and space stratification fields for indexed part of ca (no technical stratification for tr/ca)
@@ -1172,3 +1186,49 @@ setMethod("subset", signature(x="csDataCons"), function(x,subset,...){
 #})
 #
 #
+
+
+#====================================================================
+# MM 19/03/09
+# subsetSpp : only sl table is subset, and only hl is modified consequently
+#====================================================================
+
+
+
+#setGeneric("subsetSpp", function(x,subset,...){
+#	standardGeneric("subsetSpp")
+#	}
+#)
+#
+setMethod("subsetSpp", signature(x="csDataCons"), function(x,subset,...){
+  
+  hl <- slSex(sl(x),hl(x))                                                    
+  #get idx                                                                      
+	hlfk <- hl[,c(1:15)]                                                          
+	hlfk <- apply(hlfk,1,paste,collapse="")
+	hlfk <- gsub("[[:space:]]","",hlfk)
+  
+  # new idx
+	e <- substitute(subset)
+	df0 <- do.call("sl", list(object=x))
+	r <- eval(e, df0, parent.frame(n=2))
+	
+	# subset
+	sl <- df0[r,]
+	slidx <- apply(sl[,1:15],1,paste,collapse="")
+	slidx <- gsub("[[:space:]]","",slidx)
+	Hl <- hl[hlfk %in% slidx,]	                                                
+  Hl$sex <- Hl$lsex ; hl <- Hl[,-ncol(Hl)]                                      
+
+	# output
+	if(nrow(sl)<1) {sl <- csDataCons()@sl                                             
+                  warning("No data kept from subsetting process!!")}            
+  if(nrow(hl)<1) {hl <- csDataCons()@hl}                                            
+
+new("csDataCons",desc=x@desc,tr=tr(x), hh=hh(x), sl=sl, hl=hl, ca=ca(x))         
+
+})
+
+
+
+
