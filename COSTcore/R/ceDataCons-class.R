@@ -337,6 +337,6 @@ setMethod("subset", signature(x="ceDataCons"), function(x,subset,...){
 	e <- substitute(subset)
 	df0 <- ce(x)	
 	r <- eval(e, df0, parent.frame(n=2))
-	new("ceDataCons", df0[r,])
+	new("ceDataCons", desc=x@desc, ce=df0[r,])
 })
 
