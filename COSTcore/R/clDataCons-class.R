@@ -286,7 +286,7 @@ setMethod("is.clDataCons","ANY", function(object){
 
 setMethod("rbind2", signature(x="clDataCons", y="clDataCons"), function(x,y){
 	df0 <- rbind2(cl(x),cl(y))
-	new("clDataCons", df0)
+	new("clDataCons", cl=df0)
 })
 
 #====================================================================
@@ -297,6 +297,6 @@ setMethod("subset", signature(x="clDataCons"), function(x,subset,...){
 	e <- substitute(subset)
 	df0 <- cl(x)	
 	r <- eval(e, df0, parent.frame(n=2))
-	new("clDataCons", df0[r,])
+	ff <- new("clDataCons", desc=x@desc, cl=df0[r,])
 })
 
