@@ -26,5 +26,7 @@ exportMethods(
 	"sampStrDef",
 	"bpEstim",
 	"dbeCalc",
-	"bpBoot"
+	"bpBoot",
+	"RaiseLgth",
+	"RaiseAge"
 )
