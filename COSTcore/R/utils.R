@@ -22,7 +22,7 @@ setMethod("coerceDataFrameColumns", signature("data.frame", "data.frame"), funct
 		cls <- class(refObject[,i])
 		if(cls=="factor"){
 			v <- as(object[,i], "character")
-			v <- as(object[,i], "factor")
+			v <- as(v, "factor")                      #modif MM 23/03/2009
 		} else {
 			v <- as(object[,i], cls)
 		}
