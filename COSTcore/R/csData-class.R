@@ -703,8 +703,9 @@ setMethod("rbind2", signature(x="csData", y="csData"), function(x,y){
 	hl <- rbind2(hl1,hl2)
 	ca <- rbind2(ca1,ca2)
 
-	# new object
-	csData(tr=unique(tr), hh=unique(hh), sl=unique(sl), hl=unique(hl), ca=unique(ca))
+  fun <- function(df) if (!all(is.na(df))) df[apply(df,1,function(x) !all(is.na(x))),] else df[1,]                #modif MM 23/09/2009
+	# new object                                                                                                    #
+	csData(tr=unique(fun(tr)), hh=unique(fun(hh)), sl=unique(fun(sl)), hl=unique(fun(hl)), ca=unique(fun(ca)))      #
 })
 
 
