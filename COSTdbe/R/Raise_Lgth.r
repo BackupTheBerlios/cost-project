@@ -32,7 +32,7 @@ if (indNewWt) {
   NW <- spdAgreg(list(newWt=csObject@sl$subSampWt),BY=list(PSUid=csObject@sl$PSUid,SSUid=csObject@sl$SSUid,TSUid=csObject@sl$TSUid,
                                                          time=csObject@sl$time,space=csObject@sl$space,
                                                          technical=csObject@sl$technical,sort=csObject@sl$sort),sum,na.rm=TRUE)
-
+                  
   mergeSL <- merge(csObject@sl,NW,all.x=TRUE,sort=FALSE)
   ssw <- csObject@sl$subSampWt
   csObject@sl$subSampWt <- mergeSL$newWt
@@ -41,13 +41,39 @@ if (indNewWt) {
   csObject@sl$lenCode <- csObject@sl$subSampWt
 }
 
+        
+#subsetting "csObject"                                                                                    #
+x <- csObject                                                                                             #
+  hl <- slSex(sl(x),hl(x))                                                                                #
+  #get idx                                                                                                #
+	hlfk <- hl[,c(1:15)]                                                                                    #
+	hlfk <- apply(hlfk,1,paste,collapse="")                                                                 #
+	hlfk <- gsub("[[:space:]]","",hlfk)                                                                     #
+  	                                                                                                      #
+	# subset                                                                                                #
+	sl <- sl(x)                                                                                             #
+	sl <- sl[sl$spp%in%sp,]                                                                                 #
+	if (!is.na(sex)) sl <- sl[sl$sex%in%sex,]                                                               #
+	slidx <- apply(sl[,1:15],1,paste,collapse="")                                                           # here, SUBSET method should be used 
+	slidx <- gsub("[[:space:]]","",slidx)                                                                   #
+	Hl <- hl[hlfk %in% slidx,]	                                                                            #
+  Hl$sex <- Hl$lsex ; hl <- Hl[,-ncol(Hl)]                                                                #
+                                                                                                          #
+	# output                                                                                                #
+	if(nrow(sl)<1) {sl <- csDataCons()@sl                                                                   #
+                  warning("No data kept from subsetting process!!")}                                      #
+  if(nrow(hl)<1) {hl <- csDataCons()@hl}                                                                  #
+                                                                                                          #
+csObject <- new("csDataCons",desc=x@desc,tr=tr(x), hh=hh(x), sl=sl, hl=hl, ca=ca(x))                      #
+                                                                                                          #
+#csObject <- subsetSpp(csObject,spp%in%sp)                                                                #
+#if (!is.na(sex)) csObject <- subsetSpp(csObject,sex%in%sex)  #to keep all 'tr' and 'hh' information, we use "subsetSpp" method
+##csObject <- subsetSpp(csObject,spp%in%sp)                                                               #
+#subsetting "clObject"                                                                                    #
+x <- clObject ; cl <- cl(x)                                                                               #
+clObject <- new("clDataCons", desc=x@desc, cl=cl[cl$taxon%in%taxon,])                                     #
 
-#subsetting "csObject" 
-csObject <- subsetSpp(csObject,spp%in%sp)
-if (!is.na(sex)) csObject <- subsetSpp(csObject,sex%in%sex)  #to keep all 'tr' and 'hh' information, we use "subsetSpp" method
-csObject <- subsetSpp(csObject,spp%in%sp)
-#subsetting "clObject"
-clObject <- subset(clObject,taxon%in%taxon)    
+#clObject <- subset(clObject,taxon%in%taxon)    
 
 SL <- csObject@sl
 HL <- csObject@hl
@@ -66,7 +92,6 @@ clObject@cl$landMult[is.na(clObject@cl$landMult)] <- 1
 #TotLand = OffLand*Multi + UnallocCat + MisallocCat
 totLand <- mapply(function(w,x,y,z) sum(c(w*x,y,z),na.rm=TRUE),clObject@cl$landWt,clObject@cl$landMult,clObject@cl$unallocCatchWt,clObject@cl$misRepCatchWt)
 totLandings <- spdAgreg(list(W=totLand),BY=list(time=clObject@cl$time,space=clObject@cl$space,technical=clObject@cl$technical),sum,na.rm=TRUE)
-
 
 #weight of the level
 wl <- tapply(SL$wt,list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)   #reference for factor levels
@@ -131,7 +156,8 @@ second <- (1-(sum.wl_psu/W))/(sum.wl_psu^2/n)
   third.3 <- d_jpsu-third.2*as.vector(wl_psu)
 third <- apply(third.3^2,c(1,3),sum,na.rm=TRUE)/as.vector(n-1)
 VarD_j <- third*as.vector(first*second)
-
+VarD_j[is.nan(VarD_j)] <- 0
+VarD_j[is.infinite(VarD_j)] <- 0
 
 
 #results are inserted in dbeOutput object
