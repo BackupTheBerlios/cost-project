@@ -414,7 +414,7 @@ CA$SSUid <- 1
         # addition of the sorting stratification fields
         #-------
 
-fields <- c("catchCat","landCat","commCatScl","commCat")
+fields <- c("catchCat","landCat","commCatScl")#,"commCat")
 CA$sort <- apply(CA[,fields],1,paste,collapse="-")
 
 
@@ -592,7 +592,8 @@ if (is.na(techStrata)) {
   HH$technical <- HH[,techStrata]}
 
 if (!is.na(tcRec[1])) HH <- recFun(HH,"technical",tcRec)
-        
+
+if (cc) HH <- unique(HH[,-match("commCat",names(HH))])  #if commercial category recoding was made              #modif MM 27/03/2009
         #------- 
         # PSUid : combination of trip code, time, space and technical stratification
         #-------
@@ -617,6 +618,8 @@ HH$SSUid <- unlist(tapply(HH$PSUid,list(HH$PSUid),function(x) 1:length(x)))
     # merge SL and HH by the keyfields to include PSUid, SSUid, time, space and technical fields in SL
     #---------------------------------------------------------------------------
 
+if (cc) {object@sl$technical <- object@sl$commCat ; object@sl <- recFun(object@sl,"technical",tcRec)}         #modif MM 27/03/2009
+
 sl <- merge(object@sl,HH[,c("sampType",
                      "landCtry",
                      "vslFlgCtry",
@@ -628,14 +631,14 @@ sl <- merge(object@sl,HH[,c("sampType",
                      "space",
                      "technical",
                      "PSUid",
-                     "SSUid","commCat"[cc])],sort=FALSE,all.x=TRUE)
+                     "SSUid")],sort=FALSE,all.x=TRUE)
       
     #---------------------------------------------------------------------------
     # creation of the sorting stratification : concatenation of 5 fields related to the categorisation 
     # of the catch (important: this field keeps track of the original values)
     #---------------------------------------------------------------------------
       
-fields <- c("catchCat","landCat","commCatScl","commCat","subSampCat")
+fields <- c("catchCat","landCat","commCatScl","subSampCat")    #"commCat",      #modif MM 27/03/2009
 sl$sort <- apply(sl[,fields],1,paste,collapse="-")
 
     #---------------------------------------------------------------------------
@@ -648,11 +651,11 @@ sl <- sl[order(sl$PSUid,sl$SSUid),]
 
 #TSUid creation has been simplified by supposing that commCatScl is unique per species             #<<- 30/06/2008 update : only CC defines TSUid
                              
-#if (cc) {                                                                                          #<<- 30/06/2008 update : if techStrata!="commCat", then TSUid = NA
+if (cc) {                                                                                          #<<- 30/06/2008 update : if techStrata!="commCat", then TSUid = NA
+  sl$TSUid <- sl$technical                                                                         #modif MM 27/03/2009
+} else {                                                                                           #
   sl$TSUid <- sl$commCat                                                                           #
-#} else {                                                                                           #
-#  sl$TSUid <- NA                                                                                   #
-#}                                                                                                  #
+}                                                                                                  #
   
 #-------------------------------------------------------------------------------
 # Addition of fields in HL
@@ -773,7 +776,7 @@ ca$SSUid[index] <- 1
         # addition of the sorting stratification fields
         #-------
 
-fields <- c("catchCat","landCat","commCatScl","commCat")
+fields <- c("catchCat","landCat","commCatScl") #,"commCat")                     #modif MM 27/03/2009
 ca$sort <- apply(ca[,fields],1,paste,collapse="-")
 
 
