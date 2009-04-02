@@ -16,16 +16,18 @@
 \alias{spacePlot,ceData,character,character,function,missing,character-method}
 \alias{spacePlot,ceDataCons,character,character,function,ANY,ANY-method}
 
-\alias{spacePlot,clDataCons,character,character,function,character,ANY-method}              %
-\alias{spacePlot,clDataCons,character,character,function,character,character-method}        %
-\alias{spacePlot,clDataCons,character,character,function,missing,character-method}          %
-\alias{spacePlot,ceDataCons,character,character,function,character,ANY-method}              %
-\alias{spacePlot,ceDataCons,character,character,function,character,character-method}        % MM added 27/10/2008
-\alias{spacePlot,ceDataCons,character,character,function,missing,character-method}          %
-\alias{spacePlot,csDataCons,character,character,function,ANY,ANY-method}                    %
-\alias{spacePlot,csDataCons,character,character,function,character,ANY-method}              %
-\alias{spacePlot,csDataCons,character,character,function,character,character-method}        %
-\alias{spacePlot,csDataCons,character,character,function,missing,character-method}          %
+
+\alias{spacePlot,clDataCons,character,character,function,character,ANY-method}
+\alias{spacePlot,clDataCons,character,character,function,character,character-method}
+\alias{spacePlot,clDataCons,character,character,function,missing,character-method}
+\alias{spacePlot,ceDataCons,character,character,function,character,ANY-method}
+\alias{spacePlot,ceDataCons,character,character,function,character,character-method}
+\alias{spacePlot,ceDataCons,character,character,function,missing,character-method}
+\alias{spacePlot,csDataCons,character,character,function,ANY,ANY-method}
+\alias{spacePlot,csDataCons,character,character,function,character,ANY-method}
+\alias{spacePlot,csDataCons,character,character,function,character,character-method}
+\alias{spacePlot,csDataCons,character,character,function,missing,character-method}
+
 
 \alias{spacePlot}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -97,6 +99,7 @@ Other arguments are :                                                  %
   
   \item{plotmap}{Logical. If FALSE plots the map area but omits the "image", "contour", "bubble", or "values".}
   \item{overlay}{Logical. If TRUE adds to the proceeding plot.}
+  \item{squarmap}{Logical. If TRUE produces a square plot area with side length equal to the longer of the x or y limits. If FALSE produces a maximum plot area map with x and y limits as specified. The default is FALSE}
   \item{area.lines}{Logical. If TRUE adds the boundary lines of ICES or FRS demsersal sampling areas.}
   \item{depths}{Vector of the form c(50,100,200,500). Adds the specified depth contour.}
   \item{statrects}{Logical. If TRUE adds ICES statistical rectangle division lines.}
@@ -139,6 +142,11 @@ Other arguments are :                                                  %
 %\seealso{\code{\link{strataSpacePlot}} for the plotting of COST objects by spatial strata}
 \examples{
 #====================================================
+
+# The default
+spacePlot()
+
+
 #  Plotting numeric variables and spatial strata....
 #  by ICES statistical rectangle,  
 
