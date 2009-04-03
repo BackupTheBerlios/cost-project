@@ -18,24 +18,44 @@
 }
 All the following slots contain dataframes with at least 4 fields : \emph{time}, \emph{space}, \emph{technical} and \emph{value}. \cr
 \tabular{lllll}{
-\bold{nSamp} \tab \tab \tab \code{data.frame} \tab Number of samples\cr
-\bold{nMes} \tab \tab \tab \code{data.frame} \tab Number of individual measured\cr
+\bold{nSamp} \tab \tab \tab \code{list} \tab Number of samples\cr
+ \tab \tab len \tab \code{data.frame} \tab Number of length samples. \cr
+ \tab \tab age \tab \code{data.frame} \tab Number of age samples. \cr
+\bold{nMes} \tab \tab \tab \code{list} \tab Number of individual measured\cr
+ \tab \tab len \tab \code{data.frame} \tab Number of individual measured for length data. \cr
+ \tab \tab age \tab \code{data.frame} \tab Number of individual measured for age data. \cr
 \bold{lenStruc} \tab \tab \tab \code{list} \tab Estimates of the length structure\cr
  \tab \tab estim \tab \code{data.frame} \tab Final estimates (\emph{length} field added). \cr
  \tab \tab rep \tab \code{data.frame} \tab Resampling replicates (\emph{length} and \emph{iter} fields added). \cr
 \bold{lenVar} \tab \tab \tab \code{data.frame} \tab Estimates of the variance of 'lenStruc'\cr
+\bold{lenNum} \tab \tab \tab \code{list} \tab Precision estimates for length structure\cr
+ \tab \tab ci \tab \code{data.frame} \tab Confidence intervals. \cr
+ \tab \tab cv \tab \code{data.frame} \tab Coefficients of variation. \cr
+ \tab \tab DCRcvIndicator \tab \code{numeric} \tab Weighted global cv. \cr
 \bold{ageStruc} \tab \tab \tab \code{list} \tab Estimates of the age structure\cr
  \tab \tab estim \tab \code{data.frame} \tab Final estimates (\emph{age} field added). \cr
  \tab \tab rep \tab \code{data.frame} \tab Resampling replicates (\emph{age} and \emph{iter} fields added). \cr
 \bold{ageVar} \tab \tab \tab \code{data.frame} \tab Estimates of the variance of 'ageStruc'\cr
+\bold{ageNum} \tab \tab \tab \code{list} \tab Precision estimates for age structure\cr
+ \tab \tab ci \tab \code{data.frame} \tab Confidence intervals. \cr
+ \tab \tab cv \tab \code{data.frame} \tab Coefficients of variation. \cr
+ \tab \tab DCRcvIndicator \tab \code{numeric} \tab Weighted global cv. \cr
 \bold{totalN} \tab \tab \tab \code{list} \tab Estimates of the total number of the parameters\cr
  \tab \tab estim \tab \code{data.frame} \tab Final estimates. \cr
  \tab \tab rep \tab \code{data.frame} \tab Resampling replicates (\emph{iter} field added). \cr
 \bold{totalNvar} \tab \tab \tab \code{data.frame} \tab Estimates of the variance of 'totalN'\cr
+\bold{totalNnum} \tab \tab \tab \code{list} \tab Precision estimates for total numbers\cr
+ \tab \tab ci \tab \code{data.frame} \tab Confidence intervals. \cr
+ \tab \tab cv \tab \code{data.frame} \tab Coefficients of variation. \cr
+ \tab \tab DCRcvIndicator \tab \code{numeric} \tab Weighted global cv. \cr
 \bold{totalW} \tab \tab \tab \code{list} \tab Estimates of the total weight of the parameters\cr
  \tab \tab estim \tab \code{data.frame} \tab Final estimates. \cr
  \tab \tab rep \tab \code{data.frame} \tab Resampling replicates (\emph{iter} field added). \cr
 \bold{totalWvar} \tab \tab \tab \code{data.frame} \tab Estimates of the variance of 'totalW'\cr
+\bold{totalWnum} \tab \tab \tab \code{list} \tab Precision estimates for total weights\cr
+ \tab \tab ci \tab \code{data.frame} \tab Confidence intervals. \cr
+ \tab \tab cv \tab \code{data.frame} \tab Coefficients of variation. \cr
+ \tab \tab DCRcvIndicator \tab \code{numeric} \tab Weighted global cv. \cr
 }}
 
 \author{Mathieu Merzereaud}
