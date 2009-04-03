@@ -189,7 +189,7 @@ dbeOutput@lenStruc$estim <- formatt(MeanAtL,timeStrata=timeStrata,spaceStrata=sp
 dbeOutput@lenVar <- formatt(VarAtL,timeStrata=timeStrata,spaceStrata=spaceStrata,techStrata=techStrata)
 dbeOutput@ageStruc$estim <- formatt(MeanAtA,timeStrata=timeStrata,spaceStrata=spaceStrata,techStrata=techStrata,age=TRUE)
 dbeOutput@ageVar <- formatt(VarAtA,timeStrata=timeStrata,spaceStrata=spaceStrata,techStrata=techStrata,age=TRUE)
-if (!dbeOutput@methodDesc%in%"analytical") warnings("'methodDesc' slot in 'dbeOutput' object will be updated!!")
+if (!dbeOutput@methodDesc%in%"analytical") warning("'methodDesc' slot in 'dbeOutput' object will be updated!!")
 dbeOutput@methodDesc <- "analytical"
 
 
