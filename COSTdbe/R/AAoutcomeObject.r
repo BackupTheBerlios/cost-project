@@ -14,8 +14,8 @@ setClass("dbeOutput",
 		param="character",                       #recall of the parameter estimated (N, W, maturity, sex-ratio,...)
 		strataDesc="strIni",                     #time, space and technical stratification considered
 		methodDesc="character",                  #recall of the method (analytical, bootstrap, bayesian)
-		nSamp="data.frame",                      #number of samples
-		nMes="data.frame",                       #number of individual measures
+		nSamp="list",                            #number of samples
+		nMeas="list",                            #number of individual measures
 		lenStruc="list",                         #estimates of the length structure (param-at-length)
 		lenVar="data.frame",                     #estimates of the variance of '$lenStruc'
 		lenNum="list",                           #further numerical data about length structure (ex: ci, cv) 
@@ -36,16 +36,28 @@ setClass("dbeOutput",
 		param=as.character(NA),
 		strataDesc=strIni(),
 		methodDesc=as.character(NA),
-		nSamp=data.frame(
-      time=as.character(NA),
-      space=as.character(NA),
-      technical=as.character(NA),
-      value=as.numeric(NA)),
-		nMes=data.frame(      
-      time=as.character(NA),
-      space=as.character(NA),
-      technical=as.character(NA),
-      value=as.numeric(NA)),
+		nSamp=list(
+      len=data.frame(
+        time=as.character(NA),
+        space=as.character(NA),
+        technical=as.character(NA),
+        value=as.numeric(NA)),
+      age=data.frame(
+        time=as.character(NA),
+        space=as.character(NA),
+        value=as.numeric(NA))
+      ),
+		nMeas=list(      
+      len=data.frame(
+        time=as.character(NA),
+        space=as.character(NA),
+        technical=as.character(NA),
+        value=as.numeric(NA)),
+      age=data.frame(
+        time=as.character(NA),
+        space=as.character(NA),
+        value=as.numeric(NA))
+      ),
 		lenStruc=list(
         estim=data.frame(      
           time=as.character(NA),
@@ -81,7 +93,8 @@ setClass("dbeOutput",
           space=as.character(NA),
           technical=as.character(NA),
           length=as.character(NA),
-          value=as.numeric(NA))
+          value=as.numeric(NA)),
+        DCRcvIndicator=as.numeric(NA)
         ),    
 		ageStruc=list(
         estim=data.frame(      
@@ -118,7 +131,8 @@ setClass("dbeOutput",
           space=as.character(NA),
           technical=as.character(NA),
           age=as.character(NA),
-          value=as.numeric(NA))
+          value=as.numeric(NA)),
+        DCRcvIndicator=as.numeric(NA)
         ),    
 		totalN=list(
         estim=data.frame(      
@@ -150,7 +164,8 @@ setClass("dbeOutput",
           time=as.character(NA),
           space=as.character(NA),
           technical=as.character(NA),
-          value=as.numeric(NA))
+          value=as.numeric(NA)),
+        DCRcvIndicator=as.numeric(NA)
         ),    
 		totalW=list(
         estim=data.frame(      
@@ -182,7 +197,8 @@ setClass("dbeOutput",
           time=as.character(NA),
           space=as.character(NA),
           technical=as.character(NA),
-          value=as.numeric(NA))
+          value=as.numeric(NA)),
+        DCRcvIndicator=as.numeric(NA)
         )    
 	)
 )
