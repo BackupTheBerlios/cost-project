@@ -114,7 +114,14 @@ DF <- dfRep[rep(1,nrow(CVdf)),-match(c("iter"),names(dfRep))]
 invisible(sapply(names(CVdf),function(x) DF[,x] <<- CVdf[,x]))
 rownames(DF) <- 1:nrow(DF)
 
-return(DF)
+#dcrCvIndicator calculation
+#stratified estimates
+ESTdf <- NULL
+eval(parse('',text=paste("ESTdf <- aggregate(dfRep$value,list(",exprBy,"),mean)",sep=""))) 
+names(ESTdf)[ncol(ESTdf)] <- "value" 
+dcrInd <- sum(CVdf$value*ESTdf$value/sum(ESTdf$value,na.rm=TRUE),na.rm=TRUE)
+
+return(list(DF=DF,dcrInd=dcrInd))
 }
 
 
@@ -232,8 +239,13 @@ df$value <- sqrt(df$var)/df$estim
 DF <- df[,nam]
 rownames(DF) <- 1:nrow(DF)
 
-return(DF)
+#dcrCvIndicator calculation 
+dcrInd <- sum(DF$value*dfEstim$value/sum(dfEstim$value,na.rm=TRUE),na.rm=TRUE)
+
+return(list(DF=DF,dcrInd=dcrInd))
+
 }
+
 
 
 #####################################################################################
@@ -270,7 +282,7 @@ setMethod("dbeCalc",signature(object="dbeOutput"),function(object,              
                                                            update=FALSE,        # if TRUE, updated 'dbeOutput' object is returned ; if FALSE, only resulting dataframe is returned
                                                            ...){                                
 
-output <- NULL
+outpuT <- NULL
 #according to input parameters, one of the previous functions is to be used
 lType <- tolower(type)
 if (!lType%in%c("ci","cv")) stop("wrong 'type' parameter!!") 
@@ -280,7 +292,12 @@ if (!is.logical(update)) stop("wrong 'update' parameter!!")
 if (replicates) lData <- "Rep" else lData <- "Est" 
 
 #so, expected table is...
-eval(parse('',text=paste("output <- ",lType,lData,"Fun(object=object,vrbl=vrbl,probs=probs,...)",sep=""))) 
+eval(parse('',text=paste("outpuT <- ",lType,lData,"Fun(object=object,vrbl=vrbl,probs=probs,...)",sep=""))) 
+
+if (lType=="cv") 
+  {dcrInd <- outpuT$dcrInd ; output <- outpuT$DF
+} else {
+  output <- outpuT}
 
 #output depends on 'update' parameter
 if (update) {
@@ -291,10 +308,11 @@ if (update) {
                     n="totalNnum",
                     w="totalWnum")
   #and then, object is updated and returned
-  eval(parse('',text=paste("object@",updSlot,"$",lType," <- output",sep=""))) 
+  eval(parse('',text=paste("object@",updSlot,"$",lType," <- output",sep="")))
+  if (lType=="cv") eval(parse('',text=paste("object@",updSlot,"$DCRcvIndicator <- dcrInd",sep=""))) 
   return(object)
 } else {
-  return(output)
+  return(outpuT)
 }
 
 })
