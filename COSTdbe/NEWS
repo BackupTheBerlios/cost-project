@@ -9,6 +9,7 @@ NEW FEATURES
       It is a global value of '$cv' values weighted by corresponding '$estim' values.
     o '$DCRcvIndicator' is now calculated along with '$cv' by 'dbeCalc' function. 
 DOCUMENTATION
+    o 'dbeOutput-class.rd' help file updated  
 BUG FIXES		
 
 
