@@ -21,7 +21,20 @@ sp <- dbeOutput@species
 ca <- ca(csObject)
 #ca table is subset
 ca <- ca[ca$spp%in%sp,]   
-if (!(all(is.na(sex)))) ca <- ca[ca$sex%in%sex,]   
+if (nrow(ca)==0) stop("no CA data for specified species in input object!!")
+
+#number of age samples (PSUid/SSUid) is calculated at this stage (before subsetting on 'sex')               #
+Unit <- paste(ca$PSUid,ca$SSUid,sep=":-:")                                                                  #
+nSAMP <- spdAgreg(list(value=Unit),BY=list(time=ca$time,space=ca$space),function(x) length(unique(x)))      #
+dbeOutput@nSamp$age <- nSAMP                                                                                #  ADDED : MM 02/04/2009
+                                                                                                            #
+if (!(all(is.na(sex)))) {ca <- ca[ca$sex%in%sex,]                                                            
+                         if (nrow(ca)==0) stop("no CA data for specified sex in input object!!")            #                                                                               #
+}                                                                                                           #
+
+#number of fish measured in HL                                                                              #
+nMEAS <- spdAgreg(list(value=ca$age),BY=list(time=ca$time,space=ca$space),function(x) sum(!is.na(x)))       #     
+dbeOutput@nMeas$age <- nMEAS                                                                                #
 
 #numbers at length
 Ldf <- dbeOutput@lenStruc$estim

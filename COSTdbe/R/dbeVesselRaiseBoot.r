@@ -220,7 +220,8 @@ HL2 = spdAgreg(list(lenNum = HL$lenNum ),
 # merge hl and sl, sex field gets picked up from sl
 hlsl = merge (HL2, csObject@sl)
 # recreate subSampCat *** relies on hlsl sort having 5 elements separated by -  ***
-hlsl$subSampCat = unlist(lapply (strsplit(as.character(hlsl$sort), split="-"), function(x) {x[5]}))
+#hlsl$subSampCat = unlist(lapply (strsplit(as.character(hlsl$sort), split="-"), function(x) {x[5]}))
+hlsl$subSampCat = unlist(lapply (strsplit(as.character(hlsl$sort), split="-"), function(x) {x[4]}))                    ######### MM 03/04/2009 : 'commCat' is not in 'sort' anymore
 
 #measured numbers are raised to sample-level
 hlsl$raisedNum = hlsl$lenNum * hlsl$wt / hlsl$subSampWt
@@ -405,14 +406,27 @@ ld.list[[i]] = ld.out
 
 # Number of samples
 # Only one slot for number of samples so including length and age samples by using technical strata to denote age samples.
-nSampLen = spdAgreg(list (value=lenids$PSUid), BY = list(time=lenids$time, space=lenids$space, technical=lenids$technical), length)
-nSampAge = spdAgreg(list (value=ageids$PSUid), BY = list(time=ageids$time, space=ageids$space, technical=rep("AgeSamples", length(ageids$PSUid)) ), length)
-dbeOutp@nSamp = rbind(nSampLen, nSampAge)
+#nSampLen = spdAgreg(list (value=lenids$PSUid), BY = list(time=lenids$time, space=lenids$space, technical=lenids$technical), length)
+#nSampAge = spdAgreg(list (value=ageids$PSUid), BY = list(time=ageids$time, space=ageids$space, technical=rep("AgeSamples", length(ageids$PSUid)) ), length)
+#dbeOutp@nSamp = rbind(nSampLen, nSampAge)
+
+nSampLen = spdAgreg(list (value=lenids$PSUid), BY = list(time=lenids$time, space=lenids$space, technical=lenids$technical), length) ######### MM 03/04/2009
+nSampAge = spdAgreg(list (value=ageids$PSUid), BY = list(time=ageids$time, space=ageids$space), length)                             ######### MM 03/04/2009
+dbeOutp@nSamp$len = nSampLen                                                                                                        ######### MM 03/04/2009
+dbeOutp@nSamp$age = nSampAge                                                                                                        ######### MM 03/04/2009
 
 # Number measured or aged
-nMeasLen = spdAgreg(list (value=HL$lenNum), BY = list(time=HL$time, space=HL$space, technical=HL$technical), sum)
-nMeasAge = spdAgreg(list (value=CA$age), BY = list(time=CA$time, space=CA$space, technical=rep("Otoliths", length(CA$age))), length)
-dbeOutp@nMes = rbind(nMeasLen, nMeasAge)
+#nMeasLen = spdAgreg(list (value=HL$lenNum), BY = list(time=HL$time, space=HL$space, technical=HL$technical), sum)
+#nMeasAge = spdAgreg(list (value=CA$age), BY = list(time=CA$time, space=CA$space, technical=rep("Otoliths", length(CA$age))), length)
+#dbeOutp@nMes = rbind(nMeasLen, nMeasAge)
+
+nMeasLen = spdAgreg(list (value=HL$lenNum), BY = list(time=HL$time, space=HL$space, technical=HL$technical), sum)                   ######### MM 03/04/2009
+nMeasAge = spdAgreg(list (value=CA$age), BY = list(time=CA$time, space=CA$space), length)                                           ######### MM 03/04/2009
+dbeOutp@nMeas$len = nMeasLen                                                                                                        ######### MM 03/04/2009
+dbeOutp@nMeas$age = nMeasAge                                                                                                        ######### MM 03/04/2009
+
+
+
 
 # Age structure
 #convert list of age compositions into data.frame matching dbeOutput format

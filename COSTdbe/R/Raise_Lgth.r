@@ -13,16 +13,35 @@
 ################################################################################
 ################################################################################
 
+RowSum <- function(X,MARGIN) {
+d <- dim(X)
+#array is permuted --> MARGIN dimensions are shifted to first rows
+newD <- c(MARGIN,c(1:length(d))[-MARGIN])
+newX <- aperm(X,newD)
+#sum is made over columns
+rowSums(newX,na.rm=TRUE,dims=length(MARGIN))
+}
+
+
 
 
 Raise_Lgth <- function(csObject,clObject,dbeOutput,spp,taxon,sex=as.character(NA)){
 
 sp <- dbeOutput@species
 if (missing(taxon)) taxon <- sp
-if (missing(spp)) spp <- sp   # todo : give as an argument the species in CS that correspond to taxon in CL
+if (missing(spp)) spp <- sp  
+
+eval(parse('',text=paste("csObject <- subsetSpp(csObject,spp%in%",deparse(spp),")",sep=""))) 
+
+#number of length samples (length sample= PSUid/SSUid/TSUid in HL if strategy="cc", and PSUid/SSUid in HL if strategy="metier") is calculated at this stage (before subsetting on 'sp' and 'sex')
+cc <- is.na(dbeOutput@strataDesc@techStrata)==FALSE & dbeOutput@strataDesc@techStrata=="commCat"                                                                    #
+if (cc) Unit <- paste(csObject@hl$PSUid,csObject@hl$SSUid,csObject@hl$TSUid,sep=":-:") else Unit <- paste(csObject@hl$PSUid,csObject@hl$SSUid,sep=":-:")            #
+nSAMP <- spdAgreg(list(value=Unit),BY=list(time=csObject@hl$time,space=csObject@hl$space,technical=csObject@hl$technical),function(x) length(unique(x)))            #
+dbeOutput@nSamp$len <- nSAMP                                                                                                                                        #  ADDED : MM 02/04/2009
+
 
 # weight of the species/taxa/sex in the sampled box
-# this weight is to be calculated by summing the sampled weight by species/taxa/sex before subseting
+# this weight is to be calculated by summing the sampled weight by species/taxa/sex before subsetting
 # and added as a third weight variable
 
 indNewWt <- TRUE
@@ -42,38 +61,19 @@ if (indNewWt) {
 }
 
         
-#subsetting "csObject"                                                                                    #
-x <- csObject                                                                                             #
-  hl <- slSex(sl(x),hl(x))                                                                                #
-  #get idx                                                                                                #
-	hlfk <- hl[,c(1:15)]                                                                                    #
-	hlfk <- apply(hlfk,1,paste,collapse="")                                                                 #
-	hlfk <- gsub("[[:space:]]","",hlfk)                                                                     #
-  	                                                                                                      #
-	# subset                                                                                                #
-	sl <- sl(x)                                                                                             #
-	sl <- sl[sl$spp%in%sp,]                                                                                 #
-	if (!is.na(sex)) sl <- sl[sl$sex%in%sex,]                                                               #
-	slidx <- apply(sl[,1:15],1,paste,collapse="")                                                           # here, SUBSET method should be used 
-	slidx <- gsub("[[:space:]]","",slidx)                                                                   #
-	Hl <- hl[hlfk %in% slidx,]	                                                                            #
-  Hl$sex <- Hl$lsex ; hl <- Hl[,-ncol(Hl)]                                                                #
-                                                                                                          #
-	# output                                                                                                #
-	if(nrow(sl)<1) {sl <- csDataCons()@sl                                                                   #
-                  warning("No data kept from subsetting process!!")}                                      #
-  if(nrow(hl)<1) {hl <- csDataCons()@hl}                                                                  #
-                                                                                                          #
-csObject <- new("csDataCons",desc=x@desc,tr=tr(x), hh=hh(x), sl=sl, hl=hl, ca=ca(x))                      #
-                                                                                                          #
-#csObject <- subsetSpp(csObject,spp%in%sp)                                                                #
-#if (!is.na(sex)) csObject <- subsetSpp(csObject,sex%in%sex)  #to keep all 'tr' and 'hh' information, we use "subsetSpp" method
-##csObject <- subsetSpp(csObject,spp%in%sp)                                                               #
+#subsetting "csObject"                                                                                    #                                                                                                          #
+eval(parse('',text=paste("csObject <- subsetSpp(csObject,spp%in%",deparse(sp),")",sep="")))               #
+if (!is.na(sex)) eval(parse('',text=paste("csObject <- subsetSpp(csObject,sex%in%",deparse(sex),")",sep="")))  #to keep all 'tr' and 'hh' information, we use "subsetSpp" method                                                              #
 #subsetting "clObject"                                                                                    #
 x <- clObject ; cl <- cl(x)                                                                               #
 clObject <- new("clDataCons", desc=x@desc, cl=cl[cl$taxon%in%taxon,])                                     #
+   
 
-#clObject <- subset(clObject,taxon%in%taxon)    
+#number of fish measured in HL (for species specified in dbeOutput object)                                                                                          # ADDED : MM 02/04/2009                                           #
+nMEAS <- spdAgreg(list(value=csObject@hl$lenNum),BY=list(time=csObject@hl$time,space=csObject@hl$space,technical=csObject@hl$technical),sum,na.rm=TRUE)             #
+dbeOutput@nMeas$len <- nMEAS                                                                                                                                        #
+
+
 
 SL <- csObject@sl
 HL <- csObject@hl
@@ -85,7 +85,7 @@ HHSTR <- apply(csObject@hh[,c("time","space","technical")],1,function(x) paste(x
 SL$STR <- apply(SL[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
 HL$STR <- apply(HL[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
 
-if (nrow(SL)==0) stop("the arguments given resulted in an empty table!!")
+if (nrow(SL)==0) stop("the specified parameters resulted in an empty table!!")
 
 #total landed weights per strata
 clObject@cl$landMult[is.na(clObject@cl$landMult)] <- 1
@@ -109,14 +109,17 @@ d_j <- tapply(HL$lenNum,list(STR=factor(HL$STR,levels=levels(factor(SL$STR))),
                               lenCls=HL$lenCls),sum,na.rm=TRUE)
 
 #TSUid stage
-d_jtsu <- apply(d_j*(as.vector(wl/ws)),c(1,3:6),sum,na.rm=TRUE)
-w_tsu <- apply(wt*wl/ws,c(1,3:5),sum,na.rm=TRUE)  # A REVOIR
-wl_tsu <- apply(wl,c(1,3:5),sum,na.rm=TRUE)
+  #system.time(d_jtsuT <- spdApply(d_j*(as.vector(wl/ws)),c(1,3:6),sum,na.rm=TRUE))
+w_tsu <- RowSum(wt*wl/ws,c(1,3:5))  
+wl_tsu <- RowSum(wl,c(1,3:5))
 
 #SSUid stage
-sum.d_jssu <- apply(d_jtsu,c(1,4,5),sum,na.rm=TRUE)
-sum.w_ssu <- apply(w_tsu,c(1,4),sum,na.rm=TRUE)
-sum.wl_ssu <- apply(wl_tsu,c(1,4),sum,na.rm=TRUE)
+  #sum.d_jssu <- apply(d_jtsu,c(1,4,5),sum,na.rm=TRUE)
+expr <- d_j*(as.vector(wl/ws))
+sum.d_jssu <- RowSum(expr,c(1,5,6))
+
+sum.w_ssu <- RowSum(w_tsu,c(1,4))
+sum.wl_ssu <- RowSum(wl_tsu,c(1,4))
 
 #number of SSUid (total and sampled)
 Mi <- tapply(csObject@hh$SSUid,list(STR=factor(HHSTR,levels=levels(factor(SL$STR))),
@@ -132,9 +135,9 @@ wl_psu <- sum.wl_ssu*Mi/mi
 #sum.wt <- apply(wt,1,sum,na.rm=TRUE)
 #sum.ws <- apply(ws,1,sum,na.rm=TRUE)
 
-sum.d_jpsu <- apply(d_jpsu,c(1,3),sum,na.rm=TRUE)
-sum.w_psu <- apply(w_psu,1,sum,na.rm=TRUE)
-sum.wl_psu <- apply(wl_psu,1,sum,na.rm=TRUE)
+sum.d_jpsu <- RowSum(d_jpsu,c(1,3))
+sum.w_psu <- rowSums(w_psu,na.rm=TRUE)
+sum.wl_psu <- rowSums(wl_psu,na.rm=TRUE)
 
 W <- tapply(totLandings$W*1000,list(factor(apply(totLandings[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:")),levels=dimnames(d_j)[[1]])),sum,na.rm=TRUE)
 
@@ -216,12 +219,16 @@ setMethod("RaiseLgth", signature(dbeOutput="dbeOutput",csObject="csDataCons",clO
                                                                                                               taxon,
                                                                                                               sex=as.character(NA),
                                                                                                               ...){
+
+
+
+
+
+
                                                                                                            
 Raise_Lgth(csObject,clObject,dbeOutput,spp=spp,taxon=taxon,sex=sex)
 
 })
-
-
 
 
 
