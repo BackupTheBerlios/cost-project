@@ -168,8 +168,14 @@ vr <- switch(val,
         nAtLength="lenVar")
 
 lgTest <- FALSE ; if (val=="nAtLength") lgTest <- TRUE
-        
-dbeOutp@nSamp <- nSamp[,c("time","space","technical","value")]                  #modif 11/12/2008
+
+#number of samples and number of fish measured 
+if (val=="nAtLength") {                                                                                                                                 
+nMEAS <- spdAgreg(list(value=VAL$lenNum),BY=list(time=VAL$time,space=VAL$space,technical=VAL$technical),sum,na.rm=TRUE)             #
+nMEAS <- merge(nSamp[,c("time","space","technical")],nMEAS,all.x=TRUE,sort=TRUE) ; nMEAS$value[is.na(nMEAS$value)] <- 0
+dbeOutp@nMeas$len <- nMEAS                                                                                                                                        #
+dbeOutp@nSamp$len <- nSamp[,c("time","space","technical","value")]                  #modif 03/04/2009
+}
 slot(dbeOutp,est)$estim <- procRaise.format(yI,lg=lgTest)
 slot(dbeOutp,vr) <- procRaise.format(VyI,lg=lgTest)
 
@@ -322,7 +328,12 @@ vr <- switch(val,
 
 lgTest <- FALSE ; if (val=="nAtLength") lgTest <- TRUE
         
-dbeOutp@nSamp <- nSamp[,c("time","space","technical","value")]                  #modif 11/12/2008
+if (val=="nAtLength") {                                                                                                                                 
+nMEAS <- spdAgreg(list(value=VAL$lenNum),BY=list(time=VAL$time,space=VAL$space,technical=VAL$technical),sum,na.rm=TRUE)             #
+nMEAS <- merge(nSamp[,c("time","space","technical")],nMEAS,all.x=TRUE,sort=TRUE) ; nMEAS$value[is.na(nMEAS$value)] <- 0
+dbeOutp@nMeas$len <- nMEAS                                                                                                                                        #
+dbeOutp@nSamp$len <- nSamp[,c("time","space","technical","value")]                  #modif 03/04/2009
+}
 slot(dbeOutp,est)$estim <- procRaise.format(yII,lg=lgTest)
 slot(dbeOutp,vr) <- procRaise.format(VyII,lg=lgTest)
 
@@ -497,7 +508,12 @@ vr <- switch(val,
 
 lgTest <- FALSE ; if (val=="nAtLength") lgTest <- TRUE
         
-dbeOutp@nSamp <- nSamp[,c("time","space","technical","value")]                  #modif 11/12/2008
+if (val=="nAtLength") {                                                                                                                                 
+nMEAS <- spdAgreg(list(value=VAL$lenNum),BY=list(time=VAL$time,space=VAL$space,technical=VAL$technical),sum,na.rm=TRUE)             #
+nMEAS <- merge(nSamp[,c("time","space","technical")],nMEAS,all.x=TRUE,sort=TRUE) ; nMEAS$value[is.na(nMEAS$value)] <- 0
+dbeOutp@nMeas$len <- nMEAS                                                                                                                                        #
+dbeOutp@nSamp$len <- nSamp[,c("time","space","technical","value")]                  #modif 03/04/2009
+}
 slot(dbeOutp,est)$estim <- procRaise.format(yIII,lg=lgTest)
 slot(dbeOutp,vr) <- procRaise.format(VyIII,lg=lgTest)
 
@@ -685,7 +701,12 @@ vr <- switch(val,
 
 lgTest <- FALSE ; if (val=="nAtLength") lgTest <- TRUE
         
-dbeOutp@nSamp <- nSamp[,c("time","space","technical","value")]                  #modif 11/12/2008
+if (val=="nAtLength") {                                                                                                                                 
+nMEAS <- spdAgreg(list(value=VAL$lenNum),BY=list(time=VAL$time,space=VAL$space,technical=VAL$technical),sum,na.rm=TRUE)             #
+nMEAS <- merge(nSamp[,c("time","space","technical")],nMEAS,all.x=TRUE,sort=TRUE) ; nMEAS$value[is.na(nMEAS$value)] <- 0
+dbeOutp@nMeas$len <- nMEAS                                                                                                                                        #
+dbeOutp@nSamp$len <- nSamp[,c("time","space","technical","value")]                  #modif 03/04/2009
+}
 slot(dbeOutp,est)$estim <- procRaise.format(yIII,lg=lgTest)
 slot(dbeOutp,vr) <- procRaise.format(VyIII,lg=lgTest)
 
@@ -850,7 +871,12 @@ vr <- switch(val,
 
 lgTest <- FALSE ; if (val=="nAtLength") lgTest <- TRUE
         
-dbeOutp@nSamp <- nSamp[,c("time","space","technical","value")]                  #modif 11/12/2008
+if (val=="nAtLength") {                                                                                                                                 
+nMEAS <- spdAgreg(list(value=VAL$lenNum),BY=list(time=VAL$time,space=VAL$space,technical=VAL$technical),sum,na.rm=TRUE)             #
+nMEAS <- merge(nSamp[,c("time","space","technical")],nMEAS,all.x=TRUE,sort=TRUE) ; nMEAS$value[is.na(nMEAS$value)] <- 0
+dbeOutp@nMeas$len <- nMEAS                                                                                                                                        #
+dbeOutp@nSamp$len <- nSamp[,c("time","space","technical","value")]                  #modif 03/04/2009
+}
 slot(dbeOutp,est)$estim <- procRaise.format(yIV,lg=lgTest)
 slot(dbeOutp,vr) <- procRaise.format(VyIV,lg=lgTest)
 
