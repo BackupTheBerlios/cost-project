@@ -1,0 +1,14 @@
+		CHANGES IN COSTdbe VERSION 0.1-8
+
+NEW FEATURES
+    o 'nMes' slot name in 'dbeOutput' object changed to 'nMeas'
+    o 'nSamp' and 'nMeas' slots in 'dbeOutput' object are now a list with 2 elements : 
+        oo $len is a data.frame with 4 fields ('time', 'space', 'technical' and 'value')
+        oo $age is a data.frame with 3 fields ('time', 'space' and 'value').
+    o in 'lenNum', 'ageNum', 'totalNnum' and 'totalWnum' slots, a new numeric element '$DCRcvIndicator' was added. 
+      It is a global value of '$cv' values weighted by corresponding '$estim' values.
+    o '$DCRcvIndicator' is now calculated along with '$cv' by 'dbeCalc' function. 
+DOCUMENTATION
+BUG FIXES		
+
+
