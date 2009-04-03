@@ -98,7 +98,7 @@ technical <- rep (unique(ca$technical),ncol(samples.bio)*nrow(samples.bio) )
 samples.bio <- data.frame(time,sort(space),technical,as.vector(samples.bio))
 names (samples.bio) <- c("time", "space", "technical", "value")
 samples.bio <- samples.bio[!is.na(samples.bio$value),] 
-dbeOutput@nSamp <- data.frame(time=samples.bio$time,space=samples.bio$space,technical=samples.bio$technical,value=samples.bio$value) 
+dbeOutput@nSamp$len <- data.frame(time=samples.bio$time,space=samples.bio$space,technical=samples.bio$technical,value=samples.bio$value)            ######### MM 03/04/2009
 
 # Number of bio data in ca
 n.bio <- tapply (ca$bio, list(paste(ca$time, ca$space,ca$technical, sep=":")), length)
@@ -106,8 +106,8 @@ n.bio2 <- as.data.frame(t(do.call("cbind",lapply(names(n.bio),function(x) strspl
 n.bio2$value <- n.bio
 names (n.bio2) <- c("time", "space", "technical", "value")
 number.bio <- n.bio2[order(n.bio2$space,n.bio2$time),]
-dbeOutput@nMes <- data.frame(time=number.bio$time,space=number.bio$space,technical=number.bio$technical,value=number.bio$value)
-rownames(dbeOutput@nMes) <- NULL
+dbeOutput@nMeas$len <- data.frame(time=number.bio$time,space=number.bio$space,technical=number.bio$technical,value=number.bio$value)                ######### MM 03/04/2009
+rownames(dbeOutput@nMeas$len) <- NULL                                                                                                               ######### MM 03/04/2009
 #! Bootstrap function
 
 bio.fun <- function(data,i,ind=NULL) 
@@ -279,7 +279,7 @@ if (nrow(age)!=0)
   dbeOutput@ageStruc$rep <- data.frame(time=iter.age$time,space=iter.age$space,technical=iter.age$technical,age=iter.age$value,value=as.numeric(iter.age$value.iter),iter=iter.age$iter) 
   dbeOutput@ageVar <- data.frame(time=res.age$time,space=res.age$space,technical=res.age$technical,age=res.age$value,value=as.numeric(res.age$variance)) 
   dbeOutput@ageNum$ci <- dbeCalc(dbeOutput,type="CI", vrbl="a",probs=c(0.025,0.975),replicates=T,update=F)
-  dbeOutput@ageNum$cv <- dbeCalc(dbeOutput,type="CV", vrbl="a",probs=c(0.025,0.975),replicates=T,update=F)
+  dbeOutput@ageNum$cv <- dbeCalc(dbeOutput,type="CV", vrbl="a",probs=c(0.025,0.975),replicates=T,update=F)$DF                            ######### MM 03/04/2009
   }
 if (!dbeOutput@methodDesc%in%"bootstrap") warnings("'methodDesc' slot in 'dbeOutput' object will be updated!!")
 dbeOutput@methodDesc <- "bootstrap"
