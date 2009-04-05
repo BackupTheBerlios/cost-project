@@ -282,7 +282,7 @@ if (is.null(dots$xlab))
 if (is.null(dots$ylab)) 
   dots$ylab <- "Maturity"
 if (is.null(dots$main)) 
-  dots$main <- "Boxplot of individual length at maturity"
+  dots$main <- "Boxplot of individual maturity at length"
 
 tab$matStage <- factor(tab$matStage)
 #missing length classes are taken into account
@@ -290,7 +290,7 @@ lenC <- c(1,5,10,25)
 names(lenC) <- c("mm","scm","cm","25mm")
 tab$lenCls <- factor(tab$lenCls,levels=seq(min(tab$lenCls),max(tab$lenCls),by=lenC[as.character(tab$lenCode[1])]))
 
-bwplot(matStage~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
+bwplot(matStage~as.numeric(as.character(lenCls)),data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
        ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],cex=2,fill=dots$p.bg[1],scales=list(font=dots$font.axis,x=list(rot=dots$rot[1])),
        par.settings=list(box.rectangle=list(col=dots$col[1]),box.umbrella=list(col=dots$col[1],lty=dots$lty[1]),
        plot.symbol=list(col=dots$col[1])),drop.unused.levels=FALSE)
@@ -330,7 +330,7 @@ if (is.null(dots$xlab))
 if (is.null(dots$ylab)) 
   dots$ylab <- "Sex"
 if (is.null(dots$main)) 
-  dots$main <- "Boxplot of individual length at sex"
+  dots$main <- "Boxplot of individual sex at length"
 
 tab$sex <- factor(as.character(tab$sex),exclude="U")
 #missing length classes are taken into account
@@ -338,7 +338,7 @@ lenC <- c(1,5,10,25)
 names(lenC) <- c("mm","scm","cm","25mm")
 tab$lenCls <- factor(tab$lenCls,levels=seq(min(tab$lenCls),max(tab$lenCls),by=lenC[as.character(tab$lenCode[1])]))
 
-bwplot(sex~lenCls,data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
+bwplot(sex~as.numeric(as.character(lenCls)),data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
        ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],cex=2,fill=dots$p.bg[1],scales=list(font=dots$font.axis,x=list(rot=dots$rot[1])),
        par.settings=list(box.rectangle=list(col=dots$col[1]),box.umbrella=list(col=dots$col[1],lty=dots$lty[1]),
        plot.symbol=list(col=dots$col[1])),drop.unused.levels=FALSE)
