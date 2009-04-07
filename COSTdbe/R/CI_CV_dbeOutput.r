@@ -180,7 +180,9 @@ dfInfSup <- data.frame(df$value+t(qInd%*%t(sqrt(df$var)))) ; names(dfInfSup) <- 
 df <- cbind(df,dfInfSup)
 
 #problems of negative bounds
-if (any(c(df$inf,df$sup)<0)) warning("negative CI bound(s)!!")                  
+#if (any(c(df$inf,df$sup)<0)) warning("negative CI bound(s)!!")                  
+#negative values are put to 0
+df$inf[df$inf<0] <- 0
 
 #formatting process
 DF <- df[,c(names(dfEstim),"inf","sup")]
@@ -240,7 +242,7 @@ DF <- df[,nam]
 rownames(DF) <- 1:nrow(DF)
 
 #dcrCvIndicator calculation 
-dcrInd <- sum(DF$value*dfEstim$value/sum(dfEstim$value,na.rm=TRUE),na.rm=TRUE)
+dcrInd <- sum(DF$value*dfEstim$estim/sum(dfEstim$estim,na.rm=TRUE),na.rm=TRUE)
 
 return(list(DF=DF,dcrInd=dcrInd))
 
@@ -338,6 +340,82 @@ if (update) {
  
  
  
+#####################################################################################
+#####################################################################################
+#####################################################################################
+#####################################################################################
+
+## 'stratAgreg' method for aggegating 'dbeOutput' tables (estim & var) : other output tables are empty
+## WARNING : summing the variances requires strong probability assumptions
  
+
+setGeneric("stratAggreg", function(object,                  # 'dbeOutput' object
+                                  timeStrata=TRUE,         # if TRUE, aggregation is made over time strata
+                                  spaceStrata=TRUE,        # if TRUE, aggregation is made over space strata
+                                  techStrata=FALSE,        # if TRUE, aggregation is made over technical strata
+                                  ...){
+standardGeneric("stratAggreg")
+})
+
+
+
  
+setMethod("stratAggreg", signature(object="dbeOutput"),function(object,                  # 'dbeOutput' object
+                                                               timeStrata=TRUE,         # if TRUE, aggregation is made over time strata
+                                                               spaceStrata=TRUE,        # if TRUE, aggregation is made over space strata
+                                                               techStrata=FALSE,        # if TRUE, aggregation is made over technical strata
+                                                               ...){
+
+#subfunction applied to each table
+agg <- function(tab,nSampAge=FALSE) {
+
+if (all(is.na(tab))) {
+  return(tab)
+} else {
+  if (timeStrata) tab$time <- "all"
+  if (spaceStrata) tab$space <- "all"
+  if (!nSampAge & techStrata) tab$technical <- "all"
+  newTab <- aggregate(tab$value,as.list(tab[,(ncol(tab)-1):1]),sum,na.rm=TRUE)
+  names(newTab)[ncol(newTab)] <- "value"
+  return(newTab[,names(tab)])
+}}
+
+object@nSamp$len <- agg(object@nSamp$len)
+object@nSamp$age <- agg(object@nSamp$age,nSampAge=TRUE)
+object@nMeas$len <- agg(object@nMeas$len)
+object@nMeas$age <- agg(object@nMeas$age,nSampAge=TRUE)
+
+object@lenStruc$estim <- agg(object@lenStruc$estim)
+object@lenStruc$rep <- new("dbeOutput")@lenStruc$rep
+object@lenVar <- agg(object@lenVar)
+object@lenNum$ci <- new("dbeOutput")@lenNum$ci
+object@lenNum$cv <- new("dbeOutput")@lenNum$cv
+object@lenNum$DCRcvIndicator <- new("dbeOutput")@lenNum$DCRcvIndicator
+
+object@ageStruc$estim <- agg(object@ageStruc$estim)
+object@ageStruc$rep <- new("dbeOutput")@ageStruc$rep
+object@ageVar <- agg(object@ageVar)
+object@ageNum$ci <- new("dbeOutput")@ageNum$ci
+object@ageNum$cv <- new("dbeOutput")@ageNum$cv
+object@ageNum$DCRcvIndicator <- new("dbeOutput")@ageNum$DCRcvIndicator
+
+object@totalN$estim <- agg(object@totalN$estim)
+object@totalN$rep <- new("dbeOutput")@totalN$rep
+object@totalNvar <- agg(object@totalNvar)
+object@totalNnum$ci <- new("dbeOutput")@totalNnum$ci
+object@totalNnum$cv <- new("dbeOutput")@totalNnum$cv
+object@totalNnum$DCRcvIndicator <- new("dbeOutput")@totalNnum$DCRcvIndicator
+
+object@totalW$estim <- agg(object@totalW$estim)
+object@totalW$rep <- new("dbeOutput")@totalW$rep
+object@totalWvar <- agg(object@totalWvar)
+object@totalWnum$ci <- new("dbeOutput")@totalWnum$ci
+object@totalWnum$cv <- new("dbeOutput")@totalWnum$cv
+object@totalWnum$DCRcvIndicator <- new("dbeOutput")@totalWnum$DCRcvIndicator
+
+return(object)
+
+})
+
+
                                                                    
