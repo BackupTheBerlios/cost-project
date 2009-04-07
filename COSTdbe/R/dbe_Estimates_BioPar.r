@@ -171,14 +171,15 @@ if (adjust) {
   VarAtA <- tapply(ca$bio,list(ca$age,ca$time,ca$space,ca$technical),function(x) (var(x,na.rm=TRUE)/sum(!is.na(x))))        #modif 29/01/2009 s2 --> s2/n
 
 }
-
+                        
 
 #dbeOutput must be updated, so result must be formatted
 formatt <- function(x,timeStrata,spaceStrata,techStrata,age=FALSE){
 column <- expand.grid(dimnames(x))
 df <- data.frame(time=column[,2],space=column[,3],technical=column[,4],length=column[,1],value=as.numeric(x))
 if (age) names(df)[4] <- "age"
-df <- df[!is.na(df$value),] 
+df$value[is.nan(df$value)] <- NA
+#df <- df[!is.na(df$value),] 
 if (!timeStrata) df$time <- NA
 if (!spaceStrata) df$space <- NA
 if (!techStrata) df$technical <- NA
