@@ -2,53 +2,64 @@
 \alias{makeICdf}
 \alias{makeICfile}
 
-\title{ToDo}
+\title{Create InterCatch Exchange Format file}
 \description{
-ToDo}
+Converts a COST dbeOutput object of numbers at length or age into InterCatch Exchange Format Version 1.4 file
+}
+
 
 \usage{
 makeICdf(dbeOutput, filename=NA, output.df = TRUE, append = FALSE,CANUMtype = "length", Country, Species = NA, ReportingCategory,
   Usage = NA, DataToFrom = NA, SamplesOrigin,InfoFleet = NA, InfoStockCoordinator = NA, InfoGeneral = NA, Sex = "N", PlusGroup = -9, unitMeanWeight = "g",
   unitCANUM = "n", Maturity = NA)
-  
+
 makeICfile(ICdfs, filename, append=FALSE)
 }
 
 \arguments{
-  \item{dbeOutput}{ToDo}
-  \item{ICdfs}{ToDo}
-  \item{filename}{ToDo}
-  \item{output.df}{ToDo}
-  \item{append}{ToDo}
-  \item{CANUMtype}{ToDo}
-  \item{Country}{ToDo}
-  \item{Species}{ToDo}
-  \item{ReportingCategory}{ToDo}
-  \item{Usage}{ToDo}
-  \item{DataToFrom}{ToDo}
-  \item{SamplesOrigin}{ToDo}
-  \item{InfoFleet}{ToDo}
-  \item{InfoStockCoordinator}{ToDo}
-  \item{InfoGeneral}{ToDo}
-  \item{Sex}{ToDo}
-  \item{PlusGroup}{ToDo}
-  \item{unitMeanWeight}{ToDo}
-  \item{unitCANUM}{ToDo}
-  \item{Maturity}{ToDo}
-  
+  \item{dbeOutput}{A COST dbeOutput object of numbers by length and/or age}
+  \item{ICdfs}{list of 3 dataframes corresponding to InterCatch HI, SI and SD record types}
+  \item{filename}{filename for output, if NA no file is written}
+  \item{output.df}{logical, should list of dataframes be output}
+  \item{append}{logical, should output be appended to existing file}
+  \item{CANUMtype}{"age" for numbers at age, "lngt" or "length" for numbers at length}
+  \item{Country}{The remaining arguments are character elements that match the InterCatch format description and are transferred directly to the output file}
+  \item{Species}{If species is NA then it is taken from the dbeOutput, but note this is likely to be scientific name and InterCatch expects FAO code}
+  \item{ReportingCategory}{}
+  \item{Usage}{}
+  \item{DataToFrom}{}
+  \item{SamplesOrigin}{}
+  \item{InfoFleet}{}
+  \item{InfoStockCoordinator}{}
+  \item{InfoGeneral}{}
+  \item{Sex}{}
+  \item{PlusGroup}{}
+  \item{unitMeanWeight}{}
+  \item{unitCANUM}{}
+  \item{Maturity}{}
+
 }
-%\details{ 
-  
-%}
+\details{
+ makeICdf creates a list of 3 dataframes corresponding to InterCatch HI, SI and SD record types
+ then if filename is not NA makeICfile is called and a CSV file output to filename.
+
+ The process can be split into two parts by using makeICdf first, storing the list of dataframes
+ and then calling makeICfile on the list.
+
+ We expect the function to develop as InterCatch develops and expect more of the fields to be automatically filled in future versions.
+}
 \value{
-
-ToDo
+A list of 3 dataframes if output.df = TRUE
+A csv file if filename is not NA
 }
 
+\references{
+InterCatch Exchange Format Version 1.4
+"http://www.ices.dk/datacentre/InterCatch/IC-ExchFormat1-0%20Doc1-4.pdf" }
 \author{David Maxwell}
 
 
-\seealso{\code{\link{dbeOutput}} 
+\seealso{\code{\link{dbeOutput}}
 }
 \examples{
 
@@ -74,4 +85,5 @@ makeICdf (LEM.dbeOut.an, filename ="IC_LEM.csv", output.df = FALSE, Country = "U
 }
 
 \keyword{attribute}
+
 
