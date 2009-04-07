@@ -1,3 +1,14 @@
+		CHANGES IN COSTdbe VERSION 0.1-9
+
+NEW FEATURES
+    o in 'dbeCalc', negative bounds are replaced by 0 in output object.
+    o new 'stratAggreg' method for 'dbeOutput' object. Computes an aggregation (sum of 'value' field) of various 'dbeOutput' tables over specified stratification. 
+    o new 'makeICfile' and 'makeICdf' functions. Convert COST dbeOutput object to InterCatch Exchange Format file. 
+DOCUMENTATION
+    o 'stratAggreg' and 'InterCatch' help files added.  
+BUG FIXES		
+    o a bug in 'dbeCalc' concerning '$DCRcvIndicator' calculation from estimates was fixed.
+
 		CHANGES IN COSTdbe VERSION 0.1-8
 
 NEW FEATURES
