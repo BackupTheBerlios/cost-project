@@ -185,7 +185,7 @@ df.VarD_j <- df.VarD_j[order(df.VarD_j$time,df.VarD_j$space,df.VarD_j$technical,
 dbeOutput@lenVar <- df.VarD_j[,names(dbeOutput@lenVar)]
 
   #WHat
-df.WHat <- cbind(value=WHat,as.data.frame(do.call("rbind",lapply(names(WHat),function(x) strsplit(x,":-:")[[1]]))))
+df.WHat <- cbind(value=WHat/1000,as.data.frame(do.call("rbind",lapply(names(WHat),function(x) strsplit(x,":-:")[[1]]))))    #weight in kg : MM 07/04/2009
 names(df.WHat) <- c("value","time","space","technical")
 df.WHat <- df.WHat[order(df.WHat$time,df.WHat$space,df.WHat$technical),] ; rownames(df.WHat) <- 1:nrow(df.WHat)
 dbeOutput@totalW$estim <- df.WHat[,names(dbeOutput@totalW$estim)]
