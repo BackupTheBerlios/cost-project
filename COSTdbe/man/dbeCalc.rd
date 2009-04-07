@@ -23,7 +23,8 @@ dbeCalc(object,type="CI",vrbl="l",probs=c(0.025,0.975),replicates=FALSE,update=F
 
 \details{
 If calculation is made from replicates (see \emph{replicates} parameter), confidence interval is estimated using \emph{quantile} fonction with \emph{probs} and \dots parameters.
-If calculation is made from estimates, normal distribution of total estimates is assumed.
+If calculation is made from estimates, normal distribution of total estimates is assumed to compute confidence intervals. 
+Possible resulting negative bounds are automatically replaced by 0 in output object. 
 }
 
 
