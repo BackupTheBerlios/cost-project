@@ -5,7 +5,9 @@ importClassesFrom("COSTcore")
 importFrom("COSTcore")
 
 export(
-  "dbeObject"
+  "dbeObject",
+  "makeICfile",
+  "makeICdf"
 )
 
 exportClasses(
@@ -28,5 +30,6 @@ exportMethods(
 	"dbeCalc",
 	"bpBoot",
 	"RaiseLgth",
-	"RaiseAge"
+	"RaiseAge",
+	"stratAggreg"
 )
