@@ -183,6 +183,8 @@ df <- cbind(df,dfInfSup)
 #if (any(c(df$inf,df$sup)<0)) warning("negative CI bound(s)!!")                  
 #negative values are put to 0
 df$inf[df$inf<0] <- 0
+#if parameter is maturity ratio or sex ratio, then values > 1 are put to 1
+if (object@param%in%c("sex","maturity")) df$sup[df$sup>1] <- 1
 
 #formatting process
 DF <- df[,c(names(dfEstim),"inf","sup")]
