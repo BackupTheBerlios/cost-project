@@ -42,5 +42,6 @@ According to plotting procedures, some of these parameters turn out to be ineffe
 
 \examples{
 data(GraphsPar)
+names(gp)
 }
 \keyword{datasets}
