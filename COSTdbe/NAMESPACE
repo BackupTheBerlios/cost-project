@@ -31,5 +31,7 @@ exportMethods(
 	"bpBoot",
 	"RaiseLgth",
 	"RaiseAge",
-	"stratAggreg"
+	"stratAggreg",
+	"RaiseLgthBoot",
+	"RaiseAgeBoot"
 )
