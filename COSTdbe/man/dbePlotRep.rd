@@ -8,7 +8,8 @@ Method for plotting replicates data from an input 'dbeOutput' object (distributi
 }
 
 \usage{              
-dbePlotRep(object,Slot,probs=c(0.05,0.95),step=NA,origin=TRUE,dispKey=TRUE,KurtSkew=FALSE,\dots)
+dbePlotRep(object,Slot,probs=c(0.05,0.95),step=NA,origin=TRUE,dispKey=TRUE,
+           KurtSkew=FALSE,\dots)
 }
 
 \arguments{

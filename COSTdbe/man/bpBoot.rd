@@ -8,7 +8,8 @@
  sex-ratio-at-length, weight-at-age, maturity-at-age, sex-ratio-at-age and their associated variances. It requires a csDataCons object and a dbeOutput object.}
 
 \usage{
-bpBoot(dbeOutput,object,mat.scale=list(immature=c(0,1),mature=c(2:8)),sample.boot=FALSE,nboot=1000,\dots)          % modif 2:10 <-> 2:8
+bpBoot(dbeOutput,object,mat.scale=list(immature=c(0,1),mature=c(2:8)),
+       sample.boot=FALSE,nboot=1000,\dots)          % modif 2:10 <-> 2:8
 }
 
 \arguments{

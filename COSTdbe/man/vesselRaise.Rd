@@ -64,12 +64,15 @@ You should check the number of samples and age-length data are suitable before c
 data("LEMexample")
 # Setup objects for output
 # LEM.strat was defined when creating consolidated object
-LEM.dbeOut = dbeObject(desc="Example",species="Microstomus kitt",param="landings",strataDesc=LEM.strat, catchCat="LAN",methodDesc="bootstrap samples")
-LEM.dbeOut.an = dbeObject(desc="Example",species="Microstomus kitt",param="landings",strataDesc=LEM.strat, catchCat="LAN",methodDesc="analytical")
+LEM.dbeOut = dbeObject(desc="Example",species="Microstomus kitt",param="landings",
+                       strataDesc=LEM.strat, catchCat="LAN",methodDesc="bootstrap samples")
+LEM.dbeOut.an = dbeObject(desc="Example",species="Microstomus kitt",param="landings",
+                          strataDesc=LEM.strat, catchCat="LAN",methodDesc="analytical")
 
 # Run vesselRaise.boot function. B set to a very low number of iterations for demonstration only.
 # example data set is very small so it generates warnings about the number of samples.
-LEM.dbeOut = vesselRaise.boot (csObject = LEM.CScon, clObject = LEM.CLcon, dbeOutp = LEM.dbeOut, B = 3 )
+LEM.dbeOut = vesselRaise.boot (csObject = LEM.CScon, clObject = LEM.CLcon, 
+                               dbeOutp = LEM.dbeOut, B = 3 )
 dbePlotRep(LEM.dbeOut,"lenStruc") # outputs to 2 pages turn graph history on, to see the first page
 
 # Run vesselRaise.an function
