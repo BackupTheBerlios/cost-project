@@ -19,8 +19,7 @@ RaiseAgeBoot(dbeOutput,csObject,type="fixed",sex=as.character(NA) ,\dots)
   \item{sex}{Sex}
   \item{\dots}{Further arguments}
 }
-
-\references{}                              
+                            
 
 \value{An updated object of class \emph{dbeOutput}.
 Slots nSamp\$age & nMeas\$age with number of samples and measurements,
@@ -31,7 +30,7 @@ ageStruc\$rep with bootstrap replicates for numbers-at-age, iter=0 is assigned t
 
 \author{David Maxwell & Mathieu Merzereaud}
 \seealso{\code{\link{dbeOutput}}, \code{\link{dbeObject}}, \code{\link[COSTcore]{csDataCons}}, \code{\link[COSTcore]{clDataCons}}, \code{\link{RaiseAge}}, \code{\link{RaiseLgthBoot}} }
-}
+
 
 \examples{
 data(sole)

@@ -19,7 +19,6 @@ stratAggreg(object,timeStrata=TRUE,spaceStrata=TRUE,techStrata=FALSE,\dots)
   \item{\dots}{Further arguments}  
 }
 
-\references{ToDo}
 
 \value{An updated object of class \emph{dbeOutput}.}
 \details{
@@ -33,7 +32,5 @@ since the same age-length key is used for every technical strata.
 \seealso{\code{\link{dbeOutput}}, \code{\link{dbeObject}}
 }
 
-\examples{
 
-}
 \keyword{methods}

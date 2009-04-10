@@ -21,8 +21,7 @@ RaiseLgthBoot(dbeOutput,csObject,clObject,spp,taxon,sex=as.character(NA),B ,\dot
   \item{B}{Number of bootstrap interations}
   \item{\dots}{Further arguments}  
 }
-
-\references{}                        
+                      
 
 \value{An updated object of class \emph{dbeOutput}.
 Slots nSamp\$len & nMeas\$len with number of samples and measurements,
@@ -35,7 +34,7 @@ Slots nSamp\$len & nMeas\$len with number of samples and measurements,
 
 \author{David Maxwell & Mathieu Merzereaud}
 \seealso{\code{\link{dbeOutput}}, \code{\link{dbeObject}}, \code{\link[COSTcore]{csDataCons}}, \code{\link[COSTcore]{clDataCons}}, \code{\link{RaiseLgth}} }
-}
+
 
 \examples{
 data(sole)
