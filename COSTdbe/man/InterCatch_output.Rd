@@ -55,7 +55,10 @@ A csv file if filename is not NA
 
 \references{
 InterCatch Exchange Format Version 1.4
-"http://www.ices.dk/datacentre/InterCatch/IC-ExchFormat1-0%20Doc1-4.pdf" }
+\url{http://www.ices.dk/datacentre/InterCatch/IC-ExchFormat1-0\%20Doc1-4.pdf}
+} 
+ 
+
 \author{David Maxwell}
 
 

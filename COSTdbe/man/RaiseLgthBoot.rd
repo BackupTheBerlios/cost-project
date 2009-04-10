@@ -1,6 +1,6 @@
 \name{RaiseLgthBoot}
 \alias{RaiseLgthBoot}
-\alias{RaiseLgth,dbeOutput,csDataCons,clDataCons-method}
+\alias{RaiseLgthBoot,dbeOutput,csDataCons,clDataCons-method}
 \docType{methods}
 \title{Estimation of numbers-at-length from market sampling with bootstrap variance}
 \description{
@@ -10,7 +10,7 @@ RaiseLgthBoot follows the approach of RaiseLgth to calculate numbers-at-length b
 \usage{
 RaiseLgthBoot(dbeOutput,csObject,clObject,spp,taxon,sex=as.character(NA),B ,\dots)
 }
-
+                   
 \arguments{
   \item{dbeOutput}{A \emph{dbeOutput} object.}
   \item{csObject}{A \emph{csDataCons} object matching 'dbeOutput' specifications.}
@@ -22,14 +22,14 @@ RaiseLgthBoot(dbeOutput,csObject,clObject,spp,taxon,sex=as.character(NA),B ,\dot
   \item{\dots}{Further arguments}  
 }
 
-\references{}
+\references{}                        
 
 \value{An updated object of class \emph{dbeOutput}.
-Slots nSamp$len & nMeas$len with number of samples and measurements,
+Slots nSamp\$len & nMeas\$len with number of samples and measurements,
  methodDesc with "bootstrap",
- totalW$estim with total weight,
- lenStruc$rep & totalN$rep with bootstrap replicates for numbers-at-length and total numbers, iter=0 is assigned the estimates from the original data,
- lenStruc$estim & totalN$estim with the mean of the bootstrap replicates,
+ totalW\$estim with total weight,
+ lenStruc\$rep & totalN\$rep with bootstrap replicates for numbers-at-length and total numbers, iter=0 is assigned the estimates from the original data,
+ lenStruc\$estim & totalN\$estim with the mean of the bootstrap replicates,
  lenVar & totalNvar with the variance of the bootstrap replicates}
 
 
@@ -40,7 +40,7 @@ Slots nSamp$len & nMeas$len with number of samples and measurements,
 \examples{
 data(sole)
 strD <- strIni(timeStrata="quarter",techStrata="commCat")
-csObject <- csDataCons(csDataVal(subset(sole.cs,sampType%in%c("M","V"))),strD)
+csObject <- csDataCons(csDataVal(subset(sole.cs,sampType\%in\%c("M","V"))),strD)
 clObject <- clDataCons(clDataVal(sole.cl),strD)
 dbeOutput <- dbeObject(species="Solea solea",catchCat="LAN",strataDesc=strD)
 

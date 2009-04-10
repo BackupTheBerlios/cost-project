@@ -50,7 +50,7 @@ If the multiplier field is NA it is assumed to be one, if unallocated catch and 
   \item{totalNvar}{Variance of total numbers.}
   \item{totalW}{Total landed weight (kg)}
 }
-
+                                              
 
 \references{ \url{http://wwz.ifremer.fr/cost} }
 \author{ David Maxwell }
