@@ -1,11 +1,11 @@
-\name{csPlot.design,csDataVal-method}
+\name{csPlot.design}
 \alias{csPlot.design}
 \alias{csPlot.design,csData-method}
 \alias{csPlot.design,csDataVal-method}
 \docType{methods}
 \title{Plot.design of individual biological parameters in "ca" table from a "csData" or "csDataVal" object}
 \description{
-Version of \emph{plot.design} procedure from \pkg{graphics} package applied to \emph{csData} or \emph{csDataVal} biological parameters.
+Specific version of \emph{plot.design} procedure from \pkg{graphics} package applied to \emph{csData} or \emph{csDataVal} biological parameters.
 }
 
 \usage{
@@ -20,7 +20,7 @@ csPlot.design(object,species="all",\dots)
 
 \author{Mathieu Merzereaud}
 
-\seealso{\code{\link{bioPar.plot}}, \code{\link{bioPar.boxplot}}
+\seealso{\code{\link{plot.design}}, \code{\link{bioPar.plot}}, \code{\link{bioPar.boxplot}}
 }
 
 \examples{

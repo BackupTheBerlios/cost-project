@@ -14,13 +14,13 @@ bioPar.plot(object,type="wl",species="all",selection=FALSE,\dots)}
   \item{object}{A \emph{csData} object with \emph{ca} informations.}
   \item{type}{To be chosen between \code{"wl"} (weight at length), \code{"ml"} (maturity at length) or \code{"sl"} (sex at length).}
   \item{species}{A character (vector) specifying species (default value is "all" for all species) .}
-  \item{selection}{If \code{TRUE}, outlier(s) identification can be done and corresponding ca table extract is returned.}
+  \item{selection}{If \code{TRUE}, outlier(s) identification can be done by clicking on points and corresponding ca table extract is then returned.}
   \item{...}{Further graphical arguments.}
 }
 
-\author{Mathieu Merzereaud}
+\author{Mathieu Merzereaud}                                    
 
-\seealso{\code{\link{bioPar.boxplot}}, \code{\link{csPlot.design}}
+\seealso{\code{\link{bioPar.boxplot}}, \code{\link{csPlot.design}}, \code{\link{identify}}
 }
 
 \examples{

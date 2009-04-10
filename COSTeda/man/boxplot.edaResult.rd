@@ -4,7 +4,7 @@
 \alias{boxplot.edaResult}
 \title{Boxplot of "edaResult" object}
 \description{
-This method plots the output of an object of class \emph{edaResult}, resulting from a \emph{COSTeda} package function.
+This method is a generic function for producing boxplots from an object of class \emph{edaResult}, resulting from a \emph{COSTeda} package function.
 }
 
 

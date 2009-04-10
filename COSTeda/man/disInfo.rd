@@ -11,7 +11,7 @@
 \title{Display 'Tapply' function call output applied to "COST" objects. }
 \description{
 Tapply-like methods to display information from validated and consolidated objects on .txt file. 
-'cs' tables are merged one by one from 'tr' to 'hl' until all specified fields are in resulting table.
+'cs' tables are merged one by one from 'tr' to 'hl' until all required fields are in resulting table.
 }
 
 \usage{

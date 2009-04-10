@@ -29,7 +29,7 @@ disCorrPlot(object,species="all",landSpp=as.character(NA),aux="time",val="weight
 }
 
 \value{
-A dataframe with discards volume (\emph{disVol} field) and auxiliary variable (\emph{auxVar}) 
+A dataframe with discards volume (\emph{disVol} field) and an auxiliary variable (\emph{auxVar}) 
 values for each sampled haul/trip recorded in \emph{object@hh} table, with time, space and technical strata specification (one row for one plotted point). 
 }
 

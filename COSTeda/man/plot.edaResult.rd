@@ -5,7 +5,7 @@
 \alias{plot.edaResult}
 \title{Plot "edaResult" object}
 \description{
-This method plots the output of an object of class \emph{edaResult}, resulting from a \emph{COSTeda} package function.
+This method is a generic function for plotting \emph{edaResult} objects. These objects result from a \emph{COSTeda} package function call.
 }
 
 
@@ -18,9 +18,9 @@ This method plots the output of an object of class \emph{edaResult}, resulting f
 
 }}
 
-\section{Usage of plot.edaResult method according to 'desc' slot}{
+\section{Usage of plot.edaResult method according to 'desc' slot in input object :}{
 \tabular{llll}{
-\bold{desc} \tab \bold{parameter} \tab \bold{default} \tab \bold{description} \cr
+\bold{desc} \tab \bold{parameters} \tab \bold{default value} \tab \bold{description} \cr
 \bold{\code{"csRelativeValue"}} \tab \tab \tab  \cr
  \tab x \tab  \tab \emph{edaResult} object with \emph{desc="csRelativeValue"} \cr
     \tab \tab \tab (see \code{relativeValue} method). \cr
@@ -83,7 +83,7 @@ This method plots the output of an object of class \emph{edaResult}, resulting f
         
 \author{Mathieu Merzereaud}
 
-\seealso{\code{\link{edaResult}}, \code{\link{relativeValue}}, \code{\link{deltCalc}}, \code{\link{landisVol}}, \code{\link{ageLenMulti}}, \code{\link{plot}}, \code{\link{boxplot.edaResult}}
+\seealso{\code{\link{edaResult}}, \code{\link{relativeValue}}, \code{\link{deltCalc}}, \code{\link{landisVol}}, \code{\link{ageLenMulti}}, \code{\link{plot}}, \code{\link{boxplot.edaResult}}, \code{\link{GraphsPar}}
 }
 
 \examples{

@@ -179,7 +179,8 @@ title("Effort by Scottish vessels for cod in 2004")
 # Landings by Scottish vessels of cod in 2004: 
 #   landed weight by ICES statistical rectangle as a bubble plot   
 data(cod2004cl)
-spacePlot(cod2004cl,"landWt","rect",sum,maptype="bubble",statrects=TRUE,scale.title="Landed weight (kg)")
+spacePlot(cod2004cl,"landWt","rect",sum,maptype="bubble",statrects=TRUE,
+          scale.title="Landed weight (kg)")
 title("Landings by Scottish vessels of cod in 2004") 
 
 

@@ -2,9 +2,9 @@
 \alias{GraphsPar} 
 \alias{gp}
 \docType{data}
-\title{Default graphical parameters for plotting procedures from "COSTeda" package.}
-\description{
-List of default graphical parameters used for \pkg{COSTeda} plotting procedures.
+\title{Graphical parameters for plotting procedures from "COSTeda" package.}
+\description{      
+List of graphical parameters used for \pkg{COSTeda} plotting procedures.
 }
 \usage{GraphsPar}
 \format{

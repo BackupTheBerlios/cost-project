@@ -4,7 +4,7 @@
 \title{Aggregate-like function with a two-dimensional result }
 
 \description{
-This function is an aggregate-like method over grouping variables whose one constitutes field names of the resulting dataframe. 
+This function is an aggregate-like method that operates over grouping variables whose one constitutes field names of the resulting dataframe. 
 }
 
 \usage{

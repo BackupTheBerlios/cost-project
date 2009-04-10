@@ -30,8 +30,8 @@ These methods implements a special \emph{summary} procedure for objects of class
 
 \arguments{
   \item{object}{A \emph{COST} object.}
-  \item{tab}{Character specifying one slot of \emph{csData/csDataVal/csDataCons} object.}
-  \item{sizeMax}{Numerical value specifying the number of rows of output.}
+  \item{tab}{Character specifying one slot of a COST \emph{cs} object (ie "tr", "hh", "sl", "hl" or "ca").}
+  \item{sizeMax}{Numeric value specifying the number of rows displayed.}
   \item{except}{Character specifying fields to omit.}
   \item{...}{Further parameters.}
 }
