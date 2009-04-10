@@ -4,7 +4,7 @@
 \docType{methods}
 \title{Estimation of total numbers-at-length from market sampling}
 \description{
-ToDo
+This method calculates total numbers-at-length by strata from market sampling data. 
 }
 
 \usage{
@@ -15,22 +15,37 @@ RaiseLgth(dbeOutput,csObject,clObject,spp,taxon,sex=as.character(NA),\dots)
   \item{dbeOutput}{A \emph{dbeOutput} object.}
   \item{csObject}{A \emph{csDataCons} object matching 'dbeOutput' specifications.}
   \item{clObject}{A \emph{clDataCons} object matching 'dbeOutput' specifications.}
-  \item{spp}{Species}
-  \item{taxon}{Taxon}
+  \item{spp}{Species, if missing this is set to dbeOutput@species}
+  \item{taxon}{Taxon, if missing this is set to dbeOutput@species}
   \item{sex}{Sex}
   \item{\dots}{Further arguments}  
 }
 
-\references{ToDo}
 
-\value{An updated object of class \emph{dbeOutput}.}
+\value{An updated object of class \emph{dbeOutput}.
+Slots nSamp\$len & nMeas\$len with number of samples and measurements,
+totalW\$estim with total weight,
+lenStruc\$estim with numbers-at-length estimates,
+lenVar with the variance of numbers-at-length.
+ }
 
 
 \author{Mathieu Merzereaud}
-\seealso{\code{\link{dbeOutput}}, \code{\link{dbeObject}}, \code{\link[COSTcore]{csDataCons}}, \code{\link[COSTcore]{clDataCons}}
+\seealso{\code{\link{dbeOutput}}, \code{\link{dbeObject}}, \code{\link{RaiseAge}}, \code{\link[COSTcore]{csDataCons}}, \code{\link[COSTcore]{clDataCons}}
 }
 
 \examples{
+data(sole)
+#stratification
+strD <- strIni(timeStrata="quarter",techStrata="commCat")
+#only market sampling data and biological parameters are kept
+csObject <- csDataCons(csDataVal(subset(sole.cs,sampType\%in\%c("M","V"))),strD)
+clObject <- clDataCons(clDataVal(sole.cl),strD)
+#initializing the output object
+dbeOutput <- dbeObject(species="Solea solea",catchCat="LAN",strataDesc=strD)
+
+# total numbers at length
+dbeOutput <- RaiseLgth (dbeOutput, csObject, clObject)
 
 }
 \keyword{methods}

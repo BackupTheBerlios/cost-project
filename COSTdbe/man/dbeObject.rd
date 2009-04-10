@@ -3,7 +3,7 @@
 \docType{methods}
 \title{Initialized 'dbeOutput' object creator}
 \description{
-This function returns an initialized \emph{dbeOutput} object that can be used as input with 'COSTdbe' package methods.
+This function returns an initialized \emph{dbeOutput} object that can be used as input object for 'COSTdbe' package methods.
 }
 
 \usage{

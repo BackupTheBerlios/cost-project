@@ -3,9 +3,9 @@
 \alias{totVolume,dbeOutput,csDataCons,ceDataCons,missing-method}
 \alias{totVolume,dbeOutput,csDataCons,ceDataCons,clDataCons-method}
 \docType{methods}
-\title{Estimation of total volume of discards (weight, number or number-at-length)}
+\title{Estimation of total volume of discards or/and landings (weight, number or number-at-length)}
 \description{
-Generic function to estimate total volume of discards (weight, number or number-at-length) based on various raising methods.
+Generic function to estimate total volume of discards or/and landings (weight, number or number-at-length) based on various raising methods.
 }
 
 \usage{
@@ -13,7 +13,7 @@ totVolume(dbeOutput,csObject,ceObject,clObject,\dots)
 }
 
 \arguments{
-  \item{dbeOutput}{A \emph{dbeOutput} object. All necessary information for calculation process are taken in the first slots (species, catch category,...)}
+  \item{dbeOutput}{A \emph{dbeOutput} object. All necessary information for calculation process are taken in the first slots (species, catch category,...). See \emph{dbeObject} method for object initialization.}
   \item{csObject}{A \emph{csDataCons} object matching 'dbeOutput' specifications.}
   \item{ceObject}{A \emph{ceDataCons} object matching 'dbeOutput' specifications.}
   \item{clObject}{An optionnal \emph{clDataCons} object matching 'dbeOutput' specifications. If specified, raising is made with ratio-to-landings method.}

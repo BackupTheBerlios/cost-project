@@ -10,10 +10,10 @@ Method for plotting final estimates from an input 'dbeOutput' object.
 \usage{
 dbePlot(object,elmt,type="bar",Xstratum=NULL,step=NA,dispKey=TRUE,indScale=FALSE,\dots)
 }
-
+                                     
 \arguments{
   \item{object}{A \emph{dbeOutput} object.}
-  \item{elmt}{Character specifying an element (a dataframe) of \emph{dbeOutput} 'object'. For example, "lenStruc$estim", "ageVar" or "totalNnum$cv". 'rep' elements are not accepted ; see \emph{dbePlotRep}.}
+  \item{elmt}{Character specifying an element (a dataframe) of \emph{dbeOutput} 'object'. For example, "lenStruc\$estim", "ageVar" or "totalNnum\$cv". 'rep' elements are not accepted ; see \emph{dbePlotRep}.}
   \item{type}{Character specifying the type of the drawn plot. To be chosen between "bar" (default value), "point" and "line".}
   \item{Xstratum}{Stratum displayed on x-axis if 'elmt' doesn't point at length or age structure information. To be chosen between "time", "space", "technical" and \code{NULL} (default value).}
   \item{step}{Numeric. If given, empty length or age classes will be considered and displayed, according to specified value.}
