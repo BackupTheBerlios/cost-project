@@ -140,19 +140,19 @@ CEstrat <- paste(ceObject@ce$time,ceObject@ce$space,ceObject@ce$technical,sep=":
 N <- tapply(ceObject@ce$trpNum,list(factor(CEstrat,levels=dimnames(yijk)[[3]])),sum,na.rm=TRUE)
 
 #so, estimate of the total volume is...
-yiBar <- apply(yijk,c(1,3,4),sum,na.rm=TRUE)/as.vector(mi)
-yI <- apply(yiBar*as.vector(Mi),c(2,3),sum,na.rm=TRUE)*as.vector(N/n)         #if NAs, should be coming from N (unavailable population level data)
+yiBar <- RowSum(yijk,c(1,3,4))/as.vector(mi)
+yI <- RowSum(yiBar*as.vector(Mi),c(2,3))*as.vector(N/n)         #if NAs, should be coming from N (unavailable population level data)
 
 #and, its associated variance is...
-yiHat <- yiBar*as.vector(Mi) ; yBar <- apply(yiHat,c(2,3),sum,na.rm=TRUE)/as.vector(n)
-s2i <- apply(aperm(aperm(yijk,c(1,3,4,2))-rep(yiBar,dim(yijk)[2]),c(1,4,2,3))^2,c(1,3,4),sum,na.rm=TRUE)/as.vector(mi-1)
+yiHat <- yiBar*as.vector(Mi) ; yBar <- RowSum(yiHat,c(2,3))/as.vector(n)
+s2i <- RowSum(aperm(aperm(yijk,c(1,3,4,2))-rep(yiBar,dim(yijk)[2]),c(1,4,2,3))^2,c(1,3,4))/as.vector(mi-1)
   #Nan & Inf values in 's2i' must be replaced by 0 (mi=1 ==> var=0)
 s2i[is.nan(s2i)] <- 0 ; s2i[is.infinite(s2i)] <- 0 
   #first part of the formula of variance
-first <- apply((yiHat-rep(yBar,each=dim(yiHat)[1]))^2,c(2,3),sum,na.rm=TRUE)*as.vector(N*N/(n*(n-1)))
+first <- RowSum((yiHat-rep(yBar,each=dim(yiHat)[1]))^2,c(2,3))*as.vector(N*N/(n*(n-1)))
 first[is.nan(first)] <- 0 ; first[is.infinite(first)] <- 0                  #(variance inter trip, so n=1 ==> first=0 ????)
   #second part of the formula
-second <- apply(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3),sum,na.rm=TRUE)*as.vector(N/n)                     #variance intra trip
+second <- RowSum(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3))*as.vector(N/n)                     #variance intra trip
 #VyI
 VyI <- first + second
 
@@ -300,19 +300,19 @@ CEstrat <- paste(ceObject@ce$time,ceObject@ce$space,ceObject@ce$technical,sep=":
 Mo <- tapply(ceObject@ce$foNum,list(factor(CEstrat,levels=dimnames(yijk)[[3]])),sum,na.rm=TRUE)     
 
 #so, estimate of the total volume is...
-yiBar <- apply(yijk,c(1,3,4),sum,na.rm=TRUE)/as.vector(mi)
-yII <- apply(yiBar*as.vector(Mi),c(2,3),sum,na.rm=TRUE)*as.vector(Mo/apply(Mi,2,sum,na.rm=TRUE))         #if NAs, should be coming from Mo (unavailable population level data)
+yiBar <- RowSum(yijk,c(1,3,4))/as.vector(mi)
+yII <- RowSum(yiBar*as.vector(Mi),c(2,3))*as.vector(Mo/apply(Mi,2,sum,na.rm=TRUE))         #if NAs, should be coming from Mo (unavailable population level data)
 
 #and, its associated variance is...
-yBarBar <- apply(yiBar,c(2,3),sum,na.rm=TRUE)/as.vector(n)                                        
-s2i <- apply(aperm(aperm(yijk,c(1,3,4,2))-rep(yiBar,dim(yijk)[2]),c(1,4,2,3))^2,c(1,3,4),sum,na.rm=TRUE)/as.vector(mi-1)
+yBarBar <- RowSum(yiBar,c(2,3))/as.vector(n)                                        
+s2i <- RowSum(aperm(aperm(yijk,c(1,3,4,2))-rep(yiBar,dim(yijk)[2]),c(1,4,2,3))^2,c(1,3,4))/as.vector(mi-1)
   #Nan & Inf values in 's2i' must be replaced by 0 (mi=1 ==> var=0)
 s2i[is.nan(s2i)] <- 0 ; s2i[is.infinite(s2i)] <- 0 
   #first part of the formula
-first <- apply(((yiBar-rep(yBarBar,each=dim(yiBar)[1]))*as.vector(Mi))^2,c(2,3),sum,na.rm=TRUE)*as.vector(Mo*Mo/(n*MBar*MBar*(n-1)))                  # <-- CORRECTION
+first <- RowSum(((yiBar-rep(yBarBar,each=dim(yiBar)[1]))*as.vector(Mi))^2,c(2,3))*as.vector(Mo*Mo/(n*MBar*MBar*(n-1)))                  # <-- CORRECTION
 first[is.nan(first)] <- 0 ; first[is.infinite(first)] <- 0                  #(variance inter trip, so n=1 ==> first=0 ????)
   #second part of the formula
-second <- apply(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3),sum,na.rm=TRUE)*as.vector(Mo/(n*MBar))                     #variance intra trip
+second <- RowSum(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3))*as.vector(Mo/(n*MBar))                     #variance intra trip
 #VyI
 VyII <- first + second                                      
 
@@ -476,23 +476,23 @@ N <- tapply(ceObject@ce$trpNum,list(factor(CEstrat,levels=dimnames(yijk)[[3]])),
 X <- tapply(ceObject@ce$foDur*60,list(factor(CEstrat,levels=dimnames(yijk)[[3]])),sum,na.rm=TRUE)       #in minutes
 
 #so, estimate of the total volume is...
-yiBar <- apply(yijk,c(1,3,4),sum,na.rm=TRUE)/as.vector(mi) 
-xiBar <- apply(xij,c(1,3),sum,na.rm=TRUE)/mi  
-Rhat <- apply(yiBar*as.vector(Mi),c(2,3),sum,na.rm=TRUE)/as.vector(apply(Mi*xiBar,2,sum,na.rm=TRUE))         
+yiBar <- RowSum(yijk,c(1,3,4))/as.vector(mi) 
+xiBar <- RowSum(xij,c(1,3))/mi  
+Rhat <- RowSum(yiBar*as.vector(Mi),c(2,3))/as.vector(apply(Mi*xiBar,2,sum,na.rm=TRUE))         
 yIII <- Rhat*as.vector(X)                                                                    #if NAs, should be coming from X (unavailable population level data)
 
 #and, its associated variance is...
 yiHat <- yiBar*as.vector(Mi) ; xiHat <- Mi*xiBar
 s2iPart1 <- yijk-rep(xij,dim(yijk)[4])*rep(Rhat,each=prod(dim(yijk)[1:2]))                         #warning : length data in 'yijk and 'Rhat', but not in 'xij'
 s2iPart2 <- yiBar-rep(xiBar,dim(yijk)[4])*rep(Rhat,each=dim(xiBar)[1])
-s2i <- apply(aperm(aperm(s2iPart1,c(1,3,4,2))-rep(s2iPart2,dim(s2iPart1)[2]),c(1,4,2,3))^2,c(1,3,4),sum,na.rm=TRUE)/as.vector(mi-1)
+s2i <- RowSum(aperm(aperm(s2iPart1,c(1,3,4,2))-rep(s2iPart2,dim(s2iPart1)[2]),c(1,4,2,3))^2,c(1,3,4))/as.vector(mi-1)
   #Nan & Inf values in 's2i' must be replaced by 0 (mi=1 ==> var=0)
 s2i[is.nan(s2i)] <- 0 ; s2i[is.infinite(s2i)] <- 0 
   #first part of the formula
-first <- apply((yiHat-rep(xiHat,dim(yijk)[4])*rep(Rhat,each=dim(xiHat)[1]))^2,c(2,3),sum,na.rm=TRUE)*as.vector(N*N/(n*(n-1)))  
+first <- RowSum((yiHat-rep(xiHat,dim(yijk)[4])*rep(Rhat,each=dim(xiHat)[1]))^2,c(2,3))*as.vector(N*N/(n*(n-1)))  
 first[is.nan(first)] <- 0 ; first[is.infinite(first)] <- 0                  #not sure about that (variance inter trip, so n=1 ==> first=0 ????)
   #second part of the formula
-second <- apply(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3),sum,na.rm=TRUE)*as.vector(N/n)                     
+second <- RowSum(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3))*as.vector(N/n)                     
 #VyIII
 VyIII <- first + second
 
@@ -667,9 +667,9 @@ TotLand <- mapply(function(w,x,y,z) sum(c(w*x,y,z),na.rm=TRUE),CLt$landWt,CLt$la
 X <- tapply(TotLand,list(factor(CLstrat,levels=dimnames(yijk)[[3]])),sum,na.rm=TRUE)                                              
 
 #so, estimate of the total volume is...
-yiBar <- apply(yijk,c(1,3,4),sum,na.rm=TRUE)/as.vector(mi) 
-xiBar <- apply(xij,c(1,3),sum,na.rm=TRUE)/mi  
-Rhat <- apply(yiBar*as.vector(Mi),c(2,3),sum,na.rm=TRUE)/as.vector(apply(Mi*xiBar,2,sum,na.rm=TRUE))         #if NaN, no landings and no discards  --> 0 values
+yiBar <- RowSum(yijk,c(1,3,4))/as.vector(mi) 
+xiBar <- RowSum(xij,c(1,3))/mi  
+Rhat <- RowSum(yiBar*as.vector(Mi),c(2,3))/as.vector(apply(Mi*xiBar,2,sum,na.rm=TRUE))         #if NaN, no landings and no discards  --> 0 values
 Rhat[is.nan(Rhat)] <- 0
 yIII <- Rhat*as.vector(X)                                                                    #if NAs, should be coming from X (unavailable population level data)
 
@@ -677,14 +677,14 @@ yIII <- Rhat*as.vector(X)                                                       
 yiHat <- yiBar*as.vector(Mi) ; xiHat <- Mi*xiBar
 s2iPart1 <- yijk-rep(xij,dim(yijk)[4])*rep(Rhat,each=prod(dim(yijk)[1:2]))                         #warning : length data in 'yijk and 'Rhat', but not in 'xij'
 s2iPart2 <- yiBar-rep(xiBar,dim(yijk)[4])*rep(Rhat,each=dim(xiBar)[1])
-s2i <- apply(aperm(aperm(s2iPart1,c(1,3,4,2))-rep(s2iPart2,dim(s2iPart1)[2]),c(1,4,2,3))^2,c(1,3,4),sum,na.rm=TRUE)/as.vector(mi-1)
+s2i <- RowSum(aperm(aperm(s2iPart1,c(1,3,4,2))-rep(s2iPart2,dim(s2iPart1)[2]),c(1,4,2,3))^2,c(1,3,4))/as.vector(mi-1)
   #Nan & Inf values in 's2i' must be replaced by 0 (mi=1 ==> var=0)
 s2i[is.nan(s2i)] <- 0 ; s2i[is.infinite(s2i)] <- 0 
   #first part of the formula
-first <- apply((yiHat-rep(xiHat,dim(yijk)[4])*rep(Rhat,each=dim(xiHat)[1]))^2,c(2,3),sum,na.rm=TRUE)*as.vector(N*N/(n*(n-1)))  
+first <- RowSum((yiHat-rep(xiHat,dim(yijk)[4])*rep(Rhat,each=dim(xiHat)[1]))^2,c(2,3))*as.vector(N*N/(n*(n-1)))  
 first[is.nan(first)] <- 0 ; first[is.infinite(first)] <- 0                  #variance inter trip, so n=1 ==> first=0 ????
   #second part of the formula
-second <- apply(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3),sum,na.rm=TRUE)*as.vector(N/n)                     
+second <- RowSum(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3))*as.vector(N/n)                     
 #VyIII
 VyIII <- first + second
 
@@ -832,26 +832,26 @@ if (any(is.na(ceObject@ce$daysAtSea))) warning("missing values for 'daysAtSea' f
 D <- tapply(ceObject@ce$daysAtSea,list(factor(CEstrat,levels=dimnames(yikjl)[[4]])),sum,na.rm=TRUE)
 
 #so, estimate of the total volume is...
-yikBar <- apply(yikjl,c(1,2,4,5),sum,na.rm=TRUE)/as.vector(mik)
+yikBar <- RowSum(yikjl,c(1,2,4,5))/as.vector(mik)
 yikHat <- yikBar*as.vector(Mik)
-yiBar <- apply(yikHat,c(1,3,4),sum,na.rm=TRUE)/as.vector(di)
-yBarBar <- apply(yiBar*as.vector(Di),c(2,3),sum,na.rm=TRUE)/as.vector(apply(Di,2,sum,na.rm=TRUE))
+yiBar <- RowSum(yikHat,c(1,3,4))/as.vector(di)
+yBarBar <- RowSum(yiBar*as.vector(Di),c(2,3))/as.vector(apply(Di,2,sum,na.rm=TRUE))
 yIV <- yBarBar*as.vector(D)         #if NAs, should be coming from D (unavailable population level data)
 
 #and, its associated variance is...
   #first part of the formula of variance
-first <- apply((yiBar-rep(yBarBar,each=dim(yiBar)[1]))^2,c(2,3),sum,na.rm=TRUE)*as.vector(n*((D/apply(Di,2,sum,na.rm=TRUE))^2)*(1-apply(Di,2,sum,na.rm=TRUE)/D)/(n-1))
+first <- RowSum((yiBar-rep(yBarBar,each=dim(yiBar)[1]))^2,c(2,3))*as.vector(n*((D/apply(Di,2,sum,na.rm=TRUE))^2)*(1-apply(Di,2,sum,na.rm=TRUE)/D)/(n-1))
   #Nan & Inf values in 'first' must be replaced by 0 (mi=1 ==> var=0)
 first[is.nan(first)] <- 0 ; first[is.infinite(first)] <- 0 
 
   #second part of the formula of variance
-second <- apply(apply(aperm(aperm(yikHat,c(1,3,4,2))-as.vector(yiBar),c(1,4,2,3))^2,c(1,3,4),sum,na.rm=TRUE)*as.vector(Di*(Di-di)/(di*(di-1))),c(2,3),sum,na.rm=TRUE)*as.vector(D/apply(Di,2,sum,na.rm=TRUE))
+second <- RowSum(RowSum(aperm(aperm(yikHat,c(1,3,4,2))-as.vector(yiBar),c(1,4,2,3))^2,c(1,3,4))*as.vector(Di*(Di-di)/(di*(di-1))),c(2,3))*as.vector(D/apply(Di,2,sum,na.rm=TRUE))
   #Nan & Inf values in 'second' must be replaced by 0 (mi=1 ==> var=0)
 second[is.nan(second)] <- 0 ; second[is.infinite(second)] <- 0 
 
   #third part of the formula of variance
-stepp <- apply(aperm(aperm(yikjl,c(1,2,4,5,3))-as.vector(yikBar),c(1,2,5,3,4))^2,c(1,2,4,5),sum,na.rm=TRUE)*as.vector(Mik*(Mik-mik)/(mik*(mik-1)))
-third <- apply(apply(stepp,c(1,3,4),sum,na.rm=TRUE)*as.vector(Di/di),c(2,3),sum,na.rm=TRUE)*as.vector(D/apply(Di,2,sum,na.rm=TRUE))                                           
+stepp <- RowSum(aperm(aperm(yikjl,c(1,2,4,5,3))-as.vector(yikBar),c(1,2,5,3,4))^2,c(1,2,4,5))*as.vector(Mik*(Mik-mik)/(mik*(mik-1)))
+third <- RowSum(RowSum(stepp,c(1,3,4))*as.vector(Di/di),c(2,3))*as.vector(D/apply(Di,2,sum,na.rm=TRUE))                                           
   #Nan & Inf values in 'third' must be replaced by 0 (mi=1 ==> var=0)
 third[is.nan(third)] <- 0 ; third[is.infinite(third)] <- 0 
 
@@ -996,7 +996,7 @@ procRaise.landings(csObject,ceObject,clObject,dbeOutput,landSpp=landSpp,val=val,
 #obj <- dbeObject(desc="My object",species="Solea solea",catchCat="DIS",strataDesc=strDef,methodDesc="analytical")
 #obj
 #
-##raising by trip
+#raising by trip
 #newObj11 <- totVolume(obj,csObject,ceObject)
 ##raising by haul
 #newObj22 <- totVolume(obj,csObject,ceObject,type="fo")
