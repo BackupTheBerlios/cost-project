@@ -84,20 +84,27 @@ if (!all(apply(Pi.hat,2:4,sum,na.rm=TRUE)==1)) warning("it seems that some lengt
 
 #Var.pi calculation
 #----------------
-if (type=="ages") {
-	a1 <- Pi.hat*(1-Pi.hat)
-	VarPi <- a1/rep(ns,each=dim(a1)[1])
-} else {
-if (type=="fixed") {
-	b1 <- apply(aperm(aperm(Qij*(1-Qij),c(1,3,4,5,2))*as.vector(lj*(1-lj)),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)
-	b2 <- apply(aperm(aperm(Qij*(1-Qij),c(1,3,4,5,2))*as.vector(lj*lj),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)
-	b3 <- apply(aperm(aperm(Qij*Qij,c(1,3,4,5,2))*as.vector(lj),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)-Pi.hat^2
-  VarPi <- b1/rep(Nl*njStar,each=dim(b1)[1]) + b2/rep(njStar,each=dim(b2)[1]) + b3/rep(Nl,each=dim(b3)[1])
-} else {   #i.e if (type=="prop")
-	c1 <- apply(aperm(aperm(Qij*(1-Qij),c(1,3,4,5,2))*as.vector(lj),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)
-	c2 <- apply(aperm(aperm(Qij*Qij,c(1,3,4,5,2))*as.vector(lj),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)-Pi.hat^2
-  VarPi <- c1/rep(ns,each=dim(c1)[1]) + c2/rep(Nl,each=dim(c2)[1])
-}}
+#if (type=="ages") {
+#	a1 <- Pi.hat*(1-Pi.hat)
+#	VarPi <- a1/rep(ns,each=dim(a1)[1])
+#} else {
+#if (type=="fixed") {
+#	b1 <- apply(aperm(aperm(Qij*(1-Qij),c(1,3,4,5,2))*as.vector(lj*(1-lj)),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)
+#	b2 <- apply(aperm(aperm(Qij*(1-Qij),c(1,3,4,5,2))*as.vector(lj*lj),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)
+#	b3 <- apply(aperm(aperm(Qij*Qij,c(1,3,4,5,2))*as.vector(lj),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)-Pi.hat^2
+#  VarPi <- b1/rep(Nl*njStar,each=dim(b1)[1]) + b2/rep(njStar,each=dim(b2)[1]) + b3/rep(Nl,each=dim(b3)[1])
+#} else {   #i.e if (type=="prop")
+#	c1 <- apply(aperm(aperm(Qij*(1-Qij),c(1,3,4,5,2))*as.vector(lj),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)
+#	c2 <- apply(aperm(aperm(Qij*Qij,c(1,3,4,5,2))*as.vector(lj),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)-Pi.hat^2
+#  VarPi <- c1/rep(ns,each=dim(c1)[1]) + c2/rep(Nl,each=dim(c2)[1])
+#}}
+
+VarQij <- aperm(Qij*(1-Qij),c(1,3,4,5,2))/as.vector(nj)
+V1 <- aperm(VarQij*as.vector(N*N),c(1,5,2,3,4))
+VarDj <- dbeOutput@lenVar
+VarNj <- tapply(VarDj$value,list(length=VarDj$length,time=VarDj$time,space=VarDj$space,technical=VarDj$technical),sum,na.rm=TRUE)
+V2 <- aperm(aperm(Qij*Qij,c(1,3,4,5,2))*as.vector(VarNj),c(1,5,2,3,4))
+V3 <- aperm(VarQij*as.vector(VarNj),c(1,5,2,3,4))
 
 #Estimates of total numbers at age
   #total numbers
@@ -105,16 +112,16 @@ D.hat <- apply(N,2:4,sum,na.rm=TRUE)
   #total numbers at age
 D_i <- Pi.hat*rep(D.hat,each=dim(Pi.hat)[1])
 
-#Estimates of variance at age
-VarDj <- dbeOutput@lenVar
-  #Var(sum(D_j)) = sum(Var(D_j))
-VarD <- tapply(VarDj$value,list(time=factor(VarDj$time,levels=dimnames(N)[[2]]),space=factor(VarDj$space,levels=dimnames(N)[[3]]),
-                                technical=factor(VarDj$technical,levels=dimnames(N)[[4]])),sum,na.rm=TRUE)
-V1 <- Pi.hat*Pi.hat*rep(VarD,each=dim(Pi.hat)[1])
-V2 <- VarPi*rep(D.hat*D.hat,each=dim(VarPi)[1])
-V3 <- VarPi*rep(VarD,each=dim(VarPi)[1])
-
-VarD_i <- V1+V2+V3
+##Estimates of variance at age
+#VarDj <- dbeOutput@lenVar
+#  #Var(sum(D_j)) = sum(Var(D_j))
+#VarD <- tapply(VarDj$value,list(time=factor(VarDj$time,levels=dimnames(N)[[2]]),space=factor(VarDj$space,levels=dimnames(N)[[3]]),
+#                                technical=factor(VarDj$technical,levels=dimnames(N)[[4]])),sum,na.rm=TRUE)
+#V1 <- Pi.hat*Pi.hat*rep(VarD,each=dim(Pi.hat)[1])
+#V2 <- VarPi*rep(D.hat*D.hat,each=dim(VarPi)[1])
+#V3 <- VarPi*rep(VarD,each=dim(VarPi)[1])
+#
+VarD_i <- apply(V1+V2+V3,2:5,sum,na.rm=TRUE)
 
 
 #results are inserted in dbeOutput object
