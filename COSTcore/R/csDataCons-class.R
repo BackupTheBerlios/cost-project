@@ -1203,7 +1203,7 @@ setMethod("subset", signature(x="csDataCons"), function(x,subset,...){
 #	}
 #)
 #
-setMethod("subsetSpp", signature(x="csDataCons"), function(x,subset,...){
+setMethod("subsetSpp", signature(x="csDataCons"), function(x,subset,link=TRUE,...){
   
   hl <- slSex(sl(x),hl(x))                                                    
   #get idx                                                                      
@@ -1228,7 +1228,16 @@ setMethod("subsetSpp", signature(x="csDataCons"), function(x,subset,...){
                   warning("No data kept from subsetting process!!")}            
   if(nrow(hl)<1) {hl <- csDataCons()@hl}                                            
 
-new("csDataCons",desc=x@desc,tr=tr(x), hh=hh(x), sl=sl, hl=hl, ca=ca(x))         
+  if (link) {subset <- substitute(subset)
+             ca <- subset(ca(x),eval(subset)) 
+             if(nrow(ca)<1) {ca <- csDataCons()@ca                                             #modif 16/04/2009
+                  warning("No data kept from subsetting process in ca table!!")}  
+  } else {
+  ca <- ca(x)}
+ 
+
+
+new("csDataCons",desc=x@desc,tr=tr(x), hh=hh(x), sl=sl, hl=hl, ca=ca)         
 
 })
 
