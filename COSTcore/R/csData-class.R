@@ -795,7 +795,7 @@ setMethod("rbind2", signature(x="csData", y="csData"), function(x,y){
 #====================================================================
 
 
-setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr"){
+subsetCOST <- function(x,subset,..., table="tr"){
 
 isVal <- class(x)=="csDataVal"
   #-----------------------------------------------------------------------------
@@ -812,7 +812,7 @@ isVal <- class(x)=="csDataVal"
   # Function to build a primary or a foreign key for any table
   #-----------------------------------------------------------------------------
   
-  fpKey <- function(tab,colIndex,sep="") {
+  fpKey <- function(tab,colIndex,sep=":-:") {
     key <- tab[,colIndex]
     key <- apply(key,1,paste,collapse=sep)
     key <- gsub("[[:space:]]","",key)
@@ -836,7 +836,7 @@ isVal <- class(x)=="csDataVal"
 
 	e <- substitute(subset)
 	df0 <- eval(parse('',text=table))#do.call(table, list(object=x))  
-	r <- eval(e, df0, parent.frame(n=2))
+	r <- eval(e, df0, parent.frame(n=1))
   eval(parse('',text=paste(table, "<- df0[r,]")))
 
   #-----------------------------------------------------------------------------
@@ -904,10 +904,14 @@ res <- csData(tr=tr,hh=hh,sl=sl,hl=hl,ca=ca,desc=x@desc)                        
 if (isVal) res <- csDataVal(res)
 return(res)
 
+}
+
+
+setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr",link=TRUE){                 #if link, 'table' & ca tables are subset  
+subset <- substitute(subset)
+x <- subsetCOST(x,subset=eval(subset),table=table)
+if (link) subsetCOST(x,subset=eval(subset),table="ca") else x
 })
-
-
-
 
 
 #====================================================================
@@ -917,19 +921,19 @@ return(res)
 
 
 
-setGeneric("subsetSpp", function(x,subset,...){
+setGeneric("subsetSpp", function(x,subset,...,link=TRUE){
 	standardGeneric("subsetSpp")
 	}
 )
 
-setMethod("subsetSpp", signature(x="csData"), function(x,subset,...){
+setMethod("subsetSpp", signature(x="csData"), function(x,subset,...,link=TRUE){
 
 is.Val <- class(x)=="csDataVal"
   
   hl <- slSex(sl(x),hl(x))                                                    #08/12/2008 modif MM
   #get idx                                                                      #
 	hlfk <- hl[,c(1:14)]                                                          #
-	hlfk <- apply(hlfk,1,paste,collapse="")
+	hlfk <- apply(hlfk,1,paste,collapse=":-:")
 	hlfk <- gsub("[[:space:]]","",hlfk)
   
   # new idx
@@ -939,7 +943,7 @@ is.Val <- class(x)=="csDataVal"
 	
 	# subset
 	sl <- df0[r,]
-	slidx <- apply(sl[,1:14],1,paste,collapse="")
+	slidx <- apply(sl[,1:14],1,paste,collapse=":-:")
 	slidx <- gsub("[[:space:]]","",slidx)
 	Hl <- hl[hlfk %in% slidx,]	                                                  #08/12/2008 modif MM
   Hl$sex <- Hl$lsex ; hl <- Hl[,-ncol(Hl)]                                      #
@@ -947,8 +951,16 @@ is.Val <- class(x)=="csDataVal"
 	# output
 	if(nrow(sl)<1) {sl <- csData()@sl                                             #modif 19/01/2009
                   warning("No data kept from subsetting process!!")}            #
-  if(nrow(hl)<1) {hl <- csData()@hl}                                            #
-  res <- csData(tr=tr(x), hh=hh(x), sl=sl, hl=hl, ca=ca(x),desc=x@desc)         #
+  if(nrow(hl)<1) {hl <- csData()@hl}  
+  
+  if (link) {subset <- substitute(subset)
+             ca <- subset(ca(x),eval(subset)) 
+             if(nrow(ca)<1) {ca <- csData()@ca                                             #modif 16/04/2009
+                  warning("No data kept from subsetting process in ca table!!")}  
+  } else {
+  ca <- ca(x)}
+  
+  res <- csData(tr=tr(x), hh=hh(x), sl=sl, hl=hl, ca=ca,desc=x@desc)         #
 
 if (is.Val) res <- csDataVal(res)
 return(res)
