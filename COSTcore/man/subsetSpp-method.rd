@@ -11,12 +11,13 @@ and preserves the other tables.
 }
 
 \usage{
-subsetSpp(x,subset,\dots)
+subsetSpp(x,subset,link=TRUE,\dots)
 }
 
 \arguments{
   \item{x}{A \emph{csData}, \emph{csDataVal} or \emph{csDataCons} object.}
   \item{subset}{Logical expression specifying the subsetting to be applied on sl table.}
+  \item{link}{Logical. If TRUE, subset is also applied on ca table.}
   \item{...}{Further arguments.}
 }
 
