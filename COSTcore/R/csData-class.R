@@ -921,12 +921,12 @@ if (link) subsetCOST(x,subset=eval(subset),table="ca") else x
 
 
 
-setGeneric("subsetSpp", function(x,subset,...,link=TRUE){
+setGeneric("subsetSpp", function(x,subset,link=TRUE,...){
 	standardGeneric("subsetSpp")
 	}
 )
 
-setMethod("subsetSpp", signature(x="csData"), function(x,subset,...,link=TRUE){
+setMethod("subsetSpp", signature(x="csData"), function(x,subset,link=TRUE,...){
 
 is.Val <- class(x)=="csDataVal"
   
