@@ -1,4 +1,3 @@
-# Raise_Age_Boot
 
 ## FUNCTION STILL IN DEVELOPMENT,
 #need to check iters that don't give a particular age-length combination are assigned 0 for calculating mean and var across iter
@@ -21,7 +20,12 @@
 #sol.dbe.boot <- RaiseLgthBoot (dbeOutput = dbeOutput, csObject = csObject, clObject = clObject, B=10)
 
 #sol.dbe.an <- RaiseAge (csObject = csObject, dbeOutput = sol.dbe.an, type="fixed")
-#sol.dbe.boot <- RaiseAgeBoot (csObject = csObject, dbeOutput = sol.dbe.boot, type="fixed")
+#set.seed(113)
+#sol.dbe.boot1 <- RaiseAgeBoot (csObject = csObject, dbeOutput = sol.dbe.boot, type="fixed", bootMethod="samples")
+#set.seed(113)
+#sol.dbe.boot2 <- RaiseAgeBoot (csObject = csObject, dbeOutput = sol.dbe.boot, type="fixed", bootMethod="otoliths")
+# comparison
+#merge (sol.dbe.boot1@ageStruc$estim, sol.dbe.boot2@ageStruc$estim, by=c("time", "space", "technical", "age"), suffixes=c(".sam",".oto"), all=T)
 
 
 ################################################################################
@@ -31,7 +35,11 @@
 
 
 
-Raise_Age_Boot <- function(csObject,dbeOutput,type="fixed",sex=as.character(NA)){#type= "fixed" or "prop" or "ages"
+Raise_Age_Boot <- function(csObject,dbeOutput,type="fixed",sex=as.character(NA), bootMethod = "samples"){
+#type= "fixed" or "prop" or "ages"
+#bootMethod="samples" or "otoliths"
+
+if (!bootMethod %in% c("samples","otoliths")) stop ('bootMethod must be "samples" or "otoliths"')
 
 sp <- dbeOutput@species
 ca <- ca(csObject)
@@ -44,9 +52,7 @@ Unit <- paste(ca$PSUid,ca$SSUid,sep=":-:")                                      
 nSAMP <- spdAgreg(list(value=Unit),BY=list(time=ca$time,space=ca$space),function(x) length(unique(x)))      #
 dbeOutput@nSamp$age <- nSAMP                                                                                #  ADDED : MM 02/04/2009
 
-                                                                                          #
-
-if (!(all(is.na(sex)))) {ca <- ca[ca$sex%in%sex,]                                                            
+if (!(all(is.na(sex)))) {ca <- ca[ca$sex%in%sex,]
                          if (nrow(ca)==0) stop("no CA data for specified sex in input object!!")            #                                                                               #
 }                                                                                                           #
 
@@ -57,55 +63,83 @@ dbeOutput@nMeas$age <- nMEAS                                                    
 #numbers at length all replicates
 if (all(is.na(dbeOutput@lenStruc$rep))) stop("estimates for length structure are missing in 'dbeOutput' object!!")
 
+# Change desc slot to bootstrap samples or otoliths
+if (dbeOutput@methodDesc != paste("bootstrap", bootMethod)) {
+    print(paste ("dbeOutput object methodDesc slot has been changed from ", dbeOutput@methodDesc, " to bootstrap ", bootMethod, sep=""))
+    dbeOutput@methodDesc <- paste("bootstrap", bootMethod)
+    }
+
 Ldfall <- dbeOutput@lenStruc$rep
-# set number of iterations to match reps of length
-B <- max(Ldfall$iter)
-
-# PSUids for each strata combination
-CASTR <- paste(ca$time,ca$space,sep=":-:")
-UnitSTR = data.frame (Unit, CASTR, stringsAsFactors = F)
-
-ageids <- unique( UnitSTR )
-ageids <- ageids[order(ageids$CASTR),] # ageids and nSAMP should now have STR in same order
-uStrat <- paste (nSAMP$time,nSAMP$space,sep=":-:")
-#identify start and end positions for each strata
-start.pos = c(1, (cumsum(nSAMP$value)[-length(nSAMP$value)]) +1 )
-end.pos = cumsum(nSAMP$value)
-
-# sample new set of PSUid for each strata combination - stratified bootstrap resampling - may be able to use boot function instead
-bootAgeid = matrix (NA, nrow = dim(ageids)[1], ncol=B+1)
-dimnames(bootAgeid) = list(NULL, c("orig", paste("iter.",1:B,sep="")))
-# original sample ids in first column
-bootAgeid[,1] = ageids$Unit
-
-# put resampled ids for each strata into vector in relevant places,
-# assigning to all columns using size = nSAMP$value[i] * B, instead of using loop by iteration 1 to B
-for ( i in 1:length(uStrat) ){
-# order of nSAMP$value and uStrat needs to match
-  bootAgeid [ start.pos[i]:end.pos[i], -1] = resample (ageids$Unit [ ageids$CASTR == uStrat[i] ], size = nSAMP$value[i] * B, replace=T )
-  }
+# set number of age iterations to match number used for length distribution
+B <- length(unique(Ldfall$iter[Ldfall$iter != 0]))
 
 CA.orig <- ca
-CA.orig$Unit <- paste(CA.orig$PSUid,CA.orig$SSUid,sep=":-:")
 
+if (bootMethod == "samples") {
+  CA.orig$Unit <- paste(CA.orig$PSUid,CA.orig$SSUid,sep=":-:")
 
-####### START OF BOOTSTRAP LOOP #################
+  # PSUids for each strata combination
+  CASTR <- paste(ca$time,ca$space,sep=":-:")
+  UnitSTR = data.frame (Unit, CASTR, stringsAsFactors = F)
+
+  ageids <- unique( UnitSTR )
+  ageids <- ageids[order(ageids$CASTR),] # ageids and nSAMP should now have STR in same order
+  uStrat <- paste (nSAMP$time,nSAMP$space,sep=":-:")
+  #identify start and end positions for each strata
+  start.pos = c(1, (cumsum(nSAMP$value)[-length(nSAMP$value)]) +1 )
+  end.pos = cumsum(nSAMP$value)
+
+  # sample new set of PSUid for each strata combination - stratified bootstrap resampling - may be able to use boot function instead
+  bootAgeid = matrix (NA, nrow = dim(ageids)[1], ncol=B+1)
+  dimnames(bootAgeid) = list(NULL, c("orig", paste("iter.",1:B,sep="")))
+  # original sample ids in first column
+  bootAgeid[,1] = ageids$Unit
+
+  # put resampled ids for each strata into vector in relevant places,
+  # assigning to all columns using size = nSAMP$value[i] * B, instead of using loop by iteration 1 to B
+  # order of nSAMP$value and uStrat needs to match
+  for ( i in 1:length(uStrat) ){
+    bootAgeid [ start.pos[i]:end.pos[i], -1] = resample (ageids$Unit [ ageids$CASTR == uStrat[i] ], size = nSAMP$value[i] * B, replace=T )
+  }
+} else {
+  # i.e. if bootMethod is otoliths
+  #numbers at length, original data
+  Ldf <- Ldfall[Ldfall$iter == 0,]
+  N <- tapply(Ldf$value,list(length=Ldf$length,time=Ldf$time,space=Ldf$space,technical=Ldf$technical),sum,na.rm=TRUE)
+
+  #creating the stratified ALK with levels from N
+  ALK.orig <- tapply(CA.orig$age,list(length=factor(CA.orig$lenCls,levels=dimnames(N)[[1]]),age=CA.orig$age,
+                          time=factor(CA.orig$time,levels=dimnames(N)[[2]]),space=factor(CA.orig$space,levels=dimnames(N)[[3]])),length)
+  ALK.orig[is.na(ALK.orig)] <- 0
+
+  resampleALKrow <- function(x) { sumx = sum(x)
+                        if(sumx > 1) rmultinom(1,size=sumx, prob=x) else x  }
+}
+
+####### START OF BOOTSTRAP LOOP ################
+
 ac.list = vector("list", B+1)
-
+print ("iter")
 # i=1 uses original data, its output is labelled iter=0
+# printing iteration number every 50 iterations
 for (i in 1:(B+1) ){
-print(i-1)
-
-ca = merge(data.frame(Unit = bootAgeid[,i]), CA.orig, by="Unit")
+if(identical ((i-1)/50, (i-1)%/%50))print(i-1)
 
 #numbers at length
 Ldf <- Ldfall[Ldfall$iter == (i-1),]
 N <- tapply(Ldf$value,list(length=Ldf$length,time=Ldf$time,space=Ldf$space,technical=Ldf$technical),sum,na.rm=TRUE)
 
-#creating the stratified ALK with levels from N (duplication for technical strata)
-ALK <- tapply(ca$age,list(length=factor(ca$lenCls,levels=dimnames(N)[[1]]),age=ca$age,
+if (bootMethod == "samples") {
+  ca = merge(data.frame(Unit = bootAgeid[,i]), CA.orig, by="Unit")
+  ALK <- tapply(ca$age,list(length=factor(ca$lenCls,levels=dimnames(N)[[1]]),age=ca$age,
                           time=factor(ca$time,levels=dimnames(N)[[2]]),space=factor(ca$space,levels=dimnames(N)[[3]])),length)
-ALK[is.na(ALK)] <- 0
+  ALK[is.na(ALK)] <- 0
+} else {
+  #creating the stratified ALK with levels from N (duplication for technical strata)
+  ALK <- aperm (apply (ALK.orig, c(1,3,4), resampleALKrow), perm=c(2,1,3,4))
+  dimnames(ALK) <- dimnames(ALK.orig)
+  }
+
 
 ## THIS SECTION IS COPIED FROM VesselRaiseBoot as a reminder to do something about gaps in alks
 # to use it will need to setup alkgaps.list and alkgaps.counter and change alk to ALK
@@ -158,22 +192,6 @@ Pi.hat <- apply(aperm(aperm(Qij,c(1,3,4,5,2))*as.vector(lj),c(1,5,2,3,4)),2:5,su
 #test on Pi.hat (missing length class in ca)
 #if (!all(apply(Pi.hat,2:4,sum,na.rm=TRUE)==1)) warning("it seems that some length classes from 'dbeOutput@lenStruc' slot are not in 'ca' table")
 
-#Var.pi calculation
-#----------------
-#if (type=="ages") {
-#	a1 <- Pi.hat*(1-Pi.hat)
-#	VarPi <- a1/rep(ns,each=dim(a1)[1])
-#} else {
-#if (type=="fixed") {
-#	b1 <- apply(aperm(aperm(Qij*(1-Qij),c(1,3,4,5,2))*as.vector(lj*(1-lj)),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)
-#	b2 <- apply(aperm(aperm(Qij*(1-Qij),c(1,3,4,5,2))*as.vector(lj*lj),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)
-#	b3 <- apply(aperm(aperm(Qij*Qij,c(1,3,4,5,2))*as.vector(lj),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)-Pi.hat^2
-#  VarPi <- b1/rep(Nl*njStar,each=dim(b1)[1]) + b2/rep(njStar,each=dim(b2)[1]) + b3/rep(Nl,each=dim(b3)[1])
-#} else {   #i.e if (type=="prop")
-#	c1 <- apply(aperm(aperm(Qij*(1-Qij),c(1,3,4,5,2))*as.vector(lj),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)
-#	c2 <- apply(aperm(aperm(Qij*Qij,c(1,3,4,5,2))*as.vector(lj),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)-Pi.hat^2
-#  VarPi <- c1/rep(ns,each=dim(c1)[1]) + c2/rep(Nl,each=dim(c2)[1])
-#}}
 
 #Estimates of total numbers at age
   #total numbers
@@ -181,36 +199,18 @@ D.hat <- apply(N,2:4,sum,na.rm=TRUE)
   #total numbers at age
 D_i <- Pi.hat*rep(D.hat,each=dim(Pi.hat)[1])
 
-#Estimates of variance at age
-#VarDj <- dbeOutput@lenVar
-  #Var(sum(D_j)) = sum(Var(D_j))
-#VarD <- tapply(VarDj$value,list(time=factor(VarDj$time,levels=dimnames(N)[[2]]),space=factor(VarDj$space,levels=dimnames(N)[[3]]),
-#                                technical=factor(VarDj$technical,levels=dimnames(N)[[4]])),sum,na.rm=TRUE)
-#V1 <- Pi.hat*Pi.hat*rep(VarD,each=dim(Pi.hat)[1])
-#V2 <- VarPi*rep(D.hat*D.hat,each=dim(VarPi)[1])
-#V3 <- VarPi*rep(VarD,each=dim(VarPi)[1])
-
-#VarD_i <- V1+V2+V3
-
 
 #results are inserted in dbeOutput object
 #####################
-  #D_i & VarD_i
-df.D_i <- cbind(expand.grid(dimnames(D_i)),value=as.vector(D_i))
-#df.VarD_i <- cbind(expand.grid(dimnames(VarD_i)),value=as.vector(VarD_i))
-
-#df.VarD_i <- df.VarD_i[!is.na(df.D_i$val),] ; df.D_i <- df.D_i[!is.na(df.D_i$val),]
-#df.VarD_i <- df.VarD_i[df.D_i$val>0,] ; df.D_i <- df.D_i[df.D_i$val>0,]
-  
   #D_i
+df.D_i <- cbind(expand.grid(dimnames(D_i)),value=as.vector(D_i))
+
 df.D_i <- df.D_i[order(df.D_i$time,df.D_i$space,df.D_i$technical,df.D_i$age),] ; rownames(df.D_i) <- 1:nrow(df.D_i)
 ac.list[[i]] <- df.D_i[,names(dbeOutput@ageStruc$estim)] # changed for boot
 
-  #VarD_j
-#df.VarD_i <- df.VarD_i[order(df.VarD_i$time,df.VarD_i$space,df.VarD_i$technical,df.VarD_i$age),] ; rownames(df.VarD_i) <- 1:nrow(df.VarD_i)
-#dbeOutput@ageVar <- df.VarD_i[,names(dbeOutput@ageVar)]
-
 } # End of bootstrap loop
+print(i-1)
+print("iterations complete")
 
 # Age structure
 #convert list of length distributions into data.frame matching dbeOutput format
@@ -253,6 +253,7 @@ setGeneric("RaiseAgeBoot", function(dbeOutput,
                                  csObject,
                                  type="fixed",
                                  sex=as.character(NA),
+                                 bootMethod = "samples",
                                  ...){
 	standardGeneric("RaiseAgeBoot")}
 )
@@ -262,9 +263,10 @@ setMethod("RaiseAgeBoot", signature(dbeOutput="dbeOutput",csObject="csDataCons")
                                                                                        csObject,
                                                                                        type="fixed",
                                                                                        sex=as.character(NA),
+                                                                                       bootMethod = "samples",
                                                                                        ...){
                                                                                                            
-Raise_Age_Boot(csObject=csObject,dbeOutput=dbeOutput,type=type,sex=sex)
+Raise_Age_Boot(csObject=csObject,dbeOutput=dbeOutput,type=type,sex=sex, bootMethod=bootMethod)
 
 })
 
