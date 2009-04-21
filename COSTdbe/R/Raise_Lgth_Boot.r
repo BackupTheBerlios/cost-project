@@ -264,6 +264,7 @@ ld.sumiter = spdAgreg (list (value=ld.df$value), BY = list(time=ld.df$time, spac
 # reorder columns
 ld.sumiter = ld.sumiter[, c("time","space","technical","value","iter")]
 # order rows
+ld.sumiter$iter <- As.num (ld.sumiter$iter)
 ld.sumiter = ld.sumiter [order(ld.sumiter$iter, ld.sumiter$time, ld.sumiter$space, ld.sumiter$technical),]
 dimnames(ld.sumiter)[[1]] = 1:(dim(ld.sumiter)[1])
 
