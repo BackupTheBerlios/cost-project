@@ -19,7 +19,24 @@
 #sex <- as.character(NA)
 #
 #sol.dbe.an <- RaiseLgth (dbeOutput, csObject, clObject)
+#sol.dbe.boot <- RaiseLgthBoot (dbeOutput, csObject, clObject, B=3)
 #sol.dbe.boot <- RaiseLgthBoot (dbeOutput, csObject, clObject, B=100) # took about 90s on my laptop
+
+# iter = 0 should be analytical estimates
+#tmpboot <- sol.dbe.boot@lenStruc$rep
+#tmpboot <- tmpboot[tmpboot$iter==0,]
+#tmpan <-sol.dbe.an@lenStruc$estim
+#tmpm <- merge(tmpan, tmpboot, by=c("time", "space", "technical", "length"), all=T, suffixes = c(".an",".boot"))
+#plot(tmpm$value.an, tmpm$value.boot)  # values match
+#tmpm [1:20,] # although tmpboot has estimates of zero for lengths not in tmpan
+
+set.seed(191)
+sol.dbe.boot1 <- RaiseLgthBoot (dbeOutput, csObject, clObject, B=3)
+# edited code
+set.seed(191)
+sol.dbe.boot2 <- RaiseLgthBoot (dbeOutput, csObject, clObject, B=3)
+
+all.equal(sol.dbe.boot1, sol.dbe.boot2)
 
 ################################################################################
 ################################################################################
@@ -86,13 +103,14 @@ clObject <- new("clDataCons", desc=x@desc, cl=cl[cl$taxon%in%taxon,])           
 nMEAS <- spdAgreg(list(value=csObject@hl$lenNum),BY=list(time=csObject@hl$time,space=csObject@hl$space,technical=csObject@hl$technical),sum,na.rm=TRUE)             #
 dbeOutput@nMeas$len <- nMEAS                                                                                                                                        #
 
+HH <- csObject@hh
 SL <- csObject@sl
 HL <- csObject@hl
 #creating PSTUid field, concatenation of PSUid, SSUid, TSUid
 SL$PSTUid <- apply(SL[,c("PSUid","SSUid","TSUid")],1,function(x) paste(x,collapse=":-:"))
 HL$PSTUid <- apply(HL[,c("PSUid","SSUid","TSUid")],1,function(x) paste(x,collapse=":-:"))
 #creating STR field, concatenation of time, space, technical
-HHSTR <- apply(csObject@hh[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
+HHSTR <- apply(HH[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
 SL$STR <- apply(SL[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
 HL$STR <- apply(HL[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
 
@@ -144,16 +162,17 @@ HL.orig <- HL
 ####### START OF BOOTSTRAP LOOP #################
 ld.list = vector("list", B+1)
 
+print ("iter")
 # i=1 uses original data, its output is labelled iter=0
+# printing iteration number every 50 iterations
 for (i in 1:(B+1) ){
-print(i-1)
+
+if(identical ((i-1)/50, (i-1)%/%50))print(i-1)
 
 SL = merge(data.frame(PSUid = bootLenPSUid[,i]), SL.orig, by="PSUid")
   # new SL won't have as many rows as original SL if some but not all PSU were repeated because of sort variable.
 HL = merge(data.frame(PSUid = bootLenPSUid[,i]), HL.orig, by="PSUid")
 
-HH = merge(data.frame(PSUid = bootLenPSUid[,i]), csObject@hh, by="PSUid")
-HHSTR <- apply(HH[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
 
 ## Code as in Raise_Lgth
 
@@ -204,52 +223,23 @@ sum.d_jpsu <- RowSum(d_jpsu,c(1,3))
 sum.w_psu <- rowSums(w_psu,na.rm=TRUE)
 sum.wl_psu <- rowSums(wl_psu,na.rm=TRUE)
 
-# Should be able to take calculation of W out of loop
+# Should be able to take calculation of W out of loop, but it uses dimnames from d_j
 W <- tapply(totLandings$W*1000,list(factor(apply(totLandings[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:")),levels=dimnames(d_j)[[1]])),sum,na.rm=TRUE)
 
 D_j <- sum.d_jpsu*as.vector(W/sum.wl_psu)
 WHat <-  sum.w_psu*W/sum.wl_psu
                                                                                                     
-
-## variance calculation based on 'Detecting sampling outliers and sampling heterogeneity when...' article (J. Vigneau & S. Mahévas)
-######################
-
-#n : number of sampled PSUid per strata
-#n <- tapply(HL$PSUid,list(STR=factor(HL$STR,levels=levels(factor(SL$STR)))),function(x) length(unique(x)))
-
-#first  <- W^2
-#second <- (1-(sum.wl_psu/W))/(sum.wl_psu^2/n)
-#  third.1  <- sum.d_jpsu/as.vector(sum.wl_psu)
-#  third.2 <- aperm(array(rep(as.vector(third.1),dim(w_psu)[2]),dim=dim(d_jpsu)[c(1,3,2)]),c(1,3,2))
-#  third.3 <- d_jpsu-third.2*as.vector(wl_psu)
-#third <- apply(third.3^2,c(1,3),sum,na.rm=TRUE)/as.vector(n-1)
-#VarD_j <- third*as.vector(first*second)
-#VarD_j[is.nan(VarD_j)] <- 0
-#VarD_j[is.infinite(VarD_j)] <- 0
-
-
-#results are inserted in dbeOutput object
-#####################
-  #D_j & VarD_j
+ # reformat output, D_j
 df.D_j <- cbind(expand.grid(dimnames(D_j)),value=as.vector(D_j))
-#df.VarD_j <- cbind(expand.grid(dimnames(VarD_j)),value=as.vector(VarD_j))
 
-#df.VarD_j <- df.VarD_j[!is.na(df.D_j$val),] ; df.D_j <- df.D_j[!is.na(df.D_j$val),]
-#df.VarD_j <- df.VarD_j[df.D_j$val>0,] ; df.D_j <- df.D_j[df.D_j$val>0,]
-  
-  #D_j
 df.D_j <- cbind(df.D_j,do.call("rbind",lapply(as.character(df.D_j$STR),function(x) strsplit(x,":-:")[[1]])))
 names(df.D_j) <- c("STR","length","value","time","space","technical")
 df.D_j <- df.D_j[order(df.D_j$time,df.D_j$space,df.D_j$technical,df.D_j$length),] ; rownames(df.D_j) <- 1:nrow(df.D_j)
 ld.list[[i]] <- df.D_j[,names(dbeOutput@lenStruc$estim)] # changed for boot
-  
-  #VarD_j
-#df.VarD_j <- cbind(df.VarD_j,do.call("rbind",lapply(as.character(df.VarD_j$STR),function(x) strsplit(x,":-:")[[1]])))
-#names(df.VarD_j) <- c("STR","length","value","time","space","technical")
-#df.VarD_j <- df.VarD_j[order(df.VarD_j$time,df.VarD_j$space,df.VarD_j$technical,df.VarD_j$length),] ; rownames(df.VarD_j) <- 1:nrow(df.VarD_j)
-#dbeOutput@lenVar <- df.VarD_j[,names(dbeOutput@lenVar)]
 
 } # End of bootstrap loop
+print(i-1)
+print("iterations complete")
 
 # Outputs to dbeOutput
   #WHat Currently calculated for each iteration, should be the same for all iterations
@@ -273,6 +263,9 @@ ld.df = dbeOutput@lenStruc$rep = data.frame  (time =  unlist(lapply(ld.list, FUN
 ld.sumiter = spdAgreg (list (value=ld.df$value), BY = list(time=ld.df$time, space=ld.df$space, technical=ld.df$technical, iter=ld.df$iter), sum)
 # reorder columns
 ld.sumiter = ld.sumiter[, c("time","space","technical","value","iter")]
+# order rows
+ld.sumiter = ld.sumiter [order(ld.sumiter$iter, ld.sumiter$time, ld.sumiter$space, ld.sumiter$technical),]
+dimnames(ld.sumiter)[[1]] = 1:(dim(ld.sumiter)[1])
 
 dbeOutput@totalN$rep = ld.sumiter
 
