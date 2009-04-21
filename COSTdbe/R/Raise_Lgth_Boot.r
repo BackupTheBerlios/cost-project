@@ -30,13 +30,13 @@
 #plot(tmpm$value.an, tmpm$value.boot)  # values match
 #tmpm [1:20,] # although tmpboot has estimates of zero for lengths not in tmpan
 
-set.seed(191)
-sol.dbe.boot1 <- RaiseLgthBoot (dbeOutput, csObject, clObject, B=3)
+#set.seed(191)
+#sol.dbe.boot1 <- RaiseLgthBoot (dbeOutput, csObject, clObject, B=3)
 # edited code
-set.seed(191)
-sol.dbe.boot2 <- RaiseLgthBoot (dbeOutput, csObject, clObject, B=3)
+#set.seed(191)
+#sol.dbe.boot2 <- RaiseLgthBoot (dbeOutput, csObject, clObject, B=3)
 
-all.equal(sol.dbe.boot1, sol.dbe.boot2)
+#all.equal(sol.dbe.boot1, sol.dbe.boot2)
 
 ################################################################################
 ################################################################################
