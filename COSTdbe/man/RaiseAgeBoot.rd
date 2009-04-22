@@ -25,6 +25,7 @@ RaiseAgeBoot(dbeOutput, csObject, type="fixed", sex=as.character(NA), bootMethod
 
  If bootMethod="otoliths" then individual age observations within each length class (i.e. row of the ALK) are resampled instead.
  This makes the assumption that individual otoliths are independent. In other words, that for age-given-length, fish in the same sample are not more similar than fish in different samples.
+}                                                                               %MM
 
 \value{An updated object of class \emph{dbeOutput}.
 Slot methodDesc with bootstrap samples or bootstrap otoliths,
