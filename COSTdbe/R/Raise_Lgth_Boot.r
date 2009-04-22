@@ -156,9 +156,16 @@ for ( i in 1:length(uStrat) ){
   bootLenPSUid [ start.pos[i]:end.pos[i], -1] = resample (lenids$PSUid [ lenids$STR == uStrat[i] ], size = n[i] * B, replace=T )
   }
 
+# store original factor levels to use with bootstrap samples
+levLenCls <- levels(factor(HL$lenCls))
+levSTR <- levels(factor(SL$STR))
+levSort <- levels(SL$sort)
+levPSUid <- levels(factor(SL$PSUid))
+levSSUid <- levels(factor(SL$SSUid))
+levTSUid <- levels(factor(SL$TSUid))
+
 SL.orig <- SL
 HL.orig <- HL
-
 ####### START OF BOOTSTRAP LOOP #################
 ld.list = vector("list", B+1)
 
@@ -170,26 +177,43 @@ for (i in 1:(B+1) ){
 if(identical ((i-1)/50, (i-1)%/%50))print(i-1)
 
 SL = merge(data.frame(PSUid = bootLenPSUid[,i]), SL.orig, by="PSUid")
-  # new SL won't have as many rows as original SL if some but not all PSU were repeated because of sort variable.
+  # new SL won't have same number of rows as original SL if some PSUid were repeated because of sort variable.
 HL = merge(data.frame(PSUid = bootLenPSUid[,i]), HL.orig, by="PSUid")
 
 
-## Code as in Raise_Lgth
+## Code as in Raise_Lgth , except for levels=
 
 #weight of the level
-wl <- tapply(SL$wt,list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)   #reference for factor levels
+#wl <- tapply(SL$wt,list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)   #reference for factor levels
+wl <- tapply(SL$wt,list(STR=factor(SL$STR,levels=levSTR),
+                                                    sort=factor(SL$sort,levels=levSort),
+                                                    TSUid=factor(SL$TSUid,levels=levTSUid),
+                                                    SSUid=factor(SL$SSUid,levels=levSSUid),
+                                                    PSUid=factor(SL$PSUid,levels=levPSUid)),sum,na.rm=TRUE)   #reference for factor levels
+
 #sampled weight
-ws <- tapply(SL$subSampWt,list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)
+#ws <- tapply(SL$subSampWt,list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)
+ws <- tapply(SL$subSampWt,list(STR=factor(SL$STR,levels=levSTR),
+                                                    sort=factor(SL$sort,levels=levSort),
+                                                    TSUid=factor(SL$TSUid,levels=levTSUid),
+                                                    SSUid=factor(SL$SSUid,levels=levSSUid),
+                                                    PSUid=factor(SL$PSUid,levels=levPSUid)),sum,na.rm=TRUE)
+
 #weight of the species/taxa/sex
-wt  <- tapply(as.numeric(as.character(SL$lenCode)),list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)
+#wt  <- tapply(as.numeric(as.character(SL$lenCode)),list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)
+wt  <- tapply(as.numeric(as.character(SL$lenCode)),list(STR=factor(SL$STR,levels=levSTR),
+                                                    sort=factor(SL$sort,levels=levSort),
+                                                    TSUid=factor(SL$TSUid,levels=levTSUid),
+                                                    SSUid=factor(SL$SSUid,levels=levSSUid),
+                                                    PSUid=factor(SL$PSUid,levels=levPSUid)),sum,na.rm=TRUE)
 
 #number of fish in the sample by length
-d_j <- tapply(HL$lenNum,list(STR=factor(HL$STR,levels=levels(factor(SL$STR))),
-                              sort=factor(HL$sort,levels=levels(factor(SL$sort))),
-                              TSUid=factor(HL$TSUid,levels=levels(factor(SL$TSUid))),
-                              SSUid=factor(HL$SSUid,levels=levels(factor(SL$SSUid))),
-                              PSUid=factor(HL$PSUid,levels=levels(factor(SL$PSUid))),
-                              lenCls=HL$lenCls),sum,na.rm=TRUE)
+d_j <- tapply(HL$lenNum,list(STR=factor(HL$STR,levels=levSTR),
+                              sort=factor(HL$sort,levels=levSort),
+                              TSUid=factor(HL$TSUid,levels=levTSUid),
+                              SSUid=factor(HL$SSUid,levels=levSSUid),
+                              PSUid=factor(HL$PSUid,levels=levPSUid),
+                              lenCls=factor(HL$lenCls,levels=levLenCls)),sum,na.rm=TRUE)
 
 #TSUid stage
   #system.time(d_jtsuT <- spdApply(d_j*(as.vector(wl/ws)),c(1,3:6),sum,na.rm=TRUE))
@@ -206,10 +230,10 @@ sum.wl_ssu <- RowSum(wl_tsu,c(1,4))
 
 #number of SSUid (total and sampled)
 # csObject@hh replaced by HH here
-Mi <- tapply(HH$SSUid,list(STR=factor(HHSTR,levels=levels(factor(SL$STR))),
-                                      PSUid=factor(HH$PSUid,levels=levels(factor(SL$PSUid)))),function(x) length(unique(x)))
-mi <- tapply(HL$SSUid,list(STR=factor(HL$STR,levels=levels(factor(SL$STR))),
-                           PSUid=factor(HL$PSUid,levels=levels(factor(SL$PSUid)))),function(x) length(unique(x)))
+Mi <- tapply(HH$SSUid,list(STR=factor(HHSTR,levels=levSTR),
+                                      PSUid=factor(HH$PSUid,levels=levPSUid)),function(x) length(unique(x)))
+mi <- tapply(HL$SSUid,list(STR=factor(HL$STR,levels=levSTR),
+                           PSUid=factor(HL$PSUid,levels=levPSUid)),function(x) length(unique(x)))
 
 #PSUid stage                           
 d_jpsu <- sum.d_jssu*as.vector(Mi/mi)
