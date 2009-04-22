@@ -21,7 +21,7 @@
 #   convert.statsq.samplingarea 
 #   demersal.sampling.lines 
 #   .convert.samplingarea.lat.lon
-
+# lengthHist
 
 `mergecsData` <-
 function(csobj)
@@ -1101,5 +1101,232 @@ if(any(is.na(index)))warning("some of the sampling areas areas not recognised")
 out <-list(lon=lons[index],lat=lats[index])
 return(out)
 }
+
+#-----------------------------------------------------------------------------
+lengthHist <-function(x,by="spp",level="all",fraction=c("DIS","LAN"),title=TRUE,...)
+{
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# lengthHist
+# function that plots histograms 
+# of the length frequency data
+# in the hl table of csData objects
+# Borrows heavily from MM's lenDisPlot code
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+library(COSTeda)
+data(code.list)
+
+if(class(x)%in%c("csData","csDataVal")==FALSE)stop("x is not csData")
+
+spp <-sl(x)$spp[1]
+dots <-list(...)
+object <-suppressWarnings(mergecsData(x))@hl
+if((by %in% names(object))!=TRUE)stop("by not a recognised grouping variable")
+if(all((fraction %in% names(table(object$catchCat)))==FALSE))
+{
+stop(paste(fraction,"fraction not in the data")) 
+}
+
+lgthCode <- as.character(sl(x)[,"lenCode"][1])
+stepp <- c(1,5,10,25)
+names(stepp) <- c("mm","scm","cm","25mm")
+ste <- stepp[lgthCode]
+varlevs <-as.character(level)
+if(level[1]=="all")varlevs <-levels(factor(object[[by]]))
+if(any(as.character(varlevs) %in% as.character(object[[by]])==FALSE))
+{
+stop("level not present in the variable")
+}
+
+df <-object 
+# a call to hist to get the breaks over the length class range 
+alllengths <-rep(df$lenCls,df$lenNum)
+vals <-hist(alllengths,plot=F,breaks=seq(min(df$lenCls),max(df$lenCls),by=ste))
+# running through the levels to get the ylimits
+allcounts <-NULL
+for(i in 1:length(varlevs))
+{
+df <- object[(as.character(object[[by]])%in%as.character(varlevs[i]))&(object$catchCat %in% fraction),]
+if(dim(df)[1]==0)next
+alllengths <-rep(df$lenCls,df$lenNum)
+allcounts <-append(allcounts,hist(alllengths,breaks=seq(min(df$lenCls)
+,max(df$lenCls),by=ste),plot=F)$counts)
+}
+# doing some defaults for the dots argument
+addtitle <-FALSE
+if(is.null(dots$main))addtitle <-TRUE
+if(is.null(dots$axes))dots$axes <-TRUE
+if(is.null(dots$add))dots$add <-FALSE
+if(is.null(dots$angle))dots$angle <-45
+if(is.null(dots$freq))dots$freq <-TRUE
+if(is.null(dots$ylim))dots$ylim <-c(min(allcounts),max(allcounts))
+if(dots$freq==FALSE)dots$ylim <-NULL
+if(is.null(dots$xlab))dots$xlab <-"Length class (mm)"
+if(is.null(dots$ylab)&dots$freq==TRUE)dots$ylab <-"Frequency"
+if(is.null(dots$ylab)&dots$freq==FALSE)dots$ylab <-"Density"
+# and finally plotting out the levels
+out <-NULL
+for(i in 1:length(varlevs))
+{
+if(addtitle)dots$main <-paste(by,varlevs[i],sep=" ")
+if(addtitle&&by=="month")dots$main <-month.abb[as.numeric(varlevs)][i]
+df <- object[(as.character(object[[by]])%in%as.character(varlevs[i]))&(object$catchCat %in% fraction),]
+
+alllengths <-rep(df$lenCls,df$lenNum)
+out[[i]] <-hist(alllengths,main=dots$main,sub=dots$sub,xlab=dots$xlab,ylab=dots$ylab,breaks=vals$breaks
+,ylim=dots$ylim,freq=dots$freq,col=dots$col,border=dots$border,
+density=dots$density,angle=dots$angle,axes=dots$axes,add=dots$add,
+cex.main=dots$cex.main
+,line=dots$line,cex.axis=dots$cex.axis,cex.lab=dots$cex.lab)
+}
+
+# adding the outer margin title
+fishname <- as.character(code.list$spp$English_name[code.list$spp$Scientific_name == spp])
+if(title)
+{
+title(paste("Length distribution for ",fishname," by ",by, 
+
+sep=""),outer=TRUE,line=-1,cex.main=dots$cex.main)
+}
+names(out) <-varlevs
+invisible(out)
+}
+
+
+
+
+
+#------------end of lengthHist------------------------
+# methods for lengthHist
+setGeneric("lengthHist")
+
+#--------------------------------------------------
+
+
+agelenPlot <-function(x,by="spp",level="all",fraction=c("DIS","LAN"),title=TRUE,supsmu=FALSE,jitter=FALSE,...)
+{
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# agelenPlot
+# function that plots age given length 
+# of the ca table of csData objects
+# Borrows heavily from MM's lenDisPlot code
+# AP 22/04/09
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+library(COSTeda)
+data(code.list)
+
+if(class(x)%in%c("csData","csDataVal")==FALSE)stop("x is not csData")
+
+spp <-ca(x)$spp[1]
+dots <-list(...)
+object <-suppressWarnings(mergecsData(x))@ca
+if((by %in% names(object))!=TRUE)stop("by not a recognised grouping variable")
+if(all((fraction %in% names(table(object$catchCat)))==FALSE))
+{
+stop(paste(fraction,"fraction not in the data")) 
+}
+
+lgthCode <- as.character(sl(x)[,"lenCode"][1])
+stepp <- c(1,5,10,25)
+names(stepp) <- c("mm","scm","cm","25mm")
+ste <- stepp[lgthCode]
+varlevs <-as.character(level)
+if(level[1]=="all")varlevs <-levels(factor(object[[by]]))
+if(any(as.character(varlevs) %in% as.character(object[[by]])==FALSE))
+{
+stop("level not present in the variable")
+}
+
+df <-object 
+# running through the levels to get the ylimits
+allcounts <-allages <-NULL
+for(i in 1:length(varlevs))
+{
+df <- object[(as.character(object[[by]])%in%as.character(varlevs[i]))&(object$catchCat %in% fraction),]
+if(dim(df)[1]==0)next
+alllengths <-df$lenCls
+strataage <-df$age
+
+allcounts <-append(allcounts,alllengths)
+allages <-append(allages,strataage)
+
+}
+# doing some defaults for the dots argument
+addtitle <-FALSE
+if(is.null(dots$add))dots$add <-FALSE
+if(dots$add==TRUE&&is.null(dots$main)) dots$main <-""
+if(is.null(dots$main))addtitle <-TRUE
+if(is.null(dots$xlab))dots$xlab <-"Age"
+if(is.null(dots$ylab))dots$ylab <-"Length class (mm)"
+if(is.null(dots$axes))dots$axes <-TRUE
+if(is.null(dots$col))dots$col <-rep(1,length(varlevs))
+if(is.null(dots$col.line))dots$col.line <-dots$col
+if(!is.null(dots$col)&length(dots$col==1))dots$col <-rep(dots$col,length(varlevs))
+if(!is.null(dots$col.line)&length(dots$col.line==1))dots$col.line <-rep(dots$col.line,length(varlevs))
+
+
+if(is.null(dots$pch))dots$pch <-rep(1,length(varlevs))
+if(!is.null(dots$pch)&length(dots$pch==1))dots$pch <-rep(dots$pch,length(varlevs))
+if(is.null(dots$lwd))dots$lwd <-rep(1,length(varlevs))
+if(!is.null(dots$lwd)&length(dots$lwd==1))dots$lwd <-rep(dots$lwd,length(varlevs))
+if(is.null(dots$lty))dots$lty <-rep(1,length(varlevs))
+if(!is.null(dots$lty)&length(dots$lty==1))dots$lty <-rep(dots$lty,length(varlevs))
+
+
+
+if(is.null(dots$ylim))dots$ylim <-c(min(allcounts,na.rm=T),max(allcounts,na.rm=T))
+if(is.null(dots$xlim))dots$xlim <-c(min(allages,na.rm=T),max(allages,na.rm=T))
+if(is.null(dots$span))dots$span <-"cv" 
+out <-NULL
+# and finally plotting out the levels
+for(i in 1:length(varlevs))
+{
+
+if(addtitle)dots$main <-paste(by,varlevs[i],sep=" ")
+if(addtitle&&by=="month")dots$main <-month.abb[as.numeric(varlevs)][i]
+df <- object[(as.character(object[[by]])%in%as.character(varlevs[i]))&(object$catchCat %in% fraction),]
+if(jitter)df$age <-jitter(df$age)
+#alllengths <-df$lenCls
+if(i==1|dots$add==FALSE)
+{
+plot(df$age,df$lenCls,ylim=dots$ylim,xlim=dots$xlim,main=dots$main,sub=dots$sub,col=dots$col[i],
+pch=dots$pch[i],cex.main=dots$cex.main,cex.axis=dots$cex.axis,cex.lab=dots$cex.lab,
+axes=dots$axes,xlab=dots$xlab,ylab=dots$ylab,cex=dots$cex)
+if(supsmu)suppressWarnings(lines(out[[i]] <-supsmu(df$age,df$lenCls,span=dots$span)
+,col=dots$col.line[i],lwd=dots$lwd[i],lty=dots$lty[i]))
+}
+
+if(i>=2&dots$add==TRUE)
+{
+points(df$age,df$lenCls,col=dots$col[i],
+pch=dots$pch[i])
+if(supsmu)suppressWarnings(lines(out[[i]] <-supsmu(df$age,df$lenCls,span=dots$span)
+,col=dots$col.line[i],lwd=dots$lwd[i],lty=dots$lty[i]))
+
+
+}
+
+
+}
+
+# adding the outer margin title
+fishname <- as.character(code.list$spp$English_name[code.list$spp$Scientific_name == spp])
+if(title)
+{
+title(paste("Age given Length for ",fishname," by ",by, 
+
+sep=""),outer=TRUE,line=-1,cex.main=dots$cex.main)
+}
+if(!is.null(out))names(out) <-varlevs
+invisible(out)
+}
+
+#--------------end of agelenPlot--------------------------------------------
+# methods for lengthHist
+setGeneric("agelenPlot")
+
+#--------------------------------------------------
+
 
 

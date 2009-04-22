@@ -4,6 +4,8 @@ importClassesFrom("COSTcore")
 importFrom("COSTcore")
            
 export(
+"agelenPlot",
+"lengthHist",
 "convert.statsq.lat.lon",
 "convert.lon.lat.statsq",
 "convert.icesarea.statsq",
