@@ -368,6 +368,11 @@ setMethod("stratAggreg", signature(object="dbeOutput"),function(object,         
                                                                techStrata=FALSE,        # if TRUE, aggregation is made over technical strata
                                                                ...){
 
+#'strataDesc' field is updated according to input parameters                                              #
+if (timeStrata) {object@strataDesc@timeStrata <- NA ; object@strataDesc@tpRec <- list(NA)}                # ADDED MM : 22/04/2009 
+if (spaceStrata) {object@strataDesc@spaceStrata <- NA ; object@strataDesc@spRec <- list(NA)}              #
+if (techStrata) {object@strataDesc@techStrata <- NA ; object@strataDesc@tcRec <- list(NA)}                #
+
 #subfunction applied to each table
 agg <- function(tab,nSampAge=FALSE) {
 
