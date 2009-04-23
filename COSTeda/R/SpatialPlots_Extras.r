@@ -1117,8 +1117,7 @@ library(COSTeda)
 data(code.list)
 
 if(class(x)%in%c("csData","csDataVal")==FALSE)stop("x is not csData")
-
-spp <-sl(x)$spp[1]
+spp <-ifelse(length(table(ca(x)$spp))==1,ca(x)$spp[1],"multiple species")
 dots <-list(...)
 object <-suppressWarnings(mergecsData(x))@hl
 if((by %in% names(object))!=TRUE)stop("by not a recognised grouping variable")
@@ -1181,7 +1180,12 @@ cex.main=dots$cex.main
 }
 
 # adding the outer margin title
+
+fishname <-spp
+if(fishname!="multiple species")
+{
 fishname <- as.character(code.list$spp$English_name[code.list$spp$Scientific_name == spp])
+}
 if(title)
 {
 title(paste("Length distribution for ",fishname," by ",by, 
@@ -1218,7 +1222,8 @@ data(code.list)
 
 if(class(x)%in%c("csData","csDataVal")==FALSE)stop("x is not csData")
 
-spp <-ca(x)$spp[1]
+spp <-ifelse(length(table(ca(x)$spp))==1,ca(x)$spp[1],"multiple species")
+
 dots <-list(...)
 object <-suppressWarnings(mergecsData(x))@ca
 if((by %in% names(object))!=TRUE)stop("by not a recognised grouping variable")
@@ -1286,21 +1291,22 @@ for(i in 1:length(varlevs))
 if(addtitle)dots$main <-paste(by,varlevs[i],sep=" ")
 if(addtitle&&by=="month")dots$main <-month.abb[as.numeric(varlevs)][i]
 df <- object[(as.character(object[[by]])%in%as.character(varlevs[i]))&(object$catchCat %in% fraction),]
-if(jitter)df$age <-jitter(df$age)
+if(jitter)jitterage <-jitter(df$age)
 #alllengths <-df$lenCls
 if(i==1|dots$add==FALSE)
 {
 plot(df$age,df$lenCls,ylim=dots$ylim,xlim=dots$xlim,main=dots$main,sub=dots$sub,col=dots$col[i],
 pch=dots$pch[i],cex.main=dots$cex.main,cex.axis=dots$cex.axis,cex.lab=dots$cex.lab,
 axes=dots$axes,xlab=dots$xlab,ylab=dots$ylab,cex=dots$cex)
+if(jitter)points(jitterage,df$lenCls,col=dots$col[i],pch=dots$pch[i],cex=dots$cex)
 if(supsmu)suppressWarnings(lines(out[[i]] <-supsmu(df$age,df$lenCls,span=dots$span)
 ,col=dots$col.line[i],lwd=dots$lwd[i],lty=dots$lty[i]))
 }
 
 if(i>=2&dots$add==TRUE)
 {
-points(df$age,df$lenCls,col=dots$col[i],
-pch=dots$pch[i])
+points(df$age,df$lenCls,col=dots$col[i],pch=dots$pch[i],cex=dots$cex)
+if(jitter)points(jitterage,df$lenCls,col=dots$col[i],pch=dots$pch[i],cex=dots$cex)
 if(supsmu)suppressWarnings(lines(out[[i]] <-supsmu(df$age,df$lenCls,span=dots$span)
 ,col=dots$col.line[i],lwd=dots$lwd[i],lty=dots$lty[i]))
 
@@ -1311,7 +1317,12 @@ if(supsmu)suppressWarnings(lines(out[[i]] <-supsmu(df$age,df$lenCls,span=dots$sp
 }
 
 # adding the outer margin title
+
+fishname <-spp
+if(fishname!="multiple species")
+{
 fishname <- as.character(code.list$spp$English_name[code.list$spp$Scientific_name == spp])
+}
 if(title)
 {
 title(paste("Age given Length for ",fishname," by ",by, 
