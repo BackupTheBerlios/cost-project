@@ -104,8 +104,8 @@ nMEAS <- spdAgreg(list(value=csObject@hl$lenNum),BY=list(time=csObject@hl$time,s
 dbeOutput@nMeas$len <- nMEAS                                                                                                                                        #
 
 HH <- csObject@hh
-SL <- csObject@sl
-HL <- csObject@hl
+SL <- csObject@sl ; SL$TSUid <- factor(as.character(SL$TSUid),exclude=NULL)                            #MM 24/04/2009
+HL <- csObject@hl ; HL$TSUid <- factor(as.character(HL$TSUid),exclude=NULL)                            #MM 24/04/2009
 #creating PSTUid field, concatenation of PSUid, SSUid, TSUid
 SL$PSTUid <- apply(SL[,c("PSUid","SSUid","TSUid")],1,function(x) paste(x,collapse=":-:"))
 HL$PSTUid <- apply(HL[,c("PSUid","SSUid","TSUid")],1,function(x) paste(x,collapse=":-:"))
@@ -162,7 +162,7 @@ levSTR <- levels(factor(SL$STR))
 levSort <- levels(SL$sort)
 levPSUid <- levels(factor(SL$PSUid))
 levSSUid <- levels(factor(SL$SSUid))
-levTSUid <- levels(factor(SL$TSUid))
+levTSUid <- levels(SL$TSUid)#levels(factor(SL$TSUid))                            #MM 24/04/2009
 
 SL.orig <- SL
 HL.orig <- HL
@@ -187,7 +187,7 @@ HL = merge(data.frame(PSUid = bootLenPSUid[,i]), HL.orig, by="PSUid")
 #wl <- tapply(SL$wt,list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)   #reference for factor levels
 wl <- tapply(SL$wt,list(STR=factor(SL$STR,levels=levSTR),
                                                     sort=factor(SL$sort,levels=levSort),
-                                                    TSUid=factor(SL$TSUid,levels=levTSUid),
+                                                    TSUid=factor(SL$TSUid,levels=levTSUid,exclude=NULL),    #MM 24/04/2009
                                                     SSUid=factor(SL$SSUid,levels=levSSUid),
                                                     PSUid=factor(SL$PSUid,levels=levPSUid)),sum,na.rm=TRUE)   #reference for factor levels
 
@@ -195,7 +195,7 @@ wl <- tapply(SL$wt,list(STR=factor(SL$STR,levels=levSTR),
 #ws <- tapply(SL$subSampWt,list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)
 ws <- tapply(SL$subSampWt,list(STR=factor(SL$STR,levels=levSTR),
                                                     sort=factor(SL$sort,levels=levSort),
-                                                    TSUid=factor(SL$TSUid,levels=levTSUid),
+                                                    TSUid=factor(SL$TSUid,levels=levTSUid,exclude=NULL),     #MM 24/04/2009
                                                     SSUid=factor(SL$SSUid,levels=levSSUid),
                                                     PSUid=factor(SL$PSUid,levels=levPSUid)),sum,na.rm=TRUE)
 
@@ -203,14 +203,14 @@ ws <- tapply(SL$subSampWt,list(STR=factor(SL$STR,levels=levSTR),
 #wt  <- tapply(as.numeric(as.character(SL$lenCode)),list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)
 wt  <- tapply(as.numeric(as.character(SL$lenCode)),list(STR=factor(SL$STR,levels=levSTR),
                                                     sort=factor(SL$sort,levels=levSort),
-                                                    TSUid=factor(SL$TSUid,levels=levTSUid),
+                                                    TSUid=factor(SL$TSUid,levels=levTSUid,exclude=NULL),      #MM 24/04/2009
                                                     SSUid=factor(SL$SSUid,levels=levSSUid),
                                                     PSUid=factor(SL$PSUid,levels=levPSUid)),sum,na.rm=TRUE)
 
 #number of fish in the sample by length
 d_j <- tapply(HL$lenNum,list(STR=factor(HL$STR,levels=levSTR),
                               sort=factor(HL$sort,levels=levSort),
-                              TSUid=factor(HL$TSUid,levels=levTSUid),
+                              TSUid=factor(HL$TSUid,levels=levTSUid,exclude=NULL),                            #MM 24/04/2009
                               SSUid=factor(HL$SSUid,levels=levSSUid),
                               PSUid=factor(HL$PSUid,levels=levPSUid),
                               lenCls=factor(HL$lenCls,levels=levLenCls)),sum,na.rm=TRUE)
@@ -362,10 +362,3 @@ Raise_Lgth_Boot(dbeOutput = dbeOutput, csObject = csObject, clObject = clObject,
 
 
 
-
-
-
-
-
-
-             

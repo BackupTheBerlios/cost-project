@@ -75,8 +75,8 @@ dbeOutput@nMeas$len <- nMEAS                                                    
 
 
 
-SL <- csObject@sl
-HL <- csObject@hl
+SL <- csObject@sl ; SL$TSUid <- factor(as.character(SL$TSUid),exclude=NULL)                            #MM 24/04/2009
+HL <- csObject@hl ; HL$TSUid <- factor(as.character(HL$TSUid),exclude=NULL)                            #MM 24/04/2009
 #creating PSTUid field, concatenation of PSUid, SSUid, TSUid
 SL$PSTUid <- apply(SL[,c("PSUid","SSUid","TSUid")],1,function(x) paste(x,collapse=":-:"))
 HL$PSTUid <- apply(HL[,c("PSUid","SSUid","TSUid")],1,function(x) paste(x,collapse=":-:"))
@@ -103,7 +103,7 @@ wt  <- tapply(as.numeric(as.character(SL$lenCode)),list(STR=SL$STR,sort=SL$sort,
 #number of fish in the sample by length
 d_j <- tapply(HL$lenNum,list(STR=factor(HL$STR,levels=levels(factor(SL$STR))),
                               sort=factor(HL$sort,levels=levels(factor(SL$sort))),
-                              TSUid=factor(HL$TSUid,levels=levels(factor(SL$TSUid))),
+                              TSUid=factor(HL$TSUid,levels=levels(SL$TSUid),exclude=NULL),            #MM 24/04/2009
                               SSUid=factor(HL$SSUid,levels=levels(factor(SL$SSUid))),
                               PSUid=factor(HL$PSUid,levels=levels(factor(SL$PSUid))),
                               lenCls=HL$lenCls),sum,na.rm=TRUE)
