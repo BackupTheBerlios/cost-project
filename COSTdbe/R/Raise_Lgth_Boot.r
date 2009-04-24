@@ -1,9 +1,5 @@
 # Raise_Lgth_Boot
 
-## FUNCTION STILL IN DEVELOPMENT -
-# rep Output has different number of rows for each iteration, so means may not include some 0 estimates
-#Need to generate levels of length class factor from original data ??
-
 #library(COSTcore) #1.3-3
 #library(COSTdbe)  #0.1-9
 
@@ -116,11 +112,21 @@ HL$STR <- apply(HL[,c("time","space","technical")],1,function(x) paste(x,collaps
 
 if (nrow(SL)==0) stop("the specified parameters resulted in an empty table!!")
 
+# store original factor levels to use with bootstrap samples
+levLenCls <- levels(factor(HL$lenCls))
+levSTR <- levels(factor(SL$STR))
+levSort <- levels(SL$sort)
+levPSUid <- levels(factor(SL$PSUid))
+levSSUid <- levels(factor(SL$SSUid))
+levTSUid <- levels(SL$TSUid)#levels(factor(SL$TSUid))                            #MM 24/04/2009
+
 #total landed weights per strata
 clObject@cl$landMult[is.na(clObject@cl$landMult)] <- 1
 #TotLand = OffLand*Multi + UnallocCat + MisallocCat
 totLand <- mapply(function(w,x,y,z) sum(c(w*x,y,z),na.rm=TRUE),clObject@cl$landWt,clObject@cl$landMult,clObject@cl$unallocCatchWt,clObject@cl$misRepCatchWt)
 totLandings <- spdAgreg(list(W=totLand),BY=list(time=clObject@cl$time,space=clObject@cl$space,technical=clObject@cl$technical),sum,na.rm=TRUE)
+
+W <- tapply(totLandings$W*1000,list(factor(apply(totLandings[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:")),levels=levSTR)),sum,na.rm=TRUE)
 
 ## New code not in Raise_Lgth ##
 
@@ -155,14 +161,6 @@ for ( i in 1:length(uStrat) ){
 # order of nLen.vec and uStrat needs to match
   bootLenPSUid [ start.pos[i]:end.pos[i], -1] = resample (lenids$PSUid [ lenids$STR == uStrat[i] ], size = n[i] * B, replace=T )
   }
-
-# store original factor levels to use with bootstrap samples
-levLenCls <- levels(factor(HL$lenCls))
-levSTR <- levels(factor(SL$STR))
-levSort <- levels(SL$sort)
-levPSUid <- levels(factor(SL$PSUid))
-levSSUid <- levels(factor(SL$SSUid))
-levTSUid <- levels(SL$TSUid)#levels(factor(SL$TSUid))                            #MM 24/04/2009
 
 SL.orig <- SL
 HL.orig <- HL
@@ -216,12 +214,10 @@ d_j <- tapply(HL$lenNum,list(STR=factor(HL$STR,levels=levSTR),
                               lenCls=factor(HL$lenCls,levels=levLenCls)),sum,na.rm=TRUE)
 
 #TSUid stage
-  #system.time(d_jtsuT <- spdApply(d_j*(as.vector(wl/ws)),c(1,3:6),sum,na.rm=TRUE))
-w_tsu <- RowSum(wt*wl/ws,c(1,3:5))  
+w_tsu <- RowSum(wt*wl/ws,c(1,3:5))
 wl_tsu <- RowSum(wl,c(1,3:5))
 
 #SSUid stage
-  #sum.d_jssu <- apply(d_jtsu,c(1,4,5),sum,na.rm=TRUE)
 expr <- d_j*(as.vector(wl/ws))
 sum.d_jssu <- RowSum(expr,c(1,5,6))
 
@@ -229,7 +225,6 @@ sum.w_ssu <- RowSum(w_tsu,c(1,4))
 sum.wl_ssu <- RowSum(wl_tsu,c(1,4))
 
 #number of SSUid (total and sampled)
-# csObject@hh replaced by HH here
 Mi <- tapply(HH$SSUid,list(STR=factor(HHSTR,levels=levSTR),
                                       PSUid=factor(HH$PSUid,levels=levPSUid)),function(x) length(unique(x)))
 mi <- tapply(HL$SSUid,list(STR=factor(HL$STR,levels=levSTR),
@@ -240,15 +235,9 @@ d_jpsu <- sum.d_jssu*as.vector(Mi/mi)
 w_psu <- sum.w_ssu*Mi/mi
 wl_psu <- sum.wl_ssu*Mi/mi
 
-#sum.wt <- apply(wt,1,sum,na.rm=TRUE)
-#sum.ws <- apply(ws,1,sum,na.rm=TRUE)
-
 sum.d_jpsu <- RowSum(d_jpsu,c(1,3))
 sum.w_psu <- rowSums(w_psu,na.rm=TRUE)
 sum.wl_psu <- rowSums(wl_psu,na.rm=TRUE)
-
-# Should be able to take calculation of W out of loop, but it uses dimnames from d_j
-W <- tapply(totLandings$W*1000,list(factor(apply(totLandings[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:")),levels=dimnames(d_j)[[1]])),sum,na.rm=TRUE)
 
 D_j <- sum.d_jpsu*as.vector(W/sum.wl_psu)
 WHat <-  sum.w_psu*W/sum.wl_psu
@@ -266,7 +255,6 @@ print(i-1)
 print("iterations complete")
 
 # Outputs to dbeOutput
-  #WHat Currently calculated for each iteration, should be the same for all iterations
 df.WHat <- cbind(value=WHat/1000,as.data.frame(do.call("rbind",lapply(names(WHat),function(x) strsplit(x,":-:")[[1]]))))    #weight in kg : MM 07/04/2009
 names(df.WHat) <- c("value","time","space","technical")
 df.WHat <- df.WHat[order(df.WHat$time,df.WHat$space,df.WHat$technical),] ; rownames(df.WHat) <- 1:nrow(df.WHat)
@@ -276,12 +264,19 @@ dbeOutput@totalW$estim <- df.WHat[,names(dbeOutput@totalW$estim)]
 #convert list of length distributions into data.frame matching dbeOutput format
 rep.iter = unlist (lapply(ld.list, FUN = function(x) {dim(x)[1]}) )
 
-ld.df = dbeOutput@lenStruc$rep = data.frame  (time =  unlist(lapply(ld.list, FUN = function(x) {x[,"time"]})),
+ld.df =  data.frame  (time =  unlist(lapply(ld.list, FUN = function(x) {x[,"time"]})),
                                 space =  unlist(lapply(ld.list, FUN = function(x) {x[,"space"]})),
                                 technical = unlist(lapply(ld.list, FUN = function(x) {x[,"technical"]})),
                                 length =  unlist(lapply(ld.list, FUN = function(x) {x[,"length"]})),
                                 value =  unlist(lapply(ld.list, FUN = function(x) {x[,"value"]})),
                                 iter =  rep(0:B, times = rep.iter)  )
+
+# order rows
+ld.df$iter <- As.num (ld.df$iter)
+ld.df = ld.df [order(ld.df$iter, ld.df$time, ld.df$space, ld.df$technical),]
+dimnames(ld.df)[[1]] = 1:(dim(ld.df)[1])
+dbeOutput@lenStruc$rep = ld.df
+
 
 # sum over length classes to give estimate of total N for each iteration
 ld.sumiter = spdAgreg (list (value=ld.df$value), BY = list(time=ld.df$time, space=ld.df$space, technical=ld.df$technical, iter=ld.df$iter), sum)
@@ -317,7 +312,6 @@ dimnames(ld.var)[[1]] = 1:(dim(ld.var)[1])
 
 dbeOutput@lenStruc$estim = ld.mean
 dbeOutput@lenVar = ld.var
-
 
 return(dbeOutput)
 
