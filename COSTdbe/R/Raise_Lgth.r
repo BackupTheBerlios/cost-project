@@ -190,6 +190,12 @@ names(df.WHat) <- c("value","time","space","technical")
 df.WHat <- df.WHat[order(df.WHat$time,df.WHat$space,df.WHat$technical),] ; rownames(df.WHat) <- 1:nrow(df.WHat)
 dbeOutput@totalW$estim <- df.WHat[,names(dbeOutput@totalW$estim)]
 
+  #totalN slot is filled with aggregated 'lenStruc$estim' table                                                                    #added MM 27/04/2009
+totN <- with(dbeOutput@lenStruc$estim,aggregate(value,by=list(technical=technical,space=space,time=time),sum,na.rm=TRUE))          #
+names(totN)[ncol(totN)] <- "value"                                                                                                 #
+totN$value <- round(totN$value)                                                                                                    #
+dbeOutput@totalN$estim <- totN[,names(dbeOutput@totalN$estim)]                                                                     #
+
 return(dbeOutput)
 
 }
