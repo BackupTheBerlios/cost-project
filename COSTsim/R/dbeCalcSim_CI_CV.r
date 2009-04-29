@@ -39,7 +39,7 @@ setMethod("dbeCalcSim",signature(object="dbeOutputSim"),function(object,        
     if (!is.logical(replicates)) stop("wrong 'replicates' parameter!!") 
     if (!is.logical(update)) stop("wrong 'update' parameter!!")
 
-    nsamples <- length(unique(lal.anal.est@nSamp$len$sample))
+    nsamples <- length(unique(object@nSamp$len$sample))
     
     bs  <- names(which(!(sapply(slotNames(dbeObject(species = '1')), function(x) class(slot(dbeObject(species = '1'), x))) %in% c('list', 'data.frame'))))
     df  <- names(which(sapply(slotNames(dbeObject(species = '1')), function(x) class(slot(dbeObject(species = '1'), x)))== 'data.frame'))

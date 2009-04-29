@@ -8,7 +8,7 @@ Description: This package contains functions for simulating real trip/haul popul
 	 Functions to compare the precision and bias of the different raising methods 
 	 in COSTdbe and COSTmbe packages are also available. It can be used to assessed optimum sample size
 Depends: R(>= 2.8.1), COSTcore, lattice, boot, methods
-Maintainer: John Doe <johndoe@nowhere.com>
+Maintainer: Dorleta Garcia <dgarcia@azti.es>
 License: GPL 2 or above
 LazyLoad: Yes
 LazyData: Yes
