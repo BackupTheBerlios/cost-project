@@ -1,5 +1,22 @@
-simSamples <- function(simDataObj, ndisc = simDataObj@setup.args$ndisc, ntrip = simDataObj@setup.args$ntrip, fit = FALSE){
+#-------------------------------------------------------------------------------
+# simSamples method.
+# Dorleta Garcia :: Azti-Tecnalia
+# 29/04/2009 15:50:50
+#-------------------------------------------------------------------------------
 
+setGeneric("simSamples", function(obj,
+                                 ndisc,
+                                 ntrip,
+                                 fit){
+	standardGeneric("simSamples")}
+)
+
+
+setMethod("simSamples", signature(obj = "simDataCons"), function(obj, 
+                                                                 ndisc = simDataObj@setup.args$ndisc, 
+                                                                 ntrip = simDataObj@setup.args$ntrip, 
+                                                                 fit = FALSE){
+    simDataObj <- obj
     params     <- simDataObj@initial.fit
     class(params) <- 'fit.caa'
     nmcmc      <- simDataObj@nmcmc
@@ -33,3 +50,4 @@ simSamples <- function(simDataObj, ndisc = simDataObj@setup.args$ndisc, ntrip = 
     else
         return(simDataObj)
 }
+)

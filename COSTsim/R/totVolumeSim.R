@@ -1,3 +1,8 @@
+#-------------------------------------------------------------------------------
+# totVolumeSim method.
+# Dorleta Garcia :: Azti-Tecnalia
+# 29/04/2009 15:50:50
+#-------------------------------------------------------------------------------
 
 setGeneric("totVolumeSim", function(dbeOutputSim, simObj, ...){
 	standardGeneric("totVolumeSim")}

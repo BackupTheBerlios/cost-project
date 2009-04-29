@@ -1,3 +1,9 @@
+#-------------------------------------------------------------------------------
+# convert2cost output from bayesian simulation model
+# Dorleta Garcia :: Azti-Tecnalia
+# 29/04/2009 15:50:50
+#-------------------------------------------------------------------------------
+
 convert2cost <- function(sim.object){
     months.num <- 1:12
     names(months.num ) <- c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se`p', 'Oct', 'Nov', 'Dec')

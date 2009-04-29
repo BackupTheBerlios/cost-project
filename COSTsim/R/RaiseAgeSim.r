@@ -1,3 +1,11 @@
+#-------------------------------------------------------------------------------
+# RaiseAgeSim and RaiseAgeSimBoot methods.
+# Dorleta Garcia :: Azti-Tecnalia
+# 29/04/2009 15:50:50
+#-------------------------------------------------------------------------------
+
+
+# RaiseAgeSim -----------------------------------------------------------------
 
 setGeneric("RaiseAgeSim", function(dbeOutputSim,
                                  simObj,
@@ -45,6 +53,7 @@ setMethod("RaiseAgeSim", signature(dbeOutputSim="dbeOutputSim",simObj="simDataCo
 
 
 
+# RaiseAgeSimBoot --------------------------------------------------------------
 
 
 setGeneric("RaiseAgeBootSim", function(dbeOutputSim,

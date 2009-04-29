@@ -1,3 +1,12 @@
+#-------------------------------------------------------------------------------
+# RaiseLgthSim and RaiseLgthSimBoot methods.
+# Dorleta Garcia :: Azti-Tecnalia
+# 29/04/2009 15:50:50
+#-------------------------------------------------------------------------------
+
+
+# RaiseLgthSim -----------------------------------------------------------------
+
 setGeneric("RaiseLgthSim", function(dbeOutputSim,
                                  simData,
                                  spp,
@@ -42,7 +51,7 @@ setMethod("RaiseLgthSim", signature(dbeOutputSim = "dbeOutputSim", simData ="sim
 })
 
 
-
+# RaiseLgthSimBoot--------------------------------------------------------------
 
 setGeneric("RaiseLgthBootSim", function(dbeOutputSim,
                                  simData,
@@ -53,8 +62,6 @@ setGeneric("RaiseLgthBootSim", function(dbeOutputSim,
                                  ...){
 	standardGeneric("RaiseLgthBootSim")}
 )
-
-
 
 setMethod("RaiseLgthBootSim", signature(dbeOutputSim="dbeOutputSim",simData="simDataCons"), function(dbeOutputSim,simData,
                                                                                                               spp,

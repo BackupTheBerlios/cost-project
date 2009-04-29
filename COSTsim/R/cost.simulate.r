@@ -1,4 +1,12 @@
-
+#-------------------------------------------------------------------------------
+# Simulate functions for data sample simulation
+# Main function: cost.simloop
+# Author: David Hirst.
+# Last change: Dorleta Garcia :: Azti-Tecnalia
+# 29/04/2009 15:50:50
+#-------------------------------------------------------------------------------
+  
+  
 #######################################################################
 cost.simloop <- function(params,setup.data, burnin,nmcmc,l.int,Int,Slp,
                      landings,nHaul,nseas, fit = TRUE){
