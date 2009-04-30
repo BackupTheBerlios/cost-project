@@ -11,23 +11,25 @@ Input object is updated according to chosen method(s) (grouped/recoded length cl
 \usage{
 alkLgthRec(object,type="stepIncr",value,preview=FALSE,postview=TRUE,update=FALSE,\dots)
 }
-
+                           
 \arguments{
   \item{object}{A \emph{csDataCons} object with ca information.}
   \item{type}{Character for chosen method. Values are :
     \item{"stepIncr"}{Default parameter. Length class step is increased to specified \emph{value} parameter (default value=10)}
     \item{"fillMiss"}{All gaps (with size <= value) are filled out with the sum of surrounding recorded classes (default value=1)}
-    \item{"sExtrGrp"}{The 'value' first classes are grouped (default value=1)}
-    \item{"lExtrGrp"}{The 'value' last classes are grouped (default value=1)}
+%    \item{"sExtrGrp"}{The 'value' first classes are grouped (default value=1)}
+%    \item{"lExtrGrp"}{The 'value' last classes are grouped (default value=1)}
     \item{"sFillMiss"}{The 'value' empty classe(s) prior to first recorded length class is filled out with the latter (default value=1)}
     \item{"lFillMiss"}{The 'value' empty classe(s) following last recorded length class is filled out with the latter (default value=1)} 
-    \item{"sFillAge"}{The 'value' empty classe(s) prior to first recorded length class is filled out with 1 individual of minimal age (default value=1)}} 
+%    \item{"sFillAge"}{The 'value' empty classe(s) prior to first recorded length class is filled out with 1 individual of minimal age (default value=1)}
+} 
   \item{value}{Numerical parameter for chosen method (see 'type').}
   \item{preview}{Logical. If \code{TRUE}, original age length key is displayed.}
   \item{postview}{Logical. If \code{TRUE}, new age length key is displayed.}
   \item{update}{Logical. If \code{TRUE}, 'csDataCons' object is updated in accordance with chosen method, and then returned. 
   If \code{FALSE}, descriptive elements about updated alk are returned (see 'values'), but input object remains unchanged.}
-  \item{...}{Further arguments.}
+  \item{...}{Further arguments, and particularly a \emph{start} numerical parameter specifying the first considered length class when recoding (only useful for 'type="stepIncr"'). 
+  Default value is the minimum aged length class in \emph{ca} table.}
 }
 
 \value{If \code{update=FALSE}, returned elements are : \code{$alk} is the raw resulting age-length key, \code{$propMiss} are short statistics about gaps (see 'propMissLgthCons' method), 

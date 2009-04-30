@@ -4,11 +4,11 @@
 \docType{methods}
 \title{Aggregation of 'dbeOutput' table}
 \description{
-This method is aggregating (summing) input 'dbeOutput' object tables over chosen stratifications. 
+This method is aggregating (summing in case of number or weight estimates, or averaging as to mean parameters) input 'dbeOutput' object tables over chosen stratification(s). 
 }
 
 \usage{
-stratAggreg(object,timeStrata=TRUE,spaceStrata=TRUE,techStrata=FALSE,\dots)
+stratAggreg(object,timeStrata=TRUE,spaceStrata=TRUE,techStrata=FALSE,wt="totalW",\dots)
 }
 
 \arguments{
@@ -16,6 +16,8 @@ stratAggreg(object,timeStrata=TRUE,spaceStrata=TRUE,techStrata=FALSE,\dots)
   \item{timeStrata}{Logical. If \code{TRUE}, aggregation is made over time strata.}
   \item{spaceStrata}{Logical. If \code{TRUE}, aggregation is made over space strata.}
   \item{techStrata}{Logical. If \code{TRUE}, aggregation is made over technical strata.}
+  \item{wt}{Character. Input \emph{object} slot with which a weighted mean over strata is computed (only if \emph{param} slot is "weight", "maturity" or "sex"). 
+            Possible values are "totalW" or "totalN". }
   \item{\dots}{Further arguments}  
 }
 

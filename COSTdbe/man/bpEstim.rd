@@ -1,25 +1,32 @@
 \name{bpEstim}
 \alias{bpEstim}
-\alias{bpEstim,dbeOutput,csDataCons-method}
+\alias{bpEstim,dbeOutput,csDataCons,missing-method}
+\alias{bpEstim,dbeOutput,csDataCons,dbeOutput-method}
 \docType{methods}
 \title{Analytical estimates of biological parameters}
 \description{
-This method implements analytical estimates of empirical weight-at-length/age, maturity-at-length/age, sex-ratio-at-length/age and variances. The needed parameters are from input 'dbeOutput' slots. 
+This method implements analytical estimates of empirical weight-at-length/age, maturity-at-length/age, sex-ratio-at-length/age and variances. 
+The needed parameters are from input 'dbeOutput' slots. Estimates-at-age can be calculated by injecting the length distribution resultin from 3 different sampling data :
+\emph{ca} table or \emph{hl} table from input consolidated object, or total number-at-length from an input \emph{dbeOuput} object. 
+In the latter case, \emph{totalN} and \emph{totalW} slots are also inserted in output \emph{dbeOutput} object.
 }                                                                                                                                           
 
 \usage{
-bpEstim(dbeOutput,object,adjust=TRUE,immature.scale=1,\dots)
+bpEstim(dbeOutput,object,dbeLD,adjust=TRUE,immature.scale=1,\dots)
 }
-
+                                                        
 \arguments{
   \item{dbeOutput}{A \emph{dbeOutput} object.}
   \item{object}{A \emph{csDataCons} object.}
-  \item{adjust}{Logical. If FALSE, length distribution in \emph{object}'s CA table is supposed to be representative of the catch (all calculations are made within CA). 
-If TRUE (default value), previous assumption is rejected, and estimates-at-age are calculated by injecting \emph{object}'s HL information.}
+  \item{dbeLD}{Optionnal. A \emph{dbeOutput} object with total numbers-at-length data (possibly resulting from \emph{RaiseLgth} method). 
+  If missing, injected length distribution for estimates-at-age calculation is created within input consolidated object. In that case, 
+  the source table is specified with \emph{adjust} parameter.}
+  \item{adjust}{Logical. Only useful if \emph{dbeLD} parameter is missing. If FALSE, length distribution in \emph{object}'s CA table is supposed to be representative of the catch 
+  (all calculations are made within CA). If TRUE (default value), estimates-at-age are calculated by injecting \emph{object}'s HL information.}
   \item{immature.scale}{Numeric or character. Specifies the value(s) in \emph{matStage} field (from ca table in \emph{object}) for which the individuals are defined as immature.}
   \item{...}{Further arguments.}
 }
-
+                                     
 
 \author{Mathieu Merzereaud}
 \seealso{\code{\link{dbeOutput},\link[COSTcore]{csDataCons}}
