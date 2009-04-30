@@ -1,3 +1,15 @@
+		CHANGES IN COSTdbe VERSION 1.0
+
+NEW FEATURES
+    o 'alkLgthRec' has been updated : 'sExtrGrp', 'lExtrGrp' and 'sFillAge' types are removed, and virtual individuals in output object are created from recorded individuals duplication. 
+    o for 'type="stepIncr"' in 'alkLgthRec' method, a 'start' parameter can be specified to define the minimal length class after recoding. 
+    o 'stratAggreg' has been updated : weighted means calculations are made for biological parameters estimates. 
+    o 'bpEstim' has been updated : adjustment can be made within total length distribution ('lenStruc$estim' slot) in a 'dbeOuptut' object 
+DOCUMENTATION 
+BUG FIXES		
+    o virtual individuals are not considered anymore in 'nMeas' slot from 'dbeOutput' object
+    o subset on catch category has been added in 'RaiseLgth' method 
+
 		CHANGES IN COSTdbe VERSION 0.1-9
 
 NEW FEATURES
