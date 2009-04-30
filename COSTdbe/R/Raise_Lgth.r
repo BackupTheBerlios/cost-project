@@ -12,7 +12,7 @@
 ################################################################################
 ################################################################################
 ################################################################################
-
+          
 RowSum <- function(X,MARGIN) {
 d <- dim(X)
 #array is permuted --> MARGIN dimensions are shifted to first rows
@@ -31,7 +31,12 @@ sp <- dbeOutput@species
 if (missing(taxon)) taxon <- sp
 if (missing(spp)) spp <- sp  
 
-eval(parse('',text=paste("csObject <- subsetSpp(csObject,spp%in%",deparse(spp),")",sep=""))) 
+eval(parse('',text=paste("csObject <- subsetSpp(csObject,spp%in%",deparse(spp),")",sep="")))
+ccat <- dbeOutput@catchCat
+if (!all(is.na(ccat))) {
+  csObject@sl <- csObject@sl[extCatchCat(csObject@sl$sort)%in%ccat,]
+  csObject@hl <- csObject@hl[extCatchCat(csObject@hl$sort)%in%ccat,]
+}
 
 #number of length samples (length sample= PSUid/SSUid/TSUid in HL if strategy="cc", and PSUid/SSUid in HL if strategy="metier") is calculated at this stage (before subsetting on 'sp' and 'sex')
 cc <- is.na(dbeOutput@strataDesc@techStrata)==FALSE & dbeOutput@strataDesc@techStrata=="commCat"                                                                    #

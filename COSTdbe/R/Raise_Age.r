@@ -32,8 +32,9 @@ if (!(all(is.na(sex)))) {ca <- ca[ca$sex%in%sex,]
                          if (nrow(ca)==0) stop("no CA data for specified sex in input object!!")            #                                                                               #
 }                                                                                                           #
 
-#number of fish measured in HL                                                                              #
-nMEAS <- spdAgreg(list(value=ca$age),BY=list(time=ca$time,space=ca$space),function(x) sum(!is.na(x)))       #     
+#number of fish measured in CA (virtual individuals excluded)
+CAreal <- ca[ca$fishId>0,]                                                                              #
+nMEAS <- spdAgreg(list(value=CAreal$age),BY=list(time=CAreal$time,space=CAreal$space),function(x) sum(!is.na(x)))       #     
 dbeOutput@nMeas$age <- nMEAS                                                                                #
 
 #numbers at length
