@@ -99,7 +99,7 @@ return(list(pEmpty=pEmpty,pEmptyExtr=pEmptyExtr))
   #====================================================================
 
 
-stepIncrFun <- function(alk,value=10) { #value is the new length class step (in mm)  --> authorized values : 1, 2, 3, 5, 10, 20, 30, 50
+stepIncrFun <- function(alk,value=10,start=as.numeric(rownames(alk))[1],...) { #value is the new length class step (in mm)  --> authorized values : 1, 2, 3, 5, 10, 20, 30, 50
 if (!value%in%c(1,2,3,5,10,20,30,50)) stop("wrong 'value' parameter!!")
 if (nrow(alk)<2) stop("'alk' object has wrong dimensions!!")
 ALK <- alk
@@ -107,7 +107,9 @@ ALK <- alk
 lc <- as.numeric(rownames(alk))
 #value must be >= alk's step
 if (value<(lc[2]-lc[1])) stop("'value' mustn't be smaller than alk's step!!")
-nlc <- seq(from=min(lc),to=max(lc),by=value)
+#'start' value must be in ] lc[1]-value ; lc[1] ]
+if (start>lc[1] | start<=lc[1]-value) stop("wrong 'start' parameter!!")
+nlc <- seq(from=start,to=max(lc),by=value)
 #recoding of length classes
 NLC <- cut(lc,c(nlc,1000000)-0.01,labels=nlc)
 rownames(ALK) <- as.character(NLC)
@@ -121,11 +123,11 @@ return(list(newLgthClas=nwLgthCls,newAlk=newAlk))
 }
 
   #====================================================================
-  # fillMissFun : function that fills gaps of maximum size specified by 'value' parameter with the sum of values from surrounding filled classes
+  # fillMissFun : function that fills gaps of maximum size specified by 'value' parameter with the sum of values from surrounding filled classes (or another function as defined by FUN)
   #====================================================================
 
 
-fillMissFun <- function(alk,value=1) {   #'value' is the maximum 'gap size' for which the filling process can be applied 
+fillMissFun <- function(alk,value=1,...) {   #'value' is the maximum 'gap size' for which the filling process can be applied 
 ALK <- alk
 if (value<1) stop("wrong 'value' parameter!!")
 #'patterns' of the gaps that are to be filled
@@ -143,7 +145,7 @@ if (matc<0) {
 } else {
     d.index <- matc + c(0,nchar(pattern[1])-1)     #data index
     g.index <- matc + c(1:(nchar(pattern[1])-2))   #gap index
-    valFill <- apply(ALK[d.index,],2,sum)          #replacement row
+    valFill <- apply(ALK[d.index,],2,sum,na.rm=TRUE)          #replacement row
     eval(parse('',text=paste("ALK[g.index,] <- rbind(",paste(rep("valFill",length(g.index)),collapse=","),")",sep="")))   #gaps filling process
     dat <- expand.grid(age=colnames(ALK),lenCls=RN[g.index])    #builds a 'virtual' consolidated ca table from 'virtual' individuals
     dat$N <- valFill ; dat <- dat[dat$N>0,]
@@ -161,52 +163,52 @@ return(list(newLgthClas=nwLgthCls,newAlk=ALK,addInd=DAT))
   #====================================================================
 
 
-
-sExtrGrpFun <- function(alk,value=2) {    #value is the number of length classes to group at the top of the alk
-ALK <- alk
-if (value<2) stop("wrong 'value' parameter!!")
-if (value>(nrow(alk)-1)) stop("wrong 'value' parameter!!")
-if (nrow(alk)<2) stop("not relevant for 'alk' object!!")
-#new Alk with first classes grouped
-newAlk <- rbind(apply(ALK[1:value,],2,sum),ALK[(value+1):nrow(ALK),])
-#name of the first class
-RN <- rownames(ALK)
-rownames(newAlk)[1] <- RN[value]
-#output with definition of length classes recoding
-rn <- rownames(newAlk) 
-nwLgthCls <- data.frame(oldLC=as.numeric(RN),newLC=as.numeric(c(rep(rn[1],value),rn[2:length(rn)])))
-return(list(newLgthClas=nwLgthCls,newAlk=newAlk))
-}
-
-
+#
+#sExtrGrpFun <- function(alk,value=2) {    #value is the number of length classes to group at the top of the alk
+#ALK <- alk
+#if (value<2) stop("wrong 'value' parameter!!")
+#if (value>(nrow(alk)-1)) stop("wrong 'value' parameter!!")
+#if (nrow(alk)<2) stop("not relevant for 'alk' object!!")
+##new Alk with first classes grouped
+#newAlk <- rbind(apply(ALK[1:value,],2,sum),ALK[(value+1):nrow(ALK),])
+##name of the first class
+#RN <- rownames(ALK)
+#rownames(newAlk)[1] <- RN[value]
+##output with definition of length classes recoding
+#rn <- rownames(newAlk) 
+#nwLgthCls <- data.frame(oldLC=as.numeric(RN),newLC=as.numeric(c(rep(rn[1],value),rn[2:length(rn)])))
+#return(list(newLgthClas=nwLgthCls,newAlk=newAlk))
+#}
+#
+#
   #====================================================================
   # lExtrGrpFun : function that groups the 'value' number of last classes in a given alk
   #====================================================================
 
-lExtrGrpFun <- function(alk,value=2) {    #value is the number of length classes to group at the bottom of the alk
-ALK <- alk
-if (value<2) stop("wrong 'value' parameter!!")
-if (value>(nrow(alk)-1)) stop("wrong 'value' parameter!!")
-if (nrow(alk)<2) stop("not relevant for 'alk' object!!")
-#new Alk with last classes grouped
-ind <- nrow(ALK)-value
-newAlk <- rbind(ALK[1:ind,],apply(ALK[(ind+1):nrow(ALK),],2,sum))
-#name of the last class
-RN <- rownames(ALK)
-rownames(newAlk)[nrow(newAlk)] <- RN[ind+1]
-#output with definition of length classes recoding
-rn <- rownames(newAlk) 
-nwLgthCls <- data.frame(oldLC=as.numeric(RN),newLC=as.numeric(c(rn[1:(length(rn)-1)],rep(rn[length(rn)],value))))
-return(list(newLgthClas=nwLgthCls,newAlk=newAlk))
-}
-
-
+#lExtrGrpFun <- function(alk,value=2) {    #value is the number of length classes to group at the bottom of the alk
+#ALK <- alk
+#if (value<2) stop("wrong 'value' parameter!!")
+#if (value>(nrow(alk)-1)) stop("wrong 'value' parameter!!")
+#if (nrow(alk)<2) stop("not relevant for 'alk' object!!")
+##new Alk with last classes grouped
+#ind <- nrow(ALK)-value
+#newAlk <- rbind(ALK[1:ind,],apply(ALK[(ind+1):nrow(ALK),],2,sum))
+##name of the last class
+#RN <- rownames(ALK)
+#rownames(newAlk)[nrow(newAlk)] <- RN[ind+1]
+##output with definition of length classes recoding
+#rn <- rownames(newAlk) 
+#nwLgthCls <- data.frame(oldLC=as.numeric(RN),newLC=as.numeric(c(rn[1:(length(rn)-1)],rep(rn[length(rn)],value))))
+#return(list(newLgthClas=nwLgthCls,newAlk=newAlk))
+#}
+#
+#
 
   #====================================================================
   # sFillMissFun : function that fills gaps at the extremum (top) of the alks ; 'value' specifies the number of rows to be filled upward with the first filled row
   #====================================================================
 
-sFillMissFun <- function(alk,value=1) {    
+sFillMissFun <- function(alk,value=1,...) {    
 RN <- rownames(alk)
 nwLgthCls <- data.frame(oldLC=as.numeric(RN),newLC=as.numeric(RN))
 
@@ -243,7 +245,7 @@ return(list(newLgthClas=nwLgthCls,newAlk=alk,addInd=Dat))}
   # lFillMissFun : function that fills gaps at the extremum (bottom) of the alks ; 'value' specifies the number of rows to be filled downward with the last filled row
   #====================================================================
 
-lFillMissFun <- function(alk,value=1) {    
+lFillMissFun <- function(alk,value=1,...) {    
 RN <- rownames(alk)
 nwLgthCls <- data.frame(oldLC=as.numeric(RN),newLC=as.numeric(RN))
 
@@ -281,34 +283,34 @@ return(list(newLgthClas=nwLgthCls,newAlk=alk,addInd=Dat))}
   # sFillAgeFun : function that fills first empty length classes with 1 for first age (first column) ; 'value' specifies the number of rows to be filled upward 
   #====================================================================
 
-sFillAgeFun <- function(alk,value=1) {    
-RN <- rownames(alk)
-nwLgthCls <- data.frame(oldLC=as.numeric(RN),newLC=as.numeric(RN))
-
-if (value<1) stop("wrong 'value' parameter!!")
-if (nrow(alk)<2) stop("not relevant for 'alk' object!!")
-#empty rows index
-ind <- apply(alk,1,function(x) !all(x==0))
-
-#first filled row
-first <- (1:nrow(alk))[ind][1]
-if (all(!ind)) first <- 1
-#if no filled row or if first filled row is 1st
-if (first==1) {
- 
- return(list(newLgthClas=nwLgthCls,newAlk=alk,addInd=NULL))
-
-} else {
-
-#index of rows to be filled according to 'value'
-index <- max(c(1,first-value)):(first-1)
-invisible(sapply(index,function(x) alk[x,1] <<- 1))
-
-Dat <- data.frame(age=as.numeric(colnames(alk)[1]),lenCls=as.numeric(rownames(alk)[index]))
-
-return(list(newLgthClas=nwLgthCls,newAlk=alk,addInd=Dat))}
-}
-
+#sFillAgeFun <- function(alk,value=1,...) {    
+#RN <- rownames(alk)
+#nwLgthCls <- data.frame(oldLC=as.numeric(RN),newLC=as.numeric(RN))
+#
+#if (value<1) stop("wrong 'value' parameter!!")
+#if (nrow(alk)<2) stop("not relevant for 'alk' object!!")
+##empty rows index
+#ind <- apply(alk,1,function(x) !all(x==0))
+#
+##first filled row
+#first <- (1:nrow(alk))[ind][1]
+#if (all(!ind)) first <- 1
+##if no filled row or if first filled row is 1st
+#if (first==1) {
+# 
+# return(list(newLgthClas=nwLgthCls,newAlk=alk,addInd=NULL))
+#
+#} else {
+#
+##index of rows to be filled according to 'value'
+#index <- max(c(1,first-value)):(first-1)
+#invisible(sapply(index,function(x) alk[x,1] <<- 1))
+#
+#Dat <- data.frame(age=as.numeric(colnames(alk)[1]),lenCls=as.numeric(rownames(alk)[index]))
+#
+#return(list(newLgthClas=nwLgthCls,newAlk=alk,addInd=Dat))}
+#}
+#
 
 
 
@@ -326,11 +328,11 @@ return(list(newLgthClas=nwLgthCls,newAlk=alk,addInd=Dat))}
 gapsRm <- function(alk, 
                    type="stepIncr",        #type= "stepIncr" & value=10  --> case n°2   (length step is increased to specified value)
                    value,                  #type= "fillMiss" & value=1   --> case n°3   (all gaps of length <= value are filled with the sum of surrounding filled classes)
-                   preview=TRUE,           #type= "sExtrGrp" & value=1   --> case n°4.1 (the number of first classes specified by value parameter are grouped)
-                   postview=TRUE) {        #type= "lExtrGrp" & value=1   --> case n°4.2 (the number of last classes specified by value parameter are grouped)
+                   preview=TRUE,           #NO xxxxx type= "sExtrGrp" & value=1   --> case n°4.1 (the number of first classes specified by value parameter are grouped)  xxxxx
+                   postview=TRUE,...) {    #NO xxxxx type= "lExtrGrp" & value=1   --> case n°4.2 (the number of last classes specified by value parameter are grouped)  xxxxx
                                            #type= "sFillMiss" & value=1  --> case n°5.1 (the 'value' number of rows prior to first filled length class are filled)
                                            #type= "lFillMiss" & value=1  --> case n°5.2 (the 'value' number of rows following last filled length class are filled)
-                                           #type= "sFillAge" & value=1   --> case n°6   (the 'value' number of rows prior to first filled length class is filled with 1 for first age value
+                                           #NO xxxxx type= "sFillAge" & value=1   --> case n°6   (the 'value' number of rows prior to first filled length class is filled with 1 for first age value  xxxxx
                                            #'view1' displays input alk
                                            #'view2' displays output alk
 
@@ -343,10 +345,10 @@ Dim <- length(dim(alk))
 #creation of 'Alk' object -> 2 cases, if alk is stratified or not 
 if (Dim<3) {     #if 'alk' is not stratified
 
-eval(parse('',text=paste("Alk <- ",type,"Fun(alk",",value=value"[!ms],")",collapse="",sep="")))
+eval(parse('',text=paste("Alk <- ",type,"Fun(alk",",value=value"[!ms],",...)",collapse="",sep="")))
 newDim <- Alk$newLgthClas
 #if type%in%c("fillMiss","sFillMiss","lFillMiss"), 'virtual' ca has to be created
-if (type%in%c("fillMiss","sFillMiss","lFillMiss","sFillAge")) df <- Alk$addInd
+if (type%in%c("fillMiss","sFillMiss","lFillMiss")) df <- Alk$addInd
 Alk <- Alk$newAlk
 Prop <- propMissLgth(Alk)
 
@@ -354,7 +356,7 @@ Prop <- propMissLgth(Alk)
 val <- NULL
 #apply function on each alk for each strata
 res <- apply(alk,3:Dim,function(x) {
-    eval(parse('',text=paste("val <- ",type,"Fun(x",",value=value"[!ms],")",collapse="",sep="")))
+    eval(parse('',text=paste("val <- ",type,"Fun(x",",value=value"[!ms],",...)",collapse="",sep="")))
     newDim <<- val$newLgthClas
     val$newAlk}
     )
@@ -365,10 +367,10 @@ ll[[1]] <- unique(newDim$newLC)
 dimnames(Alk) <- ll
 
 #idem with 'addInd' on each alk for each strata if type%in%c("fillMiss","sFillMiss","lFillMiss")
-if (type%in%c("fillMiss","sFillMiss","lFillMiss","sFillAge")) {
+if (type%in%c("fillMiss","sFillMiss","lFillMiss")) {
 strat <- paste("\"",apply(expand.grid(dimnames(alk)[3:Dim]),1,paste,collapse="\",\""),"\"",sep="")
 df <- data.frame(do.call("rbind",lapply(strat,function(X) {
-                                          eval(parse('',text=paste("val <- ",type,"Fun(alk[,,",X,"]",",value=value"[!ms],")$addInd",collapse="",sep="")))
+                                          eval(parse('',text=paste("val <- ",type,"Fun(alk[,,",X,"]",",value=value"[!ms],",...)$addInd",collapse="",sep="")))
                                           strSpl <- strsplit(X,",")[[1]]
                                           eval(parse('',text=paste("dat <- cbind(val,",paste(strSpl,collapse=","),")",sep="")))
                                           if (is.null(val)) dat <- NULL else names(dat) <- ""    
@@ -389,7 +391,7 @@ if (preview & postview) {
 
 if (postview) viewGapsAlk(Alk)
 
-if (type%in%c("fillMiss","sFillMiss","lFillMiss","sFillAge")) {
+if (type%in%c("fillMiss","sFillMiss","lFillMiss")) {
   invisible(list(alk=Alk,addIndTab=df,propMiss=Prop))
 } else {
   invisible(list(alk=Alk,lgthCls=newDim,propMiss=Prop))
@@ -435,13 +437,39 @@ if (type%in%c("fillMiss","sFillMiss","lFillMiss","sFillAge")) {
 #
 #     type= "stepIncr" & value=10  --> case n°2   (length step is increased to specified value)
 #     type= "fillMiss" & value=1   --> case n°3   (all gaps of length <= value are filled with the sum of surrounding filled classes)
-#     type= "sExtrGrp" & value=1   --> case n°4.1 (the number of first classes specified by value parameter are grouped)
-#     type= "lExtrGrp" & value=1   --> case n°4.2 (the number of last classes specified by value parameter are grouped)
+#     NO xxxxx type= "sExtrGrp" & value=1   --> case n°4.1 (the number of first classes specified by value parameter are grouped)  xxxxx
+#     NO xxxxx type= "lExtrGrp" & value=1   --> case n°4.2 (the number of last classes specified by value parameter are grouped)  xxxxx
 #     type= "sFillMiss" & value=1  --> case n°5.1 (the 'value' number of rows prior to first filled length class are filled)
 #     type= "lFillMiss" & value=1  --> case n°5.2 (the 'value' number of rows following last filled length class are filled)
-#     type= "sFillAge" & value=1   --> case n°6   (the 'value' number of rows prior to first filled length class is filled with 1 for first age value
+#     NO xxxxx type= "sFillAge" & value=1   --> case n°6   (the 'value' number of rows prior to first filled length class is filled with 1 for first age value xxxxx
 #
 #====================================================================
+ 
+recomposeCA <- function(df,DF,BY,updown="up") {    #updown="down"
+
+tab <- unique(df[,c("lenCls","time","space")])
+tab$indic <- 1 ; step <- 0
+if (updown=="down") BY <- -BY
+inc <- NULL
+while(nrow(tab)>0) {
+step <- step + BY
+tab$lenCls <- factor(as.numeric(as.character(tab$lenCls))+BY)
+CA <- merge(ca,tab,all.x=TRUE) ; CA <- CA1 <- CA[!is.na(CA$indic) & !is.na(CA$age),]
+#otoWt, indWt and matStage are set to NA
+if (nrow(CA)>0) {
+  CA$otoWt <- CA$indWt <- CA$matStage <- NA 
+  CA$lenCls <- factor(as.numeric(as.character(CA$lenCls))-step)
+}
+inc <- rbind(inc,CA)
+if (nrow(CA)>0) {
+#found occurences are removed from tab
+occ <- unique(CA1[,c("time","space","lenCls")]) ; occ$ind2 <- 1
+tab <- merge(tab,occ,all.x=TRUE) 
+tab <- tab[is.na(tab$ind2),c("lenCls","time","space","indic")]}
+}
+return(inc)
+} 
+ 
        
 setGeneric("alkLgthRec", function(object,
                                   type="stepIncr",        
@@ -462,6 +490,8 @@ setMethod("alkLgthRec",signature(object="csDataCons"), function(object,
                                                                 postview=TRUE,
                                                                 update=FALSE,
                                                                 ...) { 
+                                                                
+if (!type%in%c("fillMiss","sFillMiss","lFillMiss","stepIncr")) stop("wrong 'type' parameter!!")
 ca <- ca(object)
 ms <- missing(value)
 #is strata information available?
@@ -485,27 +515,23 @@ strLC <- strLChl(object)
   }
 
 val <- NULL    
-  eval(parse('',text=paste("val <- gapsRm(alk,type=type,","value=value,"[!ms],"preview=FALSE,postview=FALSE)",sep="")))
+  eval(parse('',text=paste("val <- gapsRm(alk,type=type,","value=value,"[!ms],"preview=FALSE,postview=FALSE,...)",sep="")))
   #val$lgthCls defines the new length classes in object@ca & object@hl 
 
-    #if type="fillMiss" , recoding is not needed
-  if (!type%in%c("fillMiss","sFillMiss","lFillMiss","sFillAge")) {
+    #if type=="stepIncr", 'lenCode' field must be updated in ca & hl, and length classes need to be recoded
+  if (type=="stepIncr") {
     old <- as.character(val$lgthCls$oldLC) ; upd <- as.character(val$lgthCls$newLC)
     object@ca$lenCls <- as.numeric(as.character(factor(object@ca$lenCls,levels=old,labels=upd)))
     object@hl$lenCls <- as.numeric(as.character(factor(object@hl$lenCls,levels=old,labels=upd)))  
-  }
-
-    #if type=="stepIncr", 'lenCode' field must be updated in ca & hl
-  if (type=="stepIncr") {
     lCod <- switch(as.character(value),"1"="mm","2"="2mm","3"="3mm","5"="scm","10"="cm","20"="20mm","25"="25mm","30"="30mm","50"="50mm")
     object@ca$lenCode <- lCod 
     object@sl$lenCode <- lCod 
   }
 
-    #if type%in%c("fillMiss","sFillMiss","lFillMiss"), 'addIndTab' object in 'val' must be formatted as ca table, and pasted to object@ca
-  if (type%in%c("fillMiss","sFillMiss","lFillMiss","sFillAge")) {
-    if (nrow(val$addIndTab)>0) {                                                                                                            #########added MM 04/11/2008
-    df <- val$addIndTab ; names(df) <- c("age","lenCls","time"[!indNAtime],"space"[!indNAspace])
+ #   if type%in%c("fillMiss","sFillMiss","lFillMiss"), 'addIndTab' object in 'val' must be formatted as ca table, and pasted to object@ca
+  if (type%in%c("fillMiss","sFillMiss","lFillMiss")) {
+    if (nrow(val$addIndTab)>0) {                                                                                                            ######### modified MM 30/04/2009
+    df <- val$addIndTab ; nam <- names(df) ; names(df) <- c("age","lenCls","time"[!indNAtime],"space"[!indNAspace])
     if (any(c(indNAtime,indNAspace))) 
       eval(parse('',text=paste("df$",c("time"[indNAtime],"space"[indNAspace])," <- NA",collapse=";",sep="")))
     #df must be updated by removing stratified length classes that are not in hl                                      
@@ -515,15 +541,17 @@ val <- NULL
     Df <- merge(indDF,df,all.x=TRUE)
     #df is subset to stratified LC that are in hl
     Df <- Df[!is.na(Df$age),] ; df <- Df[,names(df)] 
-    df2 <- df ; names(df2) <- names(val$addIndTab)
-    
+
+    if (type=="fillMiss") DF <- rbind(recomposeCA(df,ca,BY,"up"),recomposeCA(df,ca,BY,"down"))
+    if (type=="sFillMiss") DF <- recomposeCA(df,ca,BY,"up")
+    if (type=="lFillMiss") DF <- recomposeCA(df,ca,BY,"down")
+    rownames(DF) <- nrow(ca) + c(1:nrow(DF))
+
     #corresponding 'fishId' will be negative to discriminate 'real' individuals and 'virtual' individuals in ca
-    start <- min(c(0,object@ca$fishId),na.rm=TRUE)
-    df$fishId <- start-(1:nrow(df))
-    newCa <- csDataCons()@ca
-    invisible(sapply(names(newCa),function(x) if (!x%in%names(df)) df[,x] <<- newCa[1,x]))
-    df <- df[,names(newCa)]
-    object@ca <- rbind(object@ca,df) 
+    start <- min(c(0,ca$fishId),na.rm=TRUE)
+    DF$fishId <- start-(1:nrow(DF))
+    DF <- DF[,names(ca(csDataCons()))]
+    object@ca <- rbind(object@ca,DF) 
     object@ca$age <- as.numeric(as.character(object@ca$age))
     object@ca$lenCls <- as.numeric(as.character(object@ca$lenCls))  
   }}
@@ -547,11 +575,12 @@ if (update) {
 
 } else {
   
-  if (!type%in%c("fillMiss","sFillMiss","lFillMiss","sFillAge")) {
+  if (type=="stepIncr") {
     ll <- val[1:2]
    } else {
     ll <- val[1]
-    ll$addIndTab <- df2
+    names(df) <- nam
+    ll$addIndTab <- df
   }
   ll$propMiss <- propMissLgthCons(object,strLC)
   return(ll)
@@ -638,13 +667,13 @@ return(list(pEmpty=apply(index,2:(Dim-1),function(x) eval(parse('',text=paste("p
 
 
 
-#  #====================================================================
-#  # Example of usage
-#  #====================================================================
-#
-##Example of use of the function filling gaps in ALK
-##---------------------------------------------------
-#
+##  #====================================================================
+##  # Example of usage
+##  #====================================================================
+##
+###Example of use of the function filling gaps in ALK
+###---------------------------------------------------
+##
 ##object example
 #  #restriction to "27.7.d" & "27.7.e"
 #csRaw <- subset(sole.cs,area%in%c("27.7.d","27.7.e"),table="hh")
@@ -669,7 +698,7 @@ return(list(pEmpty=apply(index,2:(Dim-1),function(x) eval(parse('',text=paste("p
 ##---------------------------
 #
 ##1st METHOD : Raising length class step to value in mm  (type="stepIncr")
-#res1 <- alkLgthRec(conSole.cs,type="stepIncr",value=20,postview=TRUE)
+#res1 <- alkLgthRec(conSole.cs,type="stepIncr",value=20,postview=TRUE,start=110)
 #names(res1)
 #
 #res1$missProp  #updated statistics about missing length
@@ -700,25 +729,25 @@ return(list(pEmpty=apply(index,2:(Dim-1),function(x) eval(parse('',text=paste("p
 #
 ##---------------------------
 #
-##3rd METHOD : the value first length classes are grouped  (type="sExtrGrp")
-#res3 <- alkLgthRec(conSole.cs,type="sExtrGrp",value=10,postview=TRUE)
-#res3$lgthCls  #updated Length Classes
-##consolidated conSole.cs updated --> conSole.cs3
-#conSole.cs3 <- alkLgthRec(conSole.cs,type="sExtrGrp",value=10,postview=FALSE,update=TRUE)
-#unique(sort(conSole.cs@hl$lenCls ))
-#unique(sort(conSole.cs3@hl$lenCls ))
-#
+####3rd METHOD : the value first length classes are grouped  (type="sExtrGrp")
+###res3 <- alkLgthRec(conSole.cs,type="sExtrGrp",value=10,postview=TRUE)
+###res3$lgthCls  #updated Length Classes
+####consolidated conSole.cs updated --> conSole.cs3
+###conSole.cs3 <- alkLgthRec(conSole.cs,type="sExtrGrp",value=10,postview=FALSE,update=TRUE)
+###unique(sort(conSole.cs@hl$lenCls ))
+###unique(sort(conSole.cs3@hl$lenCls ))
+###
 ##---------------------------
 #
-##4th METHOD : the value last length classes are grouped  (type="lExtrGrp")
-#res4 <- alkLgthRec(conSole.cs,type="lExtrGrp",value=15,postview=TRUE)
-#res4$lgthCls
-##consolidated conSole.cs updated --> conSole.cs4
-#conSole.cs4 <- alkLgthRec(conSole.cs,type="lExtrGrp",value=15,postview=FALSE,update=TRUE)
-#unique(sort(conSole.cs@hl$lenCls ))
-#unique(sort(conSole.cs4@hl$lenCls ))
-#
-##---------------------------
+####4th METHOD : the value last length classes are grouped  (type="lExtrGrp")
+###res4 <- alkLgthRec(conSole.cs,type="lExtrGrp",value=15,postview=TRUE)
+###res4$lgthCls
+####consolidated conSole.cs updated --> conSole.cs4
+###conSole.cs4 <- alkLgthRec(conSole.cs,type="lExtrGrp",value=15,postview=FALSE,update=TRUE)
+###unique(sort(conSole.cs@hl$lenCls ))
+###unique(sort(conSole.cs4@hl$lenCls ))
+###
+###---------------------------
 #
 ##5th METHOD : the value first length classes are duplicated  (type="sFillMiss")
 #res5 <- alkLgthRec(conSole.cs,type="sFillMiss",value=4,postview=TRUE)
@@ -738,18 +767,18 @@ return(list(pEmpty=apply(index,2:(Dim-1),function(x) eval(parse('',text=paste("p
 #
 ##---------------------------
 #
-##7th METHOD : each of the value small empty length classes are filled with 1 fish of first age class  (type="sFillAge")
-#res7 <- alkLgthRec(conSole.cs,type="sFillAge",value=7,postview=TRUE)
-#res7$addIndTab
-##consolidated conSole.cs updated --> conSole.cs7
-#conSole.cs7 <- alkLgthRec(conSole.cs,type="sFillAge",value=7,postview=FALSE,update=TRUE)
-#tail(conSole.cs7)  # Addition of the 10 ind. with negative fishId (cf res7$addIndTab)
-#
-#
-## It"ll be up to the user to make the best use of this!!
+####7th METHOD : each of the value small empty length classes are filled with 1 fish of first age class  (type="sFillAge")
+###res7 <- alkLgthRec(conSole.cs,type="sFillAge",value=7,postview=TRUE)
+###res7$addIndTab
+####consolidated conSole.cs updated --> conSole.cs7
+###conSole.cs7 <- alkLgthRec(conSole.cs,type="sFillAge",value=7,postview=FALSE,update=TRUE)
+###tail(conSole.cs7)  # Addition of the 10 ind. with negative fishId (cf res7$addIndTab)
+###
+##
+### It"ll be up to the user to make the best use of this!!
 ## Here for example, I would recode time stratification to Q1+Q2, Q3 & Q4 in VIId to avoid this missing ALK in Q1 because I know the fishery begins mid-March here.
 #
-#
+
 
 
 
