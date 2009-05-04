@@ -51,6 +51,14 @@ PS <- function(estSimObj, trueDataObj, desc, nSamples, ...){
                                  technical = estj.real.age$technical, age = estj.real.age$age), sum)
         sum.estj.real.age.rat <- aggregate(list(value = estj.real.age.rat[,6]*100), list(time =  estj.real.age.rat$time, space = estj.real.age.rat$space,
                                  technical = estj.real.age.rat$technical, age = estj.real.age.rat$age), sum)
+        sum.estj.real.age <- order.df(sum.estj.real.age, len = FALSE)
+        sum.estj.real.age2 <- order.df(sum.estj.real.age2, len = FALSE)
+        sum.estj.real.age.abs <- order.df(sum.estj.real.age.abs, len = FALSE)
+        var.estj.real.age <- order.df(var.estj.real.age, len = FALSE)
+        pos.estj.real.age <- order.df(pos.estj.real.age, len = FALSE)
+        sum.estj.real.age.rat <- order.df(sum.estj.real.age.rat, len = FALSE)
+        
+        
         # Bias
         res@ageBias$me  <- cbind(sum.estj.real.age[,-5], value = sum.estj.real.age[,5]/nSamples)
         res@ageBias$poe <- cbind(pos.estj.real.age[,-5], value = pos.estj.real.age[,5]/nSamples)
@@ -79,6 +87,14 @@ PS <- function(estSimObj, trueDataObj, desc, nSamples, ...){
                                  technical = estj.real.len$technical, length = estj.real.len$length), sum)
         sum.estj.real.len.rat <- aggregate(list(value = estj.real.len.rat[,6]*100), list(time =  estj.real.len.rat$time, space = estj.real.len.rat$space,
                                  technical = estj.real.len.rat$technical, length = estj.real.len.rat$length), sum)
+
+        sum.estj.real.len <- order.df(sum.estj.real.len, len = TRUE)
+        sum.estj.real.len2 <- order.df(sum.estj.real.len2, len = TRUE)
+        sum.estj.real.len.abs <- order.df(sum.estj.real.len.abs, len = TRUE)
+        var.estj.real.len <- order.df(var.estj.real.len, len = TRUE)
+        pos.estj.real.len <- order.df(pos.estj.real.len, len = TRUE)
+        sum.estj.real.len.rat <- order.df(sum.estj.real.len.rat, len = TRUE)
+        
         # Bias
         res@lenBias$me  <- cbind(sum.estj.real.len[,-5], value = sum.estj.real.len[,5]/nSamples)
         res@lenBias$poe <- cbind(pos.estj.real.len[,-5], value = pos.estj.real.len[,5]/nSamples)
@@ -99,3 +115,12 @@ PS <- function(estSimObj, trueDataObj, desc, nSamples, ...){
     }
   return(res)
   }
+  
+order.df <- function(df, len = TRUE){
+     if(len == TRUE)
+         df <- df[order(as.character(df$time), as.character(df$space), as.character(df$technical), as.numeric(as.character(df$length))),]
+     else
+        df <- df[order(as.character(df$time), as.character(df$space), as.character(df$technical), as.numeric(as.character(df$age))),]
+
+        return(df)
+}
