@@ -235,7 +235,7 @@ setClass("dbeOutputSim",
 # 'dbeOutput' object constructor (initialization)
 #====================================================================
 
-dbeObjectSim <- function(desc, species, catchCat, param, strataDesc, methodDesc, ...){
+dbeObjectSim <- function(desc, species, catchCat, param, strataDesc, methodDesc){
 
     if (missing(desc)) desc <- as.character(NA)
     if (missing(species)|all(is.na(species))) stop("Missing 'species' parameter!!")
@@ -247,7 +247,16 @@ dbeObjectSim <- function(desc, species, catchCat, param, strataDesc, methodDesc,
 
 new("dbeOutputSim",desc=desc,species=species,catchCat=toupper(catchCat),param=param,strataDesc=strataDesc,methodDesc=methodDesc)
  	  }
- 	  
+
+
+#setGeneric("dbeOutputSim", function(obj, ...){
+#	standardGeneric("dbeOutputSim")
+#})
+#setMethod("dbeOutputSim", signature(obj = 'missing'),   function(obj, desc, species, catchCat, param, strataDesc, methodDesc){ 
+#    res <- dbeOutputSimt(desc=desc,species=species,catchCat=catchCat,param=param,strataDesc=strataDesc,methodDesc=methodDesc)
+#return(res)})
+
+
  	  
 dbeSim2dbe <- function(dbeObjectSim, samples = unique(dbeObjectSim@nSamp$len$sample)){
       

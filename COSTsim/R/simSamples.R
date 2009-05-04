@@ -5,17 +5,18 @@
 #-------------------------------------------------------------------------------
 
 setGeneric("simSamples", function(obj,
-                                 ndisc,
-                                 ntrip,
-                                 fit){
+                                ...){
 	standardGeneric("simSamples")}
 )
 
 
-setMethod("simSamples", signature(obj = "simDataCons"), function(obj, 
-                                                                 ndisc = simDataObj@setup.args$ndisc, 
-                                                                 ntrip = simDataObj@setup.args$ntrip, 
+setMethod("simSamples", signature(obj = "simData"), function(obj, 
+                                                                 ndisc, 
+                                                                 ntrip, 
                                                                  fit = FALSE){
+    ndisc <- ifelse(missing(ndisc), obj@setup.args$ndisc, ndisc)
+    ntrip <- ifelse(missing(ntrip), obj@setup.args$ntrip, ntrip)
+    
     simDataObj <- obj
     params     <- simDataObj@initial.fit
     class(params) <- 'fit.caa'

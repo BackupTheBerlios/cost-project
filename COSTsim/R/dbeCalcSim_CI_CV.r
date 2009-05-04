@@ -11,7 +11,7 @@ setGeneric("dbeCalcSim", function(object,              # 'dbeOutput' object
                                vrbl="l",            # specifies data on which calculation is applied : "l" for length structure, "a" for age structure, "n" for total number estimates, "w" for total weight estimates
                                probs=c(0.025,0.975),# used only if type="CI", defines bounds
                                replicates=FALSE,    # if TRUE, calculation is made from $rep elements ; if FALSE, $estim and @...Var are used 
-                               update=FALSE,        # if TRUE, updated 'dbeOutput' object is returned ; if FALSE, only resulting dataframe is returned
+                                # if TRUE, updated 'dbeOutput' object is returned ; if FALSE, only resulting dataframe is returned
                                ...){
 standardGeneric("dbeCalcSim")
 })
@@ -24,7 +24,6 @@ setMethod("dbeCalcSim",signature(object="dbeOutputSim"),function(object,        
                                                            vrbl="l",            # specifies data on which calculation is applied : "l" for length structure, "a" for age structure, "n" for total number estimates, "w" for total weight estimates
                                                            probs=c(0.025,0.975),# used only if type="CI", defines bounds
                                                            replicates=FALSE,    # if TRUE, calculation is made from $rep elements ; if FALSE, $estim and @...Var are used 
-                                                           update=FALSE,        # if TRUE, updated 'dbeOutput' object is returned ; if FALSE, only resulting dataframe is returned
                                                            ...){                                
 
     outpuT <- NULL
@@ -32,35 +31,47 @@ setMethod("dbeCalcSim",signature(object="dbeOutputSim"),function(object,        
     lType <- tolower(type)
     if (!lType%in%c("ci","cv")) stop("wrong 'type' parameter!!") 
     if (!is.logical(replicates)) stop("wrong 'replicates' parameter!!") 
-    if (!is.logical(update)) stop("wrong 'update' parameter!!")
-
-    nsamples <- length(unique(object@nSamp$len$sample))
     
-    bs  <- names(which(!(sapply(slotNames(dbeObject(species = '1')), function(x) class(slot(dbeObject(species = '1'), x))) %in% c('list', 'data.frame'))))
-    df  <- names(which(sapply(slotNames(dbeObject(species = '1')), function(x) class(slot(dbeObject(species = '1'), x)))== 'data.frame'))
-    lst <- names(which(sapply(slotNames(dbeObject(species = '1')), function(x) class(slot(dbeObject(species = '1'), x)))== 'list'))
-    lst.df <- sapply(lst, function(x) lapply(slot(dbeObject(species = '1'),x), class))
+    sl <- switch(vrbl,
+                l = 'lenNum',
+                a = 'ageNum',
+                n= 'totalNnum',
+                w= 'totalWnum')
+    dat <- switch(vrbl,
+                l = 'lenStruc',
+                a = 'ageStruc',
+                n= 'totalN',
+                w= 'totalW')
+                
+    df <- switch(type,
+                CI = 'ci',
+                CV = c('cv', 'DCRcvIndicator'))
 
-
-   res    <- dbeSimNULL(object)
+    res <- object
+    slot(res, sl)[[df[1]]] <- NULL
+    
+    nsamples <- length(unique(slot(object, dat)[['estim']]$sample))
+    
+    
+    if(df[1] == 'cv')  slot(res, sl)[[df[2]]] <- NULL
 
     for(i in 1:nsamples){
-    
-    
+
         dbeOut <- dbeSim2dbe(object, samples = i)
-        xx <- dbeCalc(object = dbeOut, type = type, vrbl = vrbl, probs = probs, replicates = replicates, update = update, ...)
+        xx <- dbeCalc(object = dbeOut, type = type, vrbl = vrbl, probs = probs, replicates = replicates, update = FALSE, ...)
         
-        for(s in df){
-            d  <- dim(slot(xx,s))[1]
-            slot(res,s) <- rbind(slot(res,s), cbind(sample = rep(i,d),slot(xx,s)))
+        d  <- ifelse(class(xx) == 'list', dim(xx[[1]])[1], dim(xx)[1])
+          
+        if(df[1] == 'ci'){
+            slot(res,sl)[[df[1]]] <- rbind(slot(res,sl)[[df[1]]], cbind(sample = rep(i,d), xx))
         }
-        for(s in lst){
-            for(sl in names(lst.df[[s]])){
-                d  <- ifelse(is.null(dim(slot(xx,s)[[sl]])[1]), 1, dim(slot(xx,s)[[sl]])[1])
-                slot(res,s)[[sl]] <- rbind(slot(res,s)[[sl]], cbind(sample = rep(i,d),slot(xx,s)[[sl]]))
-            }
+        else{ # CV
+            slot(res,sl)[[df[1]]] <- rbind(slot(res,sl)[[df[1]]], cbind(sample = rep(i,d), xx[['DF']]))
+            slot(res,sl)[[df[2]]] <- as.data.frame(rbind(slot(res,sl)[[df[2]]], cbind(sample = i, value = xx[['dcrInd']])))
         }
     }
+        
+    
  return(res)
 
 })

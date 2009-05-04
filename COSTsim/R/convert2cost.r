@@ -346,18 +346,22 @@ convert2cost <- function(sim.object){
     validObject(sim.ml)
 
     # cl and ce objects.
+    
     area <- rep(1:6,each=20)
     season <- rep(1:4,each=5,times=6)
     gear <- rep(1:5,times=24)
-    effort1 <- rep(10000*4/(5*6),120)
+    effort1 <- rep(10000,120)
     effort2 <- 1000*exp(rnorm(120))
+    trpNum <- round(abs(rnorm(120,80,50))) + 3
+    foNum <- trpNum*(round(abs(rnorm(120,10,5))) + 3)
+    daysAtSea <- trpNum*sample(1:5,length(trpNum),replace=TRUE)
 
     sim.cl <- clData(cl=data.frame(landCtry=rep("SCO",120),vslFlgCtry=rep("SCO",120),year=rep(2000,120),quarter=season,month=NA,area=area,rect=NA,subRect=NA,taxon=rep("Melanogrammus aeglefinus",120),
         landCat=NA,commCatScl=NA,commCat=NA,foCatNat=NA,foCatEu5=gear,foCatEu6=NA,harbour=NA,vslLenCat=NA,unallocCatchWt=NA,misRepCatchWt=NA,landWt=effort1,landMult=rep(1,120),landValue=NA))
 
     sim.ce <- ceData(ce=data.frame(vslFlgCtry=rep("SCO",120),year=rep(2000,120),quarter=season,month=NA,area=area,rect=NA,subRect=NA,foCatNat=NA,foCatEu5=gear,foCatEu6=NA,harbour=NA,
-    vslLenCat=NA,trpNum=NA,foNum=NA,foDur=floor(effort2),effKwDays=NA,effGtDays=NA,daysAtSea=NA))
-
+        vslLenCat=NA,trpNum=trpNum,foNum=foNum,foDur=floor(effort2),effKwDays=NA,effGtDays=NA,daysAtSea=daysAtSea))
+        
     sim.cs <- rbind2(sim.obs, sim.ml)
     
     return(costData(ce = sim.ce, cl = sim.cl, cs = sim.cs, desc = 'Simulated Data Set ce, cl and cs'))

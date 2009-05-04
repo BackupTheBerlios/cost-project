@@ -98,6 +98,18 @@ setClass("simDataCons",
 # 'simData' object constructor (initialization)
 #====================================================================
 
+# simData --------------------------------------------------------------------
+setGeneric("simData", function(obj, ...){
+	standardGeneric("simData")
+})
+setMethod("simData", signature(obj = 'missing'),   function(obj, desc, species, nsamples, 
+                    initial.fit, setup.args, burnin,                     
+                    nmcmc, l.int, Int, Slp, landings,  nHaul, nseas){ 
+    res <- simData(desc, species, nsamples, initial.fit, setup.args, burnin,                     
+                    nmcmc, l.int, Int, Slp, landings,  nHaul, nseas)
+return(res)})
+
+
 simData <- function(desc, species, nsamples, initial.fit, setup.args, burnin,                     
                     nmcmc, l.int, Int, Slp, landings,  nHaul, nseas){
                     

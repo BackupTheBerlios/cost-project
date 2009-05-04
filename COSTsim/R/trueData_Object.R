@@ -12,7 +12,7 @@ setClass("trueData",
     lal        = "data.frame",                # True  landings at age
     laa        = "data.frame",                # True  landings at length
     dal        = "data.frame",                # True discards at length
-    daa        = "data.frame"                # True discards at age
+    dtw        = "data.frame"                # True discards total weight
 	),
 	prototype(
         desc        = "PerformStats Object",
@@ -21,16 +21,19 @@ setClass("trueData",
         lal     = data.frame(time     = as.character(NA),
                                 space     = as.character(NA),
                                 technical = as.character(NA),
+                                length = as.character(NA),
                                 value     = as.numeric(NA)),
         laa      = data.frame(time     = as.character(NA),
                                 space     = as.character(NA),
                                 technical = as.character(NA),
+                                age = as.character(NA),
                                 value     = as.numeric(NA)),
         dal     = data.frame(time     = as.character(NA),
                                 space     = as.character(NA),
                                 technical = as.character(NA),
+                                length = as.character(NA),
                                 value     = as.numeric(NA)),
-        daa      = data.frame(time     = as.character(NA),
+        dtw      = data.frame(time     = as.character(NA),
                                 space     = as.character(NA),
                                 technical = as.character(NA),
                                 value     = as.numeric(NA))                        
@@ -42,8 +45,13 @@ setGeneric("trueData", function(obj, desc, ...){
 )
 
 
-setMethod("trueData", signature(obj = "missing"), function(obj, desc, ...){
-    res <- new('trueData', desc = desc)
+setMethod("trueData", signature(obj = "missing"), function(obj, desc, species, strataDesc = strIni(), dal, dtw, laa, lal){
+    res <- new('trueData', desc = desc, species = species, strataDesc = strataDesc)
+    if(!missing(dal)) res@dal <- dal
+    if(!missing(dtw)) res@dtw <- dtw
+    if(!missing(laa)) res@dal <- laa
+    if(!missing(lal)) res@dal <- lal
+    
     return(res)
 })
 

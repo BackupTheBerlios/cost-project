@@ -24,30 +24,28 @@ setMethod("RaiseAgeSim", signature(dbeOutputSim="dbeOutputSim",simObj="simDataCo
                                                                                        ...){
    nsamples <- length(simObj@samples)
    
-   bs  <- names(which(!(sapply(slotNames(dbeObject(species = '1')), function(x) class(slot(dbeObject(species = '1'), x))) %in% c('list', 'data.frame'))))
-   df  <- names(which(sapply(slotNames(dbeObject(species = '1')), function(x) class(slot(dbeObject(species = '1'), x)))== 'data.frame'))
-   lst <- names(which(sapply(slotNames(dbeObject(species = '1')), function(x) class(slot(dbeObject(species = '1'), x)))== 'list'))
-   lst.df <- sapply(lst, function(x) lapply(slot(dbeObject(species = '1'),x), class))
-
-
-   dbeOut <- dbeSim2dbe(dbeOutputSim)
-   res    <- dbeSimNULL(dbeOutputSim)
-
+   
+   res1    <- dbeSimNULL(dbeOutputSim)
+   res     <- dbeOutputSim
+   
+   res@ageStruc$estim <- res1@ageStruc$estim
+   res@ageStruc$rep   <- res1@ageStruc$rep
+   res@ageVar         <- res1@ageVar
+   
+  remove('res1')  
+   
     for(i in 1:nsamples){
+        dbeOut  <- dbeSim2dbe(dbeOutputSim, samples = i)
         xx <- RaiseAge(dbeOutput = dbeOut, csObject = simObj@samples[[i]]@cs,
-                        type = type,  sex = sex,...)
+                        type = type,  sex = sex, ...)
 
-        for(s in df){
-            d  <- dim(slot(xx,s))[1]
-            slot(res,s) <- rbind(slot(res,s), cbind(sample = rep(i,d),slot(xx,s)))
-        }
-        for(s in lst){
-            for(sl in names(lst.df[[s]])){
-                d  <- ifelse(is.null(dim(slot(xx,s)[[sl]])[1]), 1, dim(slot(xx,s)[[sl]])[1])
-                slot(res,s)[[sl]] <- rbind(slot(res,s)[[sl]], cbind(sample = rep(i,d),slot(xx,s)[[sl]]))
-            }
-        }
+        d  <- ifelse(is.null(dim(slot(xx,'ageStruc')[['estim']])[1]), 1, dim(slot(xx,'ageStruc')[['estim']])[1])
+        slot(res,'ageStruc')[['estim']] <- rbind(slot(res,'ageStruc')[['estim']], cbind(sample = rep(i,d),slot(xx,'ageStruc')[['estim']]))
+        slot(res,'ageVar') <- rbind(slot(res,'ageVar'), cbind(sample = rep(i,d),slot(xx,'ageVar')))
+    
+    
     }
+
     return(res)
 })
 
@@ -72,33 +70,27 @@ setMethod("RaiseAgeBootSim", signature(dbeOutputSim="dbeOutputSim",simObj="simDa
                                                                                        sex=as.character(NA),
                                                                                        bootMethod = "samples",
                                                                                        ...){
-                                                                                                           
 
-    nsamples <- length(simObj@samples)
+   nsamples <- length(simObj@samples)
    
-   bs  <- names(which(!(sapply(slotNames(dbeObject(species = '1')), function(x) class(slot(dbeObject(species = '1'), x))) %in% c('list', 'data.frame'))))
-   df  <- names(which(sapply(slotNames(dbeObject(species = '1')), function(x) class(slot(dbeObject(species = '1'), x)))== 'data.frame'))
-   lst <- names(which(sapply(slotNames(dbeObject(species = '1')), function(x) class(slot(dbeObject(species = '1'), x)))== 'list'))
-   lst.df <- sapply(lst, function(x) lapply(slot(dbeObject(species = '1'),x), class))
-
-
-   dbeOut <- dbeSim2dbe(dbeOutputSim)
-   res    <- dbeSimNULL(dbeOutputSim)
-
+   dbeOut  <- dbeSim2dbe(dbeOutputSim)
+   res1    <- dbeSimNULL(dbeOutputSim)
+   res     <- dbeOutputSim
+   
+   res@ageStruc$estim <- res1@ageStruc$estim
+   res@ageStruc$rep <- res1@ageStruc$rep
+   res@ageVar         <- res1@ageVar
+   
+    remove('res1')
     for(i in 1:nsamples){
         xx <- RaiseAgeBoot(dbeOutput = dbeOut, csObject = simObj@samples[[i]]@cs, type = 'fixed', 
                         sex=sex, bootMethod=bootMethod,...)
 
-        for(s in df){
-            d  <- dim(slot(xx,s))[1]
-            slot(res,s) <- rbind(slot(res,s), cbind(sample = rep(i,d),slot(xx,s)))
-        }
-        for(s in lst){
-            for(sl in names(lst.df[[s]])){
-                d  <- ifelse(is.null(dim(slot(xx,s)[[sl]])[1]), 1, dim(slot(xx,s)[[sl]])[1])
-                slot(res,s)[[sl]] <- rbind(slot(res,s)[[sl]], cbind(sample = rep(i,d),slot(xx,s)[[sl]]))
-            }
-        }
+        d  <- ifelse(is.null(dim(slot(xx,'ageStruc')[['estim']])[1]), 1, dim(slot(xx,'ageStruc')[['estim']])[1])
+        slot(res,'ageStruc')[['estim']] <- rbind(slot(res,'ageStruc')[['estim']], cbind(sample = rep(i,d),slot(xx,'ageStruc')[['estim']]))
+        slot(res,'ageStruc')[['rep']] <- rbind(slot(res,'ageStruc')[['rep']], cbind(sample = rep(i,d),slot(xx,'ageStruc')[['rep']]))
+        slot(res,'ageVar') <- rbind(slot(res,'ageVar'), cbind(sample = rep(i,d),slot(xx,'ageVar')))
+    
     }
 return(res)
 

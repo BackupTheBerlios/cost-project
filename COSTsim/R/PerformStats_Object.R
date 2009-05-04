@@ -19,11 +19,21 @@ setClass("PerformStats",
 	ageAcc = "list",                         # a list with Accuracy statistics at age.
 	ageBias = "list",                        # a list with Bias statistics at age.
 	agePrec = "list",                        # a list with Precision statistics at age.
-    lengthTrue = "data.frame",               # True age structure (param-at-length)
-    lengthEst = "data.frame",                # mean estimates of the length structure (param-at-length)
-	lengthAcc = "list",                      # a list with Accuracy statistics at length.
-	lengthBias = "list",                     # a list with Bias statistics at length.
-	lengthPrec = "list"                     # a list with Precision statistics at length.
+    lenTrue = "data.frame",               # True age structure (param-at-length)
+    lenEst = "data.frame",                # mean estimates of the length structure (param-at-length)
+	lenAcc = "list",                      # a list with Accuracy statistics at length.
+	lenBias = "list",                     # a list with Bias statistics at length.
+	lenPrec = "list",                     # a list with Precision statistics at length.
+    totalNTrue = "data.frame",               # True age structure (param-at-length)
+    totalNEst = "data.frame",                # mean estimates of the length structure (param-at-length)
+	totalNAcc = "list",                      # a list with Accuracy statistics at length.
+	totalNBias = "list",                     # a list with Bias statistics at length.
+	totalNPrec = "list",                     # a list with Precision statistics at length.
+	totalWTrue = "data.frame",               # True age structure (param-at-length)
+    totalWEst = "data.frame",                # mean estimates of the length structure (param-at-length)
+	totalWAcc = "list",                      # a list with Accuracy statistics at length.
+	totalWBias = "list",                     # a list with Bias statistics at length.
+	totalWPrec = "list"                     # a list with Precision statistics at length.
 	),
 	prototype(
         desc        = "PerformStats Object",
@@ -36,16 +46,134 @@ setClass("PerformStats",
         ageTrue     = data.frame(time     = as.character(NA),
                                 space     = as.character(NA),
                                 technical = as.character(NA),
+                                age       = as.character(NA),
                                 value     = as.numeric(NA)),
         ageEst      = data.frame(time     = as.character(NA),
                                 space     = as.character(NA),
                                 technical = as.character(NA),
+                                age       = as.character(NA),
                                 value     = as.numeric(NA)),
         ageAcc    = list(mse  = data.frame(time      = as.character(NA),
                                            space     = as.character(NA),
                                            technical = as.character(NA),
+                                           age       = as.character(NA),
                                            value     = as.numeric(NA)),
-                         rmse = data.frame(time      = as.character(NA),
+                         mae = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           age       = as.character(NA),
+                                           value     = as.numeric(NA)),
+                         smse = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           age       = as.character(NA),
+                                           value     = as.numeric(NA)),
+                         smae = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           age       = as.character(NA),
+                                           value     = as.numeric(NA))),
+        ageBias   = list(me  = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           age       = as.character(NA),
+                                           value     = as.numeric(NA)),
+                         sme = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           age       = as.character(NA),
+                                           value     = as.numeric(NA)),
+                         par = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           age       = as.character(NA),
+                                           value     = as.numeric(NA)),
+                         poe = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           age       = as.character(NA),
+                                           value     = as.numeric(NA))),
+        agePrec   = list(var  = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           age       = as.character(NA),
+                                           value     = as.numeric(NA)),
+                         cv = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           age       = as.character(NA),
+                                           value     = as.numeric(NA))),
+# LENGTH -----------------------------------------------------------------------
+        lenTrue     = data.frame(time     = as.character(NA),
+                                space     = as.character(NA),
+                                technical = as.character(NA),
+                                length       = as.character(NA),
+                                value     = as.numeric(NA)),
+        lenEst      = data.frame(time     = as.character(NA),
+                                space     = as.character(NA),
+                                technical = as.character(NA),
+                                length       = as.character(NA),
+                                value     = as.numeric(NA)),
+        lenAcc    = list(mse  = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           length       = as.character(NA),
+                                           value     = as.numeric(NA)),
+                        mae = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           length       = as.character(NA),
+                                           value     = as.numeric(NA)),
+                         smse = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           length       = as.character(NA),
+                                           value     = as.numeric(NA)),
+                         smae = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           length       = as.character(NA),
+                                           value     = as.numeric(NA))),
+        lenBias   = list(me  = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           length       = as.character(NA),
+                                           value     = as.numeric(NA)),
+                         sme = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           length       = as.character(NA),
+                                           value     = as.numeric(NA)),
+                         par = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           length       = as.character(NA),
+                                           value     = as.numeric(NA)),
+                         poe = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           length       = as.character(NA),
+                                           value     = as.numeric(NA))),
+        lenPrec   = list(var  = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           length       = as.character(NA),
+                                           value     = as.numeric(NA)),
+                         cv = data.frame(time      = as.character(NA),
+                                           space     = as.character(NA),
+                                           technical = as.character(NA),
+                                           length       = as.character(NA),
+                                           value     = as.numeric(NA))),
+# total N -----------------------------------------------------------------------
+        totalNTrue     = data.frame(time     = as.character(NA),
+                                space     = as.character(NA),
+                                technical = as.character(NA),
+                                value     = as.numeric(NA)),
+        totalNEst      = data.frame(time     = as.character(NA),
+                                space     = as.character(NA),
+                                technical = as.character(NA),
+                                value     = as.numeric(NA)),
+        totalNAcc    = list(mse  = data.frame(time      = as.character(NA),
                                            space     = as.character(NA),
                                            technical = as.character(NA),
                                            value     = as.numeric(NA)),
@@ -57,15 +185,11 @@ setClass("PerformStats",
                                            space     = as.character(NA),
                                            technical = as.character(NA),
                                            value     = as.numeric(NA)),
-                         srmse = data.frame(time      = as.character(NA),
-                                           space     = as.character(NA),
-                                           technical = as.character(NA),
-                                           value     = as.numeric(NA)),
                          smae = data.frame(time      = as.character(NA),
                                            space     = as.character(NA),
                                            technical = as.character(NA),
                                            value     = as.numeric(NA))),
-        ageBias   = list(me  = data.frame(time      = as.character(NA),
+        totalNBias   = list(me  = data.frame(time      = as.character(NA),
                                            space     = as.character(NA),
                                            technical = as.character(NA),
                                            value     = as.numeric(NA)),
@@ -81,7 +205,7 @@ setClass("PerformStats",
                                            space     = as.character(NA),
                                            technical = as.character(NA),
                                            value     = as.numeric(NA))),
-        agePrec   = list(var  = data.frame(time      = as.character(NA),
+        totalNPrec   = list(var  = data.frame(time      = as.character(NA),
                                            space     = as.character(NA),
                                            technical = as.character(NA),
                                            value     = as.numeric(NA)),
@@ -89,20 +213,16 @@ setClass("PerformStats",
                                            space     = as.character(NA),
                                            technical = as.character(NA),
                                            value     = as.numeric(NA))),
-# LENGTH -----------------------------------------------------------------------
-        lengthTrue     = data.frame(time     = as.character(NA),
+# total W -----------------------------------------------------------------------
+        totalWTrue     = data.frame(time     = as.character(NA),
                                 space     = as.character(NA),
                                 technical = as.character(NA),
                                 value     = as.numeric(NA)),
-        lengthEst      = data.frame(time     = as.character(NA),
+        totalWEst      = data.frame(time     = as.character(NA),
                                 space     = as.character(NA),
                                 technical = as.character(NA),
                                 value     = as.numeric(NA)),
-        lengthAcc    = list(mse  = data.frame(time      = as.character(NA),
-                                           space     = as.character(NA),
-                                           technical = as.character(NA),
-                                           value     = as.numeric(NA)),
-                         rmse = data.frame(time      = as.character(NA),
+        totalWAcc    = list(mse  = data.frame(time      = as.character(NA),
                                            space     = as.character(NA),
                                            technical = as.character(NA),
                                            value     = as.numeric(NA)),
@@ -114,15 +234,11 @@ setClass("PerformStats",
                                            space     = as.character(NA),
                                            technical = as.character(NA),
                                            value     = as.numeric(NA)),
-                         srmse = data.frame(time      = as.character(NA),
-                                           space     = as.character(NA),
-                                           technical = as.character(NA),
-                                           value     = as.numeric(NA)),
                          smae = data.frame(time      = as.character(NA),
                                            space     = as.character(NA),
                                            technical = as.character(NA),
                                            value     = as.numeric(NA))),
-        lengthBias   = list(me  = data.frame(time      = as.character(NA),
+        totalWBias   = list(me  = data.frame(time      = as.character(NA),
                                            space     = as.character(NA),
                                            technical = as.character(NA),
                                            value     = as.numeric(NA)),
@@ -138,7 +254,7 @@ setClass("PerformStats",
                                            space     = as.character(NA),
                                            technical = as.character(NA),
                                            value     = as.numeric(NA))),
-        lengthPrec   = list(var  = data.frame(time      = as.character(NA),
+        totalWPrec   = list(var  = data.frame(time      = as.character(NA),
                                            space     = as.character(NA),
                                            technical = as.character(NA),
                                            value     = as.numeric(NA)),
@@ -146,6 +262,7 @@ setClass("PerformStats",
                                            space     = as.character(NA),
                                            technical = as.character(NA),
                                            value     = as.numeric(NA)))
+                                           
     )
 )
 
@@ -165,7 +282,35 @@ setMethod("PerformStats", signature(estSimObj = "missing", trueDataObj ="missing
 
 
 
-#setMethod("PerformStats", signature(estSimObj = "dbeOutputSim", simData ="trueData"), function(estSimObj, trueDataObj,
-#                                                                                                             desc,...){
+setMethod("PerformStats", signature(estSimObj = "dbeOutputSim", trueDataObj ="trueData"), function(estSimObj, trueDataObj,
+                                                                                                            desc, nSamples, ...){
+                                                                                                            
+    if(!identical(estSimObj@strataDesc, trueDataObj@strataDesc)) 
+        stop('The stratification in dbeOutputSim and trueData objects  must be the same!')
+    
+     desc <- ifelse(missing(desc), estSimObj@desc, desc)
+    
+     res <- new('PerformStats', desc = desc, species = trueDataObj@species, strataDesc = trueDataObj@strataDesc,
+                catchCat = estSimObj@catchCat, methodDesc = estSimObj@methodDesc, nSamples = nSamples)
+        
+     if(estSimObj@catchCat == 'LAN'){  # laa and lal
+        res@ageTrue    <- trueDataObj@laa
+        res@lenTrue <- trueDataObj@lal
+        res@ageEst     <- aggregate(list(value = estSimObj@ageStruc$estim$value),
+                                    list(time =  estSimObj@ageStruc$estim$time, space = estSimObj@ageStruc$estim$space,
+                                         technical = estSimObj@ageStruc$estim$technical, age = estSimObj@ageStruc$estim$age),
+                                    mean)
+        res@lenEst     <- aggregate(list(value = estSimObj@lenStruc$estim$value),
+                                    list(time =  estSimObj@lenStruc$estim$time, space = estSimObj@lenStruc$estim$space,
+                                         technical = estSimObj@lenStruc$estim$technical, len = estSimObj@lenStruc$estim$age),
+                                    mean)
+        
+     }
+    else{
+        ageTrue    <- trueDataObj@laa
+        lenTrue <- trueDataObj@lal
+    }
+  return(res)
+  })
 
 
