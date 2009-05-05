@@ -37,6 +37,10 @@ if (!all(is.na(ccat))) {
   csObject@sl <- csObject@sl[extCatchCat(csObject@sl$sort)%in%ccat,]
   csObject@hl <- csObject@hl[extCatchCat(csObject@hl$sort)%in%ccat,]
 }
+#as sort is a factor,...                                                        #
+csObject@sl$sort <- as.character(csObject@sl$sort)                              # 05/05/2009 MM
+csObject@hl$sort <- as.character(csObject@hl$sort)                              #
+
 
 #number of length samples (length sample= PSUid/SSUid/TSUid in HL if strategy="cc", and PSUid/SSUid in HL if strategy="metier") is calculated at this stage (before subsetting on 'sp' and 'sex')
 cc <- is.na(dbeOutput@strataDesc@techStrata)==FALSE & dbeOutput@strataDesc@techStrata=="commCat"                                                                    #

@@ -58,6 +58,14 @@ if (missing(taxon)) taxon <- sp
 if (missing(spp)) spp <- sp  
 
 eval(parse('',text=paste("csObject <- subsetSpp(csObject,spp%in%",deparse(spp),")",sep=""))) 
+ccat <- dbeOutput@catchCat                                                      #
+if (!all(is.na(ccat))) {                                                        #    
+  csObject@sl <- csObject@sl[extCatchCat(csObject@sl$sort)%in%ccat,]            #
+  csObject@hl <- csObject@hl[extCatchCat(csObject@hl$sort)%in%ccat,]            #
+}                                                                               #
+#as sort is a factor,...                                                        #
+csObject@sl$sort <- as.character(csObject@sl$sort)                              # 05/05/2009 MM
+csObject@hl$sort <- as.character(csObject@hl$sort)                              #
 
 #number of length samples (length sample= PSUid/SSUid/TSUid in HL if strategy="cc", and PSUid/SSUid in HL if strategy="metier") is calculated at this stage (before subsetting on 'sp' and 'sex')
 cc <- is.na(dbeOutput@strataDesc@techStrata)==FALSE & dbeOutput@strataDesc@techStrata=="commCat"                                                                    #
@@ -115,7 +123,7 @@ if (nrow(SL)==0) stop("the specified parameters resulted in an empty table!!")
 # store original factor levels to use with bootstrap samples
 levLenCls <- levels(factor(HL$lenCls))
 levSTR <- levels(factor(SL$STR))
-levSort <- levels(SL$sort)
+levSort <- levels(factor(SL$sort))
 levPSUid <- levels(factor(SL$PSUid))
 levSSUid <- levels(factor(SL$SSUid))
 levTSUid <- levels(SL$TSUid)#levels(factor(SL$TSUid))                            #MM 24/04/2009
