@@ -266,6 +266,7 @@ setClass("PerformStats",
     )
 )
 
+# Generic
 setGeneric("PerformStats", function(estSimObj,
                                     trueDataObj,
                                  ...){
@@ -273,44 +274,33 @@ setGeneric("PerformStats", function(estSimObj,
 )
 
 
+# 'missing' - 'missing'
 setMethod("PerformStats", signature(estSimObj = "missing", trueDataObj ="missing"), function(estSimObj, trueDataObj,
                                                                                                              desc,...){
-    res <- new('PerformStats')
+    res <- new('PerformStats', desc = desc)
     return(res)
 })
 
 
-
-
+# dbeOutputSim - trueData
 setMethod("PerformStats", signature(estSimObj = "dbeOutputSim", trueDataObj ="trueData"), function(estSimObj, trueDataObj,
-                                                                                                            desc, nSamples, ...){
+                                                                                                            desc, ...){
                                                                                                             
     if(!identical(estSimObj@strataDesc, trueDataObj@strataDesc)) 
         stop('The stratification in dbeOutputSim and trueData objects  must be the same!')
     
-     desc <- ifelse(missing(desc), estSimObj@desc, desc)
-    
-     res <- new('PerformStats', desc = desc, species = trueDataObj@species, strataDesc = trueDataObj@strataDesc,
-                catchCat = estSimObj@catchCat, methodDesc = estSimObj@methodDesc, nSamples = nSamples)
-        
-     if(estSimObj@catchCat == 'LAN'){  # laa and lal
-        res@ageTrue    <- trueDataObj@laa
-        res@lenTrue <- trueDataObj@lal
-        res@ageEst     <- aggregate(list(value = estSimObj@ageStruc$estim$value),
-                                    list(time =  estSimObj@ageStruc$estim$time, space = estSimObj@ageStruc$estim$space,
-                                         technical = estSimObj@ageStruc$estim$technical, age = estSimObj@ageStruc$estim$age),
-                                    mean)
-        res@lenEst     <- aggregate(list(value = estSimObj@lenStruc$estim$value),
-                                    list(time =  estSimObj@lenStruc$estim$time, space = estSimObj@lenStruc$estim$space,
-                                         technical = estSimObj@lenStruc$estim$technical, len = estSimObj@lenStruc$estim$age),
-                                    mean)
-        
-     }
-    else{
-        ageTrue    <- trueDataObj@laa
-        lenTrue <- trueDataObj@lal
+    desc <- ifelse(missing(desc), estSimObj@desc, desc)
+ 
+    if(estSimObj@catchCat == 'LAN'){
+        nSamples <- length(unique(estSimObj@lenStruc[['estim']]$sample))
+        res      <- PS.lan(estSimObj, trueDataObj, desc = desc, nSamples = nSamples)
     }
-  return(res)
-  })
+    else{
+        print('Function not available yet')
+        res <- NULL
+    }
+    return(res)
+  }
+)
 
 

@@ -10,7 +10,7 @@ setGeneric("totVolumeSim", function(dbeOutputSim, simObj, ...){
 
 
 setMethod("totVolumeSim", signature(dbeOutput="dbeOutputSim",simObj = "simDataCons"),
-    function(dbeOutputSim, simObj, type="trip", val="weight", sampPar = TRUE, rtl = FALSE, ...){
+    function(dbeOutputSim, simObj, type="trip", val="weight", sampPar = TRUE, ...){
     
    nsamples <- length(simObj@samples)
 
@@ -23,7 +23,7 @@ setMethod("totVolumeSim", signature(dbeOutput="dbeOutputSim",simObj = "simDataCo
    dbeOut <- dbeSim2dbe(dbeOutputSim)
    res    <- dbeSimNULL(dbeOutputSim)
 
-   if(rtl == TRUE){
+   if(type == 'landings'){
         for(i in 1:nsamples){
             xx <- totVolume(dbeOutput = dbeOut, csObject = simObj@samples[[i]]@cs,
                                                 ceObject = simObj@samples[[i]]@ce,
@@ -43,7 +43,7 @@ setMethod("totVolumeSim", signature(dbeOutput="dbeOutputSim",simObj = "simDataCo
         }
     }
     
-    else{ # rtl = FALSE
+    else{ # type != landings
         for(i in 1:nsamples){
             xx <- totVolume(dbeOutput = dbeOut, csObject = simObj@samples[[i]]@cs,
                                                 ceObject = simObj@samples[[i]]@ce,

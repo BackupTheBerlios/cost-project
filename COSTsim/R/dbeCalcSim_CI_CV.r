@@ -16,8 +16,6 @@ setGeneric("dbeCalcSim", function(object,              # 'dbeOutput' object
 standardGeneric("dbeCalcSim")
 })
 
-
-
  
 setMethod("dbeCalcSim",signature(object="dbeOutputSim"),function(object,              #'dbeOutput' object 
                                                            type="CI",           # "CI" for confidence interval, or "CV" for coefficient of variation
@@ -78,84 +76,6 @@ setMethod("dbeCalcSim",signature(object="dbeOutputSim"),function(object,        
 
 
 
- 
-#####################################################################################
-#####################################################################################
-#####################################################################################
-#####################################################################################
-
-## 'stratAgreg' method for aggegating 'dbeOutput' tables (estim & var) : other output tables are empty
-## WARNING : summing the variances requires strong probability assumptions
- 
-
-setGeneric("stratAggreg", function(object,                  # 'dbeOutput' object
-                                  timeStrata=TRUE,         # if TRUE, aggregation is made over time strata
-                                  spaceStrata=TRUE,        # if TRUE, aggregation is made over space strata
-                                  techStrata=FALSE,        # if TRUE, aggregation is made over technical strata
-                                  ...){
-standardGeneric("stratAggreg")
-})
-setMethod("stratAggreg", signature(object="dbeOutputSim"),function(object,                  # 'dbeOutput' object
-                                                               timeStrata=TRUE,         # if TRUE, aggregation is made over time strata
-                                                               spaceStrata=TRUE,        # if TRUE, aggregation is made over space strata
-                                                               techStrata=FALSE,        # if TRUE, aggregation is made over technical strata
-                                                               ...){
-
-    #'strataDesc' field is updated according to input parameters                                              #
-    if (timeStrata) {object@strataDesc@timeStrata <- NA ; object@strataDesc@tpRec <- list(NA)}                # ADDED MM : 22/04/2009 
-    if (spaceStrata) {object@strataDesc@spaceStrata <- NA ; object@strataDesc@spRec <- list(NA)}              #
-    if (techStrata) {object@strataDesc@techStrata <- NA ; object@strataDesc@tcRec <- list(NA)}                #
-
-    #subfunction applied to each table
-    agg <- function(tab,nSampAge=FALSE) {
-
-        if (all(is.na(tab))) {
-            return(tab)
-        } else {
-            if (timeStrata) tab$time <- "all"
-            if (spaceStrata) tab$space <- "all"
-            if (!nSampAge & techStrata) tab$technical <- "all"
-                newTab <- aggregate(tab$value,as.list(tab[,(ncol(tab)-1):1]),sum,na.rm=TRUE)
-                    names(newTab)[ncol(newTab)] <- "value"
-        return(newTab[,names(tab)])}}
-        
-
-    object@nSamp$len <- agg(object@nSamp$len)
-object@nSamp$age <- agg(object@nSamp$age,nSampAge=TRUE)
-object@nMeas$len <- agg(object@nMeas$len)
-object@nMeas$age <- agg(object@nMeas$age,nSampAge=TRUE)
-
-object@lenStruc$estim <- agg(object@lenStruc$estim)
-object@lenStruc$rep <- new("dbeOutput")@lenStruc$rep
-object@lenVar <- agg(object@lenVar)
-object@lenNum$ci <- new("dbeOutput")@lenNum$ci
-object@lenNum$cv <- new("dbeOutput")@lenNum$cv
-object@lenNum$DCRcvIndicator <- new("dbeOutput")@lenNum$DCRcvIndicator
-
-object@ageStruc$estim <- agg(object@ageStruc$estim)
-object@ageStruc$rep <- new("dbeOutput")@ageStruc$rep
-object@ageVar <- agg(object@ageVar)
-object@ageNum$ci <- new("dbeOutput")@ageNum$ci
-object@ageNum$cv <- new("dbeOutput")@ageNum$cv
-object@ageNum$DCRcvIndicator <- new("dbeOutput")@ageNum$DCRcvIndicator
-
-object@totalN$estim <- agg(object@totalN$estim)
-object@totalN$rep <- new("dbeOutput")@totalN$rep
-object@totalNvar <- agg(object@totalNvar)
-object@totalNnum$ci <- new("dbeOutput")@totalNnum$ci
-object@totalNnum$cv <- new("dbeOutput")@totalNnum$cv
-object@totalNnum$DCRcvIndicator <- new("dbeOutput")@totalNnum$DCRcvIndicator
-
-object@totalW$estim <- agg(object@totalW$estim)
-object@totalW$rep <- new("dbeOutput")@totalW$rep
-object@totalWvar <- agg(object@totalWvar)
-object@totalWnum$ci <- new("dbeOutput")@totalWnum$ci
-object@totalWnum$cv <- new("dbeOutput")@totalWnum$cv
-object@totalWnum$DCRcvIndicator <- new("dbeOutput")@totalWnum$DCRcvIndicator
-
-return(object)
-
-})
 
 
                                                                    

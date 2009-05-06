@@ -9,9 +9,44 @@ importClassesFrom("COSTdbe")
 importFrom("COSTdbe")
 
 export(
-  "cost.simloop",
+"cost.simloop",
 "setup",
 "make.tau",
-"getmode"
+"getmode",
+"dbeObjectSim",
+"fillGaps"
 	
+)
+
+
+exportClasses(
+	"costData", 
+	"costDataVal", 
+	"costDataCons",
+	"simData",  
+	"simDataVal",  
+	"simDataCons",
+	"dbeOutputSim",
+	"trueData",
+	"PerformStats"
+)
+
+
+exportMethods(
+	"costData", 
+	"costDataVal", 
+	"costDataCons",
+	"simData",  
+	"simDataVal",  
+	"simDataCons",
+	"trueData",
+	"PerformStats",
+	"dbeCalcSim",
+	"RaiseLgthSim",
+	"RaiseLgthBootSim",
+	"RaiseAgeSim",
+	"RaiseAgeBootSim",
+	"totVolumeSim",
+	"alkLgthRecSim",
+	"simSamples"
 )

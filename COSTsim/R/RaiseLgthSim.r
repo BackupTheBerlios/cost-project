@@ -23,22 +23,27 @@ setMethod("RaiseLgthSim", signature(dbeOutputSim = "dbeOutputSim", simData ="sim
                                                                                                               sex=as.character(NA),...){
    nsamples <- length(simData@samples)
    
-   dbeOut  <- dbeSim2dbe(dbeOutputSim)
    res1    <- dbeSimNULL(dbeOutputSim)
    res     <- dbeOutputSim
    
-   res@lenStruc$estim <- res1@lenStruc$estim
-   res@lenStruc$rep   <- res1@lenStruc$rep
-   res@lenVar         <- res1@lenVar
-   
+   res@lenStruc[['estim']]     <- res1@lenStruc$estim
+   res@lenStruc[['rep']]       <- res1@lenStruc$rep
+   res@lenVar                  <- res1@lenVar
+   res@nSamp[['len']]          <- res1@nSamp[['len']]
+   res@nMeas[['len']]          <- res1@nMeas[['len']]
    
     remove('res1')
     for(i in 1:nsamples){
+        dbeOut  <- dbeSim2dbe(dbeOutputSim, samples = i)
         xx <- RaiseLgth(dbeOutput = dbeOut, csObject = simData@samples[[i]]@cs, clObject = simData@samples[[i]]@cl,
                         spp = spp, taxon = taxon, sex = sex,...)
+        
+        slot(res,'nSamp')[['len']] <- rbind(slot(res,'nSamp')[['len']], cbind(sample = rep(i,dim(slot(xx,'nSamp')[['len']])[1]),slot(xx,'nSamp')[['len']]))
+        slot(res,'nMeas')[['len']] <- rbind(slot(res,'nMeas')[['len']], cbind(sample = rep(i,dim(slot(xx,'nMeas')[['len']])[1]),slot(xx,'nMeas')[['len']]))
+
         d  <- ifelse(is.null(dim(slot(xx,'lenStruc')[['estim']])[1]), 1, dim(slot(xx,'lenStruc')[['estim']])[1])
         slot(res,'lenStruc')[['estim']] <- rbind(slot(res,'lenStruc')[['estim']], cbind(sample = rep(i,d),slot(xx,'lenStruc')[['estim']]))
-        slot(res,'lenVar') <- rbind(slot(res,'lenVar'), cbind(sample = rep(i,d),slot(xx,'lenVar')))
+        slot(res,'lenVar')              <- rbind(slot(res,'lenVar'), cbind(sample = rep(i,d),slot(xx,'lenVar')))
 
     }
         
@@ -66,24 +71,28 @@ setMethod("RaiseLgthBootSim", signature(dbeOutputSim="dbeOutputSim",simData="sim
                                                                                                               ...){                                                                                                      
    nsamples <- length(simData@samples)
    
-   dbeOut  <- dbeSim2dbe(dbeOutputSim)
    res1    <- dbeSimNULL(dbeOutputSim)
    res     <- dbeOutputSim
    
    res@lenStruc$estim <- res1@lenStruc$estim
    res@lenStruc$rep   <- res1@lenStruc$rep
    res@lenVar         <- res1@lenVar
+   res@nSamp[['len']]          <- res1@nSamp[['len']]
+   res@nMeas[['len']]          <- res1@nMeas[['len']]
 
   remove('res1')
     for(i in 1:nsamples){
-    dbeOut  <- dbeSim2dbe(dbeOutputSim, samples = i)
+        dbeOut  <- dbeSim2dbe(dbeOutputSim, samples = i)
         xx <- RaiseLgthBoot(dbeOutput = dbeOut, csObject = simData@samples[[i]]@cs, clObject = simData@samples[[i]]@cl,
                         spp = spp, taxon = taxon, sex = sex, B = B,...)
+        
+        slot(res,'nSamp')[['len']] <- rbind(slot(res,'nSamp')[['len']], cbind(sample = rep(i,dim(slot(xx,'nSamp')[['len']])[1]),slot(xx,'nSamp')[['len']]))
+        slot(res,'nMeas')[['len']] <- rbind(slot(res,'nMeas')[['len']], cbind(sample = rep(i,dim(slot(xx,'nMeas')[['len']])[1]),slot(xx,'nMeas')[['len']]))
 
         d  <- ifelse(is.null(dim(slot(xx,'lenStruc')[['estim']])[1]), 1, dim(slot(xx,'lenStruc')[['estim']])[1])
-        slot(res,'lenStruc')[['estim']] <- rbind(slot(res,'lenStruc')[['estim']], cbind(sample = rep(i,d),slot(xx,'lenStruc')[['estim']]))
-        slot(res,'lenStruc')[['rep']] <- rbind(slot(res,'lenStruc')[['rep']], cbind(sample = rep(i,d),slot(xx,'lenStruc')[['rep']]))
-        slot(res,'lenVar') <- rbind(slot(res,'lenVar'), cbind(sample = rep(i,d),slot(xx,'lenVar')))
+        slot(res,'lenStruc')[['estim']] <- rbind(slot(res,'lenStruc')[['estim']], cbind(sample = rep(i,d),  slot(xx,'lenStruc')[['estim']]))
+        slot(res,'lenStruc')[['rep']]   <- rbind(slot(res,'lenStruc')[['rep']],   cbind(sample = rep(i,dim(slot(xx,'lenStruc')[['rep']])[1]),slot(xx,'lenStruc')[['rep']]))
+        slot(res,'lenVar')              <- rbind(slot(res,'lenVar'), cbind(sample = rep(i,d),slot(xx,'lenVar')))
     
     }
 return(res)
