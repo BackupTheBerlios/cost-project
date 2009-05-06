@@ -296,8 +296,9 @@ setMethod("PerformStats", signature(estSimObj = "dbeOutputSim", trueDataObj ="tr
         res      <- PS.lan(estSimObj, trueDataObj, desc = desc, nSamples = nSamples)
     }
     else{
-        print('Function not available yet')
-        res <- NULL
+        nSamples <- length(unique(estSimObj@lenStruc[['estim']]$sample))
+        res      <- PS.dis(estSimObj, trueDataObj, desc = desc, nSamples = nSamples)
+
     }
     return(res)
   }
