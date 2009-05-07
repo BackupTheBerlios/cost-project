@@ -1,6 +1,7 @@
 \name{RaiseLgth}
 \alias{RaiseLgth}
 \alias{RaiseLgth,dbeOutput,csDataCons,clDataCons-method}
+\alias{RaiseLgth,dbeOutput,csDataCons,missing-method}
 \docType{methods}
 \title{Estimation of total numbers-at-length from market sampling}
 \description{
@@ -14,7 +15,7 @@ RaiseLgth(dbeOutput,csObject,clObject,spp,taxon,sex=as.character(NA),\dots)
 \arguments{
   \item{dbeOutput}{A \emph{dbeOutput} object.}
   \item{csObject}{A \emph{csDataCons} object matching 'dbeOutput' specifications.}
-  \item{clObject}{A \emph{clDataCons} object matching 'dbeOutput' specifications.}
+  \item{clObject}{A \emph{clDataCons} object matching 'dbeOutput' specifications. If not specified, data is only raised to trips.}
   \item{spp}{Species, if missing this is set to dbeOutput@species}
   \item{taxon}{Taxon, if missing this is set to dbeOutput@species}
   \item{sex}{Sex}
