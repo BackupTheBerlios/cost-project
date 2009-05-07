@@ -1,6 +1,6 @@
 Package: COSTsim
 Title: Simulation package for COST.
-Version: 1.0
+Version: 0.9
 Date: 2009
 Author: COST Team and various contributors.
 Description: This package contains functions for simulating real trip/haul population and 
