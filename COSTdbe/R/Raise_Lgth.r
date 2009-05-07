@@ -73,10 +73,12 @@ if (indNewWt) {
 #subsetting "csObject"                                                                                    #                                                                                                          #
 eval(parse('',text=paste("csObject <- subsetSpp(csObject,spp%in%",deparse(sp),")",sep="")))               #
 if (!is.na(sex)) eval(parse('',text=paste("csObject <- subsetSpp(csObject,sex%in%",deparse(sex),")",sep="")))  #to keep all 'tr' and 'hh' information, we use "subsetSpp" method                                                              #
+
 #subsetting "clObject"                                                                                    #
-x <- clObject ; cl <- cl(x)                                                                               #
-clObject <- new("clDataCons", desc=x@desc, cl=cl[cl$taxon%in%taxon,])                                     #
-   
+if (!missing(clObject)){
+  x <- clObject ; cl <- cl(x)                                                                               #
+  clObject <- new("clDataCons", desc=x@desc, cl=cl[cl$taxon%in%taxon,])                                     #
+}   
 
 #number of fish measured in HL (for species specified in dbeOutput object)                                                                                          # ADDED : MM 02/04/2009                                           #
 nMEAS <- spdAgreg(list(value=csObject@hl$lenNum),BY=list(time=csObject@hl$time,space=csObject@hl$space,technical=csObject@hl$technical),sum,na.rm=TRUE)             #
@@ -95,12 +97,6 @@ SL$STR <- apply(SL[,c("time","space","technical")],1,function(x) paste(x,collaps
 HL$STR <- apply(HL[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
 
 if (nrow(SL)==0) stop("the specified parameters resulted in an empty table!!")
-
-#total landed weights per strata
-clObject@cl$landMult[is.na(clObject@cl$landMult)] <- 1
-#TotLand = OffLand*Multi + UnallocCat + MisallocCat
-totLand <- mapply(function(w,x,y,z) sum(c(w*x,y,z),na.rm=TRUE),clObject@cl$landWt,clObject@cl$landMult,clObject@cl$unallocCatchWt,clObject@cl$misRepCatchWt)
-totLandings <- spdAgreg(list(W=totLand),BY=list(time=clObject@cl$time,space=clObject@cl$space,technical=clObject@cl$technical),sum,na.rm=TRUE)
 
 #weight of the level
 wl <- tapply(SL$wt,list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)   #reference for factor levels
@@ -148,7 +144,17 @@ sum.d_jpsu <- RowSum(d_jpsu,c(1,3))
 sum.w_psu <- rowSums(w_psu,na.rm=TRUE)
 sum.wl_psu <- rowSums(wl_psu,na.rm=TRUE)
 
-W <- tapply(totLandings$W*1000,list(factor(apply(totLandings[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:")),levels=dimnames(d_j)[[1]])),sum,na.rm=TRUE)
+if (!missing(clObject)) {
+  #total landed weights per strata
+  clObject@cl$landMult[is.na(clObject@cl$landMult)] <- 1
+  #TotLand = OffLand*Multi + UnallocCat + MisallocCat
+  totLand <- mapply(function(w,x,y,z) sum(c(w*x,y,z),na.rm=TRUE),clObject@cl$landWt,clObject@cl$landMult,clObject@cl$unallocCatchWt,clObject@cl$misRepCatchWt)
+  totLandings <- spdAgreg(list(W=totLand),BY=list(time=clObject@cl$time,space=clObject@cl$space,technical=clObject@cl$technical),sum,na.rm=TRUE)
+
+  W <- tapply(totLandings$W*1000,list(factor(apply(totLandings[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:")),levels=dimnames(d_j)[[1]])),sum,na.rm=TRUE)
+} else {
+  W <- sum.wl_psu
+}
 
 D_j <- sum.d_jpsu*as.vector(W/sum.wl_psu)
 WHat <-  sum.w_psu*W/sum.wl_psu
@@ -186,12 +192,14 @@ df.D_j <- cbind(df.D_j,do.call("rbind",lapply(as.character(df.D_j$STR),function(
 names(df.D_j) <- c("STR","length","value","time","space","technical")
 df.D_j <- df.D_j[order(df.D_j$time,df.D_j$space,df.D_j$technical,df.D_j$length),] ; rownames(df.D_j) <- 1:nrow(df.D_j)
 dbeOutput@lenStruc$estim <- df.D_j[,names(dbeOutput@lenStruc$estim)]
-  
-  #VarD_j
-df.VarD_j <- cbind(df.VarD_j,do.call("rbind",lapply(as.character(df.VarD_j$STR),function(x) strsplit(x,":-:")[[1]])))
-names(df.VarD_j) <- c("STR","length","value","time","space","technical")
-df.VarD_j <- df.VarD_j[order(df.VarD_j$time,df.VarD_j$space,df.VarD_j$technical,df.VarD_j$length),] ; rownames(df.VarD_j) <- 1:nrow(df.VarD_j)
-dbeOutput@lenVar <- df.VarD_j[,names(dbeOutput@lenVar)]
+
+if (!missing(clObject)) {     #variance is filled only if clObject is available
+    #VarD_j
+  df.VarD_j <- cbind(df.VarD_j,do.call("rbind",lapply(as.character(df.VarD_j$STR),function(x) strsplit(x,":-:")[[1]])))
+  names(df.VarD_j) <- c("STR","length","value","time","space","technical")
+  df.VarD_j <- df.VarD_j[order(df.VarD_j$time,df.VarD_j$space,df.VarD_j$technical,df.VarD_j$length),] ; rownames(df.VarD_j) <- 1:nrow(df.VarD_j)
+  dbeOutput@lenVar <- df.VarD_j[,names(dbeOutput@lenVar)]
+}
 
   #WHat
 df.WHat <- cbind(value=WHat/1000,as.data.frame(do.call("rbind",lapply(names(WHat),function(x) strsplit(x,":-:")[[1]]))))    #weight in kg : MM 07/04/2009
@@ -241,13 +249,29 @@ setMethod("RaiseLgth", signature(dbeOutput="dbeOutput",csObject="csDataCons",clO
 
 
                                                                                                            
-Raise_Lgth(csObject,clObject,dbeOutput,spp=spp,taxon=taxon,sex=sex)
+Raise_Lgth(csObject=csObject,clObject=clObject,dbeOutput=dbeOutput,spp=spp,taxon=taxon,sex=sex)
 
 })
 
 
 
 
+setMethod("RaiseLgth", signature(dbeOutput="dbeOutput",csObject="csDataCons",clObject="missing"), function(dbeOutput,
+                                                                                                              csObject,
+                                                                                                              spp,
+                                                                                                              taxon,
+                                                                                                              sex=as.character(NA),
+                                                                                                              ...){
+
+
+
+
+
+
+                                                                                                           
+Raise_Lgth(csObject=csObject,dbeOutput=dbeOutput,spp=spp,taxon=taxon,sex=sex)
+
+})
 
 
 
