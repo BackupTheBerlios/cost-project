@@ -4,7 +4,7 @@
 # 29/04/2009 15:50:50
 #-------------------------------------------------------------------------------
 
-convert2cost <- function(sim.object){
+convert2cost <- function(sim.object, ltw){
     months.num <- 1:12
     names(months.num ) <- c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se`p', 'Oct', 'Nov', 'Dec')
 
@@ -350,7 +350,7 @@ convert2cost <- function(sim.object){
     area <- rep(1:6,each=20)
     season <- rep(1:4,each=5,times=6)
     gear <- rep(1:5,times=24)
-    effort1 <- rep(10000,120)
+    effort1 <- rep(ltw/30, each = 5, times = 6)
     effort2 <- 1000*exp(rnorm(120))
     trpNum <- round(abs(rnorm(120,80,50))) + 3
     foNum <- trpNum*(round(abs(rnorm(120,10,5))) + 3)

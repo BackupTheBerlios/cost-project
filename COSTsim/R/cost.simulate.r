@@ -2,8 +2,9 @@
 # Simulate functions for data sample simulation
 # Main function: cost.simloop
 # Author: David Hirst.
-# Last change: Dorleta Garcia :: Azti-Tecnalia
+# Modification: Dorleta Garcia :: Azti-Tecnalia
 # 29/04/2009 15:50:50
+# Modification: David Hirst 2009/05/06 (lines 48,49,50)
 #-------------------------------------------------------------------------------
   
   
@@ -44,9 +45,9 @@ cost.simloop <- function(params,setup.data, burnin,nmcmc,l.int,Int,Slp,
      ml.data<<-ml.data
     obs.data<<-obs.data
     input.data<-read.cost.data(COSTobs,COSTml, setup.data$species)
-    if(nseas==4){input.data$season_obs<-1+floor((input.data$season_obs-1)/3)    
-    input.data$season_mland<-1+floor((input.data$season_mland-1)/3)
-    input.data$seas<-1+floor((input.data$seas-1)/3) }
+#    if(nseas==4){input.data$season_obs<-1+floor((input.data$season_obs-1)/3)    
+#    input.data$season_mland<-1+floor((input.data$season_mland-1)/3)
+#    input.data$seas<-1+floor((input.data$seas-1)/3) }
   
     input.data$sampsize_disc[is.na(input.data$sampsize_disc)]<-0
     input.data$haulsize_disc[is.na(input.data$haulsize_disc)]<-0

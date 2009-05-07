@@ -12,7 +12,7 @@ setGeneric("simSamples", function(obj,
 
 setMethod("simSamples", signature(obj = "simData"), function(obj, 
                                                                  ndisc, 
-                                                                 ntrip, 
+                                                                 ntrip, ltw, 
                                                                  fit = FALSE){
     ndisc <- ifelse(missing(ndisc), obj@setup.args$ndisc, ndisc)
     ntrip <- ifelse(missing(ntrip), obj@setup.args$ntrip, ntrip)
@@ -42,7 +42,7 @@ setMethod("simSamples", signature(obj = "simData"), function(obj,
     cat('Sample: ', i,'\n')
           sim.out <- cost.simloop(params,setup.data, burnin,nmcmc,l.int,Int,Slp,
                         landings,nHaul,nseas, fit = fit)
-          slot(simDataObj, 'samples')[[i]] <- convert2cost(sim.out)
+          slot(simDataObj, 'samples')[[i]] <- convert2cost(sim.out, ltw)
           fit.by[[i]] <- sim.out$mbe.fit
     }
 
