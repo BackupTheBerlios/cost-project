@@ -650,35 +650,52 @@ par(cex=1)
 #setGeneric("ices.division.names")
 #-------------end of ices.division.names----------------------------------
 
-subSetSpp <-function(costobj,spp)
+subSetSpp <-function (costobj, spp) 
 {
-library(COSTcore)
-data(code.list)
-if(spp %in% code.list$spp$X3A_CODE)
-{
-index <-which(code.list$spp$X3A_CODE==spp)
-if(length(index)>1)stop("More than one species for this code, try the scientific name")
-spp <-as.character(code.list$spp$Scientific_name[index] )
-}
-if(class(costobj)%in% c("csData","csDataVal"))
-{
-costobj@ca <- costobj@ca[which(costobj@ca$spp==spp),]   
-costobj@hl <- costobj@hl[which(costobj@hl$spp==spp),]
-costobj@sl <- costobj@sl[which(costobj@sl$spp==spp),]
-fishname <-as.character(code.list$spp$English_name[code.list$spp$Scientific_name==spp])
-cat("csData subset by species",fishname,spp,"\n") 
-cat("New data set consists of",length(costobj@hl$spp),"length records","\n") 
-cat("and",length(costobj@ca$spp),"age or maturity records","\n") 
-}
+    library(COSTcore)
+    data(code.list)
+    if (spp %in% code.list$spp$X3A_CODE) {
+        index <- which(code.list$spp$X3A_CODE == spp)
+        if (length(index) > 1) 
+            stop("More than one species for this code, try the scientific name")
+        spp <- as.character(code.list$spp$Scientific_name[index])
+    }
+    if (class(costobj) %in% c("csData", "csDataVal")) {
+ 
+indexca1 <-which(costobj@ca$spp == spp)
+indexsl1 <-which(costobj@sl$spp == spp)
 
-if(class(costobj)%in% c("clData","clDataVal"))
-{
-costobj@cl <- costobj@cl[which(costobj@cl$taxon==spp),]   
-fishname <-as.character(code.list$spp$English_name[code.list$spp$Scientific_name==spp])
-cat("clData subset by taxon",fishname,spp,"\n") 
-cat("New data set consists of",length(costobj@cl$taxon),"records","\n") 
-}
-return(costobj)
+tripsca <-unique(costobj@ca$trpCode[indexca1])
+tripssl <-unique(costobj@sl$trpCode[indexsl1])
+alltrips <-unique(c(tripsca,tripssl))
+#if(all(alltrips %in% tripsca)!=TRUE)warning("Some trips in ca have no sl equivelent")
+#if(all(alltrips %in% tripssl)!=TRUE)warning("Some trips in sl have no ca equivelent")
+indexhh <-which(costobj@hh$trpCode %in% alltrips)
+indextr <-which(costobj@tr$trpCode %in% alltrips)
+costobj@hh <- costobj@hh[indexhh,] 
+costobj@tr <- costobj@tr[indextr,] 
+costobj@ca <- costobj@ca[which(costobj@ca$spp == spp),] 
+costobj@hl <- costobj@hl[which(costobj@hl$spp == spp),]
+costobj@sl <- costobj@sl[which(costobj@sl$spp == spp),] 
+        fishname <- as.character(code.list$spp$English_name[code.list$spp$Scientific_name == 
+            spp])
+        cat("csData subset by species", fishname, spp, "\n")
+ cat("New data set consists of", length(costobj@tr$trpCode), 
+        "trip records", "\n")
+    cat(length(costobj@hl$spp), "length records", "\n")
+    cat("and", length(costobj@ca$spp), "age or maturity records", "\n")
+
+    }
+    if (class(costobj) %in% c("clData", "clDataVal")) {
+        costobj@cl <- costobj@cl[which(costobj@cl$taxon == spp), 
+            ]
+        fishname <- as.character(code.list$spp$English_name[code.list$spp$Scientific_name == 
+            spp])
+        cat("clData subset by taxon", fishname, spp, "\n")
+        cat("New data set consists of", length(costobj@cl$taxon), 
+            "records", "\n")
+    }
+    return(costobj)
 }
 
 #-------end of subSetSpp--------------------------------------------
