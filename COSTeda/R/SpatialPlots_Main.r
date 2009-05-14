@@ -21,6 +21,8 @@ if(missing(TechStrat)) TechStrat <-NULL
 if(missing(TimeStrat)) TimeStrat <-NULL
 if(any(obj,vbl,spst))stop("function reqiues object variable and SpaceStrat")
 
+dots <-list(...)
+
 if(class(object)%in%c("clData","clDataVal","clDataCons"))
 {
 dataframe <-object@cl
@@ -136,6 +138,8 @@ nstrata <-nstrata+1
 }
 maxstratavalue <-max(maxvals,na.rm=T)
 commonbreaks <-seq(0,maxstratavalue,length.out=8)
+if(is.null(dots$breaks))dots$breaks <-commonbreaks 
+if(is.null(dots$breaks)==FALSE)commonbreaks <-dots$breaks 
 nstrata1 <-length(timeperiods)*length(techtypes)
 pages <-ceiling(nstrata/nplots)
 lastpageplot <-nplots*(1:pages)
@@ -175,10 +179,12 @@ if(length(index)>0) #plotmap <-NULL
 {
 k <-k+1
 bigindex <-1:dim(dataframe)[1]
-plotvars <-space.plot(variable[bigindex],statsqs[bigindex],func,breaks=commonbreaks,plotmap=FALSE,...)
+#plotvars <-space.plot(variable[bigindex],statsqs[bigindex],func,breaks=commonbreaks,plotmap=FALSE,...)
+plotvars <-space.plot(variable[bigindex],statsqs[bigindex],func,plotmap=FALSE,...)
 options(warn=-1)
 # stops "breaks dont span range of .." warnings when commonbreaks are used
-space.plot(variable[index],statsqs[index],func,overlay=T,breaks=commonbreaks,...)
+#space.plot(variable[index],statsqs[index],func,overlay=T,breaks=commonbreaks,...)
+space.plot(variable[index],statsqs[index],func,overlay=T,...)
 title(sub=paste(timetitle,techtitle,sep=" "))
 
 # adding the multiple scale if its the end of the page
