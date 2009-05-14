@@ -33,10 +33,13 @@ if (missing(spp)) spp <- sp
 
 eval(parse('',text=paste("csObject <- subsetSpp(csObject,spp%in%",deparse(spp),")",sep="")))
 ccat <- dbeOutput@catchCat
-if (!all(is.na(ccat))) {
+#'catchCat' slot must be "LAN"
+if (!all(is.na(ccat)) & all(ccat%in%"LAN")) {
   csObject@sl <- csObject@sl[extCatchCat(csObject@sl$sort)%in%ccat,]
   csObject@hl <- csObject@hl[extCatchCat(csObject@hl$sort)%in%ccat,]
-}
+} else {
+stop("wrong 'catchCat' slot in dbe object! This method is applied to landings!!")}
+if (nrow(csObject@hl)==0) stop("no sampled landings for specified species!!")  
 #as sort is a factor,...                                                        #
 csObject@sl$sort <- as.character(csObject@sl$sort)                              # 05/05/2009 MM
 csObject@hl$sort <- as.character(csObject@hl$sort)                              #
