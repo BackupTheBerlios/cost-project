@@ -1208,7 +1208,7 @@ setMethod("subsetSpp", signature(x="csDataCons"), function(x,subset,link=TRUE,..
   hl <- slSex(sl(x),hl(x))                                                    
   #get idx                                                                      
 	hlfk <- hl[,c(1:15)]                                                          
-	hlfk <- apply(hlfk,1,paste,collapse="")
+	hlfk <- apply(hlfk,1,paste,collapse=":-:")
 	hlfk <- gsub("[[:space:]]","",hlfk)
   
   # new idx
@@ -1218,7 +1218,7 @@ setMethod("subsetSpp", signature(x="csDataCons"), function(x,subset,link=TRUE,..
 	
 	# subset
 	sl <- df0[r,]
-	slidx <- apply(sl[,1:15],1,paste,collapse="")
+	slidx <- apply(sl[,1:15],1,paste,collapse=":-:")
 	slidx <- gsub("[[:space:]]","",slidx)
 	Hl <- hl[hlfk %in% slidx,]	                                                
   Hl$sex <- Hl$lsex ; hl <- Hl[,-ncol(Hl)]                                      
