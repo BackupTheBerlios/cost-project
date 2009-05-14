@@ -8,7 +8,7 @@ Method for calculating coefficients of variation or confidence intervals from 'd
 }
 
 \usage{
-dbeCalc(object,type="CI",vrbl="l",probs=c(0.025,0.975),replicates=FALSE,update=FALSE,\dots)
+dbeCalc(object,type="CI",vrbl="l",probs=c(0.025,0.975),replicates=FALSE,update=TRUE,\dots)
 }
 
 \arguments{
