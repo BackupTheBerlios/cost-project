@@ -33,5 +33,7 @@ exportMethods(
 	"RaiseAge",
 	"stratAggreg",
 	"RaiseLgthBoot",
-	"RaiseAgeBoot"
+	"RaiseAgeBoot",
+	"rbind2",
+	"+"
 )
