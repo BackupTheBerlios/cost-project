@@ -270,7 +270,7 @@ setGeneric("dbeCalc", function(object,              # 'dbeOutput' object
                                vrbl="l",            # specifies data on which calculation is applied : "l" for length structure, "a" for age structure, "n" for total number estimates, "w" for total weight estimates
                                probs=c(0.025,0.975),# used only if type="CI", defines bounds
                                replicates=FALSE,    # if TRUE, calculation is made from $rep elements ; if FALSE, $estim and @...Var are used 
-                               update=FALSE,        # if TRUE, updated 'dbeOutput' object is returned ; if FALSE, only resulting dataframe is returned
+                               update=TRUE,         # if TRUE, updated 'dbeOutput' object is returned ; if FALSE, only resulting dataframe is returned
                                ...){
 standardGeneric("dbeCalc")
 })
@@ -283,7 +283,7 @@ setMethod("dbeCalc",signature(object="dbeOutput"),function(object,              
                                                            vrbl="l",            # specifies data on which calculation is applied : "l" for length structure, "a" for age structure, "n" for total number estimates, "w" for total weight estimates
                                                            probs=c(0.025,0.975),# used only if type="CI", defines bounds
                                                            replicates=FALSE,    # if TRUE, calculation is made from $rep elements ; if FALSE, $estim and @...Var are used 
-                                                           update=FALSE,        # if TRUE, updated 'dbeOutput' object is returned ; if FALSE, only resulting dataframe is returned
+                                                           update=TRUE,         # if TRUE, updated 'dbeOutput' object is returned ; if FALSE, only resulting dataframe is returned
                                                            ...){                                
 
 outpuT <- NULL
