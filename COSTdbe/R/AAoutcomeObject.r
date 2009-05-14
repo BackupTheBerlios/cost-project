@@ -222,4 +222,87 @@ if (missing(methodDesc)) methodDesc <- as.character(NA)
 new("dbeOutput",desc=desc,species=species,catchCat=toupper(catchCat),param=param,strataDesc=strataDesc,methodDesc=methodDesc)
  	  }
  	  
- 	  
+
+#====================================================================
+# 'rbind2' method for 'dbeOutput' object 
+#====================================================================
+
+ 
+setMethod("rbind2", signature(x="dbeOutput", y="dbeOutput"), function(x,y){
+
+#subfunction
+rBind2 <- function(tab1,tab2){
+if (all(is.na(tab1))) {
+  res <- tab2
+} else {
+  if (all(is.na(tab2))) {
+    res <- tab1
+  } else {
+    res <- rbind2(tab1,tab2)
+    rownames(res) <- 1:nrow(res)
+  }
+}
+return(res)
+}
+
+elt <- c("nSamp$len","nSamp$age","nMeas$len","nMeas$age",
+         "lenStruc$estim","lenStruc$rep","lenVar","lenNum$ci","lenNum$cv","lenNum$DCRcvIndicator",
+         "ageStruc$estim","ageStruc$rep","ageVar","ageNum$ci","ageNum$cv","ageNum$DCRcvIndicator",
+         "totalN$estim","totalN$rep","totalNvar","totalNnum$ci","totalNnum$cv","totalNnum$DCRcvIndicator",
+         "totalW$estim","totalW$rep","totalWvar","totalWnum$ci","totalWnum$cv","totalWnum$DCRcvIndicator")
+
+invisible(sapply(elt,function(z) eval(parse('',text=paste("x@",z," <<- rBind2(x@",z,",y@",z,")",sep=""))))) 
+#'DCRcvIndicator' elements are set to NA (could be recalculated from x & y : IND = [ INDx * sum(ESTx) + INDy * sum(ESTy) ] / sum (ESTx + ESTy) <<- left to be implemented)
+x@lenNum$DCRcvIndicator <- x@ageNum$DCRcvIndicator <- x@totalNnum$DCRcvIndicator <- x@totalWnum$DCRcvIndicator <- NA
+
+return(x)
+})
+
+
+                   
+#====================================================================
+# '+' method for 'dbeOutput' object 
+#====================================================================
+
+	
+   
+     
+setMethod("+", signature(e1="dbeOutput", e2="dbeOutput"), function(e1,e2){
+
+#subfunction
+addDBE <- function(tab1,tab2) {                
+if (all(is.na(tab1))) {
+  res <- tab2
+} else {
+if (all(is.na(tab2))) {
+  res <- tab1
+} else {
+  TAB <- rbind(tab1,tab2)
+  res <- aggregate(TAB$value,as.list(TAB[,rev(names(TAB)[-match("value",names(TAB))])]),sum,na.rm=TRUE)
+  names(res)[ncol(res)] <- "value"
+}}
+return(res[,names(tab1)])
+} 
+
+
+elt <- c("nSamp$len","nSamp$age","nMeas$len","nMeas$age",
+         "lenStruc$estim","lenStruc$rep","lenVar",
+         "ageStruc$estim","ageStruc$rep","ageVar",
+         "totalN$estim","totalN$rep","totalNvar",
+         "totalW$estim","totalW$rep","totalWvar")
+
+invisible(sapply(elt,function(z) eval(parse('',text=paste("e1@",z," <<- addDBE(e1@",z,",e2@",z,")",sep=""))))) 
+
+eltNA <- c("lenNum$ci","lenNum$cv","lenNum$DCRcvIndicator",
+           "ageNum$ci","ageNum$cv","ageNum$DCRcvIndicator",
+           "totalNnum$ci","totalNnum$cv","totalNnum$DCRcvIndicator",
+           "totalWnum$ci","totalWnum$cv","totalWnum$DCRcvIndicator")
+
+invisible(sapply(eltNA,function(z) eval(parse('',text=paste("e1@",z," <<- new(\"dbeOutput\")@",z,sep=""))))) 
+
+return(e1)
+
+})
+
+
+
