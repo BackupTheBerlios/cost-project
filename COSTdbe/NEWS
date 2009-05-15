@@ -3,7 +3,7 @@
 NEW FEATURES
     o 'rbind2' method applied to 'dbeOutput' objects. 
     o "+" operator implemented for 'dbeOutput' objects. 
-    o RaiseLgth and RaiseLgthBoot applied on landings data 
+    o RaiseLgth and RaiseLgthBoot applied only to landings data if input CL object is not missing (ie if raised to population) 
     o 'dbeCalc' is updating the 'dbeOutput' object by default 
 DOCUMENTATION 
     o documentation updated
