@@ -454,7 +454,7 @@ inc <- NULL
 while(nrow(tab)>0) {
 step <- step + BY
 tab$lenCls <- factor(as.numeric(as.character(tab$lenCls))+BY)
-CA <- merge(ca,tab,all.x=TRUE) ; CA <- CA1 <- CA[!is.na(CA$indic) & !is.na(CA$age),]
+CA <- merge(DF,tab,all.x=TRUE) ; CA <- CA1 <- CA[!is.na(CA$indic) & !is.na(CA$age),]
 #otoWt, indWt and matStage are set to NA
 if (nrow(CA)>0) {
   CA$otoWt <- CA$indWt <- CA$matStage <- NA 
@@ -541,7 +541,6 @@ val <- NULL
     Df <- merge(indDF,df,all.x=TRUE)
     #df is subset to stratified LC that are in hl
     Df <- Df[!is.na(Df$age),] ; df <- Df[,names(df)] 
-
     if (type=="fillMiss") DF <- rbind(recomposeCA(df,ca,BY,"up"),recomposeCA(df,ca,BY,"down"))
     if (type=="sFillMiss") DF <- recomposeCA(df,ca,BY,"up")
     if (type=="lFillMiss") DF <- recomposeCA(df,ca,BY,"down")
