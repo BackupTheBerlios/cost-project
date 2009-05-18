@@ -50,7 +50,7 @@ ll <- dimnames(ALK) ; ll[["technical"]] <- dimnames(N)[[4]]
 ALK <- array(rep(as.vector(ALK),dim(N)[4]),dim=c(dim(ALK),dim(N)[4]),dimnames=ll)
 
   if (all(is.na(dbeOutput@lenStruc$estim))) stop("estimates for length structure are missing in 'dbeOutput' object!!")
-  if (all(is.na(dbeOutput@lenVar))) stop("variance for length structure is missing in 'dbeOutput' object!!")
+#  if (all(is.na(dbeOutput@lenVar))) stop("variance for length structure is missing in 'dbeOutput' object!!")
 
 #nj : number of sampled individuals of length j
   nj <- tapply(ca$lenCls,list(length=factor(ca$lenCls,levels=dimnames(N)[[1]]),time=factor(ca$time,levels=dimnames(N)[[2]]),
@@ -81,7 +81,7 @@ ALK <- array(rep(as.vector(ALK),dim(N)[4]),dim=c(dim(ALK),dim(N)[4]),dimnames=ll
 #------------
 Pi.hat <- apply(aperm(aperm(Qij,c(1,3,4,5,2))*as.vector(lj),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)
 #test on Pi.hat (missing length class in ca)
-if (!all(apply(Pi.hat,2:4,sum,na.rm=TRUE)==1)) warning("it seems that some length classes from 'dbeOutput@lenStruc' slot are not in 'ca' table")
+if (!all(apply(Pi.hat,2:4,sum,na.rm=TRUE)==1)) warning("some length classes from 'dbeOutput@lenStruc' slot are not in 'ca' table")
 
 #Var.pi calculation
 #----------------
@@ -102,10 +102,14 @@ if (!all(apply(Pi.hat,2:4,sum,na.rm=TRUE)==1)) warning("it seems that some lengt
 
 VarQij <- aperm(Qij*(1-Qij),c(1,3,4,5,2))/as.vector(nj)
 V1 <- aperm(VarQij*as.vector(N*N),c(1,5,2,3,4))
-VarDj <- dbeOutput@lenVar
-VarNj <- tapply(VarDj$value,list(length=VarDj$length,time=VarDj$time,space=VarDj$space,technical=VarDj$technical),sum,na.rm=TRUE)
-V2 <- aperm(aperm(Qij*Qij,c(1,3,4,5,2))*as.vector(VarNj),c(1,5,2,3,4))
-V3 <- aperm(VarQij*as.vector(VarNj),c(1,5,2,3,4))
+
+if (!all(is.na(dbeOutput@lenVar))) {
+  VarDj <- dbeOutput@lenVar
+  VarNj <- tapply(VarDj$value,list(length=VarDj$length,time=VarDj$time,space=VarDj$space,technical=VarDj$technical),sum,na.rm=TRUE)
+  V2 <- aperm(aperm(Qij*Qij,c(1,3,4,5,2))*as.vector(VarNj),c(1,5,2,3,4))
+  V3 <- aperm(VarQij*as.vector(VarNj),c(1,5,2,3,4))
+} else {
+  V2 <- V3 <- V1}
 
 #Estimates of total numbers at age
   #total numbers
@@ -140,7 +144,8 @@ dbeOutput@ageStruc$estim <- df.D_i[,names(dbeOutput@ageStruc$estim)]
   
   #VarD_j
 df.VarD_i <- df.VarD_i[order(df.VarD_i$time,df.VarD_i$space,df.VarD_i$technical,df.VarD_i$age),] ; rownames(df.VarD_i) <- 1:nrow(df.VarD_i)
-dbeOutput@ageVar <- df.VarD_i[,names(dbeOutput@ageVar)]
+
+if (!all(is.na(dbeOutput@lenVar))) dbeOutput@ageVar <- df.VarD_i[,names(dbeOutput@ageVar)]
 
 return(dbeOutput)
 
