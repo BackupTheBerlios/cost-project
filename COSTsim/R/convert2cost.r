@@ -198,7 +198,7 @@ convert2cost <- function(sim.object, ltw){
 
     # ML: TR ---------------------------------------------------------------------------
     ntr <- length(sim.object$ml@tr$trpCode)
-    ml.tr <- data.frame(sampType   = rep('S', ntr),
+    ml.tr <- data.frame(sampType   = rep('M', ntr),
                      landCtry   = rep('SCO', ntr),
                      vslFlgCtry = rep('SCO', ntr),
                      year       = rep(2000, ntr),
@@ -217,7 +217,7 @@ convert2cost <- function(sim.object, ltw){
 
     # ML: HH ---------------------------------------------------------------------------
     nhh <- length(sim.object$ml@hh$trpCode)
-    ml.hh <- data.frame(sampType   = rep('S', nhh),
+    ml.hh <- data.frame(sampType   = rep('M', nhh),
                      landCtry   = rep('SCO', nhh),
                      vslFlgCtry = rep('SCO', nhh),
                      year       = rep(2000, nhh),
@@ -255,7 +255,7 @@ convert2cost <- function(sim.object, ltw){
 
 
     nsl <- dim(b)[1]
-    ml.sl <- data.frame(sampType   = rep('S', nsl),
+    ml.sl <- data.frame(sampType   = rep('M', nsl),
                      landCtry   = rep('SCO', nsl),
                      vslFlgCtry = rep('SCO', nsl),
                      year       = rep(2000, nsl),
@@ -281,7 +281,7 @@ convert2cost <- function(sim.object, ltw){
         list(catchCat = a$catchCat, trpCode = a$trpCode, commCat = a$commCat, lenCls = a$lenCls), sum)
 
     nhl <- dim(b)[1]
-    ml.hl <- data.frame(sampType   = rep('S', nhl),
+    ml.hl <- data.frame(sampType   = rep('M', nhl),
                      landCtry   = rep('SCO', nhl),
                      vslFlgCtry = rep('SCO', nhl),
                      year       = rep(2000, nhl),
@@ -307,7 +307,7 @@ convert2cost <- function(sim.object, ltw){
         ca.date[i] <- as.Date(sim.object$ml@hh[sim.object$ml@hh$trpCode == sim.object$ml@ca$trpCode[i],]$date)
     }
 
-    ml.ca <- data.frame(sampType   = rep('S', nca),
+    ml.ca <- data.frame(sampType   = rep('M', nca),
                      landCtry   = rep('SCO', nca),
                      vslFlgCtry = rep('SCO', nca),
                      year       = rep(2000, nca),

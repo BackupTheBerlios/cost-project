@@ -45,9 +45,9 @@ cost.simloop <- function(params,setup.data, burnin,nmcmc,l.int,Int,Slp,
      ml.data<<-ml.data
     obs.data<<-obs.data
     input.data<-read.cost.data(COSTobs,COSTml, setup.data$species)
-#    if(nseas==4){input.data$season_obs<-1+floor((input.data$season_obs-1)/3)    
-#    input.data$season_mland<-1+floor((input.data$season_mland-1)/3)
-#    input.data$seas<-1+floor((input.data$seas-1)/3) }
+    if(nseas==4){input.data$season_obs<-1+floor((input.data$season_obs-1)/3)    
+    input.data$season_mland<-1+floor((input.data$season_mland-1)/3)
+    input.data$seas<-1+floor((input.data$seas-1)/3) }
   
     input.data$sampsize_disc[is.na(input.data$sampsize_disc)]<-0
     input.data$haulsize_disc[is.na(input.data$haulsize_disc)]<-0
@@ -72,7 +72,7 @@ cost.simloop <- function(params,setup.data, burnin,nmcmc,l.int,Int,Slp,
     agemodel= setup.data$agemodel,
                lgamodel= setup.data$lgamodel,lgarel="log-linear",model1=T,model2=F)
     fit$aobs=list(data=list(nBoats=nHaul))
-    res2<-insert.wgl.param(fit,Int,Slp) 
+    res2<-insert.wgl.param(fit,Int,Slp,tau.obs=1000000) 
 
     nage<-1+setup.data$ageMax-setup.data$ageMin
     s<-as.integer(setup.data$structure$seas)
@@ -108,7 +108,7 @@ p<-cost.make.cell.p(params,cell.effects,seas,gear,area,
 p<<-p
 cost.cell.lga<-cost.make.cell.lga(p, setup.data$structure,realseas)
 cost.cell.lga<<-cost.cell.lga
-nlsamp.land<-1000
+nlsamp.land<-100
 nasamp.land<-2
 nlsamp.disc<-30
 nasamp.disc<-2
@@ -640,7 +640,7 @@ for(i in 1:nsize){
   lsamp<-rep(l.all,size[,i])
 agesamp<-rep(age.all,size[,i])
 wt.land[[i]]<-NA
-if(!is.null(wglsd))wt.land[[i]]<-sum(wglInt+wglSlp*lsamp+rnorm(length(lsamp),0,wglsd))
+if(!is.null(wglsd))wt.land[[i]]<-sum(exp(wglInt+wglSlp*log(lsamp)+rnorm(length(lsamp),0,wglsd)))
 n<-length(lsamp)
 if(nlsamp>=n){
 long.l.samp<-lsamp
@@ -653,7 +653,7 @@ long.l.samp<-lsamp[samp]
 long.age.samp<-agesamp[samp]
 }
 wt.samp[[i]]<-NA
-if(!is.null(wglsd))wt.samp[[i]]<-sum(wglInt+wglSlp*long.l.samp+rnorm(length(long.l.samp),0,wglsd))
+if(!is.null(wglsd))wt.samp[[i]]<-sum(exp(wglInt+wglSlp*log(long.l.samp)+rnorm(length(long.l.samp),0,wglsd)))
 
 la<-table(long.l.samp,long.age.samp)
  
@@ -719,8 +719,8 @@ for(i in 1:nhaul){
 	}
 wt.land[[i]]<-wt.samp[[i]]<-NA
 if(!is.null(wglsd)){
-wt.land[[i]]<-sum(wglInt+wglSlp*lsamp+rnorm(length(lsamp),0,wglsd))
-wt.samp[[i]]<-sum(wglInt+wglSlp*long.l.samp+rnorm(length(long.l.samp),0,wglsd))}
+wt.land[[i]]<-sum(exp(wglInt+wglSlp*log(lsamp)+rnorm(length(lsamp),0,wglsd)))
+wt.samp[[i]]<-sum(exp(wglInt+wglSlp*log(long.l.samp)+rnorm(length(long.l.samp),0,wglsd)))}
 
 la<-table(long.l.samp,long.age.samp)
 
