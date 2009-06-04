@@ -1,0 +1,2 @@
+PKG_FFLAGS = -DHRUE_FIX
+PKG_LIBS = -L../lib_win -ltaucs -lmetis -llapack -lblas 
