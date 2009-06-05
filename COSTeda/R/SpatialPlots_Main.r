@@ -241,7 +241,7 @@ data(landmasses)
 data(GSAareas)
 data(code.list)
 data(ICESAreaRects)
-#print("GSA version")
+#print("FRSDMM version")
 doGSAs <-doFRS <-doICES <-novals<-FALSE
 if(all(c(missing(variable),missing(SpaceStrat),missing(func))))
 {
@@ -303,7 +303,7 @@ if(all(substr(SpaceStrat,1,3)=="FRS"))
 doFRS <-TRUE
 saname <-substr(SpaceStrat[1],4,6)
 sampareaname <-switch(EXPR=saname,"HER"="Herring","MAC"="Mackerel",
-"DMS"="Demersal","NEP"="Nephrops","CRA"="Edible Crab","SCA"="Scallops")
+"DMS"="Demersal","NEP"="Nephrops","CRA"="Edible Crab","SCA"="Scallops","DMM"="DemersalMet")
 SpaceStrat <-substr(SpaceStrat,7,nchar(SpaceStrat))
 if(sampareaname %in% c("Herring","Mackerel","Demersal"))SpaceStrat <-as.numeric(SpaceStrat)
 }
@@ -431,7 +431,7 @@ if(!is.statsq(SpaceStrat))
 #casout <-convert.icesarea.statsq(names(valpercell))
 casout <-.convert.area.statsq(names(valpercell),sampareaname)
 statsqs <-casout$statsq
-values <-as.vector(valpercell[match(casout$parentarea,toupper(names(valpercell)))])
+values <-as.vector(valpercell[match(toupper(casout$parentarea),toupper(names(valpercell)))])
 }
 
 
@@ -761,7 +761,7 @@ segments(lonfrom,latfrom,lonto,latto,col=colour,lwd=3)
 
 .convert.area.statsq <-function(areacode,areaname)
 {
-areanames <-c("ICES","Demersal","Mackerel","Herring","Nephrops","Scallops","Edible Crab")
+areanames <-c("ICES","Demersal","Mackerel","Herring","Nephrops","Scallops","Edible Crab","DemersalMet")
 if((areaname %in% areanames)!=TRUE)stop("areaname not known")
 if(areaname=="ICES")
 {

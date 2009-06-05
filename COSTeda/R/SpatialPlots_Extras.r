@@ -932,12 +932,14 @@ convert.samplingarea.statsq <-function(areacode,samplingarea="Demersal")
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 x <-areacode
 if (class(x) != "character") x <- as.character(areacode)
-allareas <-c("Demersal","Mackerel","Herring","Nephrops","Scallops","Edible Crab")
+allareas <-c("Demersal","Mackerel","Herring","Nephrops","Scallops","Edible Crab","DemersalMet")
 if (!(samplingarea %in% allareas))stop(cat("Sampling area must be one of",allareas,"\n"))
 data(samplingareas)
 a <-samplingareas
 samparea <-subset(a,a$TypeName==samplingarea)
-uniindex <-match(unique(substr(samparea$StatRect,1,4)),substr(samparea$StatRect,1,4))
+#uniindex <-match(unique(substr(samparea$StatRect,1,4)),substr(samparea$StatRect,1,4))
+uniindex <- match(unique(paste(samparea$AreaCode,substr(samparea$StatRect, 1, 4),sep=".")),
+paste(samparea$AreaCode,substr(samparea$StatRect, 1, 4),sep="."))
 samparea <-samparea[uniindex,]
 #index <- match(as.character(samparea$AreaCode),x)
 index <-which(!is.na(match(as.character(samparea$AreaCode),x)))
@@ -956,12 +958,16 @@ convert.statsq.samplingarea <-function(statsq,samplingarea="Demersal")
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 x <-statsq
 if (class(x) != "character") x <- as.character(statsq)
-allareas <-c("Demersal","Mackerel","Herring","Nephrops","Scallops","Edible Crab")
+allareas <-c("Demersal","Mackerel","Herring","Nephrops","Scallops","Edible Crab","DemersalMet")
 if (!(samplingarea %in% allareas))stop(cat("Sampling area must be one of",allareas,"\n"))
 data(samplingareas)
 a <-samplingareas
 samparea <-subset(a,a$TypeName==samplingarea)
-uniindex <-match(unique(substr(samparea$StatRect,1,4)),substr(samparea$StatRect,1,4))
+#uniindex <-match(unique(substr(samparea$StatRect,1,4)),substr(samparea$StatRect,1,4))
+uniindex <- match(unique(paste(samparea$AreaCode,substr(samparea$StatRect, 1, 4),sep=".")),
+paste(samparea$AreaCode,substr(samparea$StatRect, 1, 4),sep="."))
+
+
 samparea <-samparea[uniindex,]
 index <- match(x,as.character(substr(samparea$StatRect,1,4)))
 ss <-as.character(substr(samparea$StatRect[index],1,4))

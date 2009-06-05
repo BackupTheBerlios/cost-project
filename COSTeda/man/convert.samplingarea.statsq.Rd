@@ -11,7 +11,7 @@ convert.samplingarea.statsq(areacode,samplingarea)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{areacode}{A character or numeric vector giving the names of strata within the sampling area e.g. c(1:10) for Demersal. }
-  \item{samplingarea}{A character vector giving the names of sampling area; one of "Demersal", "Mackerel", "Herring", "Scallops" and "Edible crab". The default is "Demersal".}
+  \item{samplingarea}{A character vector giving the names of sampling area; one of "Demersal", "DemersalMet", "Mackerel", "Herring", "Scallops" and "Edible crab". The default is "Demersal".}
 }
 %\details{
 %  ~~ If necessary, more details than the description above ~~

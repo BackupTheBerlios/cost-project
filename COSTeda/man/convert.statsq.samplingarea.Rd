@@ -11,7 +11,7 @@ convert.statsq.samplingarea(statsq,samplingarea)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{statsq}{A character vector giving the names of ICES statistical rectangle e.g. "45F2". }
-  \item{samplingarea}{A character vector giving the names of sampling area; one of "Demersal", "Mackerel", "Herring", "Scallops" and "Edible crab". The default is "Demersal".}
+  \item{samplingarea}{A character vector giving the names of sampling area; one of "Demersal", "DemersalMet", "Mackerel", "Herring", "Scallops" and "Edible crab". The default is "Demersal".}
 }
 %\details{
 %  ~~ If necessary, more details than the description above ~~

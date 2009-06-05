@@ -65,6 +65,7 @@ spacePlot(costobj, variable, SpaceStrata, func, TimeStrata, TechStrata,\dots)
   \cr FAO areas have the form "27.4.a" (FOA area 27 corresponds to ICES areas).
   \cr GSA areas within the Mediterranean are numbered "G3701" to "G3730". 
   \cr FRS sampling areas are prefixed with a six letter code the first three being FRS the second three specifying the sampling shceme:
+\cr    FRSDMM demersal metier sampling area two and three digit codes e.g. "FRSDMM4O" "FRSDMM4aO"
   \cr    FRSDMS demersal sampling area two digit codes e.g. "FRSDMS05" 
   \cr    FRSMAC mackerel sampling area two digit codes e.g. "FRSMAC01"   
   \cr    FRSHER herring sampling area two digit codes e.g. "FRSHER01"
