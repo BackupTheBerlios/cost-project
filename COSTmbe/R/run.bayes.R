@@ -1,9 +1,11 @@
+subset <- getMethod("subset","csData")    #added MM 09/06/2009 : temporary, otherwise COSTcore's subset method is not imported ---> to be fixed
+
 run.bayes<-function(COST.data,fit=NULL,do.predict=T,species,timeStrata="quarter",burnin=2000,
                     thin=1,nmcmc=1000,ageMin=0,ageMax=20,
                     usewglrel=T,cov.list=NULL,pred.cov.real=NULL,arealist=NULL,l.int){
   obsdata<-mldata<-NULL
-if(sum(COST.data@cs@tr$sampType=="M")>0)mldata<-subset(COST.data@cs,subset=(sampType=="M"))
-if(sum(COST.data@cs@tr$sampType=="S")>0)obsdata<-subset(COST.data@cs,subset=(sampType=="S")) 
+if(sum(COST.data@cs@tr$sampType=="M")>0) mldata <- subset(COST.data@cs,subset=(sampType=="M"))
+if(sum(COST.data@cs@tr$sampType=="S")>0) obsdata <- subset(COST.data@cs,subset=(sampType=="S")) 
 if(is.null(mldata)&(is.null(obsdata))){print("no data of type M or S");return}
 input.data<-read.cost.data(obsdata,mldata,species,usewglrel)
 nseas<-0
@@ -12,7 +14,7 @@ if(timeStrata=="month")nseas<-12
 if(nseas==0){print("invalid time strata");return}
 if(nseas==4){input.data$season_obs<-1+floor((input.data$season_obs-1)/3)    
 input.data$season_mland<-1+floor((input.data$season_mland-1)/3)
-input.data$seas<-1+floor((input.data$seas-1)/3) }
+input.data$seas<-1+floor((input.data$seas-1)/3)}
   
 input.data$sampsize_disc[is.na(input.data$sampsize_disc)]<-0
 input.data$haulsize_disc[is.na(input.data$haulsize_disc)]<-0

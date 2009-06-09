@@ -1,0 +1,12 @@
+useDynLib(blas)
+useDynLib(metis)
+useDynLib(lapack)
+useDynLib(taucs)
+useDynLib(COSTmbe,caa_main_model1,caa_main_model2,caa_predict,caa_marg_dens)
+
+export(
+"run.bayes"	
+)
+
+
+                

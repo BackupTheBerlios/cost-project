@@ -294,8 +294,8 @@ cost.fit =
 
     #Start MCMC runs
     catn("Start MCMC runs - age and lga model")
-    res1 = .Call("caa_main_model1",as.integer(mcmc.par),constr,seed,as.integer(numpar1),nHaul,
-                 common.par,dataList,ageList,lgaList,priorList,objCOST,PACKAGE="caa")
+    res1 = .Call(caa_main_model1,as.integer(mcmc.par),constr,seed,as.integer(numpar1),nHaul,
+                 common.par,dataList,ageList,lgaList,priorList,objCOST)
 
     #print("Finished calling caa_main_model1")
     
@@ -418,7 +418,7 @@ cost.fit =
       prior$wgl$Hsz = list(eff=list(mean=NULL,prec=NULL),prec=list(par=NULL),ar=NULL)
 
     catn("Start MCMC runs - wgl model")
-    res2 = .C("caa_main_model2",
+    res2 = .C(caa_main_model2,
             #MCMC parameters
             as.integer(mcmc.par),           #Burnin,additional iterations, thinning
             as.integer(constr),             #=1 gives sum-constraint, 
@@ -474,8 +474,7 @@ cost.fit =
 	    loglik.mean=as.double(2),       #Loglikelihood of mean-parameters
             res.wgl=as.double(res.wgl),     #Residuals from wgl model
             wgl.mean.inv.lik=as.double(wgl.mean.inv.lik),
-            errflag=integer(1),
-            PACKAGE="caa")
+            errflag=integer(1))
     if(res2$errflag)
       {
         catn("Error fitting wgl model")
@@ -729,15 +728,14 @@ predict.fit.COST =
     wgl.hsz.C=as.double(t(tfac$cell.u.dist$wgl$Hsz$C)),
     wgl.hsz.nC=as.integer(dim(tfac$cell.u.dist$wgl$Hsz$C)[2]))
  dist.cell<<-dist.cell
-  res = .Call("caa_predict",mcmc.samp,common.par,
+  res = .Call(caa_predict,mcmc.samp,common.par,
     data.age,data.lga,data.wgl,data.catch,
     as.double(t(par.haulsize)), #Mean and var for haulsize in each cell
     dist.cell,                  #Cell parameters
     as.integer(N.lint),         #Length intervals
     as.double(l.int),           
     as.integer(nMC),            #Number of Monte Carlo simulations for p_a
-    data.COST,
-    PACKAGE="caa")
+    data.COST)
 
   res$errflag = res$err
   if(res$errflag)

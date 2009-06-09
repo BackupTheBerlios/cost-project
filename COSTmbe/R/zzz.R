@@ -1,6 +1,5 @@
-.First.lib <- function(lib,pkg)
+.onLoad <- function(lib,pkg)
 {
   library.dynam("COSTmbe",pkg,lib)
-  require(MASS)
 }
 

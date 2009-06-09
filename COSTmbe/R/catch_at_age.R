@@ -488,9 +488,9 @@ caa =
 
       #Start MCMC runs
       catn("Start MCMC runs")
-      res1 = .Call("caa_main_model1",as.integer(mcmc.par),constr,seed,
+      res1 = .Call(caa_main_model1,as.integer(mcmc.par),constr,seed,
         as.integer(numpar1),as.integer(nHaul),common.par,dataList,ageList,
-        lgaList,priorList,data.COST,PACKAGE="caa")
+        lgaList,priorList,data.COST)
       
       #catn("Finished calling caa_main_model1")
       
@@ -616,7 +616,7 @@ caa =
       #print(dim(w.I.mcov$Sigma.cell))
       #print(dim(w.I.mcov$constr.cell))
       #print(w.I.mcov$nFac)
-      res2 = .C("caa_main_model2",
+      res2 = .C(caa_main_model2,
             #MCMC parameters
             as.integer(mcmc.par),           #Burnin,additional iterations, thinning
             as.integer(constr),             #=1 gives sum-constraint, 
@@ -672,8 +672,7 @@ caa =
 	    loglik.mean=as.double(2),       #Loglikelihood of mean-parameters
             res.wgl=as.double(res.wgl),     #Residuals from wgl model
             wgl.mean.inv.lik=as.double(wgl.mean.inv.lik),
-            errflag=integer(1),
-            PACKAGE="caa")
+            errflag=integer(1))
       #rm(mcmc.par,wgl.mean.inv.lik)
       if(res2$errflag)
         {

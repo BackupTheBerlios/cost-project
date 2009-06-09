@@ -224,15 +224,14 @@ predict.fit.caa =
       wgl.hsz.nC=as.integer(dim(tfac$cell.u.dist$wgl$Hsz$C)[2]))
   data.COST = list(COST=0)
 
-  res = .Call("caa_predict",mcmc.samp,common.par,
+  res = .Call(caa_predict,mcmc.samp,common.par,
     data.age,data.lga,data.wgl,data.catch,
     as.double(t(par.haulsize)), #Mean and var for haulsize in each cell
     dist.cell,                                            #Cell parameters
     as.integer(N.lint),
     as.double(l.int),  #Length intervals   
     as.integer(nMC), #Number of Monte Carlo simulations for p_a
-    data.COST,
-    PACKAGE="caa")
+    data.COST)
 
   res$errflag = res$err
   if(res$errflag)

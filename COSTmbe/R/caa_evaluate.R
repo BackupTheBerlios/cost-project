@@ -122,7 +122,7 @@ marginal.caa <-
   ispat = c(oa$data$mcov$Int$ispat,oa$data$mcov$Hsz$ispat,
             ol$data$mcov$Int$ispat,ol$data$mcov$Slp$ispat,ol$data$mcov$Hsz$ispat,
             ow$data$mcov$Int$ispat,ow$data$mcov$Slp$ispat,ow$data$mcov$Hsz$ispat)
-  res <- .C("caa_marg_dens",
+  res <- .C(caa_marg_dens,
             #MCMC parameters
             as.integer(nMCMC),             #1 Number of MCMC iterations
             as.integer(burnin),
@@ -180,8 +180,7 @@ marginal.caa <-
             loglik=as.double(loglik),               #Log-likelihoods for models 1 and 2
             logprior=as.double(logprior),           #Log-priors for models 1 and 2
             logposterior=as.double(logpost),        #Log-posteriors for models 1 and 2
-            errflag=integer(1),
-            PACKAGE="COSTmbe")
+            errflag=integer(1))
   if(res$errflag)
     {
       print("Error calling caa_marg_dens")
