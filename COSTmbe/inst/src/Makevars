@@ -1,0 +1,5 @@
+PKG_CFLAGS = 
+PKG_FFLAGS = -DHRUE_FIX 
+//COPTFLAG=-O0
+PKG_LIBS = -L/nr/project/stat/CatchAtAge/COST/Rlibraries/R/libs -ltaucs -lmetis -llapack -lblas -lf2c
+

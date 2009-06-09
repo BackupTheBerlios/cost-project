@@ -1,0 +1,30 @@
+#include <R.h>
+#include <Rdefines.h>
+
+SEXP caa_main_model1(SEXP i_mcmc_par, SEXP i_constr, SEXP i_seed, 
+		     SEXP i_num_par, SEXP i_nBoats, SEXP i_common_par,
+		     SEXP i_dataList, SEXP i_ageList, SEXP i_lgaList, SEXP i_priorList,
+		     SEXP i_data_COST);
+void caa_main_model2(int *i_mcmc_par,
+		     int *i_constr,int *i_seed,int *i_coastal_cod,
+		     int *i_wgl_nBoats,double *i_totlength,double *i_totweight,double *i_haulweight,
+		     int *i_replength,int *i_tottype,int *i_nFishBoat,
+		     int *i_n_cov,int *i_ispat,int *i_wgl_icell,
+		     int *i_wgl_int_nFac,int *i_wgl_int_fix,int *i_wgl_int_c_cov,
+		     double *i_wgl_int_Sigma_cell,double *i_wgl_int_constr_cell,
+		     int *i_wgl_int_nconstr_cell,
+		     int *i_wgl_slp_nFac,int *i_wgl_slp_fix,int *i_wgl_slp_c_cov,
+		     double *i_wgl_slp_Sigma_cell,double *i_wgl_slp_constr_cell,
+		     int *i_wgl_slp_nconstr_cell,
+		     int *i_wgl_hsz_nFac,int *i_wgl_hsz_fix,int *i_wgl_hsz_c_cov,
+		     double *i_wgl_hsz_Sigma_cell,double *i_wgl_hsz_constr_cell,
+		     int *i_wgl_hsz_nconstr_cell,
+		     int *i_wgl_fixed_model,
+		     double *i_wgl_fixed_int,double *i_wgl_fixed_slp,double *i_wgl_fixed_tau,
+		     int *i_num_adj_area,int *i_adj_area,
+		     int *i_num_par,
+		     double *i_pri_wgl_eff_mean,double *i_pri_wgl_eff_prec,
+		     double *i_pri_wgl_prec_par,double *i_pri_wgl_ar,
+		     double *o_mcmc,double *o_loglik_mean,double *o_resid_wgl,
+                     double *o_wgl_mean_inv_lik,
+		     int *o_err);
