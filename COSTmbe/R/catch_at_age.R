@@ -490,7 +490,7 @@ caa =
       catn("Start MCMC runs")
       res1 = .Call(caa_main_model1,as.integer(mcmc.par),constr,seed,
         as.integer(numpar1),as.integer(nHaul),common.par,dataList,ageList,
-        lgaList,priorList,data.COST)
+        lgaList,priorList,data.COST,PACKAGE="COSTmbe")
       
       #catn("Finished calling caa_main_model1")
       

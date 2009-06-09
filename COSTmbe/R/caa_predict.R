@@ -231,7 +231,8 @@ predict.fit.caa =
     as.integer(N.lint),
     as.double(l.int),  #Length intervals   
     as.integer(nMC), #Number of Monte Carlo simulations for p_a
-    data.COST)
+    data.COST,
+    PACKAGE="COSTmbe")
 
   res$errflag = res$err
   if(res$errflag)

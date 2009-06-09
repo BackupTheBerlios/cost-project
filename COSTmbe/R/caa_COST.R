@@ -294,8 +294,9 @@ cost.fit =
 
     #Start MCMC runs
     catn("Start MCMC runs - age and lga model")
-    res1 = .Call(caa_main_model1,as.integer(mcmc.par),constr,seed,as.integer(numpar1),nHaul,
-                 common.par,dataList,ageList,lgaList,priorList,objCOST)
+
+    res1 = .Call("caa_main_model1",as.integer(mcmc.par),constr,seed,as.integer(numpar1),nHaul,
+                 common.par,dataList,ageList,lgaList,priorList,objCOST,PACKAGE="COSTmbe")
 
     #print("Finished calling caa_main_model1")
     
@@ -735,7 +736,8 @@ predict.fit.COST =
     as.integer(N.lint),         #Length intervals
     as.double(l.int),           
     as.integer(nMC),            #Number of Monte Carlo simulations for p_a
-    data.COST)
+    data.COST,
+    PACKAGE="COSTmbe")
 
   res$errflag = res$err
   if(res$errflag)

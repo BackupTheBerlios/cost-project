@@ -1,11 +1,9 @@
-subset <- getMethod("subset","csData")    #added MM 09/06/2009 : temporary, otherwise COSTcore's subset method is not imported ---> to be fixed
-
 run.bayes<-function(COST.data,fit=NULL,do.predict=T,species,timeStrata="quarter",burnin=2000,
                     thin=1,nmcmc=1000,ageMin=0,ageMax=20,
                     usewglrel=T,cov.list=NULL,pred.cov.real=NULL,arealist=NULL,l.int){
   obsdata<-mldata<-NULL
-if(sum(COST.data@cs@tr$sampType=="M")>0) mldata <- subset(COST.data@cs,subset=(sampType=="M"))
-if(sum(COST.data@cs@tr$sampType=="S")>0) obsdata <- subset(COST.data@cs,subset=(sampType=="S")) 
+if(sum(COST.data@cs@tr$sampType=="M")>0)mldata<-subset(COST.data@cs,subset=(sampType=="M"))
+if(sum(COST.data@cs@tr$sampType=="S")>0)obsdata<-subset(COST.data@cs,subset=(sampType=="S")) 
 if(is.null(mldata)&(is.null(obsdata))){print("no data of type M or S");return}
 input.data<-read.cost.data(obsdata,mldata,species,usewglrel)
 nseas<-0
@@ -14,7 +12,7 @@ if(timeStrata=="month")nseas<-12
 if(nseas==0){print("invalid time strata");return}
 if(nseas==4){input.data$season_obs<-1+floor((input.data$season_obs-1)/3)    
 input.data$season_mland<-1+floor((input.data$season_mland-1)/3)
-input.data$seas<-1+floor((input.data$seas-1)/3)}
+input.data$seas<-1+floor((input.data$seas-1)/3) }
   
 input.data$sampsize_disc[is.na(input.data$sampsize_disc)]<-0
 input.data$haulsize_disc[is.na(input.data$haulsize_disc)]<-0
@@ -35,21 +33,9 @@ aobs = NULL
   class(simobj) <- "caa.data"
  if(is.null(fit)){
    if(is.null(cov.list)){print("cov.list empty");return}
-
-mat<-NULL
-   for(i in 1:length(acov))mat<-cbind(mat,acov[[i]])
-   nsamp.cell<-nrow(unique(mat))
-   nparam<-length(unique(acov$year))+length(unique(acov$seas))+
-     length(unique(acov$gear))+length(arealist)-3
 models<-make.reg.models(cov.list)
-   if((nsamp.cell-nparam)<20)models$agemodel$Int$cell<-models$lgamodel$Int$cell<-
-     models$wglmodel$Int$cell<-models$lgamodel$Slp$cell<-models$wglmodel$Slp$cell<-FALSE
   input.data<<-input.data
 
-   print("###########")
-   print(c(nparam,nsamp.cell))
-   print(models)
-   
 fit = cost.fit(simobj,input.data,burnin=burnin,numit.inner=thin,numit.outer=nmcmc,constr=1,seed=3421,
                ageMin=ageMin,ageMax=ageMax,nSeason=nseas,
   agemodel=models$agemodel,
@@ -88,8 +74,9 @@ predict <-  predict.fit.COST(fit,fit$COST.list,year.pred,seas.pred$cov,gear.pred
           t2.year=NULL,t2.seas=NULL,t2.gear=NULL,t2.area=NULL,
           burnin=0,nMC=100,l.int=l.int,
           par.haulsize=NULL)
-if(nrow(pred.cov.real)==1) dbeObject.list<-mbe2dbe(predict,species)
-else dbeObject.list<-NULL
+dbeObject.list<-mbe2dbe(predict,species)
+#if(nrow(pred.cov.real)==1) dbeObject.list<-mbe2dbe(predict,species)
+#else dbeObject.list<-NULL
 }
 list(fit=fit,predict=predict,dbeObject.list=dbeObject.list)
 }
@@ -131,9 +118,9 @@ wglmodel$Slp$gear<-F
 wglmodel$Slp$area<-F
 wglmodel$Slp$cell<-F
 wglmodel$Slp$haul<-F
-if((cov.list$ageseas+cov.list$agegear+cov.list$agearea)>1)agemodel$Int$cell<-T
-if((cov.list$lgaseas+cov.list$lgagear+cov.list$lgaarea)>1)lgamodel$Int$cell<-T
-if((cov.list$wglseas+cov.list$wglgear+cov.list$wglarea)>1)wglmodel$Int$cell<-T
+#if((cov.list$ageseas+cov.list$agegear+cov.list$agearea)>1)agemodel$Int$cell<-T
+#if((cov.list$lgaseas+cov.list$lgagear+cov.list$lgaarea)>1)lgamodel$Int$cell<-T
+#if((cov.list$wglseas+cov.list$wglgear+cov.list$wglarea)>1)wglmodel$Int$cell<-T
 list(agemodel=agemodel,lgamodel=lgamodel,wglmodel=wglmodel)
 }
 #########################################################################
@@ -218,15 +205,4 @@ params$area.tau<-area.tau
 params$cell.tau<-cell.tau
 params$haul.tau<-haul.tau
 params
-}
-###################################################################
-getmode<-function(x){
-if(is.factor(x))x<-as.character(x)
-mode<-NA
-if(sum(!is.na(x))>0){
-tab<-as.integer(table(x))
-m<-max(tab)
-mode<-unique(x)[tab==m]
-mode<-mode[1]}
-mode
 }
