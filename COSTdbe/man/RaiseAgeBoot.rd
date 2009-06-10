@@ -9,13 +9,13 @@ This method requires RaiseLgthBoot to have been run to estimate the length struc
 }
 
 \usage{
-RaiseAgeBoot(dbeOutput, csObject, type="fixed", sex=as.character(NA), bootMethod = "samples", \dots)
+RaiseAgeBoot(dbeOutput, csObject, type="p", sex=as.character(NA), bootMethod = "samples", \dots)
 }
                                           
 \arguments{
   \item{dbeOutput}{A \emph{dbeOutput} object containing output from RaiseLgthBoot.}
   \item{csObject}{A \emph{csDataCons} object matching 'dbeOutput' specifications.}
-  \item{type}{Allocation strategy used to establish the age-length data, one of "fixed", "prop" or "ages"}
+  \item{type}{Allocation strategy used to establish the age-length data, one of "p", "fixedK", "propK" or "agesK" (see \emph{RaiseAge})}
   \item{sex}{Sex}
   \item{bootMethod}{"samples" (the default) or "otoliths"}
   \item{\dots}{Further arguments}
@@ -55,6 +55,6 @@ sol.dbe.an <- RaiseLgth (dbeOutput, csObject, clObject)
 # Several thousand iterations recommended for final run, which will take some time.
 sol.dbe.boot <- RaiseLgthBoot (dbeOutput, csObject, clObject, B=10)
 
-sol.dbe.boot <- RaiseAgeBoot (dbeOutput = sol.dbe.boot, csObject = csObject, type="fixed")
+sol.dbe.boot <- RaiseAgeBoot (dbeOutput = sol.dbe.boot, csObject = csObject, type="p")
 }
 \keyword{methods}
