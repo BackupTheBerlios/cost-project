@@ -74,7 +74,9 @@ if (is.null(dots$font.sub)) dots$font.sub <- 6
 if (is.null(dots$font.axis)) dots$font.axis <- 7
 if (is.null(dots$font.main)) dots$font.main <- 7
 
-if (is.null(dots$rot)) dots$rot <- 90
+if (is.null(dots$rot)) dots$rot <- 90   
+if (is.null(dots$layout)) dots$layout <- NULL 
+if (is.null(dots$as.table)) dots$as.table <- FALSE 
 
   #-----------------------------------------------------------------------------
   # Extraction of the numerical data, and formatting process
@@ -154,7 +156,7 @@ nTst <- sum(indStr)==0
 eval(parse('',text=paste(plotFun,"(value ~ ",c("rep(0,nrow(tab))",vrbl)[c(!lStruc,lStruc)],paste("|",paste(c("time","space","technical")[indStr],collapse="*",sep=""),sep="")[!nTst],
   ",data=tab,horizontal=FALSE,",typePar,"drop.unused.levels=FALSE,"[lStruc & !is.na(step)],
   "main=list(dots$main,font=dots$font.main,col=dots$col.main,cex=dots$cex.main),","ylim=c(0,max(c(tab$value,tab$sup),na.rm=TRUE)*1.05),"[!indScale],
-  "col=dots$col,lwd=dots$lwd,lty=dots$lty,pch=dots$pch,cex=dots$p.cex,fill=dots$col,par.strip.text=list(font=dots$font.lab),",
+  "col=dots$col,lwd=dots$lwd,lty=dots$lty,pch=dots$pch,cex=dots$p.cex,fill=dots$col,par.strip.text=list(font=dots$font.lab),layout=dots$layout,as.table=dots$as.table,",
   
   "prepanel = function(x,y,subscripts,...) {if (all(y==0)) y <- 1 ; "[indScale],
                                            "if (length(subscripts)>0) {list(ylim = c(0, 1.05*max(c(y,tab$sup[subscripts],tab$value[subscripts]),na.rm=TRUE)))"[indScale],
@@ -180,7 +182,7 @@ nTst <- sum(indStr)==0
 
 eval(parse('',text=paste(plotFun,"(value ~ ",Xstratum,paste("|",paste(newStr,collapse="*",sep=""),sep="")[!nTst],",data=tab,horizontal=FALSE,",typePar,
   "main=list(dots$main,font=dots$font.main,col=dots$col.main,cex=dots$cex.main),","ylim=c(0,max(c(tab$value,tab$sup),na.rm=TRUE)*1.05),"[!indScale],
-  "col=dots$col,lwd=dots$lwd,lty=dots$lty,pch=dots$pch,cex=dots$p.cex,fill=dots$col,par.strip.text=list(font=dots$font.lab),",
+  "col=dots$col,lwd=dots$lwd,lty=dots$lty,pch=dots$pch,cex=dots$p.cex,fill=dots$col,par.strip.text=list(font=dots$font.lab),layout=dots$layout,as.table=dots$as.table,",
   
   "prepanel = function(x,y,subscripts,...) {if (all(y==0)) y <- 1 ; "[indScale],
                                            "if (length(subscripts)>0) {list(ylim = c(0, 1.05*max(c(y,tab$sup[subscripts],tab$value[subscripts]),na.rm=TRUE)))"[indScale],
