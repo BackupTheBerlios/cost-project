@@ -45,6 +45,8 @@ if (is.null(dots$font.axis)) dots$font.axis <- 7
 if (is.null(dots$font.main)) dots$font.main <- 7
 
 if (is.null(dots$rot)) dots$rot <- 90
+if (is.null(dots$layout)) dots$layout <- NULL 
+if (is.null(dots$as.table)) dots$as.table <- FALSE 
 
   #-----------------------------------------------------------------------------
   # Extraction of the numerical data, and formatting process
@@ -95,7 +97,7 @@ nTst <- sum(indStr)==0
 
 eval(parse('',text=paste("histogram(~value",paste("|",paste(c("time","space","technical")[indStr],collapse="*",sep=""),sep="")[!nTst],
   ",data=tab,breaks=NULL,main=list(dots$main,font=dots$font.main,col=dots$col.main,cex=dots$cex.main),",
-  "col=dots$col,lwd=dots$lwd,lty=dots$lty,pch=dots$pch,cex=dots$p.cex,fill=dots$col,par.strip.text=list(font=dots$font.lab),",
+  "col=dots$col,lwd=dots$lwd,lty=dots$lty,pch=dots$pch,cex=dots$p.cex,fill=dots$col,par.strip.text=list(font=dots$font.lab),layout=dots$layout,as.table=dots$as.table,",
   "scales=list(x=list(relation=\"free\",rot=dots$rot,cex=dots$cex),y=list(relation=\"free\",cex=dots$cex),font=dots$font.axis,col=dots$col.axis,cex=dots$cex.axis),",
   "ylab=list(dots$ylab,font=dots$font.lab,col=dots$col.lab,cex=dots$cex.lab),xlab=list(dots$xlab,font=dots$font.lab,col=dots$col.lab,cex=dots$cex.lab),",
   ",key=list(points=list(pch=15,cex=dots$k.cex,col=strip.col[1:sum(indStr)]),text=list(intLeg[indStr]),space=\"right\",font=dots$font.lab,columns=1,border=TRUE)"[dispKey & !nTst],
@@ -163,6 +165,8 @@ if (is.null(dots$font.axis)) dots$font.axis <- 7
 if (is.null(dots$font.main)) dots$font.main <- 7
 
 if (is.null(dots$rot)) dots$rot <- 90
+if (is.null(dots$layout)) dots$layout <- NULL 
+if (is.null(dots$as.table)) dots$as.table <- FALSE 
 
   #-----------------------------------------------------------------------------
   # Extraction of the numerical data, and formatting process
@@ -301,7 +305,7 @@ eval(parse('',text=paste("xyplot(skewness~",vrbl,paste("|",paste(c("time","space
                                      "panel.xyplot(x,TAB$kurtosis[subscripts],col=dots$col[2],fill=dots$col[2],lwd=dots$lwd[1],lty=dots$lty[1],pch=dots$pch[1],cex=dots$p.cex[1],...) ;",
                                      "panel.abline(h=0,lty=2)},",
   
-  "par.strip.text=list(font=dots$font.lab),",
+  "par.strip.text=list(font=dots$font.lab),layout=dots$layout,as.table=dots$as.table,",
   "scales=list(x=list(relation=\"free\",rot=dots$rot,cex=dots$cex),y=list(relation=\"free\",cex=dots$cex),font=dots$font.axis,col=dots$col.axis,cex=dots$cex.axis),",
   "ylab=list(dots$ylab,font=dots$font.lab,col=dots$col.lab,cex=dots$cex.lab),xlab=list(dots$xlab,font=dots$font.lab,col=dots$col.lab,cex=dots$cex.lab)",
   paste(",key=list(points=list(pch=c(rep(15,sum(indStr)),rep(dots$pch[1],2)),",
@@ -323,7 +327,7 @@ eval(parse('',text=paste("barchart(mean~",vrbl,paste("|",paste(c("time","space",
   "panel=function(x,y,subscripts,...){panel.barchart(x,y,col=dots$col,lwd=dots$lwd,lty=dots$lty,pch=dots$pch,cex=dots$p.cex,...) ; ",
                                      "if (origin) panel.xyplot(x,TAB$value[subscripts],col=dots$p.col,pch=dots$pch,cex=dots$p.cex) ;",
                                      "if (length(subscripts)>0 & !ic) panel.segments(x,TAB$down[subscripts],x,TAB$up[subscripts],col=dots$l.col[1],lwd=dots$l.lwd[1],lty=dots$lty[1])},",
-  "fill=dots$col,par.strip.text=list(font=dots$font.lab),",
+  "fill=dots$col,par.strip.text=list(font=dots$font.lab),layout=dots$layout,as.table=dots$as.table,",
   "scales=list(x=list(relation=\"free\",rot=dots$rot,cex=dots$cex),y=list(relation=\"free\",cex=dots$cex,axs=\"i\"),font=dots$font.axis,col=dots$col.axis,cex=dots$cex.axis),",
   "ylab=list(dots$ylab,font=dots$font.lab,col=dots$col.lab,cex=dots$cex.lab),xlab=list(dots$xlab,font=dots$font.lab,col=dots$col.lab,cex=dots$cex.lab),",
   ",key=list(points=list(pch=c(rep(15,sum(indStr))",",dots$pch"[origin],"),cex=c(rep(dots$k.cex,sum(indStr))",",dots$p.cex"[origin],
@@ -390,6 +394,8 @@ if (is.null(dots$font.axis)) dots$font.axis <- 7
 if (is.null(dots$font.main)) dots$font.main <- 7
 
 if (is.null(dots$rot)) dots$rot <- 90
+if (is.null(dots$layout)) dots$layout <- NULL 
+if (is.null(dots$as.table)) dots$as.table <- FALSE 
 
   #-----------------------------------------------------------------------------
   # Extraction of the numerical data, and formatting process
@@ -457,7 +463,7 @@ nTst <- sum(indStr)==0
 
 eval(parse('',text=paste("levelplot(value~X*Y",paste("|",paste(c("time","space","technical")[indStr],collapse="*",sep=""),sep="")[!nTst],
   ",data=gh,main=list(dots$main,font=dots$font.main,col=dots$col.main,cex=dots$cex.main),at=seq(-1,1,length=20),",
-  "col.regions=dots$col,lwd=dots$lwd,lty=dots$lty,pch=dots$pch,cex=dots$p.cex,fill=dots$col,par.strip.text=list(font=dots$font.lab),",
+  "col.regions=dots$col,lwd=dots$lwd,lty=dots$lty,pch=dots$pch,cex=dots$p.cex,fill=dots$col,par.strip.text=list(font=dots$font.lab),layout=dots$layout,as.table=dots$as.table,",
   "colorkey=list(at=seq(-1,1,length=20),col=dots$col,space=\"bottom\"),",
   "scales=list(x=list(relation=\"free\",rot=dots$rot,cex=dots$cex),y=list(relation=\"free\",cex=dots$cex),font=dots$font.axis,col=dots$col.axis,cex=dots$cex.axis),",
   "ylab=list(dots$ylab,font=dots$font.lab,col=dots$col.lab,cex=dots$cex.lab),xlab=list(dots$xlab,font=dots$font.lab,col=dots$col.lab,cex=dots$cex.lab),",
