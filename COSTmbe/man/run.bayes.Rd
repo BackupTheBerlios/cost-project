@@ -30,15 +30,15 @@ Both \eqn{\delta_{0,t}} and \eqn{\delta_{1,t}} are linear in covariates.
 season-effect, gear-effect, area-effect and haul effect, while
 \eqn{\delta_{1,t}} includes intercept only.
 }
-\usage{run.bayes<-function(COST.data,species,timeStrata="quarter",
+\usage{run.bayes(COST.data,fit=NULL,do.predict=T,species,timeStrata="quarter",
                     burnin=2000,thin=1,nmcmc=1000,ageMin=0,ageMax=20,
-                    usewglrel=T,ageseas=F,agegear=F,agearea=F,
-                    lgaseas=F,lgagear=F,lgaarea=F,
-                    wglseas=F,wglgear=F,wglarea=F)
+                    usewglrel=T,cov.list=NULL,pred.cov.real=NULL,arealist=NULL,l.int)
   }
 \arguments{
   \item{COST.data}{An object of type ...}
-  \item{species}{}
+  \item{fit}{ToDo}
+  \item{do.predict}{ToDo}
+  \item{species}{ToDo}
   \item{timeStrata}{Time resolution of sampling. Can be "quarter"
     (default) if sampled by season, or "month" if sampled by months.}
   \item{burnin}{Number of MCMC iterations before storing samples.}
@@ -48,25 +48,29 @@ season-effect, gear-effect, area-effect and haul effect, while
     iterations will be \env{burnin} + \env{thin} * env{nmcmc}.}
   \item{ageMin}{Minimum age in the model.}
   \item{ageMax}{Maximum age in the model.}
-  \item{usewglrel}{}
-  \item{ageseas}{logical; if 'TRUE', the component is included in the
-    age model.}
-  \item{agegear}{logical; if 'TRUE', the component is included in the
-    age model.}
-  \item{agearea}{logical; if 'TRUE', the component is included in the
-    age model.}
-  \item{lgaseas}{logical; if 'TRUE', the component is included in the
-    lga model.}
-  \item{lgagear}{logical; if 'TRUE', the component is included in the
-    lga model.}
-  \item{lgaarea}{logical; if 'TRUE', the component is included in the
-    lga model.}
-  \item{wglseas}{logical; if 'TRUE', the component is included in the
-    wgl model.}
-  \item{wglgear}{logical; if 'TRUE', the component is included in the
-    wgl model.}
-  \item{wglarea}{logical; if 'TRUE', the component is included in the
-    wgl model.} 
+  \item{usewglrel}{ToDo}
+  \item{cov.list}{ToDo}
+  \item{pred.cov.real}{ToDo}
+  \item{arealist}{ToDo}
+  \item{l.int}{ToDo}
+%  \item{ageseas}{logical; if 'TRUE', the component is included in the
+%    age model.}
+%  \item{agegear}{logical; if 'TRUE', the component is included in the
+%    age model.}
+%  \item{agearea}{logical; if 'TRUE', the component is included in the
+%    age model.}
+%  \item{lgaseas}{logical; if 'TRUE', the component is included in the
+%    lga model.}
+%  \item{lgagear}{logical; if 'TRUE', the component is included in the
+%    lga model.}
+%  \item{lgaarea}{logical; if 'TRUE', the component is included in the
+%    lga model.}
+%  \item{wglseas}{logical; if 'TRUE', the component is included in the
+%    wgl model.}
+%  \item{wglgear}{logical; if 'TRUE', the component is included in the
+%    wgl model.}
+%  \item{wglarea}{logical; if 'TRUE', the component is included in the
+%    wgl model.} 
   }
 \value{An object \env{fit} from the estimation and an object \env{predict}
   }

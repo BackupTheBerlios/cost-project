@@ -1,8 +1,13 @@
 mbe2dbe <- function(mbeoutput,species=as.character(NA)) {
+
+if (nrow(mbeoutput$cov)>1) {
+time <- space <- technical <- "all"
+} else {
 #stratification definition
 time <- paste(mbeoutput$cov$year,mbeoutput$cov$seas,sep=" - ")
 space <- mbeoutput$cov$area
 technical <- mbeoutput$cov$gear
+}
 
 #mbeoutput's dimnames
 dimnames(mbeoutput$totcatch.land) <- dimnames(mbeoutput$totcatch.disc) <- list(round(exp(mbeoutput$l.int)),mbeoutput$avec,1:(dim(mbeoutput$totcatch.land)[3]))
