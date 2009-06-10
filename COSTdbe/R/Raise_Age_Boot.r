@@ -35,7 +35,7 @@
 
 
 
-Raise_Age_Boot <- function(csObject,dbeOutput,type="fixed",sex=as.character(NA), bootMethod = "samples"){
+Raise_Age_Boot <- function(csObject,dbeOutput,type="p",sex=as.character(NA), bootMethod = "samples"){
 #type= "fixed" or "prop" or "ages"
 #bootMethod="samples" or "otoliths"
 
@@ -178,7 +178,7 @@ ALK <- array(rep(as.vector(ALK),dim(N)[4]),dim=c(dim(ALK),dim(N)[4]),dimnames=ll
 #Q'ij
 	Qij <- aperm(aperm(ALK,c(1,3,4,5,2))/as.vector(apply(ALK,c(1,3:5),sum)),c(1,5,2:4))
 #njStar
-	if (type=="fixed") {
+	if (type=="p") {
     njStar <- ns/nl
   } else {
     njStar <- nj*rep(as.vector(ns/Nl),each=dim(nj)[1])}
@@ -251,7 +251,7 @@ return(dbeOutput)
 
 setGeneric("RaiseAgeBoot", function(dbeOutput,
                                  csObject,
-                                 type="fixed",
+                                 type="p",
                                  sex=as.character(NA),
                                  bootMethod = "samples",
                                  ...){
@@ -261,7 +261,7 @@ setGeneric("RaiseAgeBoot", function(dbeOutput,
 
 setMethod("RaiseAgeBoot", signature(dbeOutput="dbeOutput",csObject="csDataCons"), function(dbeOutput,
                                                                                        csObject,
-                                                                                       type="fixed",
+                                                                                       type="p",
                                                                                        sex=as.character(NA),
                                                                                        bootMethod = "samples",
                                                                                        ...){
