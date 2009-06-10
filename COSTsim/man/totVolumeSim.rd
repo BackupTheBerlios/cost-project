@@ -1,5 +1,6 @@
 \name{totVolumeSim}
 \alias{totVolumeSim}
+\alias{totVolumeSim,dbeOutputSim,simDataCons-method}
 \docType{methods}
 \title{Estimation of total volume of discards or/and landings (weight, number or number-at-length) of simulated data sets}
 \description{
@@ -8,12 +9,12 @@ landings (weight, number or number-at-length) based on various raising methods f
 }
 
 \usage{
-totVolume(dbeOutputSim,simObject,\dots)
+totVolumeSim(dbeOutputSim,simObj,\dots)
 }
 
 \arguments{
   \item{dbeOutputSim}{A \emph{dbeOutputSim} object. All necessary information for calculation process are taken in the first slots (species, catch category,...). See \emph{dbeObject} method for object initialization.}
-  \item{simObject}{A \emph{simDataCons} object matching 'dbeOutputSim' specifications.}
+  \item{simObj}{A \emph{simDataCons} object matching 'dbeOutputSim' specifications.}
   \item{...}{Further arguments such as:
   \item{type}{Specification of the raising method : \code{"trip"} (default value) for raising by trip, \code{"fo"} for raising by fishing operations, 
 \code{"fd"} for raising by fishing days,\code{"landings"} for ratio-to-total landings raising method, and \code{"time"} for ratio-to-fishing duration 

@@ -1,5 +1,6 @@
 \name{simSamples}
 \alias{simSamples}
+\alias{simSamples,simData-method}
 \title{ Simulation of data sets }
 \description{
   This function simulates data sets for the evaluation and comparison of the estimation methods

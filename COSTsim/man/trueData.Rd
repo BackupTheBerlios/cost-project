@@ -1,5 +1,7 @@
 \name{trueData}
 \alias{trueData}
+\alias{trueData-class}
+\alias{trueData,missing-method}
 \docType{class}
 \title{Class "trueData"}
 \description{
@@ -23,10 +25,10 @@ The creator function \code{trueData} can be called to create objects from this c
   }
 }
 
-\author{Dorleta García \email{dgarcia@azti.es}}
+\author{Dorleta Garcia \email{dgarcia@azti.es}}
 
 \examples{
-showclass("trueData")
+showClass("trueData")
 }
 
 \keyword{classes}

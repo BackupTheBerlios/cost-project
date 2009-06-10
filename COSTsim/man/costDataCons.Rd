@@ -1,5 +1,8 @@
 \name{costDataCons}
 \alias{costDataCons}
+\alias{costDataCons-class}
+\alias{costDataCons,costDataVal,strIni-method}
+\alias{costDataCons,missing,missing-method}
 \docType{class}
 \title{Class "costDataCons"}
 \description{
@@ -20,10 +23,10 @@ The creator function \code{costDataCons} can be called to create objects from th
   }
 }
 
-\author{Dorleta García \email{dgarcia@azti.es}}
+\author{Dorleta Garcia \email{dgarcia@azti.es}}
 
 \examples{
-showclass("costDataCons")
+showClass("costDataCons")
 }
 
 \keyword{classes}

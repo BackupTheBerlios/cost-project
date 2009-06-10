@@ -1,5 +1,6 @@
 \name{alkLgthRecSim}
 \alias{alkLgthRecSim}
+\alias{alkLgthRecSim,simDataCons-method}
 \docType{methods}
 \title{Method for managing gaps in age-length keys for simulated data sets}
 \description{

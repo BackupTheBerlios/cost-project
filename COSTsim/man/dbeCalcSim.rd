@@ -1,5 +1,6 @@
 \name{dbeCalcSim}
 \alias{dbeCalcSim}
+\alias{dbeCalcSim,dbeOutputSim-method}
 \docType{methods}                       
 \title{CI and CV calculation} 
 \description{

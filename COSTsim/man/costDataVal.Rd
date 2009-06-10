@@ -1,5 +1,7 @@
 \name{costDataVal}
 \alias{costDataVal}
+\alias{costDataVal-class}
+\alias{costDataVal,costData-method}
 \docType{class}
 \title{Class "costDataVal"}
 \description{
@@ -22,7 +24,7 @@ The creator function "costDataVal" can be called to create objects from this cla
 \author{Dorleta Garcia \email{dgarcia@azti.es}}
 
 \examples{
-showclass("costDataVal")
+showClass("costDataVal")
 }
 
 \keyword{classes}

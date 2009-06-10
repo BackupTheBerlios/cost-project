@@ -1,5 +1,7 @@
 \name{simDataVal}
 \alias{simDataVal}
+\alias{simDataVal-class}
+\alias{simDataVal,simData-method}
 \docType{class}
 \title{Class "simDataVal"}
 \description{
@@ -32,7 +34,7 @@ The creator function \code{simDataVal} can be called to create objects from this
 \author{Dorleta Garcia \email{dgarcia@azti.es}}
 
 \examples{
-showclass("simDataVal")
+showClass("simDataVal")
 }
 
 \keyword{classes}

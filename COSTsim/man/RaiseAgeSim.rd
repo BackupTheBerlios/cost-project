@@ -1,5 +1,7 @@
 \name{RaiseAgeSim}
 \alias{RaiseAgeSim}
+\alias{RaiseAgeSim-methods}
+\alias{RaiseAgeSim,dbeOutputSim,simDataCons-method}
 \docType{methods}
 \title{Estimation of total numbers-at-age from market sampling for simulated data sets}
 \description{
@@ -8,7 +10,7 @@ and it calculates total numbers-at-age by strata from market sampling for simula
 }
 
 \usage{
-RaiseAgeSim(dbeOutputSim,simObj,type="fixed",sex=as.character(NA),\dots)
+RaiseAgeSim(dbeOutputSim,simObj,type="p",sex=as.character(NA),\dots)
 }
 
 \arguments{

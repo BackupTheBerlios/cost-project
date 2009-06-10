@@ -43,10 +43,10 @@
   The accuracy, bias and precision statistics are described in detail in the COST manual
   
 }
-\author{Dorleta García \email{dgarcia@azti.es}}
+\author{Dorleta Garcia \email{dgarcia@azti.es}}
 
 \examples{
-showclass("PerformStats")
+showClass("PerformStats")
 }
 
 \keyword{classes}

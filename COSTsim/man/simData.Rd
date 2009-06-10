@@ -1,5 +1,6 @@
 \name{simData}
 \alias{simData}
+\alias{simData-class}
 \docType{class}
 \title{Class "simData"}
 \description{
@@ -29,10 +30,10 @@ The creator function \code{simData} can be called to create objects from this cl
   }
 }
 
-\author{Dorleta García \email{dgarcia@azti.es}}
+\author{Dorleta Garcia \email{dgarcia@azti.es}}
 
 \examples{
-showclass("simData")
+showClass("simData")
 }
 
 \keyword{classes}

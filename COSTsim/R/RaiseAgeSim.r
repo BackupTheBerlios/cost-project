@@ -9,7 +9,7 @@
 
 setGeneric("RaiseAgeSim", function(dbeOutputSim,
                                  simObj,
-                                 type="fixed",
+                                 type="p",
                                  sex=as.character(NA),
                                  ...){
 	standardGeneric("RaiseAgeSim")}
@@ -19,7 +19,7 @@ setGeneric("RaiseAgeSim", function(dbeOutputSim,
 
 setMethod("RaiseAgeSim", signature(dbeOutputSim="dbeOutputSim",simObj="simDataCons"), function(dbeOutputSim,
                                                                                        simObj,
-                                                                                       type="fixed",
+                                                                                       type="p",
                                                                                        sex=as.character(NA),
                                                                                        ...){
    nsamples <- length(simObj@samples)
@@ -59,7 +59,7 @@ setMethod("RaiseAgeSim", signature(dbeOutputSim="dbeOutputSim",simObj="simDataCo
 
 setGeneric("RaiseAgeBootSim", function(dbeOutputSim,
                                  simObj,
-                                 type="fixed",
+                                 type="p",
                                  sex=as.character(NA),
                                  bootMethod = "samples",
                                  ...){
@@ -69,7 +69,7 @@ setGeneric("RaiseAgeBootSim", function(dbeOutputSim,
 
 setMethod("RaiseAgeBootSim", signature(dbeOutputSim="dbeOutputSim",simObj="simDataCons"), function(dbeOutputSim,
                                                                                        simObj,
-                                                                                       type="fixed",
+                                                                                       type="p",
                                                                                        sex=as.character(NA),
                                                                                        bootMethod = "samples",
                                                                                        ...){
@@ -86,7 +86,7 @@ setMethod("RaiseAgeBootSim", signature(dbeOutputSim="dbeOutputSim",simObj="simDa
     remove('res1')
     for(i in 1:nsamples){
         dbeOut  <- dbeSim2dbe(dbeOutputSim, samples = i)
-        xx <- RaiseAgeBoot(dbeOutput = dbeOut, csObject = simObj@samples[[i]]@cs, type = 'fixed', 
+        xx <- RaiseAgeBoot(dbeOutput = dbeOut, csObject = simObj@samples[[i]]@cs, type = 'p', 
                         sex=sex, bootMethod=bootMethod,...)
    
         slot(res,'nSamp')[['age']] <- rbind(slot(res,'nSamp')[['age']], cbind(sample = rep(i,dim(slot(xx,'nSamp')[['age']])[1]),slot(xx,'nSamp')[['age']]))

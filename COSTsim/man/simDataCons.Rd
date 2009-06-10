@@ -1,5 +1,7 @@
 \name{simDataCons}
 \alias{simDataCons}
+\alias{simDataCons-class}
+\alias{simDataCons,simDataVal,strIni-method}
 \docType{class}
 \title{Class "simDataCons"}
 \description{
@@ -32,7 +34,7 @@ The creator function \code{simDataCons} can be called to create objects from thi
 \author{Dorleta Garcia <dgarcia@azti.es>}
 
 \examples{
-showclass("simDataCons")
+showClass("simDataCons")
 }
 
 \keyword{classes}

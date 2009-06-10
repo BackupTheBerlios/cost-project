@@ -1,5 +1,6 @@
 \name{RaiseAgebootSim}
 \alias{RaiseAgeBootSim}
+\alias{RaiseAgeBootSim,dbeOutputSim,simDataCons-method}
 \docType{methods}
 \title{Estimation of total numbers-at-age from market sampling with bootstrap variance for simulated data sets}
 \description{
@@ -8,7 +9,7 @@ it calculates total numbers-at-age by strata from market sampling with bootstrap
 }
 
 \usage{
-RaiseAgeBootSim(dbeOutputSim,simObj,type="fixed",sex=as.character(NA),bootMethod = "samples",\dots)
+RaiseAgeBootSim(dbeOutputSim,simObj,type="p",sex=as.character(NA),bootMethod = "samples",\dots)
 }
 
 \arguments{
@@ -20,7 +21,7 @@ RaiseAgeBootSim(dbeOutputSim,simObj,type="fixed",sex=as.character(NA),bootMethod
   \item{\dots}{Further arguments}  
 }
 
-\value{An updated object of class dbeOutputSim}
+\value{An updated object of class dbeOutputSim
 Slot methodDesc with bootstrap samples or bootstrap otoliths,
  \code{nSamp\$age} & \code{nMeas\$age} with number of samples and measurements,
 \code{ageStruc\$rep} with bootstrap replicates for numbers-at-age, iter=0 is assigned the estimates from the original data,

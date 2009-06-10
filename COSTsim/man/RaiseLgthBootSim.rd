@@ -1,5 +1,6 @@
 \name{RaiseLgthBootSim}
 \alias{RaiseLgthBootSim}
+\alias{RaiseLgthBootSim,dbeOutputSim,simDataCons-method}
 \docType{methods}
 \title{Estimation of total numbers-at-length from market sampling with bootstrap variance for simulated data sets}
 \description{
@@ -8,12 +9,12 @@ it calculates total numbers-at-length by strata from market sampling with bootst
 }
 
 \usage{
-RaiseLgthBootSim(dbeOutputSim,simObj,spp,taxon,sex=as.character(NA),B,\dots)
+RaiseLgthBootSim(dbeOutputSim,simData,spp,taxon,sex=as.character(NA),B,\dots)
 }
 
 \arguments{
   \item{dbeOutputSim}{A dbeOutputSim object.}
-  \item{simObj}{A simDataCons object matching \code{dbeOutputSim} specifications.}
+  \item{simData}{A simDataCons object matching \code{dbeOutputSim} specifications.}
   \item{spp}{Species, if missing this is set to dbeOutput@species}
   \item{taxon}{Taxon, if missing this is set to dbeOutput@species}
   \item{sex}{Sex}

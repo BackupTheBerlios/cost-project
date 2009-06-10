@@ -1,5 +1,7 @@
-\name{PerformStats}
+\name{PerformStats-methods}
 \alias{PerformStats-methods}
+\alias{PerformStats,dbeOutputSim,trueData-method}
+\alias{PerformStats,missing,missing-method}
 \docType{methods}
 \title{Method for computing performance statistics}
 \description{
@@ -20,7 +22,7 @@ performStats(estSimObj, trueDataObj, desc, nSamples)
 An object of the class performStats
 }
 
-\author{Dorleta García <dgarcia@azti.es>}
+\author{Dorleta Garcia <dgarcia@azti.es>}
 
 \seealso{
 \code{\link{PerformStats}}

@@ -1,5 +1,8 @@
 \name{costData}
 \alias{costData}
+\alias{costData-class}
+\alias{costData,ceData,clData,csData-method}
+\alias{costData,missing,missing,missing-method}
 \docType{class}
 \title{Class "costData"}
 \description{
@@ -20,7 +23,7 @@ The creator function \code{costData} can be called to create objects from this c
 \author{Dorleta Garcia \email{dgarcia@azti.es}}
 
 \examples{
-showclass("costData")
+showClass("costData")
 }
 
 \keyword{classes}

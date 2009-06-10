@@ -1,5 +1,6 @@
 \name{RaiseLgthSim}
 \alias{RaiseLgthSim}
+\alias{RaiseLgthSim,dbeOutputSim,simDataCons-method}
 \docType{methods}
 \title{Estimation of total numbers-at-length from market sampling for simulated data sets}
 \description{
@@ -8,12 +9,12 @@ and it calculates total numbers-at-length by strata from market sampling for sim
 }
 
 \usage{
-RaiseLgthSim(dbeOutputSim,simObj,spp,taxon,sex=as.character(NA),\dots)
+RaiseLgthSim(dbeOutputSim,simData,spp,taxon,sex=as.character(NA),\dots)
 }
 
 \arguments{
   \item{dbeOutputSim}{A dbeOutputSim object.}
-  \item{simObj}{A simDataCons object matching 'dbeOutputSim' specifications.}
+  \item{simData}{A simDataCons object matching 'dbeOutputSim' specifications.}
   \item{spp}{Species, if missing this is set to dbeOutput@species}
   \item{taxon}{Taxon, if missing this is set to dbeOutput@species}
   \item{sex}{Sex}
