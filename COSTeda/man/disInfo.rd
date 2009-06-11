@@ -33,7 +33,8 @@ Tapply-like methods to display information from validated and consolidated objec
   \item{biopar}{If \code{TRUE}, calculation is made upon 'ca' table. If \code{FALSE}, calculation is done upon 'tr', 'hh', 'sl' and 'hl' table.}
   \item{transpose}{If \code{TRUE}, output array is transposed.}
   \item{title}{Title to be written on .txt output file.}
-  \item{append}{If \code{TRUE}, output will be appended to .txt file. If \code{FALSE}, file will be overwritten.}
+  \item{append}{If \code{TRUE}, output will be appended to .txt file. If \code{FALSE}, file will be overwritten. If \code{NA}, result is not exported, but an output list with 'title' 
+  and 'result' elements is returned.}
 }
 
 \section{Methods}{
