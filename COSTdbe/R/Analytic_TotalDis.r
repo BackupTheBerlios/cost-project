@@ -748,7 +748,7 @@ if (!fraction%in%c("DIS","LAN")) {
  
 if (dbeOutp@methodDesc!="analytical") {
   warnings("'dbeOutput' object doesn't match the method!! 'methodDesc' slot will be updated!")
-  dbeOutp@methodDesc <- "analytitcal"}
+  dbeOutp@methodDesc <- "analytical"}
   
 species <- dbeOutp@species
 if ("all"%in%species) species <- unique(as.character(csObject@sl$spp))
