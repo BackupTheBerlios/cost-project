@@ -237,6 +237,8 @@ if (length(field)==1) {
 }
 
 if (transpose) calc <- t(calc)
+
+if (!is.na(append)){
 #Report
 sink(file=path,append=append)
     cat("\n") 		
@@ -249,7 +251,11 @@ sink(file=path,append=append)
     print(calc)
 		sink()
 invisible(calc)
-})
+} else {
+#no Report, only output
+return(list(title=title,result=calc))
+}}
+)
 
 
 
@@ -270,6 +276,8 @@ if (!all(allFields%in%names(tab))) stop("Fields don't match with 'cl' format!!")
 eval(parse('',text=paste("calc <- tapply(tab$",field,",list(",paste("tab$",by,collapse=",",sep=""),"),fun,...)",sep="")))
 
 if (transpose) calc <- t(calc)
+
+if (!is.na(append)){
 #Report
 sink(file=path,append=append)
     cat("\n") 		
@@ -282,7 +290,11 @@ sink(file=path,append=append)
     print(calc)
 		sink()
 invisible(calc)
-})
+} else {
+#no Report, only output
+return(list(title=title,result=calc))
+}}
+)
 
 
 
@@ -304,6 +316,8 @@ if (!all(allFields%in%names(tab))) stop("Fields don't match with 'ce' format!!")
 eval(parse('',text=paste("calc <- tapply(tab$",field,",list(",paste("tab$",by,collapse=",",sep=""),"),fun,...)",sep="")))
 
 if (transpose) calc <- t(calc)
+
+if (!is.na(append)){
 #Report
 sink(file=path,append=append)
     cat("\n") 		
@@ -316,7 +330,11 @@ sink(file=path,append=append)
     print(calc)
 		sink()
 invisible(calc)
-})
+} else {
+#no Report, only output
+return(list(title=title,result=calc))
+}}
+)
 
 
 
@@ -369,6 +387,8 @@ if (length(field)==1) {
 }
 
 if (transpose) calc <- t(calc)
+
+if (!is.na(append)){
 #Report
 sink(file=path,append=append)
     cat("\n") 		
@@ -381,7 +401,11 @@ sink(file=path,append=append)
     print(calc)
 		sink()
 invisible(calc)
-})
+} else {
+#no Report, only output
+return(list(title=title,result=calc))
+}}
+)
 
 
 
@@ -407,6 +431,8 @@ if (!field%in%names(TAB)) stop("'field' parameter doesn't match with CL table!!"
 eval(parse('',text=paste("calc <- tapply(TAB$",field,",list(",paste("TAB$",by,collapse=",",sep=""),"),fun,...)",sep="")))
 
 if (transpose) calc <- t(calc)
+
+if (!is.na(append)){
 #Report
 sink(file=path,append=append)
     cat("\n") 		
@@ -419,7 +445,11 @@ sink(file=path,append=append)
     print(calc)
 		sink()
 invisible(calc)
-})
+} else {
+#no Report, only output
+return(list(title=title,result=calc))
+}}
+)
 
 
 
@@ -443,6 +473,8 @@ if (!field%in%names(TAB)) stop("'field' parameter doesn't match with CE table!!"
 eval(parse('',text=paste("calc <- tapply(TAB$",field,",list(",paste("TAB$",by,collapse=",",sep=""),"),fun,...)",sep="")))
 
 if (transpose) calc <- t(calc)
+
+if (!is.na(append)){
 #Report
 sink(file=path,append=append)
     cat("\n") 		
@@ -455,7 +487,11 @@ sink(file=path,append=append)
     print(calc)
 		sink()
 invisible(calc)
-})
+} else {
+#no Report, only output
+return(list(title=title,result=calc))
+}}
+)
 
 
 
