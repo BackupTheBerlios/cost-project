@@ -1,3 +1,5 @@
+subset <- getMethod("subset","csData")
+
 run.bayes<-function(COST.data,fit=NULL,do.predict=T,species,timeStrata="quarter",burnin=2000,
                     thin=1,nmcmc=1000,ageMin=0,ageMax=20,
                     usewglrel=T,cov.list=NULL,pred.cov.real=NULL,arealist=NULL,l.int){
