@@ -833,7 +833,6 @@ isVal <- class(x)=="csDataVal"
   #-----------------------------------------------------------------------------
   # Specified table is subset according to 'subset' parameter
   #-----------------------------------------------------------------------------
-
 	e <- substitute(subset)
 	df0 <- eval(parse('',text=table))#do.call(table, list(object=x))  
 	r <- eval(e, df0, parent.frame(n=1))
@@ -909,8 +908,9 @@ return(res)
 
 setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr",link=TRUE){                 #if link, 'table' & ca tables are subset  
 subset <- substitute(subset)
-x <- subsetCOST(x,subset=eval(subset),table=table)
-if (link) subsetCOST(x,subset=eval(subset),table="ca") else x
+tab <- eval(parse('',text=paste("x@",table,sep="")))
+x <- subsetCOST(x,subset=eval(subset,tab),table=table)
+if (link) subsetCOST(x,subset=eval(subset,tab),table="ca") else x
 })
 
 
