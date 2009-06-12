@@ -48,7 +48,11 @@ indexCat <- indexSpp <- rep(0,nrow(x@hh))
 indexCat[x@hh$catReg%in%c("All",frac)] <- 1
 #indexSpp==1 if sppReg=="All" or if sppReg=="Par" & sampPar==TRUE
 restrSL <- x@sl[x@sl$spp%in%species & extCatchCat(x@sl$sort)%in%fraction,1:3]
+if (nrow(restrSL)>0) {#recorded information in SL                                ### added 12/06/2009
 restrSL$ind <- 1 ; indSpp <- merge(x@hh,unique(restrSL[,c(1:2,4)]),all.x=TRUE)$ind     #indSpp <-> index of hauls with related information in sl for given species and fraction
+} else {                                                                         ###
+indSpp <- rep(NA,nrow(x@hh))                                                     ###
+}                                                                                ###
 indexSpp[x@hh$sppReg=="All" | (x@hh$sppReg=="Par" & sampPar)] <- 1
 #so, Windex = indexCat*indexSpp (sampled haul index)
 Windex <- indexCat*indexSpp
@@ -64,6 +68,7 @@ Windex[Windex==0] <- NA ; Windex[indZero] <- 0
 #hh-index for sampled(1/0)/non sampled(NA) hauls (numbers) is Windex, with hauls in sl but not in hl as NA (this means that species was caught in the fraction, but not measured)
 #                                                                                                          (O values for weights remain 0 values for numbers)
 restrHL <- unique(x@hl[x@hl$spp%in%species & extCatchCat(x@hl$sort)%in%fraction,1:3])
+if (nrow(restrHL)>0) {#recorded information in HL                                 ###
 #detect FOs that are recorded in SL but not in HL
 restrHL$Ind <- 1 ; indMeas <- merge(unique(restrSL),restrHL,all.x=TRUE) ; indMeas$Ind[is.na(indMeas$Ind)] <- 0
 #match index with HH
@@ -71,6 +76,9 @@ indMs <- merge(x@hh,indMeas[indMeas$Ind==0,c("PSUid","SSUid","TSUid","Ind")],all
 #NAs in 'indMS' means that if info is in SL, then it is in HL
 #so, Lindex is...
 Lindex <- Windex ; Lindex[!is.na(indMs)] <- NA
+} else {                                                                          ###
+Lindex <- Windex ; Lindex[Windex%in%1]<- NA
+}
 
 #result is returned as a list
 return(list(sampWt=Windex,sampLg=Lindex))
