@@ -3,8 +3,8 @@
 \alias{RaiseAge,dbeOutput,csDataCons,clDataCons-method}
 \alias{RaiseAge,dbeOutput,csDataCons,missing-method}
 \docType{methods}
-\title{ee}
-\description{ee    
+\title{Estimation of total numbers-at-age from market sampling}
+\description{Estimation of total numbers-at-age from market sampling    
 }
 
 \usage{           
