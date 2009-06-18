@@ -379,6 +379,17 @@ wtTab <- slot(object,wt)$estim
 
 #subfunctions applied to each table 
 
+  #reorder the replicates table
+ordRep <- function(tab) {
+
+if ("iter"%in%names(tab)){
+  tab <- tab[order(tab$iter),]
+  rownames(tab) <- 1:nrow(tab)
+}
+
+return(tab)
+}
+ 
   #simple sum 
 agg <- function(tab,nSampAge=FALSE) {
 
@@ -388,36 +399,36 @@ if (all(is.na(tab))) {
   if (timeStrata) tab$time <- "all"
   if (spaceStrata) tab$space <- "all"
   if (!nSampAge & techStrata) tab$technical <- "all"
-  newTab <- aggregate(tab$value,as.list(tab[,(ncol(tab)-1):1]),sum,na.rm=TRUE)
+  newTab <- aggregate(tab$value,as.list(tab[,rev((1:ncol(tab))[-match("value",names(tab))])]),sum,na.rm=TRUE)
   names(newTab)[ncol(newTab)] <- "value"
-  return(newTab[,names(tab)])
+  return(ordRep(newTab[,names(tab)]))
 }}
 
 
   #weighted mean of estimates
-aggWt <- function(tab,Wt) {
+aggWt <- function(tab,Wt,void) {
 names(Wt)[ncol(Wt)] <- "wt"
-if (all(is.na(tab))) {
-  return(tab)
-} else {
+if (all(is.na(tab)) | all(is.na(Wt))) {
+  return(void)
+} else {  
 TAB <- merge(tab,Wt,all.x=TRUE,sort=FALSE) 
 TAB$value[is.na(TAB$wt)] <- NA ; TAB$wt[is.na(TAB$value)] <- NA 
 TAB$value <- TAB$value*TAB$wt
   if (timeStrata) TAB$time <- "all" 
   if (spaceStrata) TAB$space <- "all" 
   if (techStrata) TAB$technical <- "all"
-  newTab <- aggregate(cbind(TAB$value,TAB$wt),as.list(TAB[,(ncol(TAB)-2):1]),sum,na.rm=TRUE)
+  newTab <- aggregate(cbind(TAB$value,TAB$wt),as.list(TAB[,rev((1:ncol(TAB))[-match(c("value","wt"),names(TAB))])]),sum,na.rm=TRUE)
   names(newTab)[ncol(newTab)-c(1:0)] <- c("value","wt")
   newTab$value <- newTab$value/newTab$wt ; newTab$value[is.nan(newTab$value)] <- NA
-  return(newTab[,names(tab)])
+  return(ordRep(newTab[,names(tab)]))
 }}
 
 
   #weighted 'sum' of variances (assuming that variables are iid)  : Var((a.w1 + b.w2)/(w1+w2)) = (w1^2*Var(a) + w2^2*Var(b))/(w1+w2)^2
-aggWtVar <- function(tab,Wt) {
+aggWtVar <- function(tab,Wt,void) {
 names(Wt)[ncol(Wt)] <- "wt"
-if (all(is.na(tab))) {
-  return(tab)
+if (all(is.na(tab)) | all(is.na(Wt))) {
+  return(void)
 } else {
 TAB <- merge(tab,Wt,all.x=TRUE,sort=FALSE) 
 TAB$value[is.na(TAB$wt)] <- NA ; TAB$wt[is.na(TAB$value)] <- NA 
@@ -425,10 +436,10 @@ TAB$value <- TAB$value*TAB$wt*TAB$wt
   if (timeStrata) TAB$time <- "all" 
   if (spaceStrata) TAB$space <- "all" 
   if (techStrata) TAB$technical <- "all"
-  newTab <- aggregate(cbind(TAB$value,TAB$wt),as.list(TAB[,(ncol(TAB)-2):1]),sum,na.rm=TRUE)
+  newTab <- aggregate(cbind(TAB$value,TAB$wt),as.list(TAB[,rev((1:ncol(TAB))[-match(c("value","wt"),names(TAB))])]),sum,na.rm=TRUE)
   names(newTab)[ncol(newTab)-c(1:0)] <- c("value","wt")
   newTab$value <- newTab$value/(newTab$wt^2) ; newTab$value[is.nan(newTab$value)] <- NA
-  return(newTab[,names(tab)])
+  return(ordRep(newTab[,names(tab)]))
 }}
 
 
@@ -437,50 +448,55 @@ TAB$value <- TAB$value*TAB$wt*TAB$wt
   object@nMeas$len <- agg(object@nMeas$len)
   object@nMeas$age <- agg(object@nMeas$age,nSampAge=TRUE)
 
-  object@lenStruc$rep <- new("dbeOutput")@lenStruc$rep
+  #object@lenStruc$rep <- new("dbeOutput")@lenStruc$rep
   object@lenNum$ci <- new("dbeOutput")@lenNum$ci
   object@lenNum$cv <- new("dbeOutput")@lenNum$cv
   object@lenNum$DCRcvIndicator <- new("dbeOutput")@lenNum$DCRcvIndicator
 
-  object@ageStruc$rep <- new("dbeOutput")@ageStruc$rep
+  #object@ageStruc$rep <- new("dbeOutput")@ageStruc$rep
   object@ageNum$ci <- new("dbeOutput")@ageNum$ci
   object@ageNum$cv <- new("dbeOutput")@ageNum$cv
   object@ageNum$DCRcvIndicator <- new("dbeOutput")@ageNum$DCRcvIndicator
 
   object@totalN$estim <- agg(object@totalN$estim)
-  object@totalN$rep <- new("dbeOutput")@totalN$rep
+  object@totalN$rep <- agg(object@totalN$rep)
   object@totalNvar <- agg(object@totalNvar)
   object@totalNnum$ci <- new("dbeOutput")@totalNnum$ci
   object@totalNnum$cv <- new("dbeOutput")@totalNnum$cv
   object@totalNnum$DCRcvIndicator <- new("dbeOutput")@totalNnum$DCRcvIndicator
 
   object@totalW$estim <- agg(object@totalW$estim)
-  object@totalW$rep <- new("dbeOutput")@totalW$rep
+  object@totalW$rep <- agg(object@totalW$rep)
   object@totalWvar <- agg(object@totalWvar)
   object@totalWnum$ci <- new("dbeOutput")@totalWnum$ci
   object@totalWnum$cv <- new("dbeOutput")@totalWnum$cv
   object@totalWnum$DCRcvIndicator <- new("dbeOutput")@totalWnum$DCRcvIndicator
 
-if (object@param%in%c("weight","maturity","sex") & !all(is.na(wtTab))) {
+if (object@param%in%c("weight","maturity","sex")) {
 
-  object@lenStruc$estim <- aggWt(object@lenStruc$estim,wtTab)
-  object@lenVar <- aggWtVar(object@lenVar,wtTab)
+  object@lenStruc$estim <- aggWt(object@lenStruc$estim,wtTab,new("dbeOutput")@lenStruc$estim)
+  object@lenStruc$rep <- aggWt(object@lenStruc$rep,wtTab,new("dbeOutput")@lenStruc$rep)
+  object@lenVar <- aggWtVar(object@lenVar,wtTab,new("dbeOutput")@lenVar)
 
-  object@ageStruc$estim <- aggWt(object@ageStruc$estim,wtTab)
-  object@ageVar <- aggWtVar(object@ageVar,wtTab)
+  object@ageStruc$estim <- aggWt(object@ageStruc$estim,wtTab,new("dbeOutput")@ageStruc$estim)
+  object@ageStruc$rep <- aggWt(object@ageStruc$rep,wtTab,new("dbeOutput")@ageStruc$rep)
+  object@ageVar <- aggWtVar(object@ageVar,wtTab,new("dbeOutput")@ageVar)
 
 } else {
 
   object@lenStruc$estim <- agg(object@lenStruc$estim)
+  object@lenStruc$rep <- agg(object@lenStruc$rep)
   object@lenVar <- agg(object@lenVar)
 
   object@ageStruc$estim <- agg(object@ageStruc$estim)
+  object@ageStruc$rep <- agg(object@ageStruc$rep)
   object@ageVar <- agg(object@ageVar)
 }
 
 return(object)
 
 })
+
 
 
                                                                    
