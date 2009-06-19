@@ -657,6 +657,8 @@ if (is.null(dots$ylab))
   dots$ylab <- "Number" 
 if (is.null(dots$main)) 
   dots$main <- paste("Length distribution of ",title.frac," of \"",species,"\" species by ",title.lev,sep="") 
+if (is.null(dots$layout)) dots$layout <- NULL 
+if (is.null(dots$as.table)) dots$as.table <- FALSE 
 
 df <- object[(object$trpCode%in%trpCode)&(object$catchCat%in%fraction)&(object$spp%in%species),]
 if (nrow(df)==0) stop("No data for specified trip code and fraction!!")
@@ -685,7 +687,7 @@ names(LD)[ncol(LD)] <- "val"
 #if (!DF$staNum[1]=="all") DF$staNum <- factor(DF$staNum,levels=as.character(sort(as.numeric(levels(DF$staNum)))))
 
 eval(parse('',text=paste("print(barchart(val~lenCls|trpCode","*staNum"[panel.ind],",data=LD,ylim=c(0,max(LD$val)*1.05),scales=list(x=list(rot=dots$rot,cex=dots$cex.axis),",
-                         "font=dots$font.axis),main=list(dots$main,font=dots$font.main),",
+                         "font=dots$font.axis),main=list(dots$main,font=dots$font.main),layout=dots$layout,as.table=dots$as.table,",
                          "xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),",
                          "par.strip.text=list(font=dots$font.lab),col=dots$p.bg,fill=dots$p.bg,drop.unused.levels=FALSE))",sep="")))  
 
@@ -797,7 +799,7 @@ setMethod("lenDisPlot",signature("csData"), function(x,
                                                      level="trip",
                                                      ...){      
 
-lenDisPlotFun(x,species=species,fraction=fraction,trpCode=trpCode,level=level)
+lenDisPlotFun(x,species=species,fraction=fraction,trpCode=trpCode,level=level,...)
 
 })
   
@@ -813,7 +815,7 @@ setMethod("lenDisPlot",signature("csDataVal"), function(x,
                                                         level="trip",
                                                         ...){      
 
-lenDisPlotFun(x,species=species,fraction=fraction,trpCode=trpCode,level=level)
+lenDisPlotFun(x,species=species,fraction=fraction,trpCode=trpCode,level=level,...)
 
 })
 
