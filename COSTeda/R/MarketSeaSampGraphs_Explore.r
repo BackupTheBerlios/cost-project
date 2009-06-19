@@ -224,6 +224,8 @@ if (is.null(dots$xlab))
   dots$xlab <- "Trip Code" 
 if (is.null(dots$ylab)) 
   dots$ylab <- "Weight (g)" 
+if (is.null(dots$layout)) dots$layout <- NULL 
+if (is.null(dots$as.table)) dots$as.table <- FALSE 
 
 
 if (all(is.null(timeStrata),is.null(techStrata),is.null(spaceStrata))) {
@@ -257,7 +259,7 @@ strip.col <- trellis.par.get("strip.background")$col
       
 if (is.null(groups)) {
           
-  eval(parse('',text=paste("print(xyplot(bb~trp|",paste(index,collapse="*"),",data=df,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),",
+  eval(parse('',text=paste("print(xyplot(bb~trp|",paste(index,collapse="*"),",data=df,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),layout=dots$layout,as.table=dots$as.table,",
                            "ylab=list(dots$ylab,font=dots$font.lab),par.strip.text=list(font=dots$font.lab),scales=list(font=dots$font.axis,x=list(relation=\"free\",rot=dots$rot,cex=dots$cex.lab[1])),",
                            "key=list(points=list(pch=15,cex=dots$p.cex[1],col=strip.col[1:length(index)]),text=list(index),font=dots$font.lab,columns=1,border=TRUE,space=\"right\"),",
                            "prepanel=function(x,y,...){x <- x[,drop=TRUE] ; prepanel.default.xyplot(x,y,...)},",
@@ -271,7 +273,7 @@ if (is.null(groups)) {
   l2 <- length(LEV)
   groups <- eval(parse('',text=groups))
 
-  eval(parse('',text=paste("print(xyplot(bb~trp",paste("|",paste(indexStr,collapse="*"),sep="")[l1>0],",data=df,groups=",groups,",main=list(dots$main,font=dots$font.main),",
+  eval(parse('',text=paste("print(xyplot(bb~trp",paste("|",paste(indexStr,collapse="*"),sep="")[l1>0],",data=df,groups=",groups,",main=list(dots$main,font=dots$font.main),layout=dots$layout,as.table=dots$as.table,",
                            "xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),scales=list(font=dots$font.axis,x=list(relation=\"free\",rot=dots$rot,cex=dots$cex.lab[1])),",
                            "key=list(points=list(pch=c(rep(dots$pch[1],l2),NA,",c("rep(15,l1)","NA")[c((l1>0),(l1==0))],"),fill=dots$p.bg[1:l2],cex=dots$p.cex[1],lwd=dots$p.lwd[1],",
                            "col=c(rep(dots$col[1],l2),NA",",strip.col[1:l1]"[l1>0],")),text=list(c(LEV,\"\",\"",paste(indexStr,collapse="\",\""),"\")),title=\"",groups,"\",",
@@ -312,6 +314,8 @@ if (is.null(dots$xlab))
   dots$xlab <- "Trip Code" 
 if (is.null(dots$ylab)) 
   dots$ylab <- "Weight (g)" 
+if (is.null(dots$layout)) dots$layout <- NULL 
+if (is.null(dots$as.table)) dots$as.table <- FALSE 
 
 
 if (all(is.null(timeStrata),is.null(techStrata),is.null(spaceStrata))) {
@@ -327,7 +331,7 @@ if (all(is.null(timeStrata),is.null(techStrata),is.null(spaceStrata))) {
   df <- data.frame(aa=rep(names(obj),nvec),bb=vec)
 
   print(bwplot(bb~aa,data=df,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),
-               pch=dots$pch[1],fill=dots$p.bg[1],scales=list(font=dots$font.axis,x=list(rot=dots$rot)),
+               pch=dots$pch[1],fill=dots$p.bg[1],scales=list(font=dots$font.axis,x=list(rot=dots$rot)),layout=dots$layout,as.table=dots$as.table,
                par.settings=list(box.rectangle=list(col=dots$col[1]),box.umbrella=list(col=dots$col[1],lty=dots$lty[1]),
                plot.symbol=list(col=dots$col[1]))))
 
@@ -347,7 +351,7 @@ df$bb <- as.numeric(unlist(datas))
 
 strip.col <- trellis.par.get("strip.background")$col
 
-eval(parse('',text=paste("print(bwplot(bb~trp|",paste(index,collapse="*"),",data=df,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),",
+eval(parse('',text=paste("print(bwplot(bb~trp|",paste(index,collapse="*"),",data=df,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),layout=dots$layout,as.table=dots$as.table,",
                           "ylab=list(dots$ylab,font=dots$font.lab),par.strip.text=list(font=dots$font.lab),scales=list(font=dots$font.axis,x=list(relation=\"free\",rot=dots$rot,cex=dots$cex.lab[1])),",
                           "key=list(points=list(pch=15,cex=dots$p.cex[1],col=strip.col[1:length(index)]),text=list(index),font=dots$font.lab,columns=1,border=TRUE,space=\"right\"),",
                           "prepanel=function(x,y,...){x <- x[,drop=TRUE] ; prepanel.default.bwplot(x,y,...)},",
@@ -388,13 +392,15 @@ if (is.null(dots$ylab))
 if (is.null(dots$main)) 
   dots$main <- paste("Mean Weight by FO for each Fishing day and Trip\nSpecies :",
                      paste(x@outPut$species,collapse=", "),"    Fraction :",paste(x@outPut$fraction,collapse=", "))
+if (is.null(dots$layout)) dots$layout <- NULL 
+if (is.null(dots$as.table)) dots$as.table <- FALSE 
  
 mat <- t(sapply(names(x@outPut$MeanFO_FDTR),function(x) strsplit(x,":-:")[[1]]))       
 
 df <- data.frame(trpCode=mat[,1],date=mat[,2],Fday=as.numeric(unlist(tapply(mat[,1],list(mat[,1]),function(x) 1:length(x)))),val=as.numeric(x@outPut$MeanFO_FDTR))
    
 print(xyplot(val~Fday|trpCode,data=df,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),
-             scales=list(font=dots$font.axis,x=list(rot=dots$rot,cex=dots$cex.lab[1])),par.strip.text=list(font=dots$font.lab),
+             scales=list(font=dots$font.axis,x=list(rot=dots$rot,cex=dots$cex.lab[1])),par.strip.text=list(font=dots$font.lab),layout=dots$layout,as.table=dots$as.table,
              pch=dots$pch[1],fill=dots$p.bg[1],cex=dots$p.cex[1],col=dots$col[1]))
 }
 
@@ -426,6 +432,8 @@ if (is.null(dots$ylab))
 if (is.null(dots$main)) 
   dots$main <- paste("Weight by Fishing Operation for each Fishing day and Trip\nSpecies :",
                      paste(x@outPut$species,collapse=", "),"    Fraction :",paste(x@outPut$fraction,collapse=", "))
+if (is.null(dots$layout)) dots$layout <- NULL 
+if (is.null(dots$as.table)) dots$as.table <- FALSE 
 
 vec <- unlist(x@outPut$VolFO_FDTR)
 nvec <- unlist(lapply(x@outPut$VolFO_FDTR,length))
@@ -439,7 +447,7 @@ ind2 <- as.numeric(unlist(tapply(nvec2,list(nvec2),length)))
 df <- data.frame(trpCode=mat[,1],date=mat[,2],Fday=rep(ind1,ind2),val=vec)
 df$Fday <- as.factor(df$Fday)
 
-print(bwplot(val~Fday|trpCode,data=df,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),
+print(bwplot(val~Fday|trpCode,data=df,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),ylab=list(dots$ylab,font=dots$font.lab),layout=dots$layout,as.table=dots$as.table,
              pch=dots$pch[1],fill=dots$p.bg[1],scales=list(font=dots$font.axis,x=list(rot=dots$rot,cex=dots$cex.lab[1])),par.strip.text=list(font=dots$font.lab),
              par.settings=list(box.rectangle=list(col=dots$col[1]),box.umbrella=list(col=dots$col[1],lty=dots$lty[1]),
              plot.symbol=list(col=dots$col[1]))))
