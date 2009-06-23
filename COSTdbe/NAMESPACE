@@ -35,5 +35,6 @@ exportMethods(
 	"RaiseLgthBoot",
 	"RaiseAgeBoot",
 	"rbind2",
-	"+"
+	"+",
+	"tkFillGaps"
 )
