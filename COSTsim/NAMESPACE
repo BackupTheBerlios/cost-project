@@ -1,21 +1,19 @@
 import("utils","graphics","lattice")
 
-importClassesFrom("COSTcore")
-
-importFrom("COSTcore")
-
 importClassesFrom("COSTdbe")
 
 importFrom("COSTdbe")
 
 export(
-"cost.simloop",
+"convert2cost",
 "setup",
-"make.tau",
-"getmode",
+"getparams",
 "dbeObjectSim",
-"fillGaps"
-	
+"fillGaps",
+"truePopulation",
+"make.predict.cov",
+"predict.true.bayes",
+"tvs"	
 )
 
 

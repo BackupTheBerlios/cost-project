@@ -15,18 +15,13 @@ setClass("simData",
 	representation(
         desc        = "character",                     # descriptor
         species     = "character",                     # recall of SL$spp (+ SL$sex)
-        samples     = "list",                          # list with simulates 'costData' objects.
+        samples     = "list",                          # list with simulates 'csData' objects.
+        cl          = "clData",
+        ce          = "ceData",
         initial.fit = "list",
-		setup.args  = "list",                          # list with setup parameters
-		burnin      = "numeric",                     #recall of the parameter estimated (N, W, maturity, sex-ratio,...)
-		nmcmc       = "numeric",                        #time, space and technical stratification considered
-		l.int       = "numeric",                     #recall of the method (analytical, bootstrap, bayesian)
-		Int         = "list",                          #number of samples
-		Slp         = "list",                          #number of individual measures
-		landings    = "numeric",                          #estimates of the length structure (param-at-length)
-		nHaul       = "integer",                    #estimates of the variance of '$lenStruc'
-		nseas       = "numeric"                          #further numerical data about length structure (ex: ci, cv) )
-		))
+		setup.args  = "list"                          # list with setup parameters
+))
+
 #	prototype(
 #         desc        = "simDataObject",
 #         samples     = list(),                        
@@ -47,34 +42,22 @@ setClass("simDataVal",
 	representation(
         desc        = "character",                     # descriptor
         species     = "character",                     # recall of SL$spp (+ SL$sex)
-        samples     = "list",                          # list with simulates 'costData' objects.
+        samples     = "list",                          # list with simulates 'csData' objects.
+        cl          = "clDataVal",
+        ce          = "ceDataVal",
         initial.fit = "list",
-		setup.args  = "list",                          # list with setup parameters
-		burnin      = "numeric",                     #recall of the parameter estimated (N, W, maturity, sex-ratio,...)
-		nmcmc       = "numeric",                        #time, space and technical stratification considered
-		l.int       = "numeric",                     #recall of the method (analytical, bootstrap, bayesian)
-		Int         = "list",                          #number of samples
-		Slp         = "list",                          #number of individual measures
-		landings    = "numeric",                          #estimates of the length structure (param-at-length)
-		nHaul       = "integer",                    #estimates of the variance of '$lenStruc'
-		nseas       = "numeric"                          #further numerical data about length structure (ex: ci, cv) )
+		setup.args  = "list"                           # list with setup parameters
 		))
 		
 setClass("simDataCons",
 	representation(
         desc        = "character",                     # descriptor
         species     = "character",                     # recall of SL$spp (+ SL$sex)
-        samples     = "list",                          # list with simulates 'costData' objects.
+        samples     = "list",                          # list with simulates 'csData' objects.
+        cl          = "clDataCons",
+        ce          = "ceDataCons",
         initial.fit = "list",
-		setup.args  = "list",                          # list with setup parameters
-		burnin      = "numeric",                     #recall of the parameter estimated (N, W, maturity, sex-ratio,...)
-		nmcmc       = "numeric",                        #time, space and technical stratification considered
-		l.int       = "numeric",                     #recall of the method (analytical, bootstrap, bayesian)
-		Int         = "list",                          #number of samples
-		Slp         = "list",                          #number of individual measures
-		landings    = "numeric",                          #estimates of the length structure (param-at-length)
-		nHaul       = "integer",                    #estimates of the variance of '$lenStruc'
-		nseas       = "numeric"                          #further numerical data about length structure (ex: ci, cv) )
+		setup.args  = "list"                                # list with setup parameters
 		))
         		
 
@@ -110,27 +93,23 @@ setMethod("simData", signature(obj = 'missing'),   function(obj, desc, species, 
 return(res)})
 
 
-simData <- function(desc, species, nsamples, initial.fit, setup.args, burnin,                     
-                    nmcmc, l.int, Int, Slp, landings,  nHaul, nseas){
+simData <- function(desc, species, nsamples, clObj, ceObj, initial.fit, setup.args){
                     
     if (missing(species)|all(is.na(species))) stop("Missing 'species' parameter!!")
     if (missing(initial.fit))                 stop("Initital bayesian fit 'initial.fit' is missing!!")
-    if (missing(l.int))                       stop("l.int is missing!!")
-    if (missing(Int))                         stop("Int is missing!!")
-    if (missing(Slp))                         stop("Slp is missing!!")
-    if (missing(nHaul))                       stop("nHaul is missing!!")
-    if (missing(nseas))                       stop("nseas is missing!!")
+#    if (missing(l.int))                       stop("l.int is missing!!")
+#    if (missing(Int))                         stop("Int is missing!!")
+#    if (missing(Slp))                         stop("Slp is missing!!")
+#    if (missing(nHaul))                       stop("nHaul is missing!!")
+#    if (missing(nseas))                       stop("nseas is missing!!")
     if (missing(setup.args))                  stop("setup.args is missing!!")
     
     if(missing(nsamples)) nsamples <- 1
-    if(missing(nmcmc))    nmcmc    <- 200
-    if(missing(burnin))   burnin   <- nmcmc
-    
-    samples <- lapply(1:nsamples, function(x) costData())
+
+    samples <- lapply(1:nsamples, function(x) csData())
 
     new("simData", desc = desc, species = species, samples = samples, initial.fit = initial.fit, 
-                   setup.args = setup.args, burnin = burnin, nmcmc = nmcmc, l.int = l.int, 
-                   Int = Int, Slp = Slp, landings = landings,  nHaul = nHaul, nseas = nseas)
+                   setup.args = setup.args, cl = clObj, ce = ceObj)
  	  }
 
 # simDataVal--------------------------------------------------------------------
@@ -139,10 +118,12 @@ setGeneric("simDataVal", function(obj,...){
 })
 setMethod("simDataVal", signature("simData"), function(obj, desc,...){ 
         res <- new('simDataVal')
-        slots <- slotNames(res)
+        slots <- c("species", "initial.fit", "setup.args")
         for(sl in slots) slot(res, sl) <- slot(obj, sl)
         res@desc <- ifelse(missing(desc), obj@desc,desc) 
-        for(i in 1:length(obj@samples)) res@samples[[i]] <- costDataVal(obj@samples[[i]])
+        res@cl  <- clDataVal(obj@cl)
+        res@ce  <- ceDataVal(obj@ce)
+        for(i in 1:length(obj@samples)) res@samples[[i]] <- csDataVal(obj@samples[[i]])
         return(res)})
 
 # simDataCons-------------------------------------------------------------------
@@ -155,10 +136,12 @@ setMethod("simDataCons", signature("simDataVal", "strIni"), function(obj,
                                                                   desc="Consolidated data",  
                                                                   ...){
         res <- new('simDataCons')
-        slots <- slotNames(res)
+        slots <- c("species", "initial.fit", "setup.args")
         for(sl in slots) slot(res, sl) <- slot(obj, sl)
         res@desc <- ifelse(missing(desc), obj@desc,desc) 
-        for(i in 1:length(obj@samples)) res@samples[[i]] <- costDataCons(obj = obj@samples[[i]], objStrat = objStrat, desc = desc,...)   
+        res@cl <- clDataCons(obj = obj@cl, objStrat = objStrat, ...) 
+        res@ce <- ceDataCons(obj = obj@ce, objStrat = objStrat, ...)
+        for(i in 1:length(obj@samples)) res@samples[[i]] <- csDataCons(obj = obj@samples[[i]], objStrat = objStrat, desc = desc,...)   
         
         return(res)                                                                
 })    

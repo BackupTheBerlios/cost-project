@@ -38,7 +38,7 @@ setMethod("RaiseAgeSim", signature(dbeOutputSim="dbeOutputSim",simObj="simDataCo
    
     for(i in 1:nsamples){
         dbeOut  <- dbeSim2dbe(dbeOutputSim, samples = i)
-        xx <- RaiseAge(dbeOutput = dbeOut, csObject = simObj@samples[[i]]@cs,
+        xx <- RaiseAge(dbeOutput = dbeOut, csObject = simObj@samples[[i]],
                         type = type,  sex = sex, ...)
 
         slot(res,'nSamp')[['age']] <- rbind(slot(res,'nSamp')[['age']], cbind(sample = rep(i,dim(slot(xx,'nSamp')[['age']])[1]),slot(xx,'nSamp')[['age']]))
@@ -86,7 +86,7 @@ setMethod("RaiseAgeBootSim", signature(dbeOutputSim="dbeOutputSim",simObj="simDa
     remove('res1')
     for(i in 1:nsamples){
         dbeOut  <- dbeSim2dbe(dbeOutputSim, samples = i)
-        xx <- RaiseAgeBoot(dbeOutput = dbeOut, csObject = simObj@samples[[i]]@cs, type = 'p', 
+        xx <- RaiseAgeBoot(dbeOutput = dbeOut, csObject = simObj@samples[[i]], type = 'p', 
                         sex=sex, bootMethod=bootMethod,...)
    
         slot(res,'nSamp')[['age']] <- rbind(slot(res,'nSamp')[['age']], cbind(sample = rep(i,dim(slot(xx,'nSamp')[['age']])[1]),slot(xx,'nSamp')[['age']]))

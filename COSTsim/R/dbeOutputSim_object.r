@@ -269,14 +269,14 @@ dbeSim2dbe <- function(dbeObjectSim, samples = unique(dbeObjectSim@nSamp$len$sam
        
       for(s in bs)  slot(dbeObject,s) <- slot(dbeObjectSim,s)
         
-      for(s in df) slot(dbeObject,s) <- subset(slot(dbeObjectSim,s), sample %in% samples)[,-1]
+      for(s in df) slot(dbeObject,s) <- slot(dbeObjectSim,s)[slot(dbeObjectSim,s)$sample %in% samples,][,-1]
       
 
       lst.df <- sapply(lst, function(x) lapply(slot(dbeObject(species = '1'),x), class))
       
       for(s in lst){
         for(sl in names(lst.df[[s]])){   
-            slot(dbeObject,s)[[sl]] <- subset(slot(dbeObjectSim,s)[[sl]], sample %in% samples)[,-1]
+            slot(dbeObject,s)[[sl]] <- slot(dbeObjectSim,s)[[sl]][slot(dbeObjectSim,s)[[sl]]$sample %in% samples,][,-1]
         }
       }
       

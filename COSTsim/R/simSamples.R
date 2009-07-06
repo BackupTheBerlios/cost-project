@@ -10,45 +10,37 @@ setGeneric("simSamples", function(obj,
 )
 
 
-setMethod("simSamples", signature(obj = "simData"), function(obj, 
-                                                                 ndisc, 
-                                                                 ntrip, ltw, 
-                                                                 fit = FALSE){
-    ndisc <- ifelse(missing(ndisc), obj@setup.args$ndisc, ndisc)
-    ntrip <- ifelse(missing(ntrip), obj@setup.args$ntrip, ntrip)
-    
-    simDataObj <- obj
-    params     <- simDataObj@initial.fit
-    class(params) <- 'fit.caa'
-    nmcmc      <- simDataObj@nmcmc
-    l.int      <- simDataObj@l.int
-    Int        <- simDataObj@Int
-    Slp        <- simDataObj@Slp
-    landings   <- simDataObj@landings
-    nHaul      <- simDataObj@nHaul
-    nseas      <- simDataObj@nseas
-    nsamples   <- length(simDataObj@samples)
-    setup.data       <- simDataObj@setup.args
-    setup.data$ndisc <- ndisc
-    setup.data$ntrip <- ntrip
-    setup.data       <- setup(setup.data)
-    
-    burnin     <- simDataObj@burnin
-    
-    fit.by <- vector('list', nsamples)
+#setup.data<-new.setup(seas.list,area.list,gear.list,species,cov.list,ntrip=n.ml.trips+n.observer.trips,
+#                      ndisc=n.observer.trips,div=c(4,9),ageMin,ageMax)
 
-    
-    for(i in 1:nsamples){
-    cat('Sample: ', i,'\n')
-          sim.out <- cost.simloop(params,setup.data, burnin,nmcmc,l.int,Int,Slp,
-                        landings,nHaul,nseas, fit = fit)
-          slot(simDataObj, 'samples')[[i]] <- convert2cost(sim.out, ltw)
-          fit.by[[i]] <- sim.out$mbe.fit
+
+
+
+setMethod("simSamples", signature(obj = "simData"), function(obj, n.datasets, n.observer.trips, n.ml.trips,
+                                                                 nlsamp.land, nasamp.land, nlsamp.disc, nasamp.disc){
+
+    obj@setup.args$n.datasets        <- ifelse(missing(n.datasets), obj@setup.args$n.datasets, n.datasets)
+    obj@setup.args$n.observer.trips  <- ifelse(missing(n.observer.trips), obj@setup.args$n.observer.trips, n.observer.trips)
+    obj@setup.args$nlsamp.land       <- ifelse(missing(nlsamp.land), obj@setup.args$nlsamp.land, nlsamp.land)
+    obj@setup.args$nasamp.land       <- ifelse(missing(nasamp.land), obj@setup.args$nasamp.land, nasamp.land)
+    obj@setup.args$nlsamp.disc       <- ifelse(missing(nlsamp.disc), obj@setup.args$nlsamp.disc, nlsamp.disc)
+    obj@setup.args$nasamp.disc       <- ifelse(missing(nasamp.disc), obj@setup.args$nasamp.disc, nasamp.disc)
+
+   # setup.data       <- setup(setup.args)
+
+
+    for(i in 1:length(obj@samples)){
+        cat('Sample: ', i,'\n')
+        setup.data<-new.setup(obj@initial.fit$fit, obj@setup.args$use.seasons, obj@setup.args$use.areas, obj@setup.args$use.gears, obj@setup.args$species,
+                        obj@setup.args$age.covariates,obj@setup.args$weight.covariates, nmland= obj@setup.args$n.ml.trips,
+                      nobs=obj@setup.args$n.observer.trips,obj@setup.args$ageMin,obj@setup.args$ageMax)
+        sim.out <- make.sim.data(obj@initial.fit$fit,setup.data,  obj@setup.args$nlsamp.land,  obj@setup.args$nasamp.land,  obj@setup.args$nlsamp.disc,
+                     obj@setup.args$nasamp.disc,  obj@setup.args$length.list)
+
+slot(obj, 'samples')[[i]] <- convert2cost(sim.out, species = obj@setup.args$species, gear.list = setup.data$gearlist, 
+    area.list= setup.data$arealist, year = obj@setup.args$year)
+
     }
-
-    if(fit == TRUE)
-        return(list(simData = simDataObj, mbe.fit = fit.by))
-    else
-        return(simDataObj)
+    return(obj)
 }
 )

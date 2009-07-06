@@ -1,15 +1,15 @@
-fillGaps <- function(dbeSimObj, ageMin, ageMax, lenMin, lenMax){
+fillGaps <- function(dbeSimObj, age.seq, len.seq){
 
     if(dbeSimObj@catchCat == 'LAN')
-          res <- fillGaps.lan(dbeSimObj, ageMin, ageMax, lenMin, lenMax)
+          res <- fillGaps.lan(dbeSimObj, age.seq, len.seq)
     else
-        res <- fillGaps.dis(dbeSimObj, ageMin, ageMax, lenMin, lenMax)
+        res <- fillGaps.dis(dbeSimObj, age.seq, len.seq)
 
     return(res)
 }
         
 
-fillGaps.lan <- function(dbeSimObj, ageMin, ageMax, lenMin, lenMax){
+fillGaps.lan <- function(dbeSimObj, age.seq, len.seq){
 
      samples      <- unique(dbeSimObj@ageStruc$estim$sample)
      times        <- as.character(unique(dbeSimObj@ageStruc$estim$time))
@@ -19,8 +19,8 @@ fillGaps.lan <- function(dbeSimObj, ageMin, ageMax, lenMin, lenMax){
     age <- dbeSimObj@ageStruc$estim
     len <- dbeSimObj@lenStruc$estim
 
-    ages    <- ageMin:ageMax
-    lens    <- lenMin:lenMax
+    ages    <- age.seq
+    lens    <- len.seq
     
     for(sm in samples){
         for(tm in times){
@@ -52,7 +52,7 @@ fillGaps.lan <- function(dbeSimObj, ageMin, ageMax, lenMin, lenMax){
     
     
 
-fillGaps.dis <- function(dbeSimObj, ageMin, ageMax, lenMin, lenMax){
+fillGaps.dis <- function(dbeSimObj, age.seq, len.seq){
 
      samples      <- unique(dbeSimObj@lenStruc$estim$sample)
      times        <- as.character(unique(dbeSimObj@lenStruc$estim$time))
@@ -61,7 +61,7 @@ fillGaps.dis <- function(dbeSimObj, ageMin, ageMax, lenMin, lenMax){
 
     len <- dbeSimObj@lenStruc$estim
 
-    lens    <- lenMin:lenMax
+    lens    <- len.seq
     
     for(sm in samples){
         for(tm in times){
