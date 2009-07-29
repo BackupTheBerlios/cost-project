@@ -862,8 +862,12 @@ csc <- new("csDataCons")
   
 	ca <- ca[,match(names(ca(csc)),names(ca))]
   rownames(ca) <- 1:nrow(ca)  
-  
+
+if (all(is.na(object@ca))) {
+new("csDataCons",desc=desc,tr=coerceCons(tr,csc@tr),hh=coerceCons(hh,csc@hh),sl=coerceCons(sl,csc@sl),hl=coerceCons(hl,csc@hl))
+} else {  
 new("csDataCons",desc=desc,tr=coerceCons(tr,csc@tr),hh=coerceCons(hh,csc@hh),sl=coerceCons(sl,csc@sl),hl=coerceCons(hl,csc@hl),ca=coerceCons(ca,csc@ca))
+}
 }
 })
 
