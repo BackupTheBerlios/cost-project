@@ -28,7 +28,7 @@ setMethod("tkFillGaps",signature(object="csDataCons"), function(object){
 # ALK is created
 #------------
 
-ca <- ca(object)
+ca <- ca(object) ; ca$age <- as.character(ca$age) ; AGE <- as.numeric(ca$age)
 #is strata information available?
 Time <- factor(ca$time,levels=as.character(unique(sort(object@hl$time))))
 Space <- factor(ca$space,levels=as.character(unique(sort(object@hl$space))))
@@ -39,7 +39,7 @@ if (indNAtime | indNAspace) stop("no defined time or space stratification in ca,
 BY <- switch(as.character(ca$lenCode[1]),"mm"=1,"2mm"=2,"3mm"=3,"scm"=5,"cm"=10,"20mm"=20,"25mm"=25,"30mm"=30,"50mm"=50)
 #according to available strata, alk is computed (length classes are defined according to hl table)
 eval(parse('',text=paste("alk <- tapply(ca$age,list(factor(ca$lenCls,levels=seq(from=min(object@hl$lenCls,na.rm=TRUE),to=max(object@hl$lenCls,na.rm=TRUE),by=BY)),",
-                         paste(c("ca$age","Time"[!indNAtime],"Space"[!indNAspace]),collapse=","),"),length)",sep="")))
+                         paste(c("factor(ca$age,levels=seq(from=min(AGE,na.rm=TRUE),to=max(AGE,na.rm=TRUE),by=1))","Time"[!indNAtime],"Space"[!indNAspace]),collapse=","),"),length)",sep="")))
 #NAs --> 0
 alk[is.na(alk)] <- 0
 

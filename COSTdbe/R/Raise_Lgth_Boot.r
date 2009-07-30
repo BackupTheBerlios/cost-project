@@ -51,9 +51,11 @@ rowSums(newX,na.rm=TRUE,dims=length(MARGIN))
 
 
 
-Raise_Lgth_Boot <- function(dbeOutput, csObject, clObject,spp,taxon,sex=as.character(NA), B){
+Raise_Lgth_Boot <- function(dbeOutput, csObject, clObject,spp,taxon,sex=as.character(NA),sampPar=TRUE,B){
+
 
 sp <- dbeOutput@species
+
 if (missing(taxon)) taxon <- sp
 if (missing(spp)) spp <- sp  
 
@@ -97,18 +99,23 @@ if (indNewWt) {
   csObject@sl$lenCode <- csObject@sl$subSampWt
 }
 
-        
-#subsetting "csObject"                                                                                    #                                                                                                          #
-eval(parse('',text=paste("csObject <- subsetSpp(csObject,spp%in%",deparse(sp),")",sep="")))               #
-if (!is.na(sex)) eval(parse('',text=paste("csObject <- subsetSpp(csObject,sex%in%",deparse(sex),")",sep="")))  #to keep all 'tr' and 'hh' information, we use "subsetSpp" method                                                              #
 #subsetting "clObject"                                                                                    #
 x <- clObject ; cl <- cl(x)                                                                               #
 clObject <- new("clDataCons", desc=x@desc, cl=cl[cl$taxon%in%taxon,])                                     #
-   
+  
+#we calculate the number of samples by strata now
+ind <- sampledFO(csObject,species=spp,fraction=ccat,sampPar=sampPar)$sampLg
+Hl <- cbind(csObject@hh[,c("PSUid","time","space","technical")],ind=ind)   #sampled FO by strata
+ 
+#subsetting "csObject" for nMEAS calculation
+temp <- NULL                                                                                                                                                                                             #
+eval(parse('',text=paste("temp <- subsetSpp(csObject,spp%in%",deparse(sp),")",sep="")))               
+if (!is.na(sex)) eval(parse('',text=paste("temp <- subsetSpp(temp,sex%in%",deparse(sex),")",sep="")))  #to keep all 'tr' and 'hh' information, we use "subsetSpp" method                                                                 
 
 #number of fish measured in HL (for species specified in dbeOutput object)                                                                                          # ADDED : MM 02/04/2009                                           #
-nMEAS <- spdAgreg(list(value=csObject@hl$lenNum),BY=list(time=csObject@hl$time,space=csObject@hl$space,technical=csObject@hl$technical),sum,na.rm=TRUE)             #
+nMEAS <- spdAgreg(list(value=temp@hl$lenNum),BY=list(time=temp@hl$time,space=temp@hl$space,technical=temp@hl$technical),sum,na.rm=TRUE)             #
 dbeOutput@nMeas$len <- nMEAS                                                                                                                                        #
+rm(temp)
 
 HH <- csObject@hh
 SL <- csObject@sl ; SL$TSUid <- factor(as.character(SL$TSUid),exclude=NULL)                            #MM 24/04/2009
@@ -117,9 +124,10 @@ HL <- csObject@hl ; HL$TSUid <- factor(as.character(HL$TSUid),exclude=NULL)     
 SL$PSTUid <- apply(SL[,c("PSUid","SSUid","TSUid")],1,function(x) paste(x,collapse=":-:"))
 HL$PSTUid <- apply(HL[,c("PSUid","SSUid","TSUid")],1,function(x) paste(x,collapse=":-:"))
 #creating STR field, concatenation of time, space, technical
-HHSTR <- apply(HH[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
+HH$STR <- apply(HH[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
 SL$STR <- apply(SL[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
 HL$STR <- apply(HL[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
+Hl$STR <- apply(Hl[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
 
 if (nrow(SL)==0) stop("the specified parameters resulted in an empty table!!")
 
@@ -129,7 +137,7 @@ levSTR <- levels(factor(SL$STR))
 levSort <- levels(factor(SL$sort))
 levPSUid <- levels(factor(SL$PSUid))
 levSSUid <- levels(factor(SL$SSUid))
-levTSUid <- levels(SL$TSUid)#levels(factor(SL$TSUid))                            #MM 24/04/2009
+levTSUid <- levels(SL$TSUid)                           #MM 24/04/2009
 
 #total landed weights per strata
 clObject@cl$landMult[is.na(clObject@cl$landMult)] <- 1
@@ -173,6 +181,8 @@ for ( i in 1:length(uStrat) ){
   bootLenPSUid [ start.pos[i]:end.pos[i], -1] = resample (lenids$PSUid [ lenids$STR == uStrat[i] ], size = n[i] * B, replace=T )
   }
 
+HH.orig <- HH  #added MM 29/07/2009
+Hl.orig <- Hl  #added MM 29/07/2009
 SL.orig <- SL
 HL.orig <- HL
 ####### START OF BOOTSTRAP LOOP #################
@@ -184,6 +194,10 @@ print ("iter")
 for (i in 1:(B+1) ){
 
 if(identical ((i-1)/50, (i-1)%/%50))print(i-1)
+
+
+HH = merge(data.frame(PSUid = bootLenPSUid[,i]), HH.orig, by="PSUid") #added MM 29/07/2009
+Hl = merge(data.frame(PSUid = bootLenPSUid[,i]), Hl.orig, by="PSUid") #
 
 SL = merge(data.frame(PSUid = bootLenPSUid[,i]), SL.orig, by="PSUid")
   # new SL won't have same number of rows as original SL if some PSUid were repeated because of sort variable.
@@ -207,6 +221,13 @@ ws <- tapply(SL$subSampWt,list(STR=factor(SL$STR,levels=levSTR),
                                                     TSUid=factor(SL$TSUid,levels=levTSUid,exclude=NULL),     #MM 24/04/2009
                                                     SSUid=factor(SL$SSUid,levels=levSSUid),
                                                     PSUid=factor(SL$PSUid,levels=levPSUid)),sum,na.rm=TRUE)
+
+
+#subsetting "csObject" on taxa/sex                                                                #added MM 29/07/2009                                                                                                                              #
+eval(parse('',text=paste("SL <- subset(SL,spp%in%",deparse(sp),")",sep="")))                      #
+if (!is.na(sex)) eval(parse('',text=paste("SL <- subset(SL,sex%in%",deparse(sex),")",sep="")))    #
+
+                                                              
 
 #weight of the species/taxa/sex
 #wt  <- tapply(as.numeric(as.character(SL$lenCode)),list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)
@@ -236,10 +257,11 @@ sum.w_ssu <- RowSum(w_tsu,c(1,4))
 sum.wl_ssu <- RowSum(wl_tsu,c(1,4))
 
 #number of SSUid (total and sampled)
-Mi <- tapply(HH$SSUid,list(STR=factor(HHSTR,levels=levSTR),
+Mi <- tapply(HH$SSUid,list(STR=factor(HH$STR,levels=levSTR),
                                       PSUid=factor(HH$PSUid,levels=levPSUid)),function(x) length(unique(x)))
-mi <- tapply(HL$SSUid,list(STR=factor(HL$STR,levels=levSTR),
-                           PSUid=factor(HL$PSUid,levels=levPSUid)),function(x) length(unique(x)))
+Hl <- Hl[!is.na(Hl$ind),]
+mi <- tapply(Hl$ind,list(STR=factor(Hl$STR,levels=levSTR),
+                           PSUid=factor(Hl$PSUid,levels=levPSUid)),function(x) length(unique(x)))
 
 #PSUid stage                           
 d_jpsu <- sum.d_jssu*as.vector(Mi/mi)
@@ -341,7 +363,7 @@ setGeneric("RaiseLgthBoot", function(dbeOutput,
                                  clObject,
                                  spp,
                                  taxon,
-                                 sex=as.character(NA),
+                                 sex=as.character(NA),  #MM added 30/07/2009 'sampPar' parameter is left to be added
                                  B,
                                  ...){
 	standardGeneric("RaiseLgthBoot")}
@@ -354,11 +376,11 @@ setMethod("RaiseLgthBoot", signature(dbeOutput="dbeOutput",csObject="csDataCons"
                                                                                                               clObject,
                                                                                                               spp,
                                                                                                               taxon,
-                                                                                                              sex=as.character(NA),
+                                                                                                              sex=as.character(NA),     #MM added 30/07/2009 'sampPar' parameter is left to be added
                                                                                                               B,
                                                                                                               ...){
                                                                                                            
-Raise_Lgth_Boot(dbeOutput = dbeOutput, csObject = csObject, clObject = clObject, spp=spp,taxon=taxon,sex=sex, B=B)
+Raise_Lgth_Boot(dbeOutput = dbeOutput, csObject = csObject, clObject = clObject, spp=spp,taxon=taxon,sex=sex,B=B)
 
 })
 

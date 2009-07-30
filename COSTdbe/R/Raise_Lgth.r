@@ -25,13 +25,18 @@ rowSums(newX,na.rm=TRUE,dims=length(MARGIN))
 
 
 
-Raise_Lgth <- function(csObject,clObject,dbeOutput,spp,taxon,sex=as.character(NA)){
+Raise_Lgth <- function(csObject,clObject,dbeOutput,spp,taxon,sex=as.character(NA),sampPar=TRUE){              
+
 
 sp <- dbeOutput@species
-if (missing(taxon)) taxon <- sp
-if (missing(spp)) spp <- sp  
 
-eval(parse('',text=paste("csObject <- subsetSpp(csObject,spp%in%",deparse(spp),")",sep="")))
+if (missing(taxon)) taxon <- sp
+if (missing(spp)) spp <- sp 
+ 
+if (length(spp)>1 & !is.na(sex)) stop("wrong spp and/or sex parameters : this case can't be considered!!")
+if (length(spp)>1 & length(sp)>1) stop("wrong spp and/or dbeOutput@species values : this case can't be considered!!")
+
+eval(parse('',text=paste("csObject <- subsetSpp(csObject,spp%in%",deparse(spp),")",sep="")))       
 ccat <- dbeOutput@catchCat
 #'catchCat' slot must be "LAN"
 if (!all(is.na(ccat)) & (all(ccat%in%"LAN") | missing(clObject))) {
@@ -43,7 +48,9 @@ if (nrow(csObject@hl)==0) stop("no sampled landings for specified species!!")
 #as sort is a factor,...                                                        #
 csObject@sl$sort <- as.character(csObject@sl$sort)                              # 05/05/2009 MM
 csObject@hl$sort <- as.character(csObject@hl$sort)                              #
-
+#in TSUid field, all values are considered (NAs)  
+csObject@sl$TSUid <- factor(as.character(csObject@sl$TSUid),exclude=NULL)
+csObject@hl$TSUid <- factor(as.character(csObject@hl$TSUid),exclude=NULL)
 
 #number of length samples (length sample= PSUid/SSUid/TSUid in HL if strategy="cc", and PSUid/SSUid in HL if strategy="metier") is calculated at this stage (before subsetting on 'sp' and 'sex')
 cc <- is.na(dbeOutput@strataDesc@techStrata)==FALSE & dbeOutput@strataDesc@techStrata=="commCat"                                                                    #
@@ -51,28 +58,21 @@ if (cc) Unit <- paste(csObject@hl$PSUid,csObject@hl$SSUid,csObject@hl$TSUid,sep=
 nSAMP <- spdAgreg(list(value=Unit),BY=list(time=csObject@hl$time,space=csObject@hl$space,technical=csObject@hl$technical),function(x) length(unique(x)))            #
 dbeOutput@nSamp$len <- nSAMP                                                                                                                                        #  ADDED : MM 02/04/2009
 
+#we calculate the number of samples by strata now
+ind <- sampledFO(csObject,species=spp,fraction=ccat,sampPar=sampPar)$sampLg
+Hl <- cbind(csObject@hh[,c("PSUid","time","space","technical")],ind=ind)
+       
+#some calculations must be made BEFORE subsetting      
+ 
+SL_STR <- apply(csObject@sl[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:")) 
 
-# weight of the species/taxa/sex in the sampled box
-# this weight is to be calculated by summing the sampled weight by species/taxa/sex before subsetting
-# and added as a third weight variable
-
-indNewWt <- TRUE
-if (is.na(sex) & all(taxon%in%sp)) indNewWt <- FALSE
-if (indNewWt) {
-
-  NW <- spdAgreg(list(newWt=csObject@sl$subSampWt),BY=list(PSUid=csObject@sl$PSUid,SSUid=csObject@sl$SSUid,TSUid=csObject@sl$TSUid,
-                                                         time=csObject@sl$time,space=csObject@sl$space,
-                                                         technical=csObject@sl$technical,sort=csObject@sl$sort),sum,na.rm=TRUE)
-                  
-  mergeSL <- merge(csObject@sl,NW,all.x=TRUE,sort=FALSE)
-  ssw <- csObject@sl$subSampWt
-  csObject@sl$subSampWt <- mergeSL$newWt
-  csObject@sl$lenCode <- ssw
-} else {
-  csObject@sl$lenCode <- csObject@sl$subSampWt
-}
-
-        
+ 
+#weight of the level
+wl <- tapply(csObject@sl$wt,list(STR=SL_STR,sort=csObject@sl$sort,TSUid=csObject@sl$TSUid,SSUid=csObject@sl$SSUid,PSUid=csObject@sl$PSUid),sum,na.rm=TRUE)   #reference for factor levels
+#sampled weight
+ws <- tapply(csObject@sl$subSampWt,list(STR=SL_STR,sort=csObject@sl$sort,TSUid=csObject@sl$TSUid,SSUid=csObject@sl$SSUid,PSUid=csObject@sl$PSUid),sum,na.rm=TRUE)
+      
+     
 #subsetting "csObject"                                                                                    #                                                                                                          #
 eval(parse('',text=paste("csObject <- subsetSpp(csObject,spp%in%",deparse(sp),")",sep="")))               #
 if (!is.na(sex)) eval(parse('',text=paste("csObject <- subsetSpp(csObject,sex%in%",deparse(sex),")",sep="")))  #to keep all 'tr' and 'hh' information, we use "subsetSpp" method                                                              #
@@ -88,32 +88,29 @@ nMEAS <- spdAgreg(list(value=csObject@hl$lenNum),BY=list(time=csObject@hl$time,s
 dbeOutput@nMeas$len <- nMEAS                                                                                                                                        #
 
 
-
-SL <- csObject@sl ; SL$TSUid <- factor(as.character(SL$TSUid),exclude=NULL)                            #MM 24/04/2009
-HL <- csObject@hl ; HL$TSUid <- factor(as.character(HL$TSUid),exclude=NULL)                            #MM 24/04/2009
-#creating PSTUid field, concatenation of PSUid, SSUid, TSUid
-SL$PSTUid <- apply(SL[,c("PSUid","SSUid","TSUid")],1,function(x) paste(x,collapse=":-:"))
-HL$PSTUid <- apply(HL[,c("PSUid","SSUid","TSUid")],1,function(x) paste(x,collapse=":-:"))
+SL <- csObject@sl                            #MM 24/04/2009
+HL <- csObject@hl                             #MM 24/04/2009
 #creating STR field, concatenation of time, space, technical
 HHSTR <- apply(csObject@hh[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
 SL$STR <- apply(SL[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
 HL$STR <- apply(HL[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
+Hl$STR <- apply(Hl[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
 
 if (nrow(SL)==0) stop("the specified parameters resulted in an empty table!!")
 
-#weight of the level
-wl <- tapply(SL$wt,list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)   #reference for factor levels
-#sampled weight
-ws <- tapply(SL$subSampWt,list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)
+nam <- dimnames(wl)        
 #weight of the species/taxa/sex
-wt  <- tapply(as.numeric(as.character(SL$lenCode)),list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)
+wt  <- tapply(SL$subSampWt,list(STR=factor(as.character(SL$STR),levels=nam$STR),sort=factor(as.character(SL$sort),levels=nam$sort),
+                                 TSUid=factor(as.character(SL$TSUid),exclude=NULL,levels=nam$TSUid),
+                                 SSUid=factor(as.character(SL$SSUid),levels=nam$SSUid),
+                                 PSUid=factor(as.character(SL$PSUid),levels=nam$PSUid)),sum,na.rm=TRUE)
 
 #number of fish in the sample by length
-d_j <- tapply(HL$lenNum,list(STR=factor(HL$STR,levels=levels(factor(SL$STR))),
-                              sort=factor(HL$sort,levels=levels(factor(SL$sort))),
-                              TSUid=factor(HL$TSUid,levels=levels(SL$TSUid),exclude=NULL),            #MM 24/04/2009
-                              SSUid=factor(HL$SSUid,levels=levels(factor(SL$SSUid))),
-                              PSUid=factor(HL$PSUid,levels=levels(factor(SL$PSUid))),
+d_j <- tapply(HL$lenNum,list(STR=factor(HL$STR,levels=nam$STR),
+                              sort=factor(HL$sort,levels=nam$sort),
+                              TSUid=factor(HL$TSUid,levels=nam$TSUid,exclude=NULL),            #MM 24/04/2009
+                              SSUid=factor(HL$SSUid,levels=nam$SSUid),
+                              PSUid=factor(HL$PSUid,levels=nam$PSUid),
                               lenCls=HL$lenCls),sum,na.rm=TRUE)
 
 #TSUid stage
@@ -130,10 +127,14 @@ sum.w_ssu <- RowSum(w_tsu,c(1,4))
 sum.wl_ssu <- RowSum(wl_tsu,c(1,4))
 
 #number of SSUid (total and sampled)
-Mi <- tapply(csObject@hh$SSUid,list(STR=factor(HHSTR,levels=levels(factor(SL$STR))),
-                                      PSUid=factor(csObject@hh$PSUid,levels=levels(factor(SL$PSUid)))),function(x) length(unique(x)))
-mi <- tapply(HL$SSUid,list(STR=factor(HL$STR,levels=levels(factor(SL$STR))),
-                           PSUid=factor(HL$PSUid,levels=levels(factor(SL$PSUid)))),function(x) length(unique(x)))
+Mi <- tapply(csObject@hh$SSUid,list(STR=factor(HHSTR,levels=nam$STR),
+                                      PSUid=factor(csObject@hh$PSUid,levels=nam$PSUid)),function(x) length(unique(x)))
+Hl <- Hl[!is.na(Hl$ind),]
+mi <- tapply(Hl$ind,list(STR=factor(Hl$STR,levels=nam$STR),
+                         PSUid=factor(Hl$PSUid,levels=nam$PSUid)),function(x) length(unique(x)))
+
+#mi <- tapply(SL$SSUid,list(STR=factor(SL$STR,levels=nam$STR),
+#                           PSUid=factor(SL$PSUid,levels=nam$PSUid)),function(x) length(unique(x)))   
 
 #PSUid stage                           
 d_jpsu <- sum.d_jssu*as.vector(Mi/mi)
@@ -167,8 +168,10 @@ WHat <-  sum.w_psu*W/sum.wl_psu
 ## variance calculation based on 'Detecting sampling outliers and sampling heterogeneity when...' article (J. Vigneau & S. Mahévas)
 ######################
 
-#n : number of sampled PSUid per strata
-n <- tapply(HL$PSUid,list(STR=factor(HL$STR,levels=levels(factor(SL$STR)))),function(x) length(unique(x)))
+#n : number of sampled SSUid per strata
+  #n <- tapply(HL$PSUid,list(STR=factor(HL$STR,levels=levels(factor(SL$STR)))),function(x) length(unique(x)))
+
+n <- tapply(Hl$ind,list(STR=factor(Hl$STR,levels=nam$STR)),length)
 
 first  <- W^2
 second <- (1-(sum.wl_psu/W))/(sum.wl_psu^2/n) 
@@ -232,7 +235,7 @@ setGeneric("RaiseLgth", function(dbeOutput,
                                  spp,
                                  taxon,
                                  sex=as.character(NA),
-                                 ...){
+                                 ...){                                                         #'sampPar' parameter is left to be added
 	standardGeneric("RaiseLgth")}
 )
 
