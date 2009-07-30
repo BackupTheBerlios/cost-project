@@ -502,7 +502,7 @@ return(list(title=title,result=calc))
 tabConsist <- function(lTab,field,nb=FALSE) {                 #lTab is a list containing various COST objects
 
 timeField <- function(tab) {
-month <- sapply(tab$date,function(x) as.numeric(strsplit(x,"-")[[1]][2]))
+month <- sapply(as.character(tab$date),function(x) as.numeric(strsplit(x,"-")[[1]][2]))
 quarter <- ceiling(month/3)
 semester <- ceiling(quarter/2)
 return(data.frame(month=month,quarter=quarter,semester=semester))
