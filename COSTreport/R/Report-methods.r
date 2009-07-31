@@ -12,15 +12,15 @@ initReport <- function() {
 temp <- getwd()
 suppressWarnings(dir.create("Report"))
 setwd(paste(temp,"/Report",sep=""))
-invisible(file.copy(from=paste(R.home(),"/library/TianPack/cost1.jpg",sep=""),to="cost1.jpg"))
-invisible(file.copy(from=paste(R.home(),"/library/TianPack/cost2.jpg",sep=""),to="cost2.jpg"))
+invisible(file.copy(from=paste(R.home(),"/library/COSTreport/cost1.jpg",sep=""),to="cost1.jpg"))
+invisible(file.copy(from=paste(R.home(),"/library/COSTreport/cost2.jpg",sep=""),to="cost2.jpg"))
 return(temp)
 }                                           
 
 #fonction pour effacer tous les fichiers créés hors .pdf
-deleteReport <- function(){
+deleteReport <- function(){                                        #& length(grep("logo",x))==0 
 List <- list.files()
-ind <- sapply(List,function(x) {if ( (length(grep(".pdf",x))==0 & length(grep("logo",x))==0 ) | length(grep("-",x))>0 ) return(FALSE) else return(TRUE)})
+ind <- sapply(List,function(x) {if ( (length(grep(".pdf",x))==0 ) | length(grep("-",x))>0 ) return(FALSE) else return(TRUE)})
 for (i in 1:length(ind)){
 if (!ind[i]) file.remove(List[i])
 }
@@ -213,6 +213,7 @@ mainVal=function (fileList)
          \n\\usepackage{multirow}
          \n\\usepackage{hyperref}
          \n\\usepackage{fancyhdr}
+         \n\\setlength{\\textheight}{10in}
          \n\\begin{document}\n")
     for (i in fileList) {
         cat("\\input{", i, "}\n", sep = "")
@@ -318,7 +319,7 @@ setGeneric("Report",
 setMethod("Report",signature(w="strIni",x="csDataVal",y="missing",z="missing"),
            function(w,x,y,z,language="FR",logo=as.character(NA),...){
            current <- initReport()
-           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg"))
+           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg",overwrite=TRUE))
            cs.valStatList=new("statValOutput",cs.val=csValOutput(w,x,language=language))@cs.val
            for( j in 1:4 ) {
               i=cs.valStatList[[j]]
@@ -358,7 +359,7 @@ setMethod("Report",signature(w="strIni",x="csDataVal",y="missing",z="missing"),
 setMethod("Report",signature(w="strIni",x="clDataVal",y="missing",z="missing"),
            function(w,x,y,z,language="FR",logo=as.character(NA),...){
            current <- initReport()
-           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg"))
+           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg",overwrite=TRUE))
            cl.valStatList=new("statValOutput",cl.val=clValOutput(w,x,language=language))@cl.val
            for( i in cl.valStatList ) {
                 res=transformer(i$result)
@@ -378,7 +379,7 @@ setMethod("Report",signature(w="strIni",x="clDataVal",y="missing",z="missing"),
 setMethod("Report",signature(w="strIni",x="ceDataVal",y="missing",z="missing"),
            function(w,x,y,z,language="FR",logo=as.characetr(NA),...){
            current <- initReport()
-           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg"))
+           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg",overwrite=TRUE))
            ce.valStatList=new("statValOutput",ce.val=ceValOutput(w,x,language=language))@ce.val
            for( i in ce.valStatList ) {
                 res=transformer(i$result)
@@ -398,7 +399,7 @@ setMethod("Report",signature(w="strIni",x="ceDataVal",y="missing",z="missing"),
 setMethod("Report",signature(w="strIni",x="csDataVal",y="clDataVal",z="missing"),
            function(w,x,y,z,language="FR",logo=as.character(NA),...){
            current <- initReport()
-           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg"))
+           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg",overwrite=TRUE))
            cs.valStatList=new("statValOutput",cs.val=csValOutput(w,x,language=language))@cs.val
            for( j in 1:4 ) {
               i=cs.valStatList[[j]]
@@ -447,7 +448,7 @@ setMethod("Report",signature(w="strIni",x="csDataVal",y="clDataVal",z="missing")
 setMethod("Report",signature(w="strIni",x="csDataVal",y="ceDataVal",z="missing"),
            function(w,x,y,z,language="FR",logo=as.character(NA),...){
            current <- initReport()
-           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg"))
+           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg",overwrite=TRUE))
            cs.valStatList=new("statValOutput",cs.val=csValOutput(w,x,language=language))@cs.val
            for( j in 1:4 ) {
               i=cs.valStatList[[j]]
@@ -496,7 +497,7 @@ setMethod("Report",signature(w="strIni",x="csDataVal",y="ceDataVal",z="missing")
 setMethod("Report",signature(w="strIni",x="clDataVal",y="ceDataVal",z="missing"),
            function(w,x,y,z,language="FR",logo=as.character(NA),...){
            current <- initReport()
-           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg"))
+           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg",overwrite=TRUE))
            cl.valStatList=new("statValOutput",cl.val=clValOutput(w,x,language=language))@cl.val
            ce.valStatList=new("statValOutput",ce.val=ceValOutput(w,y,language=language))@ce.val
            for( i in cl.valStatList ) {
@@ -523,7 +524,7 @@ setMethod("Report",signature(w="strIni",x="clDataVal",y="ceDataVal",z="missing")
 setMethod("Report",signature(w="strIni",x="csDataVal",y="clDataVal",z="ceDataVal"),
            function(w,x,y,z,language="FR",logo=as.character(NA),...){
            current <- initReport()
-           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg"))
+           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg",overwrite=TRUE))
            cs.valStatList=new("statValOutput",cs.val=csValOutput(w,x,language=language))@cs.val
            for( j in 1:4 ) {
               i=cs.valStatList[[j]]
@@ -692,6 +693,7 @@ mainCons=function (fileList)
          \n\\usepackage{multirow}
          \n\\usepackage{hyperref}
          \n\\usepackage{fancyhdr}
+         \n\\setlength{\\textheight}{10in}
          \n\\begin{document}\n")
     for (i in fileList) {
         cat("\\input{", i, "}\n", sep = "")
@@ -795,7 +797,7 @@ data(fieldTitle)
 setMethod("Report",signature(w="strIni",x="csDataCons",y="missing",z="missing"),
            function(w,x,y,z,language="FR",logo=as.character(NA),...){
            current <- initReport()
-           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg"))
+           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg",overwrite=TRUE))
            cs.consStatList=new("statConsOutput",cs.cons=csConsOutput(w,x,language=language))@cs.cons
            for( j in 1:4 ) {
                 i=cs.consStatList[[j]]
@@ -830,7 +832,7 @@ setMethod("Report",signature(w="strIni",x="csDataCons",y="missing",z="missing"),
 setMethod("Report",signature(w="strIni",x="clDataCons",y="missing",z="missing"),
            function(w,x,y,z,language="FR",logo=as.character(NA),...){
            current <- initReport()
-           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg"))
+           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg",overwrite=TRUE))
            cl.consStatList=new("statConsOutput",cl.cons=clConsOutput(w,x,language=language))@cl.cons
            for( i in cl.consStatList ) {
                 res=transformer(i$result)
@@ -850,7 +852,7 @@ setMethod("Report",signature(w="strIni",x="clDataCons",y="missing",z="missing"),
 setMethod("Report",signature(w="strIni",x="ceDataCons",y="missing",z="missing"),
            function(w,x,y,z,language="FR",logo=as.character(NA),...){
            current <- initReport()
-           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg"))
+           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg",overwrite=TRUE))
            if ( w@techStrata != "foCatEu5" ) warning ( "commCat is not available!")
            else {
                ce.consStatList=new("statConsOutput",ce.cons=ceConsOutput(w,x,language=language))@ce.cons
@@ -873,7 +875,7 @@ setMethod("Report",signature(w="strIni",x="ceDataCons",y="missing",z="missing"),
 setMethod("Report",signature(w="strIni",x="csDataCons",y="clDataCons",z="missing"),
            function(w,x,y,z,language="FR",logo=as.character(NA),...){
            current <- initReport()
-           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg"))
+           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg",overwrite=TRUE))
            cs.consStatList=new("statConsOutput",cs.cons=csConsOutput(w,x,language=language))@cs.cons
            for( j in 1:4 ) {
                 i=cs.consStatList[[j]]
@@ -916,7 +918,7 @@ setMethod("Report",signature(w="strIni",x="csDataCons",y="clDataCons",z="missing
 setMethod("Report",signature(w="strIni",x="csDataCons",y="ceDataCons",z="missing"),
            function(w,x,y,z,language="FR",logo=as.character(NA),...){
            current <- initReport()
-           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg"))
+           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg",overwrite=TRUE))
            cs.consStatList=new("statConsOutput",cs.cons=csConsOutput(w,x,language=language))@cs.cons
            for( j in 1:4 ) {
                 i=cs.consStatList[[j]]
@@ -959,7 +961,7 @@ setMethod("Report",signature(w="strIni",x="csDataCons",y="ceDataCons",z="missing
 setMethod("Report",signature(w="strIni",x="clDataCons",y="ceDataCons",z="missing"),
            function(w,x,y,z,language="FR",logo=as.character(NA),...){
            current <- initReport()
-           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg"))
+           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg",overwrite=TRUE))
            cl.consStatList=new("statConsOutput",cl.cons=clConsOutput(w,x,language=language))@cl.cons
            for( i in cl.consStatList ) {
                 res=transformer(i$result)
@@ -987,7 +989,7 @@ setMethod("Report",signature(w="strIni",x="clDataCons",y="ceDataCons",z="missing
 setMethod("Report",signature(w="strIni",x="csDataCons",y="clDataCons",z="ceDataCons"),
            function(w,x,y,z,language="FR",logo=as.character(NA),...){
            current <- initReport()
-           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg"))
+           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg",overwrite=TRUE))
            cs.consStatList=new("statConsOutput",cs.cons=csConsOutput(w,x,language=language))@cs.cons
            for( j in 1:4 ) {
                 i=cs.consStatList[[j]]
@@ -1095,7 +1097,8 @@ maindbe=function (fileList,dbe)
     cat("\n\\rfoot{","\\","LARGE ","\\","today}",sep="")
     cat("\n\\renewcommand{","\\","footrulewidth}{1pt}",sep="")
     cat("\n\\title{",dbe@species," estimate information}",sep="")
-    cat("\n\\begin{document}
+    cat("\n\\setlength{\\textheight}{10in}
+         \n\\begin{document}
          \n\\maketitle
          \n\\thispagestyle{fancy}
          \n\\begin{center}
@@ -1139,10 +1142,12 @@ dbeLength= function (w,language="FR"){
   data(fieldTitle)
   w <- dbeCalc(w,type="CV",vrbl="l")
   w <- dbeCalc(w,type="CI",vrbl="l")
-  totalLen=cbind(w@lenNum$ci[,4:7],w@lenVar$value,w@lenNum$cv$value)
-  label=paste(w@lenVar$time,w@lenVar$space,w@lenVar$technical,sep="/")
-  totalLen=cbind(label,totalLen)
-  colnames(totalLen)=c(as.character(fieldTitle[31:37,language]))
+  #totalLen=cbind(w@lenNum$ci[,4:7],w@lenVar$value,w@lenNum$cv$value)
+#  label=paste(w@lenVar$time,w@lenVar$space,w@lenVar$technical,sep="/")
+#  totalLen=cbind(label,totalLen)
+#  colnames(totalLen)=c(as.character(fieldTitle[31:37,language]))
+  totalLen=cbind(w@lenNum$ci,w@lenVar$value,w@lenNum$cv$value)
+  colnames(totalLen)=c(as.character(fieldTitle[39,language]),as.character(fieldTitle[26,language]),as.character(fieldTitle[40,language]),as.character(fieldTitle[32:37,language]))
   generalLen=merge(w@nSamp$len,w@nMeas$len, by=c("time","space","technical"), suffix=c(".nSamp",".nMeas"),all=TRUE)
   colnames(generalLen)=c(as.character(fieldTitle[39,language]),as.character(fieldTitle[26,language]),as.character(fieldTitle[40:42,language]))
   total=list()
@@ -1160,10 +1165,12 @@ dbeAge= function (w,language="FR"){
  data(fieldTitle)
   w <- dbeCalc(w,type="CV",vrbl="a")
   w <- dbeCalc(w,type="CI",vrbl="a")
-  totalAge=cbind(w@ageNum$ci[,4:7],w@ageVar$value,w@ageNum$cv$value)
-  label=paste(w@ageVar$time,w@ageVar$space,w@ageVar$technical,1:nrow(w@ageVar),sep="/")
-  totalAge=cbind(label,totalAge)
-  colnames(totalAge)=c(as.character(fieldTitle[31,language]),as.character(fieldTitle[38,language]),as.character(fieldTitle[33:37,language]))
+  #totalAge=cbind(w@ageNum$ci[,4:7],w@ageVar$value,w@ageNum$cv$value)
+#  label=paste(w@ageVar$time,w@ageVar$space,w@ageVar$technical,1:nrow(w@ageVar),sep="/")
+#  totalAge=cbind(label,totalAge)
+#  colnames(totalAge)=c(as.character(fieldTitle[31,language]),as.character(fieldTitle[38,language]),as.character(fieldTitle[33:37,language]))
+  totalAge=cbind(w@ageNum$ci,w@ageVar$value,w@ageNum$cv$value)
+  colnames(totalAge)=c(as.character(fieldTitle[39,language]),as.character(fieldTitle[26,language]),as.character(fieldTitle[40,language]),as.character(fieldTitle[38,language]),as.character(fieldTitle[33:37,language]))
   generalAge=merge(w@nSamp$age,w@nMeas$age, by=c("time","space"), suffix=c(".nSamp",".nMeas"),all=TRUE)
   colnames(generalAge)=c(as.character(fieldTitle[39,language]),as.character(fieldTitle[26,language]),as.character(fieldTitle[41:42,language]))
   total=list()
@@ -1180,7 +1187,7 @@ dbeAge= function (w,language="FR"){
 setMethod("Report",signature(w="dbeOutput",x="missing",y="missing",z="missing"),
            function(w,x,y,z,language="FR",logo=as.character(NA),...){
            current <- initReport()
-           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg"))
+           if (!is.na(logo)) invisible(file.copy(from=logo,to="logo.jpg",overwrite=TRUE))
            if ( all(is.na(w@nMeas$age$value)) == TRUE & all(is.na(w@nMeas$len$value)) == TRUE ) {
                warning(" use RaiseLgth() to fill the dbeObject !")}
            if ( all(is.na(w@nMeas$age$value)) == TRUE ) fileList=dbeLength(w,language=language)
@@ -1226,7 +1233,7 @@ script=function(textName){
 setMethod("Report",signature(w="character",x="missing",y="missing",z="missing"),
            function(w,x,y,z,language="FR",logo=as.character(NA),...){
            current <- initReport()
-           invisible(file.copy(from=paste(R.home(),"/library/TianPack/Sweave.sty",sep=""),to="Sweave.sty"))
+           invisible(file.copy(from=paste(R.home(),"/library/COSTreport/Sweave.sty",sep=""),to="Sweave.sty"))
            code=script(w)
            Split=strsplit(w,"/")
            Title=Split[[1]][length(Split[[1]])]
