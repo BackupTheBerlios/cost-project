@@ -5,6 +5,7 @@ PS.lan <- function(estSimObj, trueDataObj, desc, nSamples){
 
         res@ageTrue    <- trueDataObj@laa
         res@lenTrue <- trueDataObj@lal
+        
 
         xx     <- aggregate(list(value = estSimObj@ageStruc$estim$value),
                                     list(time =  estSimObj@ageStruc$estim$time, space = estSimObj@ageStruc$estim$space,
@@ -16,6 +17,32 @@ PS.lan <- function(estSimObj, trueDataObj, desc, nSamples){
                                          technical = estSimObj@lenStruc$estim$technical, length = estSimObj@lenStruc$estim$length),
                                     mean)
         res@lenEst <- xx[order(as.character(xx$time), as.character(xx$space), as.character(xx$technical), as.numeric(as.character(xx$length))),]
+
+
+        xx     <- aggregate(list(lower = estSimObj@ageStruc$estim$value), 
+                                        list(time =  estSimObj@ageStruc$estim$time, space = estSimObj@ageStruc$estim$space,
+                                         technical = estSimObj@ageStruc$estim$technical, age = estSimObj@ageStruc$estim$age),
+                                    quantile, prob = 0.05)
+        res@agePI <- xx[order(as.character(xx$time), as.character(xx$space), as.character(xx$technical), as.numeric(as.character(xx$age))),]
+        xx     <- aggregate(list(upper = estSimObj@ageStruc$estim$value), 
+                                        list(time =  estSimObj@ageStruc$estim$time, space = estSimObj@ageStruc$estim$space,
+                                         technical = estSimObj@ageStruc$estim$technical, age = estSimObj@ageStruc$estim$age),
+                                    quantile, prob = 0.95)
+        res@agePI$upper <- xx[order(as.character(xx$time), as.character(xx$space), as.character(xx$technical), as.numeric(as.character(xx$age))),'upper']
+
+
+        xx     <- aggregate(list(lower = estSimObj@lenStruc$estim$value), 
+                                        list(time =  estSimObj@lenStruc$estim$time, space = estSimObj@lenStruc$estim$space,
+                                         technical = estSimObj@lenStruc$estim$technical, length = estSimObj@lenStruc$estim$len),
+                                    quantile, prob = 0.05)
+        res@lenPI <- xx[order(as.character(xx$time), as.character(xx$space), as.character(xx$technical), as.numeric(as.character(xx$length))),]
+        xx     <- aggregate(list(upper = estSimObj@lenStruc$estim$value), 
+                                        list(time =  estSimObj@lenStruc$estim$time, space = estSimObj@lenStruc$estim$space,
+                                         technical = estSimObj@lenStruc$estim$technical, length = estSimObj@lenStruc$estim$len),
+                                    quantile, prob = 0.95)
+        res@lenPI$upper <- xx[order(as.character(xx$time), as.character(xx$space), as.character(xx$technical), as.numeric(as.character(xx$length))),'upper']
+
+
 
         estj.real.age <- cbind(estSimObj@ageStruc$estim[,-6], value =  estSimObj@ageStruc$estim$value - rep(trueDataObj@laa$value, nSamples))
         estj.real.len <- cbind(estSimObj@lenStruc$estim[,-6], value =  estSimObj@lenStruc$estim$value - rep(trueDataObj@lal$value, nSamples))
@@ -32,7 +59,7 @@ PS.lan <- function(estSimObj, trueDataObj, desc, nSamples){
         estj.real.age.rat <- cbind(estSimObj@ageStruc$estim[,-6], value =  estSimObj@ageStruc$estim$value/rep(trueDataObj@laa$value, nSamples))
         estj.real.len.rat <- cbind(estSimObj@lenStruc$estim[,-6], value =  estSimObj@lenStruc$estim$value/rep(trueDataObj@lal$value, nSamples))
 
-# AGE PERFROMANCE
+# AGE PERFORMANCE
         sum.estj.real.age       <- aggregate(list(value = estj.real.age[,6]), list(time =  estj.real.age$time, space = estj.real.age$space,
                                         technical = estj.real.age$technical, age = estj.real.age$age), sum)
         sum.estj.real.age2      <- aggregate(list(value = estj.real.age2[,6]), list(time =  estj.real.age2$time, space = estj.real.age2$space,
@@ -61,7 +88,7 @@ PS.lan <- function(estSimObj, trueDataObj, desc, nSamples){
         res@ageBias$par <- cbind(sum.estj.real.age.rat[,-5], value = sum.estj.real.age.rat[,5]/nSamples)
         # Precission
         res@agePrec$var <- var.estj.real.age
-        res@agePrec$cv  <- cbind(var.estj.real.age[,-5], value = sqrt(var.estj.real.age[,5])/res@ageEst[,5])
+        res@agePrec$cv  <- cbind(var.estj.real.age[,-5], value = 100*sqrt(var.estj.real.age[,5])/res@ageEst[,5])
         # Accuracy.
         res@ageAcc$mse  <- cbind(sum.estj.real.age2[,-5], value = sum.estj.real.age2[,5]/nSamples)
         res@ageAcc$mae  <- cbind(sum.estj.real.age.abs[,-5], value = sum.estj.real.age.abs[,5]/nSamples)
@@ -97,7 +124,7 @@ PS.lan <- function(estSimObj, trueDataObj, desc, nSamples){
         res@lenBias$par <- cbind(sum.estj.real.len.rat[,-5], value = sum.estj.real.len.rat[,5]/nSamples)
         # Precission
         res@lenPrec$var <- var.estj.real.len
-        res@lenPrec$cv  <- cbind(var.estj.real.len[,-5], value = sqrt(var.estj.real.len[,5])/res@lenEst[,5])
+        res@lenPrec$cv  <- cbind(var.estj.real.len[,-5], value = 100*sqrt(var.estj.real.len[,5])/res@lenEst[,5])
         # Accuracy.
         res@lenAcc$mse  <- cbind(sum.estj.real.len2[,-5], value = sum.estj.real.len2[,5]/nSamples)
         res@lenAcc$mae  <- cbind(sum.estj.real.len.abs[,-5], value = sum.estj.real.len.abs[,5]/nSamples)

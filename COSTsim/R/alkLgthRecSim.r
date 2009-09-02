@@ -29,14 +29,14 @@ setMethod("alkLgthRecSim",signature(object="simDataCons"), function(object,
     if(update == TRUE){ 
         res <- object
         for(i in 1:nsamples){
-            res@samples[[i]]@cs <- alkLgthRec(object@samples[[i]]@cs, type = type, value = value, 
+            res@samples[[i]] <- alkLgthRec(object@samples[[i]], type = type, value = value, 
                                     preview = preview, postview = postview, update = update,...)    
         }
     }
     else{
         res <- vector('list', nsamples)
          for(i in 1:nsamples){
-            res[[i]]<- alkLgthRec(object@samples[[i]]@cs, type = type, value = value, 
+            res[[i]]<- alkLgthRec(object@samples[[i]], type = type, value = value, 
                                     preview = preview, postview = postview, update = update,...)    
         }
     }

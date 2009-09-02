@@ -5,6 +5,7 @@ importClassesFrom("COSTdbe")
 importFrom("COSTdbe")
 
 export(
+"bayesSim",
 "convert2cost",
 "setup",
 "getparams",
@@ -13,7 +14,10 @@ export(
 "truePopulation",
 "make.predict.cov",
 "predict.true.bayes",
-"tvs"	
+"mbeObjectSim",
+"ObjectSim",
+"tvs",
+"combOutSim"	
 )
 
 
@@ -26,7 +30,9 @@ exportClasses(
 	"simDataCons",
 	"dbeOutputSim",
 	"trueData",
-	"PerformStats"
+	"PerformStats",
+	"mbeOutputSim",
+	"OutputSim"
 )
 
 

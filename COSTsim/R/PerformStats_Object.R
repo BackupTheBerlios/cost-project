@@ -16,21 +16,25 @@ setClass("PerformStats",
 	nSamples = "numeric",                    # number of samples
     ageTrue = "data.frame",                  # True age structure (param-at-length)
     ageEst = "data.frame",                   # mean estimates of the age structure (param-at-length)
+    agePI  = "data.frame",
 	ageAcc = "list",                         # a list with Accuracy statistics at age.
 	ageBias = "list",                        # a list with Bias statistics at age.
 	agePrec = "list",                        # a list with Precision statistics at age.
-    lenTrue = "data.frame",               # True age structure (param-at-length)
-    lenEst = "data.frame",                # mean estimates of the length structure (param-at-length)
-	lenAcc = "list",                      # a list with Accuracy statistics at length.
-	lenBias = "list",                     # a list with Bias statistics at length.
-	lenPrec = "list",                     # a list with Precision statistics at length.
+    lenTrue = "data.frame",                  # True age structure (param-at-length)
+    lenEst = "data.frame",                   # mean estimates of the length structure (param-at-length)
+    lenPI  = "data.frame",
+	lenAcc = "list",                         # a list with Accuracy statistics at length.
+	lenBias = "list",                        # a list with Bias statistics at length.
+	lenPrec = "list",                        # a list with Precision statistics at length.
     totalNTrue = "data.frame",               # True age structure (param-at-length)
     totalNEst = "data.frame",                # mean estimates of the length structure (param-at-length)
+    totalNPI  = "data.frame",
 	totalNAcc = "list",                      # a list with Accuracy statistics at length.
 	totalNBias = "list",                     # a list with Bias statistics at length.
 	totalNPrec = "list",                     # a list with Precision statistics at length.
 	totalWTrue = "data.frame",               # True age structure (param-at-length)
     totalWEst = "data.frame",                # mean estimates of the length structure (param-at-length)
+    totalWPI  = "data.frame",
 	totalWAcc = "list",                      # a list with Accuracy statistics at length.
 	totalWBias = "list",                     # a list with Bias statistics at length.
 	totalWPrec = "list"                     # a list with Precision statistics at length.
@@ -53,6 +57,12 @@ setClass("PerformStats",
                                 technical = as.character(NA),
                                 age       = as.character(NA),
                                 value     = as.numeric(NA)),
+        agePI      = data.frame(time     = as.character(NA),
+                                space     = as.character(NA),
+                                technical = as.character(NA),
+                                age       = as.character(NA),
+                                lower     = as.numeric(NA),
+                                upper     = as.numeric(NA)),
         ageAcc    = list(mse  = data.frame(time      = as.character(NA),
                                            space     = as.character(NA),
                                            technical = as.character(NA),
@@ -114,6 +124,12 @@ setClass("PerformStats",
                                 technical = as.character(NA),
                                 length       = as.character(NA),
                                 value     = as.numeric(NA)),
+        lenPI      = data.frame(time     = as.character(NA),
+                                space     = as.character(NA),
+                                technical = as.character(NA),
+                                age       = as.character(NA),
+                                lower     = as.numeric(NA),
+                                upper     = as.numeric(NA)),
         lenAcc    = list(mse  = data.frame(time      = as.character(NA),
                                            space     = as.character(NA),
                                            technical = as.character(NA),
@@ -173,6 +189,12 @@ setClass("PerformStats",
                                 space     = as.character(NA),
                                 technical = as.character(NA),
                                 value     = as.numeric(NA)),
+        totalNPI      = data.frame(time     = as.character(NA),
+                                space     = as.character(NA),
+                                technical = as.character(NA),
+                                age       = as.character(NA),
+                                lower     = as.numeric(NA),
+                                upper     = as.numeric(NA)),
         totalNAcc    = list(mse  = data.frame(time      = as.character(NA),
                                            space     = as.character(NA),
                                            technical = as.character(NA),
@@ -222,6 +244,12 @@ setClass("PerformStats",
                                 space     = as.character(NA),
                                 technical = as.character(NA),
                                 value     = as.numeric(NA)),
+        totalWPI      = data.frame(time     = as.character(NA),
+                                space     = as.character(NA),
+                                technical = as.character(NA),
+                                age       = as.character(NA),
+                                lower     = as.numeric(NA),
+                                upper     = as.numeric(NA)),
         totalWAcc    = list(mse  = data.frame(time      = as.character(NA),
                                            space     = as.character(NA),
                                            technical = as.character(NA),
@@ -286,7 +314,7 @@ setMethod("PerformStats", signature(estSimObj = "missing", trueDataObj ="missing
 setMethod("PerformStats", signature(estSimObj = "dbeOutputSim", trueDataObj ="trueData"), function(estSimObj, trueDataObj,
                                                                                                             desc, ...){
                                                                                                             
-    if(!identical(estSimObj@strataDesc, trueDataObj@strataDesc)) 
+   if(!identical(estSimObj@strataDesc, trueDataObj@strataDesc)) 
         stop('The stratification in dbeOutputSim and trueData objects  must be the same!')
     
     desc <- ifelse(missing(desc), estSimObj@desc, desc)
@@ -304,4 +332,26 @@ setMethod("PerformStats", signature(estSimObj = "dbeOutputSim", trueDataObj ="tr
   }
 )
 
+
+# outputsim - trueData
+setMethod("PerformStats", signature(estSimObj = "OutputSim", trueDataObj ="trueData"), function(estSimObj, trueDataObj,
+                                                                                                            desc, ...){
+                                                                                                            
+    #if(!identical(estSimObj@strataDesc, trueDataObj@strataDesc)) 
+    #    stop('The stratification in OutputSim and trueData objects  must be the same!')
+    
+    desc <- ifelse(missing(desc), estSimObj@desc, desc)
+ 
+    if(estSimObj@catchCat == 'LAN'){
+        nSamples <- length(unique(estSimObj@lenStruc[['estim']]$sample))
+        res      <- PS.lan(estSimObj, trueDataObj, desc = desc, nSamples = nSamples)
+    }
+    else{
+        nSamples <- length(unique(estSimObj@lenStruc[['estim']]$sample))
+        res      <- PS.dis(estSimObj, trueDataObj, desc = desc, nSamples = nSamples)
+
+    }
+    return(res)
+  }
+)
 

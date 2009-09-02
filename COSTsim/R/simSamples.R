@@ -16,11 +16,11 @@ setGeneric("simSamples", function(obj,
 
 
 
-setMethod("simSamples", signature(obj = "simData"), function(obj, n.datasets, n.observer.trips, n.ml.trips,
+setMethod("simSamples", signature(obj = "simData"), function(obj, n.observer.trips, n.ml.trips,
                                                                  nlsamp.land, nasamp.land, nlsamp.disc, nasamp.disc){
 
-    obj@setup.args$n.datasets        <- ifelse(missing(n.datasets), obj@setup.args$n.datasets, n.datasets)
     obj@setup.args$n.observer.trips  <- ifelse(missing(n.observer.trips), obj@setup.args$n.observer.trips, n.observer.trips)
+    obj@setup.args$n.ml.trips        <- ifelse(missing(n.ml.trips), obj@setup.args$n.ml.trips, n.ml.trips)
     obj@setup.args$nlsamp.land       <- ifelse(missing(nlsamp.land), obj@setup.args$nlsamp.land, nlsamp.land)
     obj@setup.args$nasamp.land       <- ifelse(missing(nasamp.land), obj@setup.args$nasamp.land, nasamp.land)
     obj@setup.args$nlsamp.disc       <- ifelse(missing(nlsamp.disc), obj@setup.args$nlsamp.disc, nlsamp.disc)
@@ -31,7 +31,7 @@ setMethod("simSamples", signature(obj = "simData"), function(obj, n.datasets, n.
 
     for(i in 1:length(obj@samples)){
         cat('Sample: ', i,'\n')
-        setup.data<-new.setup(obj@initial.fit$fit, obj@setup.args$use.seasons, obj@setup.args$use.areas, obj@setup.args$use.gears, obj@setup.args$species,
+        setup.data<-new.setup(obj@initial.fit$fit, obj@setup.args$use.seasons, obj@setup.args$arealist, obj@setup.args$use.gears, obj@setup.args$species,
                         obj@setup.args$age.covariates,obj@setup.args$weight.covariates, nmland= obj@setup.args$n.ml.trips,
                       nobs=obj@setup.args$n.observer.trips,obj@setup.args$ageMin,obj@setup.args$ageMax)
         sim.out <- make.sim.data(obj@initial.fit$fit,setup.data,  obj@setup.args$nlsamp.land,  obj@setup.args$nasamp.land,  obj@setup.args$nlsamp.disc,

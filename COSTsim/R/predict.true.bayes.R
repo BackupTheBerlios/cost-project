@@ -26,13 +26,13 @@ predict.true.bayes <- function (csdata, cldata, fit = NULL,  species,
         print("invalid time strata")
         return
     }
-    if (nseas == 4) {
-        input.data$season_obs <- 1 + floor((input.data$season_obs -
-            1)/3)
-        input.data$season_mland <- 1 + floor((input.data$season_mland -
-            1)/3)
-        input.data$seas <- 1 + floor((input.data$seas - 1)/3)
-    }
+  #  if (nseas == 4) {
+  #      input.data$season_obs <- 1 + floor((input.data$season_obs -
+ #           1)/3)
+ #       input.data$season_mland <- 1 + floor((input.data$season_mland -
+ #           1)/3)
+ #       input.data$seas <- 1 + floor((input.data$seas - 1)/3)
+ #   }
     if (!is.null(input.data$sampsize_disc))
         input.data$sampsize_disc[is.na(input.data$sampsize_disc)] <- 0
     if (!is.null(input.data$haulsize_disc))

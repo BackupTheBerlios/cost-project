@@ -1,13 +1,14 @@
 Package: COSTsim
 Title: Simulation package for COST.
-Version: 1.0
+Version: 1.1
 Date: 2009
 Author: COST Team and various contributors.
 Description: This package contains functions for simulating real trip/haul population and 
 	'clData', 'csData' and 	'ceData' COST objects from the simulated population.
-	 Functions to compare the precision and bias of the different raising methods 
-	 in COSTdbe and COSTmbe packages are also available. It can be used to assessed optimum sample size
-Depends: R(>= 2.8.1), COSTcore, COSTdbe, lattice, boot, methods
+	 Functions to compare the accuracy, bias and precision of the different estimation methods 
+	 in COSTdbe and COSTmbe packages are also available. It can be used to assessed optimum 
+	  sample size and design.
+Depends: R(>= 2.8.1), COSTcore, COSTdbe, COSTmbe
 Maintainer: Dorleta Garcia <dgarcia@azti.es>
 License: GPL 2 or above
 LazyLoad: Yes

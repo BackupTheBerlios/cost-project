@@ -93,7 +93,7 @@ setMethod("simData", signature(obj = 'missing'),   function(obj, desc, species, 
 return(res)})
 
 
-simData <- function(desc, species, nsamples, clObj, ceObj, initial.fit, setup.args){
+simData <- function(desc, species, clObj, ceObj, initial.fit, setup.args){
                     
     if (missing(species)|all(is.na(species))) stop("Missing 'species' parameter!!")
     if (missing(initial.fit))                 stop("Initital bayesian fit 'initial.fit' is missing!!")
@@ -104,10 +104,15 @@ simData <- function(desc, species, nsamples, clObj, ceObj, initial.fit, setup.ar
 #    if (missing(nseas))                       stop("nseas is missing!!")
     if (missing(setup.args))                  stop("setup.args is missing!!")
     
-    if(missing(nsamples)) nsamples <- 1
+#    if(missing(nsamples)) nsamples <- 1
 
-    samples <- lapply(1:nsamples, function(x) csData())
+    samples <- lapply(1:setup.args$n.sample.datasets, function(x) csData())
 
+    setup.args$use.seasons <- 1:4  
+    if(setup.args$season.definition == 'month')  setup.args$use.seasons <- 1:12   
+     
+     setup.args$use.areas<-  setup.args$arealist
+                    
     new("simData", desc = desc, species = species, samples = samples, initial.fit = initial.fit, 
                    setup.args = setup.args, cl = clObj, ce = ceObj)
  	  }
