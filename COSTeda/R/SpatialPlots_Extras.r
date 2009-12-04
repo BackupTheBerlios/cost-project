@@ -36,6 +36,14 @@ function(csobj)
 if(class(csobj)%in%c("csData","csDataVal","csDataCons")!=TRUE) stop("this function only works on a csData object")
 
 
+csobj@hh$staNum <-formatC(csobj@hh$staNum,width=3)
+csobj@hl$staNum <-formatC(csobj@hl$staNum,width=3)
+csobj@sl$staNum <-formatC(csobj@sl$staNum,width=3)
+csobj@ca$staNum <-formatC(csobj@ca$staNum,width=3)
+
+
+
+
 ca6colstring <-apply(csobj@ca[,c(1:6)],1,paste,collapse=".")
 tr6colstring <-apply(csobj@tr[,c(1:6)],1,paste,collapse=".")
 hh6colstring <-apply(csobj@hh[,c(1:6)],1,paste,collapse=".")
@@ -700,28 +708,45 @@ costobj@sl <- costobj@sl[which(costobj@sl$spp == spp),]
 
 #-------end of subSetSpp--------------------------------------------
 
-subSetTrip <-function(costobj,trpCode) 
-{
-library(COSTcore)
-if ((class(costobj) %in% c("csData","csDataVal"))==FALSE)stop("COST object is not of csData class")
 
-if (all(trpCode %in% costobj@tr$trpCode)==FALSE)
+subSetTrip <-function (costobj, trpCode,silent=FALSE) 
 {
-stop("Trip code not recognised in the specified cost object")
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# subSetTrip
+# Function that subsets a csData object by trip
+# now works on csDataCons objects
+# and has the option of not printing to screen a summary 
+# of the resulting subset. 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+    library(COSTcore)
+    if ((class(costobj) %in% c("csData", "csDataVal","csDataCons")) == FALSE) 
+        stop("COST object is not of csData class")
+    if (all(trpCode %in% costobj@tr$trpCode) == FALSE) {
+        stop("Trip code not recognised in the specified cost object")
+    }
+    costobj@tr <- costobj@tr[which(costobj@tr$trpCode %in% trpCode), 
+        ]
+    costobj@hh <- costobj@hh[which(costobj@hh$trpCode %in% trpCode), 
+        ]
+    costobj@sl <- costobj@sl[which(costobj@sl$trpCode %in% trpCode), 
+        ]
+    costobj@hl <- costobj@hl[which(costobj@hl$trpCode %in% trpCode), 
+        ]
+    costobj@ca <- costobj@ca[which(costobj@ca$trpCode %in% trpCode), 
+        ]
+if(silent==FALSE)
+{
+    cat("csData subset by trpCode", trpCode, "\n")
+    cat("New data set consists of", length(costobj@tr$trpCode), 
+        "trip records", "\n")
+    cat(length(costobj@hl$trpCode), "length records", "\n")
+    cat("and", length(costobj@ca$trpCode), "age records", "\n")
+} 
+   return(costobj)
 }
-costobj@tr <- costobj@tr[which(costobj@tr$trpCode %in% trpCode),]
-costobj@hh <- costobj@hh[which(costobj@hh$trpCode %in% trpCode),]
-costobj@sl <- costobj@sl[which(costobj@sl$trpCode %in% trpCode),]
-costobj@hl <- costobj@hl[which(costobj@hl$trpCode %in% trpCode),]
-costobj@ca <- costobj@ca[which(costobj@ca$trpCode %in% trpCode),]
-        cat("csData subset by trpCode", trpCode, "\n")
-        cat("New data set consists of", length(costobj@tr$trpCode), 
-            "trip records", "\n")
-        cat(length(costobj@hl$trpCode), "length records","\n")
-        cat("and", length(costobj@ca$trpCode), "age records","\n")
-    
-    return(costobj)
-}
+
+
+
 # --------------end of subSetTrip------------------------------
 
 subSetProj <-function(costobj,proj) 
@@ -1144,7 +1169,18 @@ spp <-ifelse(length(table(ca(x)$spp))==1,ca(x)$spp[1],"multiple species")
 dots <-list(...)
 object <-suppressWarnings(mergecsData(x))@hl
 if((by %in% names(object))!=TRUE)stop("by not a recognised grouping variable")
-if(all((fraction %in% names(table(object$catchCat)))==FALSE))
+#if(all((fraction %in% names(table(object$catchCat)))==FALSE))
+if(all(names(table(object$catchCat))=="DIS"))
+{
+fraction <-"DIS"
+warning("Only DIS fraction present in data")
+}
+if(all(names(table(object$catchCat))=="LAN"))
+{
+fraction <-"LAN"
+warning("Only LAN fraction present in data")
+}
+if(all(fraction %in% names(table(object$catchCat)))==FALSE)
 {
 stop(paste(fraction,"fraction not in the data")) 
 }
@@ -1250,7 +1286,18 @@ spp <-ifelse(length(table(ca(x)$spp))==1,ca(x)$spp[1],"multiple species")
 dots <-list(...)
 object <-suppressWarnings(mergecsData(x))@ca
 if((by %in% names(object))!=TRUE)stop("by not a recognised grouping variable")
-if(all((fraction %in% names(table(object$catchCat)))==FALSE))
+
+if(all(names(table(object$catchCat))=="DIS"))
+{
+fraction <-"DIS"
+warning("Only DIS fraction present in data")
+}
+if(all(names(table(object$catchCat))=="LAN"))
+{
+fraction <-"LAN"
+warning("Only LAN fraction present in data")
+}
+if(all(fraction %in% names(table(object$catchCat)))==FALSE)
 {
 stop(paste(fraction,"fraction not in the data")) 
 }
