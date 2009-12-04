@@ -7,12 +7,13 @@
  Function that subsets csData by trip.  
 }
 \usage{
-subSetTrip(costobj,trpCode)
+subSetTrip(costobj,trpCode,silent=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-\item{costobj}{A COST object either of csDate or csDataVal class.}
+\item{costobj}{A COST object either of csDate, csDataVal or csDataCons class.}
 \item{trpCode}{Vector of trip codes. }
+\item{silent}{Logical, if TRUE does not print summary to the screen. }
 }
 \details{
 subSetTrip returns all components of the csData object for the specified trip or trips. }
