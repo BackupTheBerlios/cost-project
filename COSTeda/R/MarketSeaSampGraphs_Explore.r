@@ -496,12 +496,12 @@ if (type=="FD") {
     # Raw objects
     #---------------------------------------------------------------------------
 
-
+                                                           
 
 setGeneric("landisVol", function(object,
                                  strDef,                                   
                                  species,
-                                 fraction="LAN",
+                                 fraction="LAN",                                
                                  sampPar=TRUE,
                                  ...){
 	standardGeneric("landisVol")
@@ -510,19 +510,7 @@ setGeneric("landisVol", function(object,
     
                                                        
 
-
-setMethod("landisVol", signature("csData","missing"), function(object,
-                                                               species,         
-                                                               fraction="LAN",  #or "DIS"
-                                                               sampPar=TRUE,
-                                                               ...){ 
-
-landisVolumeFun(object,species=species,fraction=fraction,timeStrata=NA,spaceStrata=NA,techStrata=NA,sampPar=sampPar)
-
-})
-
-
-setMethod("landisVol", signature("csData","strIni"), function(object,
+setMethod("landisVol", signature(object="csData",strDef="strIni"), function(object,
                                                               strDef,
                                                               species,         
                                                               fraction="LAN",  #or "DIS"
@@ -533,6 +521,15 @@ landisVolumeFun(object,species=species,fraction=fraction,timeStrata=strDef@timeS
 
 })
 
+setMethod("landisVol", signature(object="csData",strDef="missing"), function(object,
+                                                               species,         
+                                                               fraction="LAN",  #or "DIS"
+                                                               sampPar=TRUE,
+                                                               ...){ 
+
+landisVolumeFun(object,species=species,fraction=fraction,timeStrata=NA,spaceStrata=NA,techStrata=NA,sampPar=sampPar)
+
+})
 
 #-------------------------------------------------------------------------------
 # plot (--> 'edaResult' with desc="landisVol" )  cf MarketSampGraphs_ExploreSimplify.r
