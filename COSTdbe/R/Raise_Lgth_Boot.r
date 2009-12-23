@@ -49,6 +49,110 @@ rowSums(newX,na.rm=TRUE,dims=length(MARGIN))
 }
 
 
+################################################################################
+################################################################################
+
+#
+#sex=as.character(NA)
+#sampPar=TRUE
+#B <- 10
+#sp <- dbeOutput@species
+#taxon <- sp
+#spp <- sp
+#
+## extCatchCat
+#extCatchCat <- function(x) {
+#sapply(x, function(x) substring(as.character(x),1,3))
+#}
+#
+## spdAgreg
+#spdAgreg <- function(X,BY,FUN,...){
+#FactCar <- sapply(BY,as.character)
+#val <- apply(FactCar,1,function(x) paste(x,collapse=":-:"))
+#valAg <- aggregate(X,list(val=val),FUN,...)
+#tab <- as.data.frame(matrix(unlist(strsplit(as.character(valAg$val),":-:")),ncol=length(BY),byrow=TRUE))
+#tab.ag <- data.frame(tab,valAg[,-1])
+#namBY <- names(BY) ; namX <- names(X)
+#if (is.null(namBY)) namBY <- rep("",length(BY)) ; if (is.null(namX)) namX <- rep("",length(X))
+#namBY[namBY==""] <- paste("c.",1:sum(namBY==""),sep="") ; namX[namX==""] <- paste("v.",1:sum(namX==""),sep="")
+#names(tab.ag) <- c(namBY,namX)
+#return(tab.ag)}
+#
+## As.num
+#As.num <- function(x) as.numeric(as.character(x))
+#
+## Need sample function that returns one value if give data with one value x,
+## rather than returning sample of vector 1:x , see help file for sample
+#resample <- function(x, size, replace,...)
+#  if(length(x) <= 1) { if(!missing(size) && size == 0) x[FALSE] else x
+#  } else sample(x, size, replace,...)
+#
+#
+#
+#
+##method for handle 'sex' conditional key field in SL : an new 'sex' field is inserted in HL, matching SL sex field, and true HL sex field is moved down and renamed as 'lsex'
+#slSex <- function(slTab,hlTab) {
+#if (names(slTab)[1]!=names(hlTab)[1]) stop("tables must be consistent!!")
+#ind <- NULL
+#if (names(slTab)[1]=="sampType") ind <- 1:14 
+#if (names(slTab)[1]=="PSUid") ind <- 1:15
+#if (is.null(ind)) stop("wrong input tables!!") 
+#slTab <- slTab[,ind] ; slTab$lsex <- slTab$sex ; hlTab$N <- 1:nrow(hlTab)
+#hlTab <- merge(hlTab,slTab,all.x=TRUE) ; hlTab <- hlTab[order(hlTab$N),-match("N",names(hlTab))]
+#sex <- as.character(hlTab$sex) 
+#hlTab$sex <- as.character(hlTab$lsex)
+#hlTab$lsex <- sex
+#rownames(hlTab) <- 1:nrow(hlTab)
+#return(hlTab)
+#}
+#
+#
+##fonction qui concatène les dimensions avant d'appliquer un tapply sur LA dimension
+##retourne aussi en sortie les éléments séparés constituant les en-têtes (en prévision de calculs matriciels) -> matrice avec une ligne par dim 
+#catApply <- function(X, INDEX, FUN = NULL, ..., simplify = TRUE,collapse=":@&@&@:"){
+#
+##on commence par concaténer les éléments de la liste
+#catIndex <- apply(matrix(unlist(lapply(INDEX,as.character)),nrow=length(INDEX[[1]])),1, function(x) paste(x,collapse=collapse,sep=""))
+#
+#return1 <- tapply(X,list(catIndex),FUN=FUN,simplify=simplify,...)
+#
+#return2 <- sapply(names(return1),function(x) strsplit(x,collapse)[[1]])
+#if (is.null(nrow(return2))) return2 <- t(as.matrix(return2))
+#
+#return(list(val=return1, ind=return2))
+#}
+#
+#
+#
+#
+##fonction de réplication d'un vecteur résultat de 'catApply' via la mise en parallèle des indices '$ind' de ce vecteur avec les indices du vecteur modèle
+##peut aussi fonctionner juste pour ordonner un vecteur indicé conformément à un autre
+#dbeReplic <- function(catAppObj, indMat, collapse=":@&@&@:"){
+#
+#if (!is.null(nrow(indMat))) {
+#  indRef <- apply(indMat,2, function(x) paste(x,collapse=collapse,sep=""))
+#} else {
+#  indRef <- as.character(indMat)
+#}
+#res <- catAppObj$val[indRef]
+#names(res) <- indRef #il faut gérer les en-têtes non trouvées
+#return(list(val = res, ind = indMat))
+#
+#}
+#
+#
+##fonction d'agrégation d'un vecteur résultat de 'catApply' conservant les dimensions choisies
+#dbeAgg <- function(catAppObj, ind , FUN = NULL, ..., collapse=":@&@&@:"){
+#
+#return(catApply(catAppObj$val,lapply(ind,function(x) catAppObj$ind[x,]), FUN=FUN, ..., collapse=collapse))
+#
+#}
+#
+
+
+################################################################################
+################################################################################
+
 
 
 Raise_Lgth_Boot <- function(dbeOutput, csObject, clObject,spp,taxon,sex=as.character(NA),sampPar=TRUE,B){
@@ -145,7 +249,9 @@ clObject@cl$landMult[is.na(clObject@cl$landMult)] <- 1
 totLand <- mapply(function(w,x,y,z) sum(c(w*x,y,z),na.rm=TRUE),clObject@cl$landWt,clObject@cl$landMult,clObject@cl$unallocCatchWt,clObject@cl$misRepCatchWt)
 totLandings <- spdAgreg(list(W=totLand),BY=list(time=clObject@cl$time,space=clObject@cl$space,technical=clObject@cl$technical),sum,na.rm=TRUE)
 
-W <- tapply(totLandings$W*1000,list(factor(apply(totLandings[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:")),levels=levSTR)),sum,na.rm=TRUE)
+  ##W <- tapply(totLandings$W*1000,list(factor(apply(totLandings[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:")),levels=levSTR)),sum,na.rm=TRUE)
+W <- catApply(totLandings$W*1000,list(apply(totLandings[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))),
+        sum,na.rm=TRUE)
 
 ## New code not in Raise_Lgth ##
 
@@ -208,19 +314,21 @@ HL = merge(data.frame(PSUid = bootLenPSUid[,i]), HL.orig, by="PSUid")
 
 #weight of the level
 #wl <- tapply(SL$wt,list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)   #reference for factor levels
-wl <- tapply(SL$wt,list(STR=factor(SL$STR,levels=levSTR),
-                                                    sort=factor(SL$sort,levels=levSort),
-                                                    TSUid=factor(SL$TSUid,levels=levTSUid,exclude=NULL),    #MM 24/04/2009
-                                                    SSUid=factor(SL$SSUid,levels=levSSUid),
-                                                    PSUid=factor(SL$PSUid,levels=levPSUid)),sum,na.rm=TRUE)   #reference for factor levels
+  ##wl <- tapply(SL$wt,list(STR=factor(SL$STR,levels=levSTR),
+  ##                                                    sort=factor(SL$sort,levels=levSort),
+  ##                                                    TSUid=factor(SL$TSUid,levels=levTSUid,exclude=NULL),    #MM 24/04/2009
+  ##                                                    SSUid=factor(SL$SSUid,levels=levSSUid),
+  ##                                                    PSUid=factor(SL$PSUid,levels=levPSUid)),sum,na.rm=TRUE)   #reference for factor levels
+wl <- catApply(SL$wt,list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)  #reference for factor levels
 
 #sampled weight
 #ws <- tapply(SL$subSampWt,list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)
-ws <- tapply(SL$subSampWt,list(STR=factor(SL$STR,levels=levSTR),
-                                                    sort=factor(SL$sort,levels=levSort),
-                                                    TSUid=factor(SL$TSUid,levels=levTSUid,exclude=NULL),     #MM 24/04/2009
-                                                    SSUid=factor(SL$SSUid,levels=levSSUid),
-                                                    PSUid=factor(SL$PSUid,levels=levPSUid)),sum,na.rm=TRUE)
+  ##ws <- tapply(SL$subSampWt,list(STR=factor(SL$STR,levels=levSTR),
+  ##                                                    sort=factor(SL$sort,levels=levSort),
+  ##                                                    TSUid=factor(SL$TSUid,levels=levTSUid,exclude=NULL),     #MM 24/04/2009
+  ##                                                    SSUid=factor(SL$SSUid,levels=levSSUid),
+  ##                                                    PSUid=factor(SL$PSUid,levels=levPSUid)),sum,na.rm=TRUE)
+ws <- catApply(SL$subSampWt,list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)
 
 
 #subsetting "csObject" on taxa/sex                                                                #added MM 29/07/2009                                                                                                                              #
@@ -231,54 +339,113 @@ if (!is.na(sex)) eval(parse('',text=paste("SL <- subset(SL,sex%in%",deparse(sex)
 
 #weight of the species/taxa/sex
 #wt  <- tapply(as.numeric(as.character(SL$lenCode)),list(STR=SL$STR,sort=SL$sort,TSUid=SL$TSUid,SSUid=SL$SSUid,PSUid=SL$PSUid),sum,na.rm=TRUE)
-wt  <- tapply(as.numeric(as.character(SL$lenCode)),list(STR=factor(SL$STR,levels=levSTR),
-                                                    sort=factor(SL$sort,levels=levSort),
-                                                    TSUid=factor(SL$TSUid,levels=levTSUid,exclude=NULL),      #MM 24/04/2009
-                                                    SSUid=factor(SL$SSUid,levels=levSSUid),
-                                                    PSUid=factor(SL$PSUid,levels=levPSUid)),sum,na.rm=TRUE)
+  ##wt  <- tapply(as.numeric(as.character(SL$lenCode)),list(STR=factor(SL$STR,levels=levSTR),
+  ##                                                    sort=factor(SL$sort,levels=levSort),
+  ##                                                    TSUid=factor(SL$TSUid,levels=levTSUid,exclude=NULL),      #MM 24/04/2009
+  ##                                                    SSUid=factor(SL$SSUid,levels=levSSUid),
+  ##                                                    PSUid=factor(SL$PSUid,levels=levPSUid)),sum,na.rm=TRUE)
+wt  <- catApply(SL$subSampWt,list(as.character(SL$STR),as.character(SL$sort),as.character(SL$TSUid),as.character(SL$SSUid),
+                                  as.character(SL$PSUid)),sum,na.rm=TRUE)    
+
 
 #number of fish in the sample by length
-d_j <- tapply(HL$lenNum,list(STR=factor(HL$STR,levels=levSTR),
-                              sort=factor(HL$sort,levels=levSort),
-                              TSUid=factor(HL$TSUid,levels=levTSUid,exclude=NULL),                            #MM 24/04/2009
-                              SSUid=factor(HL$SSUid,levels=levSSUid),
-                              PSUid=factor(HL$PSUid,levels=levPSUid),
-                              lenCls=factor(HL$lenCls,levels=levLenCls)),sum,na.rm=TRUE)
+  ##d_j <- tapply(HL$lenNum,list(STR=factor(HL$STR,levels=levSTR),
+  ##                              sort=factor(HL$sort,levels=levSort),
+  ##                              TSUid=factor(HL$TSUid,levels=levTSUid,exclude=NULL),                            #MM 24/04/2009
+  ##                              SSUid=factor(HL$SSUid,levels=levSSUid),
+  ##                              PSUid=factor(HL$PSUid,levels=levPSUid),
+  ##                              lenCls=factor(HL$lenCls,levels=levLenCls)),sum,na.rm=TRUE)
+d_j  <- catApply(HL$lenNum,list(as.character(HL$STR),as.character(HL$sort),as.character(HL$TSUid),as.character(HL$SSUid),
+                                  as.character(HL$PSUid),HL$lenCls),sum,na.rm=TRUE)    
+
 
 #TSUid stage
-w_tsu <- RowSum(wt*wl/ws,c(1,3:5))
-wl_tsu <- RowSum(wl,c(1,3:5))
+  ##w_tsu <- RowSum(wt*wl/ws,c(1,3:5))
+  ##wl_tsu <- RowSum(wl,c(1,3:5))
+w_tsu <- dbeAgg(list(val = wt$val * wl$val / ws$val, ind = wl$ind), c(1,3:5),sum,na.rm=TRUE)
+wl_tsu <- dbeAgg(wl,c(1,3:5),sum,na.rm=TRUE)
+
 
 #SSUid stage
-expr <- d_j*(as.vector(wl/ws))
-sum.d_jssu <- RowSum(expr,c(1,5,6))
+  ##expr <- d_j*(as.vector(wl/ws))
+  ##sum.d_jssu <- RowSum(expr,c(1,5,6))
+  ##
+  ##sum.w_ssu <- RowSum(w_tsu,c(1,4))
+  ##sum.wl_ssu <- RowSum(wl_tsu,c(1,4))
+expr <- list(val = d_j$val * dbeReplic(list(val = wl$val/ws$val, ind = wl$ind), d_j$ind[1:5,])$val , ind = d_j$ind)
+sum.d_jssu <- dbeAgg(expr,c(1,5,6),sum,na.rm=TRUE)
+sum.w_ssu <- dbeAgg(w_tsu,c(1,4),sum,na.rm=TRUE)
+sum.wl_ssu <- dbeAgg(wl_tsu,c(1,4),sum,na.rm=TRUE)
 
-sum.w_ssu <- RowSum(w_tsu,c(1,4))
-sum.wl_ssu <- RowSum(wl_tsu,c(1,4))
 
 #number of SSUid (total and sampled)
-Mi <- tapply(HH$SSUid,list(STR=factor(HH$STR,levels=levSTR),
-                                      PSUid=factor(HH$PSUid,levels=levPSUid)),function(x) length(unique(x)))
+  ##Mi <- tapply(HH$SSUid,list(STR=factor(HH$STR,levels=levSTR),
+  ##                                      PSUid=factor(HH$PSUid,levels=levPSUid)),function(x) length(unique(x)))
+Mi <- catApply(HH$SSUid,list(as.character(HH$STR),as.character(HH$PSUid)),function(x) length(unique(x)))
+Mi_a <- dbeReplic(Mi,sum.d_jssu$ind[1:2,])  #on met à la dimension de 'sum.d_jssu'
+Mi_b <- dbeReplic(Mi,sum.w_ssu$ind[1:2,])  #on met à la dimension de 'sum.w_ssu'
+
+
 Hl <- Hl[!is.na(Hl$ind),]
-mi <- tapply(Hl$ind,list(STR=factor(Hl$STR,levels=levSTR),
-                           PSUid=factor(Hl$PSUid,levels=levPSUid)),function(x) length(unique(x)))
+
+  ##mi <- tapply(Hl$ind,list(STR=factor(Hl$STR,levels=levSTR),
+  ##                           PSUid=factor(Hl$PSUid,levels=levPSUid)),function(x) length(unique(x)))
+mi <- catApply(Hl$ind,list(STR=as.character(Hl$STR),as.character(Hl$PSUid)),function(x) length(unique(x)))
+mi_a <- dbeReplic(mi,sum.d_jssu$ind[1:2,])
+mi_b <- dbeReplic(mi,sum.w_ssu$ind[1:2,])
+
 
 #PSUid stage                           
-d_jpsu <- sum.d_jssu*as.vector(Mi/mi)
-w_psu <- sum.w_ssu*Mi/mi
-wl_psu <- sum.wl_ssu*Mi/mi
+  ##d_jpsu <- sum.d_jssu*as.vector(Mi/mi)
+  ##w_psu <- sum.w_ssu*Mi/mi
+  ##wl_psu <- sum.wl_ssu*Mi/mi
+  ##
+  ##sum.d_jpsu <- RowSum(d_jpsu,c(1,3))
+  ##sum.w_psu <- rowSums(w_psu,na.rm=TRUE)
+  ##sum.wl_psu <- rowSums(wl_psu,na.rm=TRUE)
+  ##
+  ##D_j <- sum.d_jpsu*as.vector(W/sum.wl_psu)
+  ##WHat <-  sum.w_psu*W/sum.wl_psu
 
-sum.d_jpsu <- RowSum(d_jpsu,c(1,3))
-sum.w_psu <- rowSums(w_psu,na.rm=TRUE)
-sum.wl_psu <- rowSums(wl_psu,na.rm=TRUE)
+d_jpsu <- list(val = sum.d_jssu$val * Mi_a$val / mi_a$val, ind = sum.d_jssu$ind)
+w_psu <- list(val = sum.w_ssu$val * Mi_b$val / mi_b$val, ind = sum.w_ssu$ind)
+wl_psu <- list(val = sum.wl_ssu$val * Mi_b$val / mi_b$val, ind = sum.wl_ssu$ind)
 
-D_j <- sum.d_jpsu*as.vector(W/sum.wl_psu)
-WHat <-  sum.w_psu*W/sum.wl_psu
+sum.d_jpsu <- dbeAgg(d_jpsu,c(1,3),sum,na.rm=TRUE)
+sum.w_psu <- dbeAgg(w_psu,1,sum,na.rm=TRUE)
+sum.wl_psu <- dbeAgg(wl_psu,1,sum,na.rm=TRUE)
+                                 
+#on doit maintenant penser à insérer les 0-values, càd les combinaisons strate/psuid/length non échantillonnées, 
+# mais dont l'occurence strate/length a été échantillonnée, dans d_jpsu (croisement des en-têtes de 'sum.d_jpsu' et de 'sum.w_ssu')
+
+  #on commence par croiser les deux paires de dimensions (STR/PSUid et STR/Lgth)             #####
+dfTemp <- as.data.frame(t(sum.d_jpsu$ind)) ; names(dfTemp) <- c("V1","V3")                       #
+cross <- merge(as.data.frame(t(sum.w_ssu$ind)),dfTemp,all=TRUE)                                  #
+  #ensuite, on étend le vecteur input selon cette nouvelle matrice                               #
+d_jpsu.new <- dbeReplic(d_jpsu,as.matrix(t(cross)))                                              #
+  #il ne reste plus qu'à considérer les 0-values                                                 #
+d_jpsu.new$val[is.na(d_jpsu.new$val)] <- 0                                                   #####
+
+#on remet au format
+W_a <- dbeReplic(W,sum.d_jpsu$ind[1,])
+sum.wl_psu_a <- dbeReplic(sum.wl_psu,sum.d_jpsu$ind[1,])
+W_b <- dbeReplic(W,sum.w_psu$ind[1,])
+
+D_j <- list(val = sum.d_jpsu$val * W_a$val / sum.wl_psu_a$val, ind = sum.d_jpsu$ind)
+
+WHat <- list(val = sum.w_psu$val * W_b$val / sum.wl_psu$val, ind = sum.w_psu$ind)
+
+
                                                                                                     
  # reformat output, D_j
-df.D_j <- cbind(expand.grid(dimnames(D_j)),value=as.vector(D_j))
+  ##df.D_j <- cbind(expand.grid(dimnames(D_j)),value=as.vector(D_j))
+df.D_j <- as.data.frame(cbind(do.call("rbind",lapply(names(D_j$val),function(x) strsplit(x,":@&@&@:")[[1]]))))
+  df.D_j$value=D_j$val
 
-df.D_j <- cbind(df.D_j,do.call("rbind",lapply(as.character(df.D_j$STR),function(x) strsplit(x,":-:")[[1]])))
+#df.D_j <- df.D_j[!is.na(df.D_j$val),]
+#df.D_j <- df.D_j[df.D_j$val>0,]
+
+df.D_j <- cbind(df.D_j,do.call("rbind",lapply(as.character(df.D_j$V1),function(x) strsplit(x,":-:")[[1]])))
 names(df.D_j) <- c("STR","length","value","time","space","technical")
 df.D_j <- df.D_j[order(df.D_j$time,df.D_j$space,df.D_j$technical,df.D_j$length),] ; rownames(df.D_j) <- 1:nrow(df.D_j)
 ld.list[[i]] <- df.D_j[,names(dbeOutput@lenStruc$estim)] # changed for boot
@@ -288,7 +455,7 @@ print(i-1)
 print("iterations complete")
 
 # Outputs to dbeOutput
-df.WHat <- cbind(value=WHat/1000,as.data.frame(do.call("rbind",lapply(names(WHat),function(x) strsplit(x,":-:")[[1]]))))    #weight in kg : MM 07/04/2009
+df.WHat <- cbind(value=WHat$val/1000,as.data.frame(do.call("rbind",lapply(names(WHat$val),function(x) strsplit(x,":-:")[[1]]))))    #weight in kg : MM 07/04/2009
 names(df.WHat) <- c("value","time","space","technical")
 df.WHat <- df.WHat[order(df.WHat$time,df.WHat$space,df.WHat$technical),] ; rownames(df.WHat) <- 1:nrow(df.WHat)
 dbeOutput@totalW$estim <- df.WHat[,names(dbeOutput@totalW$estim)]
@@ -332,13 +499,16 @@ dbeOutput@totalNvar = spdAgreg (list (value=ld.sumiter$value), BY = list(time=ld
 
 # drop original estimates from ld.df to calculate bootstrap mean & var
 ld.df = ld.df[ld.df$iter > 0,]
-ld.mean = spdAgreg (list (value=ld.df$value), BY = list(time=ld.df$time, space=ld.df$space, technical=ld.df$technical, length=ld.df$length), mean)
+#0-values are not inserted in ld.df, but must be considered in mean and variance calculation, so... 
+ld.mean = spdAgreg (list (value=ld.df$value), BY = list(time=ld.df$time, space=ld.df$space, technical=ld.df$technical, length=ld.df$length),
+  function(x) mean(c(x,rep(0,length=B-length(x)))))
 ld.mean$length = As.num(ld.mean$length)
 # should be in correct order, but sort anyway
 ld.mean = ld.mean [order(ld.mean$time, ld.mean$space, ld.mean$technical, ld.mean$length),]
 dimnames(ld.mean)[[1]] = 1:(dim(ld.mean)[1])
 
-ld.var = spdAgreg (list (value=ld.df$value), BY = list(time=ld.df$time, space=ld.df$space, technical=ld.df$technical, length=ld.df$length), var)
+ld.var = spdAgreg (list (value=ld.df$value), BY = list(time=ld.df$time, space=ld.df$space, technical=ld.df$technical, length=ld.df$length),
+   function(x) var(c(x,rep(0,length=B-length(x)))))
 ld.var$length = As.num(ld.var$length)
 ld.var = ld.var [order(ld.var$time, ld.var$space, ld.var$technical, ld.var$length),]
 dimnames(ld.var)[[1]] = 1:(dim(ld.var)[1])

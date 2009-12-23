@@ -7,7 +7,30 @@
     #############################
     # Tasks related to discards #
     #############################
-    
+
+
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+
+
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+
+
 
 
 ################################################################################
@@ -24,14 +47,15 @@ slSex <- COSTcore:::slSex                                                       
 #-------------------------------------------------------------------------------
 
 procRaise.format <- function(vrbl,lg=TRUE) {                                                                                       #\\#
-DF <- as.data.frame.table(vrbl)                                                                                                    #\\#
+tempDf <- do.call("rbind",lapply(names(vrbl),function(x) strsplit(x ,":@&@&@:")[[1]]))
+DF <- cbind.data.frame(tempDf,vrbl)                                                                                                #\\#
 df <- as.data.frame(do.call("rbind",lapply(as.character(DF[,1]),function(x) res <- strsplit(x,":-:")[[1]])))                       #\\#
 names(df) <- c("time","space","technical")                                                                                         #\\#
 if (lg) df$length <- DF[,2]                                                                                                        #\\#
-df$value <- as.numeric(as.character(DF$Freq))                                                                                      #\\#
+df$value <- as.numeric(as.character(DF[,ncol(DF)]))                                                                                #\\#
 df <- df[order(df[,1],df[,2],df[,3],df[,4]),]
 rownames(df) <- 1:nrow(df)
-return(df)                                                                                    #\\#
+return(df)                                                                                                                         #\\#
 }                                                                                                                                  #\\#
 
 
@@ -101,35 +125,51 @@ VALstrat <- paste(VAL$time,VAL$space,VAL$technical,sep=":-:")
 samFOstrat <- paste(samFO$time,samFO$space,samFO$technical,sep=":-:")          
 HHstrat <- paste(csObject@hh$time,csObject@hh$space,csObject@hh$technical,sep=":-:")
 
-FOind <- tapply(samFO$ind,list(samFO$PSUid,samFO$SSUid,samFOstrat),function(x) return(0))  #index of all sampled FOs
+  ##FOind <- tapply(samFO$ind,list(samFO$PSUid,samFO$SSUid,samFOstrat),function(x) return(0))  #index of all sampled FOs
+FOind <- catApply(samFO$ind,list(samFO$PSUid,samFO$SSUid,samFOstrat),function(x) return(0))
+
 
 #------
 # yijk : volume in a haul j of a trip i, for a class k                                                                                         #\\#
 #------
 if (any(is.na(VAL$vol))) warning("values from hauls defined as sampled hauls are missing!!")
-yijk <- tapply(VAL$vol,list(factor(VAL$PSUid,levels=levels(factor(samFO$PSUid))),  #all sampled trip should appear
-                           factor(VAL$SSUid,levels=levels(factor(samFO$SSUid))),
-                           factor(VALstrat,levels=levels(factor(samFOstrat))),
-                           VAL$lenCls),                                                                                                         #\\# 
-              sum,na.rm=TRUE)
+  
+  ##yijk <- tapply(VAL$vol,list(factor(VAL$PSUid,levels=levels(factor(samFO$PSUid))),  #all sampled trip should appear
+  ##                           factor(VAL$SSUid,levels=levels(factor(samFO$SSUid))),
+  ##                           factor(VALstrat,levels=levels(factor(samFOstrat))),
+  ##                           VAL$lenCls),                                                                                                         #\\# 
+  ##              sum,na.rm=TRUE)
+  
+yijk <- catApply(VAL$vol,list(as.character(VAL$PSUid),as.character(VAL$SSUid),as.character(VALstrat),VAL$lenCls),sum,na.rm=TRUE)  
+  
+  
   #sampled FOs that are not recorded in VAL must also appear in yij as 0 values
-yijk[is.na(yijk) & rep(!is.na(FOind),dim(yijk)[4])] <- 0  
+  ##yijk[is.na(yijk) & rep(!is.na(FOind),dim(yijk)[4])] <- 0  
+  
+                                                                                         #####
+dfTemp <- as.data.frame(t(FOind$ind))                                                        #
+cross <- merge(dfTemp,unique(yijk$ind[4,]),all=TRUE)                                         #
+yijk.new <- dbeReplic(yijk,as.matrix(t(cross)))                                              #
+yijk.new$val[is.na(yijk.new$val)] <- 0                                                   #####
 
 #------
 # mi : number of sampled hauls in a trip i
 #------
-mi <- tapply(samFO$ind,list(samFO$PSUid,factor(samFOstrat,levels=dimnames(yijk)[[3]])),sum)
+  ##mi <- tapply(samFO$ind,list(samFO$PSUid,factor(samFOstrat,levels=dimnames(yijk)[[3]])),sum)
+mi <- catApply(samFO$ind,list(as.character(samFO$PSUid),as.character(samFOstrat)),sum)  
 
 #------
 # Mi : total number of hauls in a trip i
 #------
-Mi <- tapply(csObject@hh$SSUid,list(factor(csObject@hh$PSUid,levels=levels(factor(samFO$PSUid))),
-             factor(HHstrat,levels=dimnames(yijk)[[3]])),function(x) length(unique(x)))
+  ##Mi <- tapply(csObject@hh$SSUid,list(factor(csObject@hh$PSUid,levels=levels(factor(samFO$PSUid))),
+  ##           factor(HHstrat,levels=dimnames(yijk)[[3]])),function(x) length(unique(x)))
+Mi <- catApply(csObject@hh$SSUid,list(as.character(csObject@hh$PSUid),as.character(HHstrat)),function(x) length(unique(x)))$val[names(mi$val)]
+
 
 #------
 # n : number of sampled trips
 #------
-n <- tapply(samFO$PSUid,list(factor(samFOstrat,levels=dimnames(yijk)[[3]])),function(x) length(unique(x)))
+n <- tapply(samFO$PSUid,list(factor(samFOstrat,levels=unique(as.character(yijk.new$ind[3,])))),function(x) length(unique(x)))
 
 #------
 # N : total number of trips
@@ -137,22 +177,43 @@ n <- tapply(samFO$PSUid,list(factor(samFOstrat,levels=dimnames(yijk)[[3]])),func
 if (all(is.na(ceObject@ce$trpNum))) stop("no available data in 'trpNum' field of 'ceObject' for raising process!!")
 if (any(is.na(ceObject@ce$trpNum))) warning("missing values for 'trpNum' field in ceObject!!")
 CEstrat <- paste(ceObject@ce$time,ceObject@ce$space,ceObject@ce$technical,sep=":-:")
-N <- tapply(ceObject@ce$trpNum,list(factor(CEstrat,levels=dimnames(yijk)[[3]])),sum,na.rm=TRUE)
+N <- tapply(ceObject@ce$trpNum,list(factor(CEstrat,levels=unique(as.character(yijk.new$ind[3,])))),sum,na.rm=TRUE)
 
 #so, estimate of the total volume is...
-yiBar <- RowSum(yijk,c(1,3,4))/as.vector(mi)
-yI <- RowSum(yiBar*as.vector(Mi),c(2,3))*as.vector(N/n)         #if NAs, should be coming from N (unavailable population level data)
+  ##yiBar <- RowSum(yijk,c(1,3,4))/as.vector(mi)
+tt <- dbeAgg(yijk.new,c(1,3,4),sum,na.rm=TRUE)
+yiBar <- list(val = tt$val/dbeReplic(mi,tt$ind[1:2,])$val, ind = tt$ind)
+
+  ##yI <- RowSum(yiBar*as.vector(Mi),c(2,3))*as.vector(N/n)         
+tt <- dbeAgg(list(val = yiBar$val * dbeReplic(list(val = Mi, ind= mi$ind),tt$ind[1:2,])$val , ind = yiBar$ind),2:3,sum,na.rm=TRUE)
+yI <- list(val = tt$val*(N/n)[tt$ind[1,]] , ind = tt$ind)
 
 #and, its associated variance is...
-yiHat <- yiBar*as.vector(Mi) ; yBar <- RowSum(yiHat,c(2,3))/as.vector(n)
-s2i <- RowSum(aperm(aperm(yijk,c(1,3,4,2))-rep(yiBar,dim(yijk)[2]),c(1,4,2,3))^2,c(1,3,4))/as.vector(mi-1)
+  ##yiHat <- yiBar*as.vector(Mi) 
+yiHat <- list(val = yiBar$val*dbeReplic(list(val=Mi,ind=mi$ind),yiBar$ind[1:2,])$val, ind= yiBar$ind)
+  ##yBar <- RowSum(yiHat,c(2,3))/as.vector(n)
+tt <- dbeAgg(yiHat,c(2,3),sum,na.rm=TRUE)
+yBar <- list(val = tt$val/(n)[tt$ind[1,]] , ind = tt$ind)
+
+  ##s2i <- RowSum(aperm(aperm(yijk,c(1,3,4,2))-rep(yiBar,dim(yijk)[2]),c(1,4,2,3))^2,c(1,3,4))/as.vector(mi-1)
+tt <- dbeAgg(list(val = (yijk.new$val - dbeReplic(yiBar,yijk.new$ind[c(1,3:4),])$val)^2, ind = yijk.new$ind),c(1,3,4),sum,na.rm=TRUE) 
+s2i <- list(val = tt$val/dbeReplic(list(val = mi$val-1, ind = mi$ind),tt$ind[1:2,])$val , ind = tt$ind)
+
   #Nan & Inf values in 's2i' must be replaced by 0 (mi=1 ==> var=0)
-s2i[is.nan(s2i)] <- 0 ; s2i[is.infinite(s2i)] <- 0 
+s2i$val[is.nan(s2i$val)] <- 0 ; s2i$val[is.infinite(s2i$val)] <- 0 
+
   #first part of the formula of variance
-first <- RowSum((yiHat-rep(yBar,each=dim(yiHat)[1]))^2,c(2,3))*as.vector(N*N/(n*(n-1)))
+  ##first <- RowSum((yiHat-rep(yBar,each=dim(yiHat)[1]))^2,c(2,3))*as.vector(N*N/(n*(n-1)))
+tt <- dbeAgg(list(val = (yiHat$val - dbeReplic(yBar,yiHat$ind[2:3,])$val)^2, ind = yiHat$ind),c(2,3),sum,na.rm=TRUE)
+first <- tt$val * (N*N/(n*(n-1)))[tt$ind[1,]]
+
 first[is.nan(first)] <- 0 ; first[is.infinite(first)] <- 0                  #(variance inter trip, so n=1 ==> first=0 ????)
+  
   #second part of the formula
-second <- RowSum(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3))*as.vector(N/n)                     #variance intra trip
+  ##second <- RowSum(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3))*as.vector(N/n)                     #variance intra trip
+tt <- dbeAgg(list(val= s2i$val * dbeReplic(list(val = Mi*(Mi-mi$val)/mi$val, ind = mi$ind), s2i$ind[1:2,])$val , ind = s2i$ind) , 
+                    2:3, sum, na.rm=TRUE) 
+second <- tt$val * (N/n)[tt$ind[1,]]
 #VyI
 VyI <- first + second
 
@@ -176,7 +237,8 @@ nMEAS <- merge(nSamp[,c("time","space","technical")],nMEAS,all.x=TRUE,sort=TRUE)
 dbeOutp@nMeas$len <- nMEAS                                                                                                                                        #
 dbeOutp@nSamp$len <- nSamp[,c("time","space","technical","value")]                  #modif 03/04/2009
 }
-slot(dbeOutp,est)$estim <- procRaise.format(yI,lg=lgTest)
+
+slot(dbeOutp,est)$estim <- procRaise.format(yI$val,lg=lgTest)
 slot(dbeOutp,vr) <- procRaise.format(VyI,lg=lgTest)
 
 return(dbeOutp)
@@ -249,47 +311,62 @@ VALstrat <- paste(VAL$time,VAL$space,VAL$technical,sep=":-:")
 samFOstrat <- paste(samFO$time,samFO$space,samFO$technical,sep=":-:")          
 HHstrat <- paste(csObject@hh$time,csObject@hh$space,csObject@hh$technical,sep=":-:")
 
-FOind <- tapply(samFO$ind,list(samFO$PSUid,samFO$SSUid,samFOstrat),function(x) return(0))  #index of all sampled FOs
+  ##FOind <- tapply(samFO$ind,list(samFO$PSUid,samFO$SSUid,samFOstrat),function(x) return(0))  #index of all sampled FOs
+FOind <- catApply(samFO$ind,list(samFO$PSUid,samFO$SSUid,samFOstrat),function(x) return(0))
 
 #------
 # yijk : volume in a haul j of a trip i in a class k
 #------
 if (any(is.na(VAL$vol))) warning("values from hauls defined as sampled hauls are missing!!")
-yijk <- tapply(VAL$vol,list(factor(VAL$PSUid,levels=levels(factor(samFO$PSUid))),  #all sampled trips and FOs should appear
-                           factor(VAL$SSUid,levels=levels(factor(samFO$SSUid))),
-                           factor(VALstrat,levels=levels(factor(samFOstrat))),
-                           VAL$lenCls),
-              sum,na.rm=TRUE)
+  #yijk <- tapply(VAL$vol,list(factor(VAL$PSUid,levels=levels(factor(samFO$PSUid))),  #all sampled trips and FOs should appear
+  #                           factor(VAL$SSUid,levels=levels(factor(samFO$SSUid))),
+  #                           factor(VALstrat,levels=levels(factor(samFOstrat))),
+  #                           VAL$lenCls),
+  #              sum,na.rm=TRUE)
+  
+yijk <- catApply(VAL$vol,list(as.character(VAL$PSUid),as.character(VAL$SSUid),as.character(VALstrat),VAL$lenCls),sum,na.rm=TRUE)  
+  
+  
   #sampled FOs that are not recorded in VAL must also appear in yij as 0 values, so...
-yijk[is.na(yijk) & rep(!is.na(FOind),dim(yijk)[4])] <- 0   
+  ##yijk[is.na(yijk) & rep(!is.na(FOind),dim(yijk)[4])] <- 0   
+
+dfTemp <- as.data.frame(t(FOind$ind))                                                        #
+cross <- merge(dfTemp,unique(yijk$ind[4,]),all=TRUE)                                         #
+yijk.new <- dbeReplic(yijk,as.matrix(t(cross)))                                              #
+yijk.new$val[is.na(yijk.new$val)] <- 0                                                   #####
+
 
 #------
 # mi : number of sampled hauls in a trip i
 #------
-mi <- tapply(samFO$ind,list(samFO$PSUid,factor(samFOstrat,levels=dimnames(yijk)[[3]])),sum)
+  ##mi <- tapply(samFO$ind,list(samFO$PSUid,factor(samFOstrat,levels=dimnames(yijk)[[3]])),sum)
+mi <- catApply(samFO$ind,list(as.character(samFO$PSUid),as.character(samFOstrat)),sum)  
 
 #------
 # Mi : total number of hauls in a trip i
 #------
-Mi <- tapply(csObject@hh$SSUid,list(factor(csObject@hh$PSUid,levels=levels(factor(samFO$PSUid))),
-             factor(HHstrat,levels=dimnames(yijk)[[3]])),function(x) length(unique(x)))
+  ##Mi <- tapply(csObject@hh$SSUid,list(factor(csObject@hh$PSUid,levels=levels(factor(samFO$PSUid))),
+  ##             factor(HHstrat,levels=dimnames(yijk)[[3]])),function(x) length(unique(x)))
+Mi <- catApply(csObject@hh$SSUid,list(as.character(csObject@hh$PSUid),as.character(HHstrat)),function(x) length(unique(x)))$val[names(mi$val)]
 
 #------
 # mBar : mean of number of sampled hauls by trip
 #------
 
-mBar <- apply(mi,2,mean,na.rm=TRUE)
+  ##mBar <- apply(mi,2,mean,na.rm=TRUE)
+mBar <- dbeAgg(mi,2,mean,na.rm=TRUE)
 
 #------
 # MBar : mean of total number of hauls by trip
 #------
 
-MBar <- apply(Mi,2,mean,na.rm=TRUE)
+  ##MBar <- apply(Mi,2,mean,na.rm=TRUE)
+MBar <- dbeAgg(list(val = Mi, ind = mi$ind),2,mean,na.rm=TRUE)
 
 #------
 # n : number of sampled trips
 #------
-n <- tapply(samFO$PSUid,list(factor(samFOstrat,levels=dimnames(yijk)[[3]])),function(x) length(unique(x)))
+n <- tapply(samFO$PSUid,list(factor(samFOstrat,levels=unique(as.character(yijk.new$ind[3,])))),function(x) length(unique(x)))
 
 #------
 # Mo : total number of FOs
@@ -297,22 +374,45 @@ n <- tapply(samFO$PSUid,list(factor(samFOstrat,levels=dimnames(yijk)[[3]])),func
 if (all(is.na(ceObject@ce$foNum))) stop("no available data in 'foNum' field of 'ceObject' for raising process!!")
 if (any(is.na(ceObject@ce$foNum))) warning("missing values for 'foNum' field in ceObject!!")
 CEstrat <- paste(ceObject@ce$time,ceObject@ce$space,ceObject@ce$technical,sep=":-:")
-Mo <- tapply(ceObject@ce$foNum,list(factor(CEstrat,levels=dimnames(yijk)[[3]])),sum,na.rm=TRUE)     
+Mo <- tapply(ceObject@ce$foNum,list(factor(CEstrat,levels=unique(as.character(yijk.new$ind[3,])))),sum,na.rm=TRUE)     
 
 #so, estimate of the total volume is...
-yiBar <- RowSum(yijk,c(1,3,4))/as.vector(mi)
-yII <- RowSum(yiBar*as.vector(Mi),c(2,3))*as.vector(Mo/apply(Mi,2,sum,na.rm=TRUE))         #if NAs, should be coming from Mo (unavailable population level data)
+  ##yiBar <- RowSum(yijk,c(1,3,4))/as.vector(mi)
+tt <- dbeAgg(yijk.new,c(1,3,4),sum,na.rm=TRUE)
+yiBar <- list(val = tt$val/dbeReplic(mi,tt$ind[1:2,])$val, ind = tt$ind)
+
+  ##yII <- RowSum(yiBar*as.vector(Mi),c(2,3))*as.vector(Mo/apply(Mi,2,sum,na.rm=TRUE))         #if NAs, should be coming from Mo (unavailable population level data)
+tt <- dbeAgg(list(val = yiBar$val * dbeReplic(list(val = Mi, ind= mi$ind),yiBar$ind[1:2,])$val , ind = yiBar$ind),2:3,sum,na.rm=TRUE)
+yII <- tt$val * Mo[tt$ind[1,]] / dbeAgg(list(val=Mi,ind=mi$ind),2,sum,na.rm=TRUE)$val[tt$ind[1,]]
+
 
 #and, its associated variance is...
-yBarBar <- RowSum(yiBar,c(2,3))/as.vector(n)                                        
-s2i <- RowSum(aperm(aperm(yijk,c(1,3,4,2))-rep(yiBar,dim(yijk)[2]),c(1,4,2,3))^2,c(1,3,4))/as.vector(mi-1)
+  ##yBarBar <- RowSum(yiBar,c(2,3))/as.vector(n)   
+tt <- dbeAgg(yiBar,c(2,3),sum,na.rm=TRUE)
+yBarBar <- list(val = tt$val/(n)[tt$ind[1,]] , ind = tt$ind)
+
+  ##s2i <- RowSum(aperm(aperm(yijk,c(1,3,4,2))-rep(yiBar,dim(yijk)[2]),c(1,4,2,3))^2,c(1,3,4))/as.vector(mi-1)
+tt <- dbeAgg(list(val = (yijk.new$val - dbeReplic(yiBar,yijk.new$ind[c(1,3:4),])$val)^2, ind = yijk.new$ind),c(1,3,4),sum,na.rm=TRUE) 
+s2i <- list(val = tt$val/dbeReplic(list(val = mi$val-1, ind = mi$ind),tt$ind[1:2,])$val , ind = tt$ind)
+
   #Nan & Inf values in 's2i' must be replaced by 0 (mi=1 ==> var=0)
-s2i[is.nan(s2i)] <- 0 ; s2i[is.infinite(s2i)] <- 0 
+s2i$val[is.nan(s2i$val)] <- 0 ; s2i$val[is.infinite(s2i$val)] <- 0 
+ 
   #first part of the formula
-first <- RowSum(((yiBar-rep(yBarBar,each=dim(yiBar)[1]))*as.vector(Mi))^2,c(2,3))*as.vector(Mo*Mo/(n*MBar*MBar*(n-1)))                  # <-- CORRECTION
+  ##first <- RowSum(((yiBar-rep(yBarBar,each=dim(yiBar)[1]))*as.vector(Mi))^2,c(2,3))*as.vector(Mo*Mo/(n*MBar*MBar*(n-1)))
+tt <- dbeAgg(list(val = ((yiBar$val - dbeReplic(yBarBar,yiBar$ind[2:3,])$val) * 
+                  dbeReplic(list(val= Mi,ind = mi$ind),yiBar$ind[1:2,])$val)^2, ind = yiBar$ind),c(2,3),sum,na.rm=TRUE)
+first <- tt$val * (Mo*Mo/(n*(n-1)))[tt$ind[1,]] / (MBar$val*MBar$val)[tt$ind[1,]]
+
 first[is.nan(first)] <- 0 ; first[is.infinite(first)] <- 0                  #(variance inter trip, so n=1 ==> first=0 ????)
+  
   #second part of the formula
-second <- RowSum(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3))*as.vector(Mo/(n*MBar))                     #variance intra trip
+  ##second <- RowSum(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3))*as.vector(Mo/(n*MBar))                     #variance intra trip
+tt <- dbeAgg(list(val= s2i$val * dbeReplic(list(val = Mi*(Mi-mi$val)/mi$val, ind = mi$ind), s2i$ind[1:2,])$val , ind = s2i$ind) , 
+                    2:3, sum, na.rm=TRUE) 
+second <- tt$val * (Mo/n)[tt$ind[1,]] / MBar$val[tt$ind[1,]]
+
+
 #VyI
 VyII <- first + second                                      
 
@@ -334,6 +434,7 @@ nMEAS <- merge(nSamp[,c("time","space","technical")],nMEAS,all.x=TRUE,sort=TRUE)
 dbeOutp@nMeas$len <- nMEAS                                                                                                                                        #
 dbeOutp@nSamp$len <- nSamp[,c("time","space","technical","value")]                  #modif 03/04/2009
 }
+
 slot(dbeOutp,est)$estim <- procRaise.format(yII,lg=lgTest)
 slot(dbeOutp,vr) <- procRaise.format(VyII,lg=lgTest)
 
@@ -416,47 +517,61 @@ VALstrat <- paste(VAL$time,VAL$space,VAL$technical,sep=":-:")
 samFOstrat <- paste(samFO$time,samFO$space,samFO$technical,sep=":-:")          
 HHstrat <- paste(csObject@hh$time,csObject@hh$space,csObject@hh$technical,sep=":-:")
 
-FOind <- tapply(samFO$ind,list(samFO$PSUid,samFO$SSUid,samFOstrat),function(x) return(0))  #index of all sampled FOs
+  ##FOind <- tapply(samFO$ind,list(samFO$PSUid,samFO$SSUid,samFOstrat),function(x) return(0))  #index of all sampled FOs
+FOind <- catApply(samFO$ind,list(samFO$PSUid,samFO$SSUid,samFOstrat),function(x) return(0))
 
 #------
 # yijk : volume in a haul j of a trip i for a class k
 #------
 if (any(is.na(VAL$vol))) warning("values from hauls defined as sampled hauls are missing!!")
-yijk <- tapply(VAL$vol,list(factor(VAL$PSUid,levels=levels(factor(samFO$PSUid))),  #all sampled trips and FOs should appear
-                           factor(VAL$SSUid,levels=levels(factor(samFO$SSUid))),
-                           factor(VALstrat,levels=levels(factor(samFOstrat))),
-                           VAL$lenCls),
-              sum,na.rm=TRUE)
+  ##yijk <- tapply(VAL$vol,list(factor(VAL$PSUid,levels=levels(factor(samFO$PSUid))),  #all sampled trips and FOs should appear
+  ##                           factor(VAL$SSUid,levels=levels(factor(samFO$SSUid))),
+  ##                           factor(VALstrat,levels=levels(factor(samFOstrat))),
+  ##                           VAL$lenCls),
+  ##              sum,na.rm=TRUE)
+yijk <- catApply(VAL$vol,list(as.character(VAL$PSUid),as.character(VAL$SSUid),as.character(VALstrat),VAL$lenCls),sum,na.rm=TRUE)  
+              
   #sampled FOs that are not recorded in VAL must also appear in yij as 0 values, so...
-yijk[is.na(yijk) & rep(!is.na(FOind),dim(yijk)[4])] <- 0   
+  ##yijk[is.na(yijk) & rep(!is.na(FOind),dim(yijk)[4])] <- 0   
 
+dfTemp <- as.data.frame(t(FOind$ind))                                                        #
+cross <- merge(dfTemp,unique(yijk$ind[4,]),all=TRUE)                                         #
+yijk.new <- dbeReplic(yijk,as.matrix(t(cross)))                                              #
+yijk.new$val[is.na(yijk.new$val)] <- 0                                                   #####
+
+ref <- dbeAgg(yijk.new,c(1:3),sum,na.rm=TRUE)
 
 #------
 # xij : fishing time in a haul j of a trip i (in minutes)
 #------
-xij <- tapply(csObject@hh$foDur,list(factor(csObject@hh$PSUid,levels=levels(factor(samFO$PSUid))),  
-                                     factor(csObject@hh$SSUid,levels=levels(factor(samFO$SSUid))),
-                                     factor(HHstrat,levels=levels(factor(samFOstrat)))),
-              sum,na.rm=TRUE)
-  #sampled FOs are those indexed in FOind, so...
-xij[is.na(FOind)] <- NA                            #not necessary I guess !
+  ##xij <- tapply(csObject@hh$foDur,list(factor(csObject@hh$PSUid,levels=levels(factor(samFO$PSUid))),  
+  ##                                     factor(csObject@hh$SSUid,levels=levels(factor(samFO$SSUid))),
+  ##                                     factor(HHstrat,levels=levels(factor(samFOstrat)))),
+  ##              sum,na.rm=TRUE)
+TT <- catApply(csObject@hh$foDur,list(as.character(csObject@hh$PSUid),as.character(csObject@hh$SSUid),as.character(HHstrat)),sum,na.rm=TRUE)  
+#xij <- dbeReplic(tt,yijk.new$ind[1:3,])  
 
+##  #sampled FOs are those indexed in FOind, so...
+TT <- list(val = TT$val[names(ref$val)], ind = ref$ind)                   
+##
 
 #------
 # mi : number of sampled hauls in a trip i
 #------
-mi <- tapply(samFO$ind,list(samFO$PSUid,factor(samFOstrat,levels=dimnames(yijk)[[3]])),sum)
+  ##mi <- tapply(samFO$ind,list(samFO$PSUid,factor(samFOstrat,levels=dimnames(yijk)[[3]])),sum)
+mi <- catApply(samFO$ind,list(as.character(samFO$PSUid),as.character(samFOstrat)),sum) 
 
 #------
 # Mi : total number of hauls in a trip i
 #------
-Mi <- tapply(csObject@hh$SSUid,list(factor(csObject@hh$PSUid,levels=levels(factor(samFO$PSUid))),
-             factor(HHstrat,levels=dimnames(yijk)[[3]])),function(x) length(unique(x)))
+  ##Mi <- tapply(csObject@hh$SSUid,list(factor(csObject@hh$PSUid,levels=levels(factor(samFO$PSUid))),
+  ##             factor(HHstrat,levels=dimnames(yijk)[[3]])),function(x) length(unique(x)))
+Mi <- catApply(csObject@hh$SSUid,list(as.character(csObject@hh$PSUid),as.character(HHstrat)),function(x) length(unique(x)))$val[names(mi$val)]
 
 #------
 # n : number of sampled trips
 #------
-n <- tapply(samFO$PSUid,list(factor(samFOstrat,levels=dimnames(yijk)[[3]])),function(x) length(unique(x)))
+n <- tapply(samFO$PSUid,list(factor(samFOstrat,levels=unique(as.character(yijk.new$ind[3,])))),function(x) length(unique(x)))
 
 
 #------
@@ -468,31 +583,66 @@ if (all(is.na(ceObject@ce$foDur))) stop("no available data in 'foDur' field of '
 CEstrat <- paste(ceObject@ce$time,ceObject@ce$space,ceObject@ce$technical,sep=":-:")
 if (any(is.na(ceObject@ce$trpNum))) warning("missing values for 'trpNum' field in ceObject!!")
 if (any(is.na(ceObject@ce$foDur))) warning("missing values for 'foDur' field in ceObject!!")
-N <- tapply(ceObject@ce$trpNum,list(factor(CEstrat,levels=dimnames(yijk)[[3]])),sum,na.rm=TRUE)
+  ##N <- tapply(ceObject@ce$trpNum,list(factor(CEstrat,levels=dimnames(yijk)[[3]])),sum,na.rm=TRUE)
+N <- tapply(ceObject@ce$trpNum,list(factor(CEstrat,levels=unique(as.character(yijk.new$ind[3,])))),sum,na.rm=TRUE)
 
 #------
 # X : total stratified fishing time at population level (in minutes)
 #------
-X <- tapply(ceObject@ce$foDur*60,list(factor(CEstrat,levels=dimnames(yijk)[[3]])),sum,na.rm=TRUE)       #in minutes
+  ##X <- tapply(ceObject@ce$foDur*60,list(factor(CEstrat,levels=dimnames(yijk)[[3]])),sum,na.rm=TRUE)       #in minutes
+X <- tapply(ceObject@ce$foDur*60,list(factor(CEstrat,levels=unique(as.character(yijk.new$ind[3,])))),sum,na.rm=TRUE)
 
 #so, estimate of the total volume is...
-yiBar <- RowSum(yijk,c(1,3,4))/as.vector(mi) 
-xiBar <- RowSum(xij,c(1,3))/mi  
-Rhat <- RowSum(yiBar*as.vector(Mi),c(2,3))/as.vector(apply(Mi*xiBar,2,sum,na.rm=TRUE))         
-yIII <- Rhat*as.vector(X)                                                                    #if NAs, should be coming from X (unavailable population level data)
+  ##yiBar <- RowSum(yijk,c(1,3,4))/as.vector(mi) 
+tt <- dbeAgg(yijk.new,c(1,3,4),sum,na.rm=TRUE)
+yiBar <- list(val = tt$val/dbeReplic(mi,tt$ind[1:2,])$val, ind = tt$ind)
+
+  ##xiBar <- RowSum(xij,c(1,3))/mi 
+tt <- dbeAgg(TT,c(1,3),sum,na.rm=TRUE)
+xiBar <- list(val = tt$val/mi$val[names(tt$val)], ind = tt$ind)
+    
+  ##Rhat <- RowSum(yiBar*as.vector(Mi),c(2,3))/as.vector(apply(Mi*xiBar,2,sum,na.rm=TRUE))        
+tt <- dbeAgg(list(val = yiBar$val * dbeReplic(list(val = Mi, ind= mi$ind),yiBar$ind[1:2,])$val , ind = yiBar$ind),2:3,sum,na.rm=TRUE)
+tt2 <- dbeAgg(list(val = xiBar$val * Mi[names(xiBar$val)] , ind = xiBar$ind),2,sum,na.rm=TRUE)
+Rhat <- list(val = tt$val / tt2$val[tt$ind[1,]] , ind = tt$ind)
+    
+yIII <- Rhat$val*X[Rhat$ind[1,]]                                                                    #if NAs, should be coming from X (unavailable population level data)
 
 #and, its associated variance is...
-yiHat <- yiBar*as.vector(Mi) ; xiHat <- Mi*xiBar
-s2iPart1 <- yijk-rep(xij,dim(yijk)[4])*rep(Rhat,each=prod(dim(yijk)[1:2]))                         #warning : length data in 'yijk and 'Rhat', but not in 'xij'
-s2iPart2 <- yiBar-rep(xiBar,dim(yijk)[4])*rep(Rhat,each=dim(xiBar)[1])
-s2i <- RowSum(aperm(aperm(s2iPart1,c(1,3,4,2))-rep(s2iPart2,dim(s2iPart1)[2]),c(1,4,2,3))^2,c(1,3,4))/as.vector(mi-1)
+
+  ##yiHat <- yiBar*as.vector(Mi) 
+yiHat <- list(val = yiBar$val*dbeReplic(list(val=Mi,ind=mi$ind),yiBar$ind[1:2,])$val, ind= yiBar$ind)
+
+  ##xiHat <- Mi*xiBar
+xiHat <- xiBar$val * Mi[names(xiBar$val)]
+  
+  ##s2iPart1 <- yijk-rep(xij,dim(yijk)[4])*rep(Rhat,each=prod(dim(yijk)[1:2]))  #warning : length data in 'yijk and 'Rhat', but not in 'xij'
+s2iPart1 <- list(val = yijk.new$val - dbeReplic(TT,yijk.new$ind[1:3,])$val * dbeReplic(Rhat,yijk.new$ind[3:4,])$val , ind = yijk.new$ind)
+
+  ##s2iPart2 <- yiBar-rep(xiBar,dim(yijk)[4])*rep(Rhat,each=dim(xiBar)[1])
+s2iPart2 <- list(val = yiBar$val - dbeReplic(xiBar,yiBar$ind[1:2,])$val * dbeReplic(Rhat,yiBar$ind[2:3,])$val , ind = yiBar$ind)
+
+  ##s2i <- RowSum(aperm(aperm(s2iPart1,c(1,3,4,2))-rep(s2iPart2,dim(s2iPart1)[2]),c(1,4,2,3))^2,c(1,3,4))/as.vector(mi-1)
+tt <- dbeAgg(list(val = (s2iPart1$val - dbeReplic(s2iPart2,s2iPart1$ind[c(1,3:4),])$val)^2 , ind = s2iPart1$ind),c(1,3,4), sum, na.rm=TRUE)
+s2i <- list(val = tt$val / (dbeReplic(mi, tt$ind[1:2,])$val - 1) , ind = tt$ind)
   #Nan & Inf values in 's2i' must be replaced by 0 (mi=1 ==> var=0)
-s2i[is.nan(s2i)] <- 0 ; s2i[is.infinite(s2i)] <- 0 
+s2i$val[is.nan(s2i$val)] <- 0 ; s2i$val[is.infinite(s2i$val)] <- 0 
+  
   #first part of the formula
-first <- RowSum((yiHat-rep(xiHat,dim(yijk)[4])*rep(Rhat,each=dim(xiHat)[1]))^2,c(2,3))*as.vector(N*N/(n*(n-1)))  
+  ##first <- RowSum((yiHat-rep(xiHat,dim(yijk)[4])*rep(Rhat,each=dim(xiHat)[1]))^2,c(2,3))*as.vector(N*N/(n*(n-1)))  
+tt <- dbeAgg(list(val = (yiHat$val - dbeReplic(list(val = xiHat, ind = xiBar$ind),yiHat$ind[1:2,])$val * 
+                          dbeReplic(Rhat,yiHat$ind[2:3,])$val)^2, ind = yiHat$ind),c(2,3),sum,na.rm=TRUE)
+first <- tt$val * (N*N/(n*(n-1)))[tt$ind[1,]]
+
 first[is.nan(first)] <- 0 ; first[is.infinite(first)] <- 0                  #not sure about that (variance inter trip, so n=1 ==> first=0 ????)
+  
   #second part of the formula
-second <- RowSum(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3))*as.vector(N/n)                     
+  ##second <- RowSum(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3))*as.vector(N/n)                     
+tt <- dbeAgg(list(val= s2i$val * dbeReplic(list(val = Mi*(Mi-mi$val)/mi$val, ind = mi$ind), s2i$ind[1:2,])$val , ind = s2i$ind) , 
+                    2:3, sum, na.rm=TRUE) 
+second <- tt$val * (N/n)[tt$ind[1,]]
+
+
 #VyIII
 VyIII <- first + second
 
@@ -607,46 +757,65 @@ LANstrat <- paste(LAN$time,LAN$space,LAN$technical,sep=":-:")
 
 
 #index of all sampled FOs
-FOind <- tapply(samFO$ind,list(samFO$PSUid,samFO$SSUid,samFOstrat),function(x) return(0))  
+  ##FOind <- tapply(samFO$ind,list(samFO$PSUid,samFO$SSUid,samFOstrat),function(x) return(0))  
+FOind <- catApply(samFO$ind,list(samFO$PSUid,samFO$SSUid,samFOstrat),function(x) return(0))
 
 #------
 # yij : volume in a haul j of a trip i
 #------
 if (any(is.na(VAL$vol))) warning("values from hauls defined as sampled hauls are missing!!")
-yijk <- tapply(VAL$vol,list(factor(VAL$PSUid,levels=levels(factor(samFO$PSUid))),  #all sampled trips and FOs should appear
-                           factor(VAL$SSUid,levels=levels(factor(samFO$SSUid))),
-                           factor(VALstrat,levels=levels(factor(samFOstrat))),
-                           VAL$lenCls),
-              sum,na.rm=TRUE)
+  ##yijk <- tapply(VAL$vol,list(factor(VAL$PSUid,levels=levels(factor(samFO$PSUid))),  #all sampled trips and FOs should appear
+  ##                           factor(VAL$SSUid,levels=levels(factor(samFO$SSUid))),
+  ##                           factor(VALstrat,levels=levels(factor(samFOstrat))),
+  ##                           VAL$lenCls),
+  ##              sum,na.rm=TRUE)
+
+yijk <- catApply(VAL$vol,list(as.character(VAL$PSUid),as.character(VAL$SSUid),as.character(VALstrat),VAL$lenCls),sum,na.rm=TRUE)  
+
   #sampled FOs that are not recorded in VAL must also appear in yij as 0 values, so... 
-yijk[is.na(yijk) & rep(!is.na(FOind),dim(yijk)[4])] <- 0  
+  ##yijk[is.na(yijk) & rep(!is.na(FOind),dim(yijk)[4])] <- 0  
+
+dfTemp <- as.data.frame(t(FOind$ind))                                                        #
+cross <- merge(dfTemp,unique(yijk$ind[4,]),all=TRUE)                                         #
+yijk.new <- dbeReplic(yijk,as.matrix(t(cross)))                                              #
+yijk.new$val[is.na(yijk.new$val)] <- 0                                                   #####
+
+ref <- dbeAgg(yijk.new,c(1:3),sum,na.rm=TRUE)
 
 #------
 # xij : landed weight of specified species in a haul j of a trip i  (in kg)
 #------
-xij <- tapply(LAN$wt/1000,list(factor(LAN$PSUid,levels=levels(factor(samFO$PSUid))),  
-                               factor(LAN$SSUid,levels=levels(factor(samFO$SSUid))),
-                               factor(LANstrat,levels=levels(factor(samFOstrat)))),
-              sum,na.rm=TRUE)
-  #sampled FOs are indexed in FOind, so...
-xij[is.na(xij) & !is.na(FOind)] <- 0        
+  ##xij <- tapply(LAN$wt/1000,list(factor(LAN$PSUid,levels=levels(factor(samFO$PSUid))),  
+  ##                               factor(LAN$SSUid,levels=levels(factor(samFO$SSUid))),
+  ##                               factor(LANstrat,levels=levels(factor(samFOstrat)))),
+  ##              sum,na.rm=TRUE)
+              
+TT <- catApply(LAN$wt/1000,list(as.character(LAN$PSUid),as.character(LAN$SSUid),as.character(LANstrat)),sum,na.rm=TRUE)  
+#xij <- dbeReplic(tt,yijk.new$ind[1:3,])  
+              
 
+  #sampled FOs are indexed in FOind, so...
+  ##xij[is.na(xij) & !is.na(FOind)] <- 0        
+TT <- list(val = TT$val[names(ref$val)], ind = ref$ind)   
 
 #------
 # mi : number of sampled hauls in a trip i
 #------
-mi <- tapply(samFO$ind,list(samFO$PSUid,factor(samFOstrat,levels=dimnames(yijk)[[3]])),sum)
+  ##mi <- tapply(samFO$ind,list(samFO$PSUid,factor(samFOstrat,levels=dimnames(yijk)[[3]])),sum)
+mi <- catApply(samFO$ind,list(as.character(samFO$PSUid),as.character(samFOstrat)),sum) 
 
 #------
 # Mi : total number of hauls in a trip i
 #------
-Mi <- tapply(csObject@hh$SSUid,list(factor(csObject@hh$PSUid,levels=levels(factor(samFO$PSUid))),
-             factor(HHstrat,levels=dimnames(yijk)[[3]])),function(x) length(unique(x)))
+  ##Mi <- tapply(csObject@hh$SSUid,list(factor(csObject@hh$PSUid,levels=levels(factor(samFO$PSUid))),
+  ##             factor(HHstrat,levels=dimnames(yijk)[[3]])),function(x) length(unique(x)))
+
+Mi <- catApply(csObject@hh$SSUid,list(as.character(csObject@hh$PSUid),as.character(HHstrat)),function(x) length(unique(x)))$val[names(mi$val)]
 
 #------
 # n : number of sampled trips
 #------
-n <- tapply(samFO$PSUid,list(factor(samFOstrat,levels=dimnames(yijk)[[3]])),function(x) length(unique(x)))
+n <- tapply(samFO$PSUid,list(factor(samFOstrat,levels=unique(as.character(yijk.new$ind[3,])))),function(x) length(unique(x)))
 
 
 #------
@@ -654,7 +823,8 @@ n <- tapply(samFO$PSUid,list(factor(samFOstrat,levels=dimnames(yijk)[[3]])),func
 #------
 CEstrat <- paste(ceObject@ce$time,ceObject@ce$space,ceObject@ce$technical,sep=":-:")
 if (any(is.na(ceObject@ce$trpNum))) warning("missing values for 'trpNum' field in ceObject!!")
-N <- tapply(ceObject@ce$trpNum,list(factor(CEstrat,levels=dimnames(yijk)[[3]])),sum,na.rm=TRUE)
+  ##N <- tapply(ceObject@ce$trpNum,list(factor(CEstrat,levels=dimnames(yijk)[[3]])),sum,na.rm=TRUE)
+N <- tapply(ceObject@ce$trpNum,list(factor(CEstrat,levels=unique(as.character(yijk.new$ind[3,])))),sum,na.rm=TRUE)
 
 #------
 # X : total stratified landed weights at population level for landSpp species (in kg)
@@ -664,27 +834,63 @@ CLstrat <- paste(CLt$time,CLt$space,CLt$technical,sep=":-:")
 if (any(is.na(CLt$landWt))) warning("missing values for 'landWt' field in clObject!!")                  
 CLt$landMult[is.na(CLt$landMult)] <- 1                                                                                         #modif 11/12/2008
 TotLand <- mapply(function(w,x,y,z) sum(c(w*x,y,z),na.rm=TRUE),CLt$landWt,CLt$landMult,CLt$unallocCatchWt,CLt$misRepCatchWt)   ## TotLand = OffLand*Multi + UnallocCat + MisallocCat 
-X <- tapply(TotLand,list(factor(CLstrat,levels=dimnames(yijk)[[3]])),sum,na.rm=TRUE)                                              
+  ##X <- tapply(TotLand,list(factor(CLstrat,levels=dimnames(yijk)[[3]])),sum,na.rm=TRUE)                                              
+X <- tapply(TotLand,list(factor(CLstrat,levels=unique(as.character(yijk.new$ind[3,])))),sum,na.rm=TRUE)
 
 #so, estimate of the total volume is...
-yiBar <- RowSum(yijk,c(1,3,4))/as.vector(mi) 
-xiBar <- RowSum(xij,c(1,3))/mi  
-Rhat <- RowSum(yiBar*as.vector(Mi),c(2,3))/as.vector(apply(Mi*xiBar,2,sum,na.rm=TRUE))         #if NaN, no landings and no discards  --> 0 values
-Rhat[is.nan(Rhat)] <- 0
-yIII <- Rhat*as.vector(X)                                                                    #if NAs, should be coming from X (unavailable population level data)
+
+  ##yiBar <- RowSum(yijk,c(1,3,4))/as.vector(mi) 
+tt <- dbeAgg(yijk.new,c(1,3,4),sum,na.rm=TRUE)
+yiBar <- list(val = tt$val/dbeReplic(mi,tt$ind[1:2,])$val, ind = tt$ind)
+
+  ##xiBar <- RowSum(xij,c(1,3))/mi 
+tt <- dbeAgg(TT,c(1,3),sum,na.rm=TRUE)
+xiBar <- list(val = tt$val/mi$val[names(tt$val)], ind = tt$ind)
+    
+  ##Rhat <- RowSum(yiBar*as.vector(Mi),c(2,3))/as.vector(apply(Mi*xiBar,2,sum,na.rm=TRUE))        
+tt <- dbeAgg(list(val = yiBar$val * dbeReplic(list(val = Mi, ind= mi$ind),yiBar$ind[1:2,])$val , ind = yiBar$ind),2:3,sum,na.rm=TRUE)
+tt2 <- dbeAgg(list(val = xiBar$val * Mi[names(xiBar$val)] , ind = xiBar$ind),2,sum,na.rm=TRUE)
+Rhat <- list(val = tt$val / tt2$val[tt$ind[1,]] , ind = tt$ind)
+    
+Rhat$val[is.nan(Rhat$val)] <- 0
+
+yIII <- Rhat$val*X[Rhat$ind[1,]]                                                                    #if NAs, should be coming from X (unavailable population level data)
 
 #and, its associated variance is...
-yiHat <- yiBar*as.vector(Mi) ; xiHat <- Mi*xiBar
-s2iPart1 <- yijk-rep(xij,dim(yijk)[4])*rep(Rhat,each=prod(dim(yijk)[1:2]))                         #warning : length data in 'yijk and 'Rhat', but not in 'xij'
-s2iPart2 <- yiBar-rep(xiBar,dim(yijk)[4])*rep(Rhat,each=dim(xiBar)[1])
-s2i <- RowSum(aperm(aperm(s2iPart1,c(1,3,4,2))-rep(s2iPart2,dim(s2iPart1)[2]),c(1,4,2,3))^2,c(1,3,4))/as.vector(mi-1)
+
+  ##yiHat <- yiBar*as.vector(Mi) 
+yiHat <- list(val = yiBar$val*dbeReplic(list(val=Mi,ind=mi$ind),yiBar$ind[1:2,])$val, ind= yiBar$ind)
+
+  ##xiHat <- Mi*xiBar
+xiHat <- xiBar$val * Mi[names(xiBar$val)]
+  
+  ##s2iPart1 <- yijk-rep(xij,dim(yijk)[4])*rep(Rhat,each=prod(dim(yijk)[1:2]))  #warning : length data in 'yijk and 'Rhat', but not in 'xij'
+s2iPart1 <- list(val = yijk.new$val - dbeReplic(TT,yijk.new$ind[1:3,])$val * dbeReplic(Rhat,yijk.new$ind[3:4,])$val , ind = yijk.new$ind)
+
+  ##s2iPart2 <- yiBar-rep(xiBar,dim(yijk)[4])*rep(Rhat,each=dim(xiBar)[1])
+s2iPart2 <- list(val = yiBar$val - dbeReplic(xiBar,yiBar$ind[1:2,])$val * dbeReplic(Rhat,yiBar$ind[2:3,])$val , ind = yiBar$ind)
+
+  ##s2i <- RowSum(aperm(aperm(s2iPart1,c(1,3,4,2))-rep(s2iPart2,dim(s2iPart1)[2]),c(1,4,2,3))^2,c(1,3,4))/as.vector(mi-1)
+tt <- dbeAgg(list(val = (s2iPart1$val - dbeReplic(s2iPart2,s2iPart1$ind[c(1,3:4),])$val)^2 , ind = s2iPart1$ind),c(1,3,4), sum, na.rm=TRUE)
+s2i <- list(val = tt$val / (dbeReplic(mi, tt$ind[1:2,])$val - 1) , ind = tt$ind)
   #Nan & Inf values in 's2i' must be replaced by 0 (mi=1 ==> var=0)
-s2i[is.nan(s2i)] <- 0 ; s2i[is.infinite(s2i)] <- 0 
+s2i$val[is.nan(s2i$val)] <- 0 ; s2i$val[is.infinite(s2i$val)] <- 0 
+  
   #first part of the formula
-first <- RowSum((yiHat-rep(xiHat,dim(yijk)[4])*rep(Rhat,each=dim(xiHat)[1]))^2,c(2,3))*as.vector(N*N/(n*(n-1)))  
-first[is.nan(first)] <- 0 ; first[is.infinite(first)] <- 0                  #variance inter trip, so n=1 ==> first=0 ????
+  ##first <- RowSum((yiHat-rep(xiHat,dim(yijk)[4])*rep(Rhat,each=dim(xiHat)[1]))^2,c(2,3))*as.vector(N*N/(n*(n-1)))  
+tt <- dbeAgg(list(val = (yiHat$val - dbeReplic(list(val = xiHat, ind = xiBar$ind),yiHat$ind[1:2,])$val * 
+                          dbeReplic(Rhat,yiHat$ind[2:3,])$val)^2, ind = yiHat$ind),c(2,3),sum,na.rm=TRUE)
+first <- tt$val * (N*N/(n*(n-1)))[tt$ind[1,]]
+
+first[is.nan(first)] <- 0 ; first[is.infinite(first)] <- 0                  #not sure about that (variance inter trip, so n=1 ==> first=0 ????)
+  
   #second part of the formula
-second <- RowSum(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3))*as.vector(N/n)                     
+  ##second <- RowSum(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3))*as.vector(N/n)                     
+tt <- dbeAgg(list(val= s2i$val * dbeReplic(list(val = Mi*(Mi-mi$val)/mi$val, ind = mi$ind), s2i$ind[1:2,])$val , ind = s2i$ind) , 
+                    2:3, sum, na.rm=TRUE) 
+second <- tt$val * (N/n)[tt$ind[1,]]
+
+
 #VyIII
 VyIII <- first + second
 
@@ -781,77 +987,131 @@ VALstrat <- paste(VAL$time,VAL$space,VAL$technical,sep=":-:")
 samFOstrat <- paste(samFO$time,samFO$space,samFO$technical,sep=":-:")          
 HHstrat <- paste(csObject@hh$time,csObject@hh$space,csObject@hh$technical,sep=":-:")
 
-FOind <- tapply(samFO$ind,list(samFO$PSUid,samFO$date,samFO$SSUid,samFOstrat),function(x) return(0))  #index of all sampled FOs
+  ##FOind <- tapply(samFO$ind,list(samFO$PSUid,samFO$date,samFO$SSUid,samFOstrat),function(x) return(0))  #index of all sampled FOs
+FOind <- catApply(samFO$ind,list(samFO$PSUid,samFO$date,samFO$SSUid,samFOstrat),function(x) return(0))
 
 #------
 # yikjl : volume in a haul j of a fishing day k, in a trip i for a class l
 #------
 if (any(is.na(VAL$vol))) warning("values from hauls defined as sampled hauls are missing!!")
-yikjl <- tapply(VAL$vol,list(factor(VAL$PSUid,levels=levels(factor(samFO$PSUid))),  #all sampled trip should appear
-                           factor(VAL$date,levels=levels(factor(samFO$date))),
-                           factor(VAL$SSUid,levels=levels(factor(samFO$SSUid))),
-                           factor(VALstrat,levels=levels(factor(samFOstrat))),
-                           VAL$lenCls),
-              sum,na.rm=TRUE)
+  ##yikjl <- tapply(VAL$vol,list(factor(VAL$PSUid,levels=levels(factor(samFO$PSUid))),  #all sampled trip should appear
+  ##                           factor(VAL$date,levels=levels(factor(samFO$date))),
+  ##                           factor(VAL$SSUid,levels=levels(factor(samFO$SSUid))),
+  ##                           factor(VALstrat,levels=levels(factor(samFOstrat))),
+  ##                           VAL$lenCls),
+  ##              sum,na.rm=TRUE)
+              
+yikjl <- catApply(VAL$vol,list(as.character(VAL$PSUid),as.character(VAL$date),as.character(VAL$SSUid),as.character(VALstrat),VAL$lenCls),sum,na.rm=TRUE)  
+
   #sampled FOs that are not recorded in VAL must also appear in yikj as 0 values
-yikjl[is.na(yikjl) & rep(!is.na(FOind),dim(yikjl)[5])] <- 0  
+  ##yikjl[is.na(yikjl) & rep(!is.na(FOind),dim(yikjl)[5])] <- 0  
+
+dfTemp <- as.data.frame(t(FOind$ind))                                                        #
+cross <- merge(dfTemp,unique(yikjl$ind[5,]),all=TRUE)                                         #
+yikjl.new <- dbeReplic(yikjl,as.matrix(t(cross)))                                              #
+yikjl.new$val[is.na(yikjl.new$val)] <- 0                                                   #####
 
 #------
 # mik : number of sampled hauls in a fishing day k of a trip i
 #------
-mik <- tapply(samFO$ind,list(samFO$PSUid,samFO$date,factor(samFOstrat,levels=dimnames(yikjl)[[4]])),sum)
+  ##mik <- tapply(samFO$ind,list(samFO$PSUid,samFO$date,factor(samFOstrat,levels=dimnames(yikjl)[[4]])),sum)
+mik <- catApply(samFO$ind,list(as.character(samFO$PSUid),as.character(samFO$date),as.character(samFOstrat)),sum) 
 
 #------
 # Mik : total number of hauls in a fishing day k of a trip i
 #------
-Mik <- tapply(csObject@hh$SSUid,list(factor(csObject@hh$PSUid,levels=levels(factor(samFO$PSUid))),
-             factor(csObject@hh$date,levels=levels(factor(samFO$date))),
-             factor(HHstrat,levels=dimnames(yikjl)[[4]])),function(x) length(unique(x)))
+  ##Mik <- tapply(csObject@hh$SSUid,list(factor(csObject@hh$PSUid,levels=levels(factor(samFO$PSUid))),
+  ##             factor(csObject@hh$date,levels=levels(factor(samFO$date))),
+  ##             factor(HHstrat,levels=dimnames(yikjl)[[4]])),function(x) length(unique(x)))
+Mik <- catApply(csObject@hh$SSUid,list(as.character(csObject@hh$PSUid),as.character(csObject@hh$date),as.character(HHstrat)),
+                    function(x) length(unique(x)))$val[names(mik$val)]
+
 
 #------
 # di : number of sampled fishing day in a trip i
 #------
-di <- tapply(samFO$date,list(samFO$PSUid,factor(samFOstrat,levels=dimnames(yikjl)[[4]])),function(x) length(unique(x)))
+  ##di <- tapply(samFO$date,list(samFO$PSUid,factor(samFOstrat,levels=dimnames(yikjl)[[4]])),function(x) length(unique(x)))
+di <- catApply(samFO$date,list(as.character(samFO$PSUid),as.character(samFOstrat)),function(x) length(unique(x))) 
 
 #------
 # Di : total number of fishing day in a trip i
 #------
-Di <- tapply(csObject@hh$date,list(factor(csObject@hh$PSUid,levels=levels(factor(samFO$PSUid))),
-             factor(HHstrat,levels=dimnames(yikjl)[[4]])),function(x) length(unique(x)))
+  ##Di <- tapply(csObject@hh$date,list(factor(csObject@hh$PSUid,levels=levels(factor(samFO$PSUid))),
+  ##             factor(HHstrat,levels=dimnames(yikjl)[[4]])),function(x) length(unique(x)))
+Di <- catApply(csObject@hh$date,list(as.character(csObject@hh$PSUid),as.character(HHstrat)),function(x) length(unique(x)))$val[names(di$val)] 
+
 
 #------
 # n : number of sampled trips
 #------
-n <- tapply(samFO$PSUid,list(factor(samFOstrat,levels=dimnames(yikjl)[[4]])),function(x) length(unique(x)))
+  ##n <- tapply(samFO$PSUid,list(factor(samFOstrat,levels=dimnames(yikjl)[[4]])),function(x) length(unique(x)))
+n <- tapply(samFO$PSUid,list(factor(samFOstrat,levels=unique(as.character(yikjl.new$ind[4,])))),function(x) length(unique(x)))
 
 #------
 # D : total number of fishing days
 #------
 CEstrat <- paste(ceObject@ce$time,ceObject@ce$space,ceObject@ce$technical,sep=":-:")
 if (any(is.na(ceObject@ce$daysAtSea))) warning("missing values for 'daysAtSea' field in ceObject!!")
-D <- tapply(ceObject@ce$daysAtSea,list(factor(CEstrat,levels=dimnames(yikjl)[[4]])),sum,na.rm=TRUE)
+  ##D <- tapply(ceObject@ce$daysAtSea,list(factor(CEstrat,levels=dimnames(yikjl)[[4]])),sum,na.rm=TRUE)
+D <- tapply(ceObject@ce$daysAtSea,list(factor(CEstrat,levels=unique(as.character(yikjl.new$ind[4,])))),sum,na.rm=TRUE)
 
 #so, estimate of the total volume is...
-yikBar <- RowSum(yikjl,c(1,2,4,5))/as.vector(mik)
-yikHat <- yikBar*as.vector(Mik)
-yiBar <- RowSum(yikHat,c(1,3,4))/as.vector(di)
-yBarBar <- RowSum(yiBar*as.vector(Di),c(2,3))/as.vector(apply(Di,2,sum,na.rm=TRUE))
-yIV <- yBarBar*as.vector(D)         #if NAs, should be coming from D (unavailable population level data)
+
+  ##yikBar <- RowSum(yikjl,c(1,2,4,5))/as.vector(mik) 
+tt <- dbeAgg(yikjl.new,c(1,2,4,5),sum,na.rm=TRUE)
+temp <- dbeReplic(mik,tt$ind[1:3,])$val
+yikBar <- list(val = tt$val/temp, ind = tt$ind)
+
+yikHat <- list(val = yikBar$val * Mik[names(temp)] ,ind =  yikBar$ind)
+
+  ##yiBar <- RowSum(yikHat,c(1,3,4))/as.vector(di)
+tt <- dbeAgg(yikHat,c(1,3,4),sum,na.rm=TRUE)
+temp <- dbeReplic(di,tt$ind[1:2,])$val
+yiBar <- list(val = tt$val/temp, ind = tt$ind)
+
+  ##yBarBar <- RowSum(yiBar*as.vector(Di),c(2,3))/as.vector(apply(Di,2,sum,na.rm=TRUE))
+tt <- dbeAgg(list(val = yiBar$val * dbeReplic(list(val = Di, ind = di$ind),yiBar$ind[1:2,])$val , ind = yiBar$ind), 2:3, sum, na.rm=TRUE)
+tt2 <- dbeAgg(list(val = Di, ind = di$ind),2,sum,na.rm=TRUE)
+yBarBar <- tt$val / tt2$val[tt$ind[1,]]
+
+yIV <- yBarBar * D[tt$ind[1,]]         #if NAs, should be coming from D (unavailable population level data)
+
 
 #and, its associated variance is...
   #first part of the formula of variance
-first <- RowSum((yiBar-rep(yBarBar,each=dim(yiBar)[1]))^2,c(2,3))*as.vector(n*((D/apply(Di,2,sum,na.rm=TRUE))^2)*(1-apply(Di,2,sum,na.rm=TRUE)/D)/(n-1))
+  ##first <- RowSum((yiBar-rep(yBarBar,each=dim(yiBar)[1]))^2,c(2,3))*
+  ##    as.vector(n*((D/apply(Di,2,sum,na.rm=TRUE))^2)*(1-apply(Di,2,sum,na.rm=TRUE)/D)/(n-1))
+yBarBar <- list(val=yBarBar, ind = tt$ind)
+tt <- dbeAgg(list(val = (yiBar$val - dbeReplic(yBarBar,yiBar$ind[2:3,])$val)^2 ,ind = yiBar$ind), c(2,3), sum, na.rm=TRUE)
+ttt <- (n/(n-1))[names(D)] * ((D / tt2$val[names(D)])^2) * (1-tt2$val[names(D)]/D) 
+first <- tt$val * ttt[tt$ind[1,]]  
+
   #Nan & Inf values in 'first' must be replaced by 0 (mi=1 ==> var=0)
 first[is.nan(first)] <- 0 ; first[is.infinite(first)] <- 0 
 
   #second part of the formula of variance
-second <- RowSum(RowSum(aperm(aperm(yikHat,c(1,3,4,2))-as.vector(yiBar),c(1,4,2,3))^2,c(1,3,4))*as.vector(Di*(Di-di)/(di*(di-1))),c(2,3))*as.vector(D/apply(Di,2,sum,na.rm=TRUE))
+  ##  second <- RowSum(RowSum(aperm(aperm(yikHat,c(1,3,4,2))-as.vector(yiBar),c(1,4,2,3))^2,c(1,3,4))*
+  ##     as.vector(Di*(Di-di)/(di*(di-1))),c(2,3))*as.vector(D/apply(Di,2,sum,na.rm=TRUE))
+tt1 <- dbeAgg(list(val = (yikHat$val - dbeReplic(yiBar,yikHat$ind[c(1,3:4),])$val)^2 ,ind = yikHat$ind), c(1,3,4), sum, na.rm=TRUE)
+ttt1 <- dbeReplic(list(val = Di[names(di$val)]*(Di[names(di$val)]-di$val)/(di$val*(di$val-1)) , ind = di$ind), tt1$ind[1:2,]) 
+tt <- dbeAgg(list(val = tt1$val * ttt1$val, ind = tt1$ind), 2:3, sum, na.rm=TRUE) 
+second <- tt$val * (D / tt2$val[names(D)])[tt$ind[1,]] 
+
   #Nan & Inf values in 'second' must be replaced by 0 (mi=1 ==> var=0)
 second[is.nan(second)] <- 0 ; second[is.infinite(second)] <- 0 
-
+                                     
   #third part of the formula of variance
-stepp <- RowSum(aperm(aperm(yikjl,c(1,2,4,5,3))-as.vector(yikBar),c(1,2,5,3,4))^2,c(1,2,4,5))*as.vector(Mik*(Mik-mik)/(mik*(mik-1)))
-third <- RowSum(RowSum(stepp,c(1,3,4))*as.vector(Di/di),c(2,3))*as.vector(D/apply(Di,2,sum,na.rm=TRUE))                                           
+  ##stepp <- RowSum(aperm(aperm(yikjl,c(1,2,4,5,3))-as.vector(yikBar),c(1,2,5,3,4))^2,c(1,2,4,5))*as.vector(Mik*(Mik-mik)/(mik*(mik-1)))
+  ##third <- RowSum(RowSum(stepp,c(1,3,4))*as.vector(Di/di),c(2,3))*as.vector(D/apply(Di,2,sum,na.rm=TRUE))                                           
+  
+stepp <- dbeAgg(list(val = (yikjl.new$val - dbeReplic(yikBar,yikjl.new$ind[c(1,2,4,5),])$val)^2 ,ind = yikjl.new$ind), c(1,2,4,5), sum, na.rm=TRUE)
+stepp1 <- dbeReplic(list(val = Mik[names(mik$val)]*(Mik[names(mik$val)]-mik$val)/(mik$val*(mik$val-1)), ind = mik$ind), stepp$ind[1:3,])
+third1 <- dbeAgg(list(val = stepp$val * stepp1$val, ind= stepp$ind), c(1,3,4), sum, na.rm=TRUE)   
+third2 <- dbeAgg(
+  list(val = third1$val * dbeReplic(list(val = Di[names(di$val)]/di$val, ind = di$ind) , third1$ind[1:2,])$val, ind = third1$ind),
+  2:3, sum, na.rm=TRUE)  
+third <- third2$val * (D / tt2$val[names(D)])[third2$ind[1,]]  
+  
   #Nan & Inf values in 'third' must be replaced by 0 (mi=1 ==> var=0)
 third[is.nan(third)] <- 0 ; third[is.infinite(third)] <- 0 
 
