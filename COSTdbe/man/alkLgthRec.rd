@@ -14,15 +14,16 @@ alkLgthRec(object,type="stepIncr",value,preview=FALSE,postview=TRUE,update=FALSE
                            
 \arguments{
   \item{object}{A \emph{csDataCons} object with ca information.}
-  \item{type}{Character for chosen method. Values are :
-    \item{"stepIncr"}{Default parameter. Length class step is increased to specified \emph{value} parameter (default value=10)}
-    \item{"fillMiss"}{All gaps (with size <= value) are filled out with the sum of surrounding recorded classes (default value=1)}
+  \item{type}{Character for chosen method. Values are :\\
+\tabular{ll}{
+    \bold{"stepIncr"} \tab Default parameter. Length class step is increased to specified \emph{value} parameter (default value=10) \cr
+    \bold{"fillMiss"} \tab All gaps (with size <= value) are filled out with the sum of surrounding recorded classes (default value=1) \cr
 %    \item{"sExtrGrp"}{The 'value' first classes are grouped (default value=1)}
 %    \item{"lExtrGrp"}{The 'value' last classes are grouped (default value=1)}
-    \item{"sFillMiss"}{The 'value' empty classe(s) prior to first recorded length class is filled out with the latter (default value=1)}
-    \item{"lFillMiss"}{The 'value' empty classe(s) following last recorded length class is filled out with the latter (default value=1)} 
+    \bold{"sFillMiss"} \tab The 'value' empty classe(s) prior to first recorded length class is filled out with the latter (default value=1) \cr
+    \bold{"lFillMiss"} \tab The 'value' empty classe(s) following last recorded length class is filled out with the latter (default value=1) \cr 
 %    \item{"sFillAge"}{The 'value' empty classe(s) prior to first recorded length class is filled out with 1 individual of minimal age (default value=1)}
-} 
+}} 
   \item{value}{Numerical parameter for chosen method (see 'type').}
   \item{preview}{Logical. If \code{TRUE}, original age length key is displayed.}
   \item{postview}{Logical. If \code{TRUE}, new age length key is displayed.}

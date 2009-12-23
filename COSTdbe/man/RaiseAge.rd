@@ -11,14 +11,17 @@
 RaiseAge(dbeOutput,csObject,clObject,\dots)
 }
 
+
 \arguments{
   \item{dbeOutput}{A \emph{dbeOutput} object.}
   \item{csObject}{A \emph{csDataCons} object matching 'dbeOutput' specifications.}
   \item{clObject}{Optionnal. A \emph{clDataCons} object matching 'dbeOutput' specifications (only required if type=\code{"direct"}).}
-  \item{...}{Further arguments such as:
-    \item{type}{Character. Specification of the raising method : \code{"p"} (default value), \code{"fixedK"}, \code{"propK"}, \code{"agesK"}, or \code{"direct"}.}
-    \item{sex}{Character. Sex specification, basically \code{"M"}, \code{"F"} or \code{as.character(NA)} (default value) for no restriction.}
-}}
+  \item{...}{Further arguments such as:\\
+\tabular{ll}{ 
+    \bold{type} \tab Character. Specification of the raising method : \code{"p"} (default value), \code{"fixedK"}, \code{"propK"}, \code{"agesK"}, or \code{"direct"}.\cr
+    \bold{sex} \tab Character. Sex specification, basically \code{"M"}, \code{"F"} or \code{as.character(NA)} (default value) for no restriction. \cr
+}
+}} 
 
 \references{D.K. Kimura, Statistical assessment of the age-length key, J. Fish. Res. Board Can. 34 (1977)}
 

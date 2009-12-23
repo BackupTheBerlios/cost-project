@@ -17,13 +17,15 @@ totVolume(dbeOutput,csObject,ceObject,clObject,\dots)
   \item{csObject}{A \emph{csDataCons} object matching 'dbeOutput' specifications.}
   \item{ceObject}{A \emph{ceDataCons} object matching 'dbeOutput' specifications.}
   \item{clObject}{An optionnal \emph{clDataCons} object matching 'dbeOutput' specifications. If specified, raising is made with ratio-to-landings method.}
-  \item{...}{Further arguments such as:
-  \item{type}{Specification of the raising method : \code{"trip"} (default value) for raising by trip, \code{"fo"} for raising by fishing operations, 
+  \item{...}{Further arguments such as:\\
+\tabular{ll}{
+  \bold{type} \tab Specification of the raising method : \code{"trip"} (default value) for raising by trip, \code{"fo"} for raising by fishing operations, 
 \code{"fd"} for raising by fishing days,\code{"landings"} for ratio-to-total landings raising method, and \code{"time"} for ratio-to-fishing duration 
-raising method.}
-  \item{val}{Estimated parameter. To be chosen between \code{"weight"} (default value), \code{"number"} and \code{"nAtLength"}.}
-  \item{sampPar}{logical specifying if given species is considered to be automatically sampled during the sampling process (default value is \code{TRUE}).}
-  \item{landSpp}{character vector describing the species considered in the 'volume of landings' variable if chosen raising method is ratio-to-landings (see 'clObject' description).}  
+raising method. \cr
+  \bold{val} \tab Estimated parameter. To be chosen between \code{"weight"} (default value), \code{"number"} and \code{"nAtLength"}.\cr
+  \bold{sampPar} \tab Logical specifying if given species is considered to be automatically sampled during the sampling process (default value is \code{TRUE}).\cr
+  \bold{landSpp} \tab Character vector describing the species considered in the 'volume of landings' variable if chosen raising method is ratio-to-landings (see 'clObject' description).\cr  
+}
 }
 }
 

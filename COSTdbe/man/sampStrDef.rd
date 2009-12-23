@@ -28,7 +28,6 @@ sampStrDef(x,species,fraction="LAN",fishAct="foCatEu5",sampPar=TRUE,\dots)
 \item{4}{Sampling for age in fishing trips - Unsorted catch}
 \item{5}{Sampling for age in fishing trips - Commercial Categories}
 \item{6}{Sampling for age in commercial categories}
-\newline
 \item{0}{No sampling or undefined strategy}
 \item{9}{Several defined strategies (trip level)}
 }           
