@@ -20,12 +20,12 @@ These methods implements a special \emph{summary} procedure for objects of class
 \S4method{cstSummary}{csData}(object,tab="tr",sizeMax=20,except=NULL,\dots)
 \S4method{cstSummary}{csDataVal}(object,tab="tr",sizeMax=20,except=NULL,\dots)
 \S4method{cstSummary}{csDataCons}(object,tab="tr",sizeMax=20,except=NULL,\dots)
-\S4method{cstSummary}{clData}(object,sizeMax=20,except=NULL,\dots)
-\S4method{cstSummary}{clDataVal}(object,sizeMax=20,except=NULL,\dots)
-\S4method{cstSummary}{clDataCons}(object,sizeMax=20,except=NULL,\dots)
-\S4method{cstSummary}{ceData}(object,sizeMax=20,except=NULL,\dots)
-\S4method{cstSummary}{ceDataVal}(object,sizeMax=20,except=NULL,\dots)
-\S4method{cstSummary}{ceDataCons}(object,sizeMax=20,except=NULL,\dots)
+\S4method{cstSummary}{clData}(object,tab="missing",sizeMax=20,except=NULL,\dots)
+\S4method{cstSummary}{clDataVal}(object,tab="missing",sizeMax=20,except=NULL,\dots)
+\S4method{cstSummary}{clDataCons}(object,tab="missing",sizeMax=20,except=NULL,\dots)
+\S4method{cstSummary}{ceData}(object,tab="missing",sizeMax=20,except=NULL,\dots)
+\S4method{cstSummary}{ceDataVal}(object,tab="missing",sizeMax=20,except=NULL,\dots)
+\S4method{cstSummary}{ceDataCons}(object,tab="missing",sizeMax=20,except=NULL,\dots)
 }
 
 \arguments{

@@ -7,6 +7,10 @@
 Most often it can be called by a plotting procedure (e.g \emph{plot} or \emph{boxplot}).}
 
 \section{Slots}{
+\describe{
+    \item{\code{desc}:}{Object of class \code{"character"}}
+    \item{\code{outPut}:}{Object of class \code{"ANY"}}
+  }
 \tabular{lllll}{
 \bold{slot} \tab \bold{desc} \tab \bold{elements} \tab \bold{class} \tab \bold{description} \cr
 \bold{\code{desc}} \tab \tab \tab \code{character} \tab Distinctive reference to mother function \cr

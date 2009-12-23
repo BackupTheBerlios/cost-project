@@ -12,8 +12,9 @@ Only sea sampling data is computed.
 
 
 \usage{
-\S4method{landisVol}{csData,missing}(object,species,fraction="LAN",sampPar=TRUE,\dots)
-\S4method{landisVol}{csData,strIni}(object,strDef,species,fraction="LAN",sampPar=TRUE,\dots)
+%\S4method{landisVol}{csData,missing}(object,strDef="missing",species,fraction="LAN",sampPar=TRUE,\dots)
+%\S4method{landisVol}{csData,strIni}(object,strDef,species,fraction="LAN",sampPar=TRUE,\dots)
+landisVol(object,strDef,species,fraction="LAN",sampPar=TRUE,\dots)
 }
 
 \arguments{
