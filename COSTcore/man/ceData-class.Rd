@@ -13,10 +13,14 @@
 The creator function "ceData" can be called to create objects from this class.
 }
 \section{Slots}{
+\describe{
+    \item{\code{desc}:}{object description}
+    \item{\code{ce}:}{effort information}
+  }
 \tabular{lrll}{
 \bold{slot} \tab \bold{columns} \tab \bold{class} \tab \bold{description} \cr
-\bold{\code{desc}} \tab \tab \code{character} \tab object description \cr
-\bold{\code{ce}} \tab \tab \code{data.frame} \tab effort information \cr
+%\bold{\code{desc}} \tab \tab \code{character} \tab object description \cr
+%\bold{\code{ce}} \tab \tab \code{data.frame} \tab effort information \cr
  \tab vslFlgCtry \tab \code{character} \tab vessel flag country \cr
  \tab year \tab \code{numeric} \tab year \cr
  \tab quarter \tab \code{numeric} \tab quarter \cr 

@@ -14,10 +14,14 @@
 The creator function "clDataCons" can be called to create objects from this class.
 }
 \section{Slots}{
+\describe{
+    \item{\code{desc}:}{object description}
+    \item{\code{cl}:}{landings information}
+  }
 \tabular{lrll}{
 \bold{slot} \tab \bold{columns} \tab \bold{class} \tab \bold{description} \cr
-\bold{\code{desc}} \tab \tab \code{character} \tab object description \cr
-\bold{\code{cl}} \tab \tab \code{data.frame} \tab landings information \cr
+%\bold{\code{desc}} \tab \tab \code{character} \tab object description \cr
+%\bold{\code{cl}} \tab \tab \code{data.frame} \tab landings information \cr
  \tab landCtry \tab \code{factor} \tab landing country \cr
  \tab vslFlgCtry \tab \code{factor} \tab vessel flag country \cr
  \tab time \tab \code{numeric} \tab time strata \cr

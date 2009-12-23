@@ -14,10 +14,18 @@
 The creator function "csDataCons" can be called to create objects from this class.
 }
 \section{Slots}{
+\describe{
+    \item{\code{desc}:}{object description}
+    \item{\code{tr}:}{trip information}
+    \item{\code{hh}:}{haul information}
+    \item{\code{sl}:}{species list}
+    \item{\code{hl}:}{length frequencies}
+    \item{\code{ca}:}{growth and maturity}
+  }
 \tabular{lrll}{
 \bold{slot} \tab \bold{columns} \tab \bold{class} \tab \bold{description} \cr
-\bold{\code{desc}} \tab \tab \code{character} \tab object description \cr
- \tab \tab \tab \cr
+%\bold{\code{desc}} \tab \tab \code{character} \tab object description \cr
+% \tab \tab \tab \cr
 \bold{\code{tr}} \tab \tab \code{data.frame} \tab  trip information \cr
  \tab PSUid \tab \code{numeric} \tab primary sampling unit id \cr
  \tab time \tab \code{factor} \tab time strata \cr

@@ -9,18 +9,14 @@
 The creator function "strIni" can be called to create objects from this class. Default values for slots are NAs, that means no stratification or no recoding)
 }
 \section{Slots}{
-\tabular{lrll}{
-\bold{slot} \tab \bold{columns} \tab \bold{class} \tab \bold{description} \cr
-\bold{\code{timeStrata}} \tab \tab \code{character} \tab time stratification (e.g "quarter", "month",...)\cr
-\bold{\code{spaceStrata}} \tab \tab \code{character} \tab space stratification (e.g "area",...)\cr
-\bold{\code{techStrata}} \tab \tab \code{character} \tab technical stratification (e.g "commCat", "foCatEu5",...)\cr
-\bold{\code{tpRec}} \tab \tab \code{list} \tab list for time strata recoding \cr
-\tab \tab \tab (e.g \code{list(from="1",to="2")}) \cr
-\bold{\code{spRec}} \tab \tab \code{list} \tab list for space strata recoding \cr
-\tab \tab \tab (e.g \code{list(from=c("7D","7D1"),to=c("27.7.d","27.7.d"))}) \cr
-\bold{\code{tcRec}} \tab \tab \code{list} \tab list for technical strata recoding \cr
-\tab \tab \tab (e.g \code{list(from=c("OTB-DEF","OTB-MOL"),to=c("OTB","OTB"))}) 
-}
+\describe{
+    \item{\code{timeStrata}:}{time stratification (e.g "quarter", "month",...)}
+    \item{\code{spaceStrata}:}{space stratification (e.g "area",...}
+    \item{\code{techStrata}:}{technical stratification (e.g "commCat", "foCatEu5",...}
+    \item{\code{tpRec}:}{list for time strata recoding (e.g \code{list(from="1",to="2")})}
+    \item{\code{spRec}:}{list for space strata recoding (e.g \code{list(from=c("7D","7D1"),to=c("27.7.d","27.7.d"))})}
+    \item{\code{tcRec}:}{list for technical strata recoding (e.g \code{list(from=c("OTB-DEF","OTB-MOL"),to=c("OTB","OTB"))})}
+  }
 }
 
 \section{Methods}{
