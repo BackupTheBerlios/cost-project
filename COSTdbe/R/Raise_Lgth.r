@@ -203,7 +203,7 @@ Hl <- Hl[!is.na(Hl$ind),]
   ##mi <- tapply(Hl$ind,list(STR=factor(Hl$STR,levels=nam$STR),
   ##                         PSUid=factor(Hl$PSUid,levels=nam$PSUid)),function(x) length(unique(x))) <------
 
-mi <- catApply(Hl$ind,list(STR=as.character(Hl$STR),as.character(Hl$PSUid)),function(x) length(unique(x)))
+mi <- catApply(Hl$ind,list(STR=as.character(Hl$STR),as.character(Hl$PSUid)),length)
 mi_a <- dbeReplic(mi,sum.d_jssu$ind[1:2,])
 mi_b <- dbeReplic(mi,sum.w_ssu$ind[1:2,])
 #mi <- tapply(SL$SSUid,list(STR=factor(SL$STR,levels=nam$STR),
