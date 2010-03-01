@@ -739,7 +739,8 @@ if (val=="weight") {
   if (val=="number") VAL$lenCls <- "all"                                                                                                           #\\#
 }
 
-LAN <- VAL
+LAN <- csObject@sl ; LAN$vol <- LAN$wt/1000 ; LAN$lenCls <- "all"  #modif MM : 01/03/2010
+
 VAL <- VAL[VAL$spp%in%species,] ; VAL <- merge(VAL,samFO,all.x=TRUE)
 VAL <- VAL[extCatchCat(VAL$sort)%in%fraction & !is.na(VAL$ind),]
 if (nrow(VAL)==0) stop("no available discards sampling data for specified parameters!!")
