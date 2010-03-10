@@ -74,7 +74,14 @@ if (names(slTab)[1]=="sampType") ind <- 1:14
 if (names(slTab)[1]=="PSUid") ind <- 1:15
 if (is.null(ind)) stop("wrong input tables!!") 
 slTab <- slTab[,ind] ; slTab$lsex <- slTab$sex ; hlTab$N <- 1:nrow(hlTab)
-hlTab <- merge(hlTab,slTab,all.x=TRUE) ; hlTab <- hlTab[order(hlTab$N),-match("N",names(hlTab))]
+#
+#inter <- slTab$lsex ; indInter <- do.call("paste",slTab[,1:14])  #modif MM 19/02/2010  : memory issue for big datasets
+#index <- do.call("paste",hlTab[,1:14])
+#indic <- match(index,indInter)
+#hlTab$lsex <- inter[indic]
+hlTab <- merge(hlTab,slTab,all.x=TRUE)
+
+hlTab <- hlTab[order(hlTab$N),-match("N",names(hlTab))]
 sex <- as.character(hlTab$sex) 
 hlTab$sex <- as.character(hlTab$lsex)
 hlTab$lsex <- sex

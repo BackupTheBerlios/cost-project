@@ -146,7 +146,8 @@ setGeneric("checkTRpk", function(object, ...){
 )
 
 setMethod("checkTRpk", signature(object="data.frame"), function(object, ...){
-	identical(object[,1:6], unique(object[,1:6]))
+	#identical(object[,1:6], unique(object[,1:6]))
+  nrow(unique(object[,1:6]))==nrow(object)
 })
 
 # HH
@@ -156,7 +157,8 @@ setGeneric("checkHHpk", function(object, ...){
 )
 
 setMethod("checkHHpk", signature(object="data.frame"), function(object, ...){
-	identical(object[,1:7], unique(object[,1:7]))
+	#identical(object[,1:7], unique(object[,1:7]))
+	nrow(unique(object[,1:7]))==nrow(object)
 })
 
 # SL
@@ -166,7 +168,8 @@ setGeneric("checkSLpk", function(object, ...){
 )
 
 setMethod("checkSLpk", signature(object="data.frame"), function(object, ...){
-	identical(object[,1:14], unique(object[,1:14]))
+	#identical(object[,1:14], unique(object[,1:14]))
+  nrow(unique(object[,1:14]))==nrow(object)
 })
 
 # HL
@@ -176,7 +179,8 @@ setGeneric("checkHLpk", function(object, ...){
 )
 
 setMethod("checkHLpk", signature(object="data.frame"), function(object, ...){
-	identical(object[,1:15], unique(object[,1:15]))
+	#identical(object[,1:15], unique(object[,1:15]))
+  nrow(unique(object[,1:15]))==nrow(object)
 })
 
 # CA
@@ -186,7 +190,8 @@ setGeneric("checkCApk", function(object, ...){
 )
 
 setMethod("checkCApk", signature(object="data.frame"), function(object, ...){
-	identical(object[,c(1:22)], unique(object[,c(1:22)]))
+	#identical(object[,c(1:22)], unique(object[,c(1:22)]))
+  nrow(unique(object[,1:22]))==nrow(object)
 })
 
 # CL
@@ -196,7 +201,8 @@ setGeneric("checkCLpk", function(object, ...){
 )
 
 setMethod("checkCLpk", signature(object="data.frame"), function(object, ...){
-	identical(object[,c(1:17)], unique(object[,c(1:17)]))                         #modif MM 01/12/2008
+	#identical(object[,c(1:17)], unique(object[,c(1:17)]))                         #modif MM 01/12/2008
+  nrow(unique(object[,1:17]))==nrow(object)
 })
 
 # CE
@@ -206,7 +212,8 @@ setGeneric("checkCEpk", function(object, ...){
 )
 
 setMethod("checkCEpk", signature(object="data.frame"), function(object, ...){
-	identical(object[,c(1:12)], unique(object[,c(1:12)]))                         #modif MM 01/12/2008
+	#identical(object[,c(1:12)], unique(object[,c(1:12)]))                         #modif MM 01/12/2008
+  nrow(unique(object[,1:12]))==nrow(object)
 })
 
 #====================================================================

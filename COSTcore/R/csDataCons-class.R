@@ -826,12 +826,12 @@ daysAtSeaTemp <- df$nDay[index] ; tr$daysAtSea[!is.na(daysAtSeaTemp)] <- daysAtS
 
 colN <- c("sampType","landCtry","vslFlgCtry","year","proj","trpCode")    
 index <- match(apply(tr[,colN],1,paste,collapse=""),apply(ca[,colN],1,paste,collapse=""))
-indexTr <- (1:nrow(tr))[!is.na(index)]  #to preserve the information already added from hh  
+indexTr <- (1:nrow(tr))[indic <- is.na(tr$PSUid)]  #to preserve the information already added from hh    ##10/03/2010 modif : !is.na(index) <-> is.na(tr$PSUid)
 #index & indexTr are linking tr and ca datas
-tr$PSUid[indexTr] <- ca$PSUid[index[!is.na(index)]]
+tr$PSUid[indexTr] <- ca$PSUid[index[indic]]
 tr$time <- as.character(tr$time)                                                                #<<- 30/06/2008 update 
-tr$time[indexTr] <- ca$time[index[!is.na(index)]]
-tr$space[indexTr] <- ca$space[index[!is.na(index)]]
+tr$time[indexTr] <- ca$time[index[indic]]
+tr$space[indexTr] <- ca$space[index[indic]]
 #no technical strata for tr table part that is only linked to ca
 #ordering by PSUid field
 tr <- tr[order(tr$PSUid),]
