@@ -11,7 +11,7 @@ and preserves the other tables.
 }
 
 \usage{
-subsetSpp(x,subset,link=TRUE,\dots)
+subsetSpp(x,subset,link=FALSE,\dots)
 }
 
 \arguments{

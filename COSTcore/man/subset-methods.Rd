@@ -27,7 +27,9 @@
 \details{Subset methods for \emph{csData} and \emph{csDataVal} objects are quite specific. An additional "table" parameter (with default value \code{table="tr"}) 
 allows to specify which table will be subset. According to the subset table, the impact on other tables will be various. A subset on \emph{tr} will impact on all the datasets. 
 A subset on \emph{hh}, \emph{sl} or \emph{hl} will potentially affect all the tables except \emph{ca}. Finally, a subset \emph{ca} will impact on \emph{tr}, and then incidentally 
-on the other datasets. Another subsetting method proceeding on \emph{sl} table with more restrictive effects is also available (see \code{subsetSpp}).}
+on the other datasets. Another "link" logical parameter (with default value \code{link=FALSE}) allows to subset afterwards on \emph{ca}. For example, considering a subset on "area" field 
+in \emph{hh} table : if "link" is false, only \emph{ca} part that is linked to \emph{hh} will be subset accordingly. On the other hand, if "link" is true, \emph{ca} will also be subset on "area" field. 
+Another subsetting method proceeding on \emph{sl} table with more restrictive effects is also available (see \code{subsetSpp}).}
 
 \seealso{\code{\link{subsetSpp}}
 }      
