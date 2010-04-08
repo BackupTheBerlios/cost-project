@@ -176,7 +176,7 @@ if (!identical(nrow(dfEstim),nrow(df))) stop("tables are not matching!!")
 
 #'inf' and 'sup' fields are calulated, and pasted to df
 qInd <- qnorm(probs)
-dfInfSup <- data.frame(df$value+t(qInd%*%t(sqrt(df$var)))) ; names(dfInfSup) <- c("inf","sup")
+dfInfSup <- data.frame(as.vector(df$value)+t(qInd%*%t(sqrt(df$var)))) ; names(dfInfSup) <- c("inf","sup")
 df <- cbind(df,dfInfSup)
 
 #problems of negative bounds
