@@ -906,7 +906,7 @@ return(res)
 }
 
 
-setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr",link=TRUE){                 #if link, 'table' & ca tables are subset  
+setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr",link=FALSE){    #if link, 'table' & ca tables are subset  
 subset <- substitute(subset)
 tab <- eval(parse('',text=paste("x@",table,sep="")))
 x <- subsetCOST(x,subset=eval(subset,tab),table=table)
@@ -921,12 +921,12 @@ if (link) subsetCOST(x,subset=eval(subset,tab),table="ca") else x
 
 
 
-setGeneric("subsetSpp", function(x,subset,link=TRUE,...){
+setGeneric("subsetSpp", function(x,subset,link=FALSE,...){
 	standardGeneric("subsetSpp")
 	}
 )
 
-setMethod("subsetSpp", signature(x="csData"), function(x,subset,link=TRUE,...){
+setMethod("subsetSpp", signature(x="csData"), function(x,subset,link=FALSE,...){
 
 is.Val <- class(x)=="csDataVal"
   
