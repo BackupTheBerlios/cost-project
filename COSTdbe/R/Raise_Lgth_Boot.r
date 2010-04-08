@@ -347,7 +347,7 @@ if (!is.na(sex)) eval(parse('',text=paste("SL <- subset(SL,sex%in%",deparse(sex)
 wt  <- catApply(SL$subSampWt,list(as.character(SL$STR),as.character(SL$sort),as.character(SL$TSUid),as.character(SL$SSUid),
                                   as.character(SL$PSUid)),sum,na.rm=TRUE)    
 
-
+wt <- dbeReplic(wt,wl$ind)
 #number of fish in the sample by length
   ##d_j <- tapply(HL$lenNum,list(STR=factor(HL$STR,levels=levSTR),
   ##                              sort=factor(HL$sort,levels=levSort),

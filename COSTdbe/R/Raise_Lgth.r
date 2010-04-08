@@ -157,7 +157,8 @@ if (nrow(SL)==0) stop("the specified parameters resulted in an empty table!!")
   ##                                 PSUid=factor(as.character(SL$PSUid),levels=nam$PSUid)),sum,na.rm=TRUE) <-----
 
 wt  <- catApply(SL$subSampWt,list(as.character(SL$STR),as.character(SL$sort),as.character(SL$TSUid),as.character(SL$SSUid),
-                                  as.character(SL$PSUid)),sum,na.rm=TRUE)    
+                                  as.character(SL$PSUid)),sum,na.rm=TRUE) 
+wt <- dbeReplic(wt,wl$ind)   
 #number of fish in the sample by length
   ##d_j <- tapply(HL$lenNum,list(STR=factor(HL$STR,levels=nam$STR),
   ##                              sort=factor(HL$sort,levels=nam$sort),
@@ -314,8 +315,8 @@ df.D_j <- as.data.frame(cbind(do.call("rbind",lapply(names(D_j$val),function(x) 
 df.VarD_j <- as.data.frame(cbind(do.call("rbind",lapply(names(VarD_j),function(x) strsplit(x,":@&@&@:")[[1]]))))
   df.VarD_j$value <- VarD_j
 
-df.VarD_j <- df.VarD_j[!is.na(df.D_j$val),] ; df.D_j <- df.D_j[!is.na(df.D_j$val),]
-df.VarD_j <- df.VarD_j[df.D_j$val>0,] ; df.D_j <- df.D_j[df.D_j$val>0,]
+df.VarD_j <- df.VarD_j[!is.na(df.VarD_j$value),] ; df.D_j <- df.D_j[!is.na(df.D_j$val),]
+df.D_j <- df.D_j[df.D_j$val>0,] ; df.VarD_j <- merge(df.D_j[,1:2],df.VarD_j,sort=FALSE,all.x=TRUE)
 
   #D_j
 df.D_j <- cbind(df.D_j,do.call("rbind",lapply(as.character(df.D_j[,1]),function(x) strsplit(x,":-:")[[1]])))
@@ -335,12 +336,16 @@ if (!missing(clObject)) {     #variance is filled only if clObject is available
 df.WHat <- cbind(value=WHat$val/1000,as.data.frame(do.call("rbind",lapply(names(WHat$val),function(x) strsplit(x,":-:")[[1]]))))    #weight in kg : MM 07/04/2009
 names(df.WHat) <- c("value","time","space","technical")
 df.WHat <- df.WHat[order(df.WHat$time,df.WHat$space,df.WHat$technical),] ; rownames(df.WHat) <- 1:nrow(df.WHat)
+df.WHat <- df.WHat[!is.na(df.WHat$value),]
+rownames(df.WHat) <- 1:nrow(df.WHat)
 dbeOutput@totalW$estim <- df.WHat[,names(dbeOutput@totalW$estim)]
 
   #totalN slot is filled with aggregated 'lenStruc$estim' table                                                                    #added MM 27/04/2009
 totN <- with(dbeOutput@lenStruc$estim,aggregate(value,by=list(technical=technical,space=space,time=time),sum,na.rm=TRUE))          #
 names(totN)[ncol(totN)] <- "value"                                                                                                 #
-totN$value <- round(totN$value)                                                                                                    #
+totN$value <- round(totN$value)  
+totN <- totN[!is.na(totN$value),]  
+rownames(totN) <- 1:nrow(totN)                                                                                                #
 dbeOutput@totalN$estim <- totN[,names(dbeOutput@totalN$estim)]                                                                     #
 
 return(dbeOutput)
