@@ -266,6 +266,8 @@ if ( dbeOutput@methodDesc != "bootstrap" ) {
 #n : number of sampled PSUid per strata
 n <- tapply(HL$PSUid,list(STR=factor(HL$STR,levels=levels(factor(SL$STR)))),function(x) length(unique(x)))
 
+n <- n[!is.na(n)]     #added MM 12/04/2010
+
 # PSUids for each strata combination
 lenids <- unique( HL [,c( "PSUid", "STR")] )
 lenids <- lenids[order(lenids$STR),] # lenids and n should now have STR in same order
