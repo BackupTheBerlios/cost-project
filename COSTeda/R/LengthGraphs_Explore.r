@@ -102,6 +102,9 @@ deltCalcFun <- function(object,
                         spaceStrata,
                         techStrata,
                         indSamp=TRUE,
+                        tpRec,
+                        spRec,
+                        tcRec,
                         ...){
 
 nbTot_Lg <- WkvTot <- DELTA <- Delta <- NkMatrix <- WkMatrix <- SampDeltaMat <- NULL 
@@ -196,19 +199,33 @@ if (!Ntc) {
     Ntc <- TRUE}
 }
 
+#recoding procedure                                                                                              #  added 09/04/2010
+recFun <- function(df,field,rec) {                                                                               #
+  Typ <- class(df[,field])                                                                                       #
+  fc <- factor(df[,field])                                                                                       #
+  Lev <- levels(fc)[!levels(fc)%in%rec$from]                                                                     #
+  df[,field] <- factor(fc,levels=c(Lev,rec$from),labels=c(Lev,rec$to))                                           #
+  eval(parse('',text=paste("df[,field] <- as.",Typ,"(as.character(df[,field]))",sep="")))                        #
+  return(df)                                                                                                     #
+}                                                                                                                #
 
-#stratification fields are converted to factors 
+#stratification fields are converted to factors (& recoded : added MM 09/04/2010) 
 if (!Ntp) {
   tempS <- factor(tabHL[,timeStrata])
   #modification of levels to sort numerical value correctly
   vv <- levels(tempS)
   index <- is.na(suppressWarnings(as.numeric(vv)))
   tabHL[,timeStrata] <- factor(tabHL[,timeStrata],levels=c(as.character(sort(as.numeric(vv[!index]))),vv[index]))
+  if (!is.na(tpRec[1])) tabHL <- recFun(tabHL,timeStrata,tpRec)                 #added 09/04/2010
 }
-if (!Nsp) 
+if (!Nsp) {
   tabHL[,spaceStrata] <- factor(tabHL[,spaceStrata])
-if (!Ntc) 
+  if (!is.na(spRec[1])) tabHL <- recFun(tabHL,spaceStrata,spRec)                #added 09/04/2010
+}
+if (!Ntc) {
   tabHL[,techStrata] <- factor(tabHL[,techStrata])
+  if (!is.na(tcRec[1])) tabHL <- recFun(tabHL,techStrata,tcRec)                 #added 09/04/2010
+}
 
 
 #sample definition depends on strategy definition
@@ -743,7 +760,8 @@ setMethod("deltCalc", signature("csData","strIni"), function(data,
                                                              ...){
 
 deltCalcFun(data,species=species,fraction=fraction,strategy=strategy,timeStrata=strDef@timeStrata,
-            spaceStrata=strDef@spaceStrata,techStrata=strDef@techStrata,indSamp=indSamp,...)
+            spaceStrata=strDef@spaceStrata,techStrata=strDef@techStrata,indSamp=indSamp,tpRec=strDef@tpRec,spRec=strDef@spRec,
+            tcRec=strDef@tcRec,...)
       
 })         
   
@@ -760,7 +778,8 @@ setMethod("deltCalc", signature("csDataVal","strIni"), function(data,
                                                                 ...){
 
 deltCalcFun(data,species=species,fraction=fraction,strategy=strategy,timeStrata=strDef@timeStrata,
-            spaceStrata=strDef@spaceStrata,techStrata=strDef@techStrata,indSamp=indSamp,...)
+            spaceStrata=strDef@spaceStrata,techStrata=strDef@techStrata,indSamp=indSamp,tpRec=strDef@tpRec,spRec=strDef@spRec,
+            tcRec=strDef@tcRec,...)
       
 })         
  
