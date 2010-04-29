@@ -28,6 +28,11 @@ setMethod("sampledFO", signature(x="csDataCons"), function(x,species,fraction="L
 
 if (missing(species)) stop("Missing species parameter!!")
 
+fraction <- toupper(fraction)                               #
+x@sl$sort <- toupper(x@sl$sort)                                   # MM 29/04/2010
+x@hl$sort <- toupper(x@hl$sort)                                   #
+x@ca$sort <- toupper(x@ca$sort)                                   #
+
 #Values in 'catReg' field are "All", "Lan", "Dis" & "Non", so...
 if (fraction=="DIS") frac <- "Dis" else frac <- "Lan"
 
