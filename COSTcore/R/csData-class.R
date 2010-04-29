@@ -378,7 +378,7 @@ setMethod("csData", signature("character", "character", "character", "character"
 	# read CSV files
 	# ToDo
 	tr <- read.csv(tr,...)
-	hh <- read.csv(hh,colClasses=c(NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"character","character",NA,NA,NA,NA,NA,NA,NA,NA),...)
+	hh <- read.csv(hh,colClasses=c(NA,NA,NA,NA,NA,NA,NA,NA,NA,"character",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"character","character",NA,NA,NA,NA,NA,NA,NA,NA),...)
 	sl <- read.csv(sl,...)
 	hl <- read.csv(hl,...)
 
@@ -411,7 +411,7 @@ setMethod("csData", signature("character", "character", "character", "character"
 	# read CSV files
 	# ToDo
 	tr <- read.csv(tr,...)
-	hh <- read.csv(hh,colClasses=c(NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"character","character",NA,NA,NA,NA,NA,NA,NA,NA),...)
+	hh <- read.csv(hh,colClasses=c(NA,NA,NA,NA,NA,NA,NA,NA,NA,"character",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"character","character",NA,NA,NA,NA,NA,NA,NA,NA),...)
 	sl <- read.csv(sl,...)
 	hl <- read.csv(hl,...)
 	ca <- read.csv(ca,colClasses=c(NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"character","character",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA),...)
@@ -449,7 +449,7 @@ setMethod("csData", signature("character", "character", "character", "missing", 
 	# read CSV files
 	# ToDo
 	tr <- read.csv(tr,...)
-	hh <- read.csv(hh,colClasses=c(NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"character","character",NA,NA,NA,NA,NA,NA,NA,NA),...)
+	hh <- read.csv(hh,colClasses=c(NA,NA,NA,NA,NA,NA,NA,NA,NA,"character",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"character","character",NA,NA,NA,NA,NA,NA,NA,NA),...)
 	sl <- read.csv(sl,...)
 
 	# check names are correct
@@ -479,7 +479,7 @@ setMethod("csData", signature("character", "character", "missing", "missing", "m
 	# read CSV files
 	# ToDo
 	tr <- read.csv(tr,...)
-	hh <- read.csv(hh,colClasses=c(NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"character","character",NA,NA,NA,NA,NA,NA,NA,NA),...)
+	hh <- read.csv(hh,colClasses=c(NA,NA,NA,NA,NA,NA,NA,NA,NA,"character",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"character","character",NA,NA,NA,NA,NA,NA,NA,NA),...)
 
 	# check names are correct
 	checkTRnms(tr)
