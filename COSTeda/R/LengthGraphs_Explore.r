@@ -106,6 +106,11 @@ deltCalcFun <- function(object,
                         spRec,
                         tcRec,
                         ...){
+                        
+fraction <- toupper(fraction)                                                   #
+object@sl$catchCat <- toupper(object@sl$catchCat)                                                 # MM 29/04/2010
+object@hl$catchCat <- toupper(object@hl$catchCat)                                                 #
+object@ca$catchCat <- toupper(object@ca$catchCat)                                                 #
 
 nbTot_Lg <- WkvTot <- DELTA <- Delta <- NkMatrix <- WkMatrix <- SampDeltaMat <- NULL 
 #strategy="metier" & techStrata="commCat" don't match
@@ -121,7 +126,7 @@ if (is.na(techStrata)) techStrata <- NULL
 #all information that we need is in tabHL (hh,sl,hl info)
 tabHL <- UE.proc(object,species)$hlslhh 
 #restriction to specified catch category
-if (fraction!="all")  tabHL <- tabHL[tabHL$catchCat%in%fraction,]
+if (fraction!="ALL")  tabHL <- tabHL[tabHL$catchCat%in%fraction,]
  
 #measured numbers are raised to sample-level
 tabHL$Number <- tabHL$lenNum*(tabHL$wt/tabHL$subSampWt)
@@ -619,7 +624,12 @@ lenDisPlotFun <- function(x,        # a csData or csDataVal object
                           trpCode="all",     #a vector of trips
                           level="trip",      # or "fo" (trip level or fo level)
                           ...){      
-                                                  
+ 
+fraction <- toupper(fraction)                                                   #
+x@sl$catchCat <- toupper(x@sl$catchCat)                                                 # MM 29/04/2010
+x@hl$catchCat <- toupper(x@hl$catchCat)                                                 #
+x@ca$catchCat <- toupper(x@ca$catchCat)                                                 #
+                                                 
 if (length(species)!=1) 
   stop("One species is to be specified!!")
 
