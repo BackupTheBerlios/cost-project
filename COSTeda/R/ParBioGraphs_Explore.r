@@ -290,7 +290,7 @@ lenC <- c(1,5,10,25)
 names(lenC) <- c("mm","scm","cm","25mm")
 tab$lenCls <- factor(tab$lenCls,levels=seq(min(tab$lenCls),max(tab$lenCls),by=lenC[as.character(tab$lenCode[1])]))
 
-bwplot(matStage~as.numeric(as.character(lenCls)),data=tab,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
+bwplot(as.numeric(as.character(matStage))~lenCls,data=tab,horizontal=FALSE,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,font=dots$font.lab),
        ylab=list(dots$ylab,font=dots$font.lab),pch=dots$pch[1],cex=2,fill=dots$p.bg[1],scales=list(font=dots$font.axis,x=list(rot=dots$rot[1])),
        par.settings=list(box.rectangle=list(col=dots$col[1]),box.umbrella=list(col=dots$col[1],lty=dots$lty[1]),
        plot.symbol=list(col=dots$col[1])),drop.unused.levels=FALSE)
