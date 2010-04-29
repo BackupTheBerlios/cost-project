@@ -22,6 +22,12 @@ landisVolumeFun <- function(object,         #csData object
                             sampPar=TRUE,   #'sampPar' checks if given species is considered as automatically sampled (if TRUE, sppReg=Par <-> sppReg=All, i.e. includes sppReg="Par" in the analysis )
                             ...){ 
 
+fraction <- toupper(fraction)                                                   #
+object@sl$catchCat <- toupper(object@sl$catchCat)                                                 # MM 29/04/2010
+object@hl$catchCat <- toupper(object@hl$catchCat)                                                 #
+object@ca$catchCat <- toupper(object@ca$catchCat)                                                 #
+
+
 M_ik <- y_ikj <- m_ik <- NULL
 
 if (is.na(timeStrata)) timeStrata <- NULL
