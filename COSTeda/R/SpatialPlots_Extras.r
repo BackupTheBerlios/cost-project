@@ -1165,6 +1165,12 @@ library(COSTeda)
 data(code.list)
 
 if(class(x)%in%c("csData","csDataVal")==FALSE)stop("x is not csData")
+
+fraction <- toupper(fraction)                                                   #
+x@sl$catchCat <- toupper(x@sl$catchCat)                                         # MM 29/04/2010
+x@hl$catchCat <- toupper(x@hl$catchCat)                                         #
+x@ca$catchCat <- toupper(x@ca$catchCat)                                         #
+
 spp <-ifelse(length(table(ca(x)$spp))==1,ca(x)$spp[1],"multiple species")
 dots <-list(...)
 object <-suppressWarnings(mergecsData(x))@hl
@@ -1280,6 +1286,11 @@ library(COSTeda)
 data(code.list)
 
 if(class(x)%in%c("csData","csDataVal")==FALSE)stop("x is not csData")
+
+fraction <- toupper(fraction)                                                   #
+x@sl$catchCat <- toupper(x@sl$catchCat)                                         # MM 29/04/2010
+x@hl$catchCat <- toupper(x@hl$catchCat)                                         #
+x@ca$catchCat <- toupper(x@ca$catchCat)                                         #
 
 spp <-ifelse(length(table(ca(x)$spp))==1,ca(x)$spp[1],"multiple species")
 
