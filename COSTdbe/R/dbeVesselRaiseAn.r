@@ -68,9 +68,13 @@ setMethod("vesselRaise.an", signature(csObject="csDataCons", clObject="clDataCon
                             age.plus = -1           # age of plus group, if < 0 then no plus group applied
                             )  {
 
+dbeOutp@catchCat <- toupper(dbeOutp@catchCat)                               #
+csObject@sl$sort <- toupper(csObject@sl$sort)                                   # MM 29/04/2010
+csObject@hl$sort <- toupper(csObject@hl$sort)                                   #
+csObject@ca$sort <- toupper(csObject@ca$sort)                                   #
 
 species <- dbeOutp@species
-fraction <- dbeOutp@catchCat ; if ("all"%in%fraction) fraction <- c("LAN","DIS")
+fraction <- dbeOutp@catchCat ; if ("ALL"%in%fraction) fraction <- c("LAN","DIS")    # modif MM 29/04/2010
 if (dbeOutp@param != "landings") warning("This method is for estimating landings but 'param' slot in 'dbeOutp' is not 'landings'")
 
 ## Warn that calculations are not stratified by species

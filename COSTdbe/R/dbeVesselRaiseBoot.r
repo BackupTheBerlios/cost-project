@@ -87,9 +87,13 @@ setMethod("vesselRaise.boot", signature(csObject="csDataCons", clObject="clDataC
                                                      # NOT IMPLEMENTED "otoliths" to resample otoliths within length classes of ALK
                             )  {
 
+dbeOutp@catchCat <- toupper(dbeOutp@catchCat)                               #
+csObject@sl$sort <- toupper(csObject@sl$sort)                                   # MM 29/04/2010
+csObject@hl$sort <- toupper(csObject@hl$sort)                                   #
+csObject@ca$sort <- toupper(csObject@ca$sort)                                   #
 
 species <- dbeOutp@species
-fraction <- dbeOutp@catchCat ; if ("all"%in%fraction) fraction <- c("LAN","DIS")
+fraction <- dbeOutp@catchCat ; if ("ALL"%in%fraction) fraction <- c("LAN","DIS")
 if (dbeOutp@param != "landings") warning("This method is for estimating landings but 'param' slot in 'dbeOutp' is not 'landings'")
 
 ## Warn that calculations are not stratified by species

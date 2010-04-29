@@ -70,6 +70,10 @@ rowSums(newX,na.rm=TRUE,dims=length(MARGIN))
              
 Raise_Lgth <- function(csObject,clObject,dbeOutput,spp,taxon,sex=as.character(NA),sampPar=TRUE){
 
+dbeOutput@catchCat <- toupper(dbeOutput@catchCat)                               #
+csObject@sl$sort <- toupper(csObject@sl$sort)                                   # MM 29/04/2010
+csObject@hl$sort <- toupper(csObject@hl$sort)                                   #
+csObject@ca$sort <- toupper(csObject@ca$sort)                                   #
 
 sp <- dbeOutput@species
 
@@ -80,9 +84,10 @@ if (length(spp)>1 & !is.na(sex)) stop("wrong spp and/or sex parameters : this ca
 if (length(spp)>1 & length(sp)>1) stop("wrong spp and/or dbeOutput@species values : this case can't be considered!!")
 
 eval(parse('',text=paste("csObject <- subsetSpp(csObject,spp%in%",deparse(spp),")",sep="")))
+
 ccat <- dbeOutput@catchCat
 #'catchCat' slot must be "LAN"
-if (!all(is.na(ccat)) & (all(ccat%in%"LAN") | missing(clObject))) {
+if (!all(is.na(ccat)) & (all(toupper(ccat)%in%"LAN") | missing(clObject))) {
   csObject@sl <- csObject@sl[extCatchCat(csObject@sl$sort)%in%ccat,]
   csObject@hl <- csObject@hl[extCatchCat(csObject@hl$sort)%in%ccat,]
 } else {
@@ -103,7 +108,12 @@ dbeOutput@nSamp$len <- nSAMP                                                    
 
 #we calculate the number of samples by strata now
 ind <- sampledFO(csObject,species=spp,fraction=ccat,sampPar=sampPar)$sampLg
-Hl <- cbind(csObject@hh[,c("PSUid","time","space","technical")],ind=ind)
+Hl <- cbind(csObject@hh[,c("PSUid","SSUid","time","space","technical")],ind=ind)
+
+#on insère les indicateurs d'échantillonnage
+IndSL <- merge(csObject@sl,Hl,all.x=TRUE,sort=FALSE)                            #
+csObject@sl$wt <- csObject@sl$wt*IndSL$ind                                      # MM modif 28/04/2010
+csObject@sl$subSampWt <- csObject@sl$subSampWt*IndSL$ind                        #
 
 #some calculations must be made BEFORE subsetting
 
@@ -119,7 +129,6 @@ wl <- catApply(csObject@sl$wt,list(STR=SL_STR,sort=csObject@sl$sort,TSUid=csObje
   ##ws <- tapply(csObject@sl$subSampWt,list(STR=SL_STR,sort=csObject@sl$sort,TSUid=csObject@sl$TSUid,SSUid=csObject@sl$SSUid,
   ##PSUid=csObject@sl$PSUid),sum,na.rm=TRUE)      <-----
 ws <- catApply(csObject@sl$subSampWt,list(STR=SL_STR,sort=csObject@sl$sort,TSUid=csObject@sl$TSUid,SSUid=csObject@sl$SSUid,PSUid=csObject@sl$PSUid),sum,na.rm=TRUE)
-
 
 #subsetting "csObject"                                                                                    #                                                                                                          #
 eval(parse('',text=paste("csObject <- subsetSpp(csObject,spp%in%",deparse(sp),")",sep="")))               #
@@ -172,7 +181,7 @@ d_j  <- catApply(HL$lenNum,list(as.character(HL$STR),as.character(HL$sort),as.ch
 
 #TSUid stage
   #system.time(d_jtsuT <- spdApply(d_j*(as.vector(wl/ws)),c(1,3:6),sum,na.rm=TRUE))
-  ##w_tsu <- RowSum(wt*wl/ws,c(1,3:5))  <------
+  ##w_tsu <- RowSum(wt*wl/ws,c(1,3:5))  <------ 
 w_tsu <- dbeAgg(list(val = wt$val * wl$val / ws$val, ind = wl$ind), c(1,3:5),sum,na.rm=TRUE)
   
   ##wl_tsu <- RowSum(wl,c(1,3:5)) <------

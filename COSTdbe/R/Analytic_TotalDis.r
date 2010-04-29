@@ -74,6 +74,11 @@ procRaise.trip <- function(csObject,                      #consolidated CS table
                            val="weight",                  #value to raise ("weight" or "number" or "nAtLength")                                   #\\#
                            sampPar=TRUE,                  #'sampPar' checks if given species is considered to be automatically sampled
                            ...) {
+
+dbeOutp@catchCat <- toupper(dbeOutp@catchCat)                               #
+csObject@sl$sort <- toupper(csObject@sl$sort)                                   # MM 29/04/2010
+csObject@hl$sort <- toupper(csObject@hl$sort)                                   #
+csObject@ca$sort <- toupper(csObject@ca$sort)                                   #
                                                                                                                                                   #\\#
 if (!val%in%c("weight","number","nAtLength")) {                                                                                                    #\\#
   stop("wrong 'val' parameter!!")                                                                                                                   #\\#
@@ -262,6 +267,11 @@ procRaise.fo <- function(csObject,                      #consolidated CS table
                          sampPar=TRUE,                  #'sampPar' checks if given species is considered to be automatically sampled
                          ...) {
 
+dbeOutp@catchCat <- toupper(dbeOutp@catchCat)                               #
+csObject@sl$sort <- toupper(csObject@sl$sort)                                   # MM 29/04/2010
+csObject@hl$sort <- toupper(csObject@hl$sort)                                   #
+csObject@ca$sort <- toupper(csObject@ca$sort)                                   #
+                         
 if (!val%in%c("weight","number","nAtLength")) {                                                                                                    #\\#
   stop("wrong 'val' parameter!!")                                                                                                                   #\\#
 }
@@ -460,6 +470,11 @@ procRaise.time <- function(csObject,                      #consolidated CS table
                            val="weight",                  #value to raise ("weight" or "number" or "nAtLength")
                            sampPar=TRUE,                  #'sampPar' checks if given species is considered to be automatically sampled
                            ...) {
+
+dbeOutp@catchCat <- toupper(dbeOutp@catchCat)                               #
+csObject@sl$sort <- toupper(csObject@sl$sort)                                   # MM 29/04/2010
+csObject@hl$sort <- toupper(csObject@hl$sort)                                   #
+csObject@ca$sort <- toupper(csObject@ca$sort)                                   #
 
 if (!val%in%c("weight","number","nAtLength")) {                                                                                                    #\\#
   stop("wrong 'val' parameter!!")                                                                                                                   #\\#
@@ -690,6 +705,11 @@ procRaise.landings <- function(csObject,                      #consolidated CS t
                                val="weight",                  #value to raise ("weight"or "number" or "nAtLength")
                                sampPar=TRUE,                  #'sampPar' checks if given species is considered as automatically sampled
                                ...) {
+
+dbeOutp@catchCat <- toupper(dbeOutp@catchCat)                               #
+csObject@sl$sort <- toupper(csObject@sl$sort)                                   # MM 29/04/2010
+csObject@hl$sort <- toupper(csObject@hl$sort)                                   #
+csObject@ca$sort <- toupper(csObject@ca$sort)                                   #
 
 if (!val%in%c("weight","number","nAtLength")) {                                                                                                    #\\#
   stop("wrong 'val' parameter!!")                                                                                                                   #\\#
@@ -938,6 +958,10 @@ procRaise.fd <- function(csObject,                      #consolidated CS table
                          sampPar=TRUE,                  #'sampPar' checks if given species is considered as automatically sampled
                          ...) {
 
+dbeOutp@catchCat <- toupper(dbeOutp@catchCat)                               #
+csObject@sl$sort <- toupper(csObject@sl$sort)                                   # MM 29/04/2010
+csObject@hl$sort <- toupper(csObject@hl$sort)                                   #
+csObject@ca$sort <- toupper(csObject@ca$sort)                                   #
 
 if (!val%in%c("weight","number","nAtLength")) {                                                                                                    #\\#
   stop("wrong 'val' parameter!!")                                                                                                                   #\\#
@@ -1211,7 +1235,9 @@ setMethod("totVolume", signature(dbeOutput="dbeOutput",csObject="csDataCons",ceO
                                                                                                                                     val="weight",  #or "number" or "nAtLength"
                                                                                                                                     sampPar=TRUE,
                                                                                                                                     ...){
-
+para <- match.call()
+if (!is.null(para$type)) {
+  if (para$type!="landings") warning("CL object as input!! Raising is made by total landings!!")} 
 procRaise.landings(csObject,ceObject,clObject,dbeOutput,landSpp=landSpp,val=val,sampPar=sampPar)                                                                                                          
 
 })

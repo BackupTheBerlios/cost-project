@@ -185,7 +185,7 @@ ALK <- array(rep(as.vector(ALK),dim(N)[4]),dim=c(dim(ALK),dim(N)[4]),dimnames=ll
 #------------
 Pi.hat <- apply(aperm(aperm(Qij,c(1,3,4,5,2))*as.vector(lj),c(1,5,2,3,4)),2:5,sum,na.rm=TRUE)
 #test on Pi.hat (missing length class in ca)
-if (!all(apply(Pi.hat,2:4,sum,na.rm=TRUE)==1)) warning("some length classes from 'dbeOutput@lenStruc' slot are not in 'ca' table")
+if (!all(round(apply(Pi.hat,2:4,sum,na.rm=TRUE),6)==1)) warning("some length classes from 'dbeOutput@lenStruc' slot are not in 'ca' table")
 
 #Estimates of total numbers at age
   #total numbers

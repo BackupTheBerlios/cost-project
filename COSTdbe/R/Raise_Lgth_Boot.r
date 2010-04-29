@@ -157,6 +157,10 @@ rowSums(newX,na.rm=TRUE,dims=length(MARGIN))
 
 Raise_Lgth_Boot <- function(dbeOutput, csObject, clObject,spp,taxon,sex=as.character(NA),sampPar=TRUE,B){
 
+dbeOutput@catchCat <- toupper(dbeOutput@catchCat)                               #
+csObject@sl$sort <- toupper(csObject@sl$sort)                                   # MM 29/04/2010
+csObject@hl$sort <- toupper(csObject@hl$sort)                                   #
+csObject@ca$sort <- toupper(csObject@ca$sort)                                   #
 
 sp <- dbeOutput@species
 
