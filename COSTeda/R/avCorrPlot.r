@@ -25,6 +25,12 @@ setMethod("sampledFO", signature(x="csDataCons"), function(x,species,fraction="L
 
 if (missing(species)) stop("Missing species parameter!!")
 
+fraction <- toupper(fraction)                                                   #
+x@sl$sort <- toupper(x@sl$sort)                                                 # MM 29/04/2010
+x@hl$sort <- toupper(x@hl$sort)                                                 #
+x@ca$sort <- toupper(x@ca$sort)                                                 #
+
+
 #Values in 'catReg' field are "All", "Lan", "Dis" & "Non", so...
 if (fraction=="DIS") frac <- "Dis" else frac <- "Lan"
 
@@ -62,7 +68,11 @@ Windex[Windex==0] <- NA ; Windex[indZero] <- 0
 #                                                                                                          (O values for weights remain 0 values for numbers)
 restrHL <- unique(x@hl[x@hl$spp%in%species & extCatchCat(x@hl$sort)%in%fraction,1:3])
 #detect FOs that are recorded in SL but not in HL
-restrHL$Ind <- 1 ; indMeas <- merge(unique(restrSL),restrHL,all.x=TRUE) ; indMeas$Ind[is.na(indMeas$Ind)] <- 0
+if (nrow(restrHL)>0) {
+  restrHL$Ind <- 1 ; indMeas <- merge(unique(restrSL),restrHL,all.x=TRUE) ; indMeas$Ind[is.na(indMeas$Ind)] <- 0
+} else {
+  indMeas <- unique(restrSL) ; indMeas$Ind <- 0
+}
 #match index with HH
 indMs <- merge(x@hh,indMeas[indMeas$Ind==0,c("PSUid","SSUid","TSUid","Ind")],all.x=TRUE)$Ind
 #NAs in 'indMS' means that if info is in SL, then it is in HL
@@ -118,6 +128,11 @@ setMethod("disCorrPlot", signature(object="csDataCons"), function(object,
                                                                     reg=TRUE,                      #regression line or not
                                                                     show.legend="right",
                                                                     ...){                          #further graphical parameters
+
+
+object@sl$sort <- toupper(object@sl$sort)                                                 # MM 29/04/2010
+object@hl$sort <- toupper(object@hl$sort)                                                 #
+object@ca$sort <- toupper(object@ca$sort)                                                 #
 
 if ("all"%in%species) species <- unique(object@sl$spp)
 #according to 'val' and available information, hauls are considered as sampled or not for discards
