@@ -26,6 +26,12 @@ ssdFun <- function(x,species,fraction="LAN",fishAct="foCatEu5",sampPar=TRUE,...)
                                                                                                               #x = raw or validated CS object
 if (missing(species)) stop("Missing species parameter!!")                                                     #'sampPar' checks if given species is considered as automatically sampled
                                                                                                               #    (cf 'OvaluesIndex.r')
+
+fraction <- toupper(fraction)                               #
+x@sl$catchCat <- toupper(x@sl$catchCat)                     # MM 29/04/2010
+x@hl$catchCat <- toupper(x@hl$catchCat)                     #
+x@ca$catchCat <- toupper(x@ca$catchCat)                     #
+
 #Values in 'catReg' field are "All", "Lan", "Dis" & "Non", so...
 if (fraction=="DIS") frac <- "Dis" else frac <- "Lan"
 
