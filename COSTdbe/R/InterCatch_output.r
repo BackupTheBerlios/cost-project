@@ -103,7 +103,7 @@ SI <- data.frame (
   DepthRange = NA ,
   Species ,
   Stock = NA,
-  CatchCategory = dbeOutput@catchCat  ,
+  CatchCategory = toupper(dbeOutput@catchCat)  ,            #modif MM 29/04/2010
   ReportingCategory  ,
   DataToFrom ,
   Usage ,
@@ -149,7 +149,7 @@ SD <- data.frame (
   DepthRange = NA ,
   Species ,
   Stock = NA,
-  CatchCategory = dbeOutput@catchCat  ,
+  CatchCategory = toupper(dbeOutput@catchCat)  ,            #modif MM 29/04/2010
   ReportingCategory ,
   Sex ,
   CANUMtype,
