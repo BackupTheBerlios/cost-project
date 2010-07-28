@@ -8,7 +8,7 @@ This method is aggregating (summing in case of number or weight estimates, or av
 }
 
 \usage{
-stratAggreg(object,timeStrata=TRUE,spaceStrata=TRUE,techStrata=FALSE,wt="totalW",\dots)
+stratAggreg(object,timeStrata=TRUE,spaceStrata=TRUE,techStrata=FALSE,wt="totalW",incl.precision=TRUE,probs=c(0.025,0.975),\dots)
 }
 
 \arguments{
@@ -18,6 +18,8 @@ stratAggreg(object,timeStrata=TRUE,spaceStrata=TRUE,techStrata=FALSE,wt="totalW"
   \item{techStrata}{Logical. If \code{TRUE}, aggregation is made over technical strata.}
   \item{wt}{Character. Input \emph{object} slot with which a weighted mean over strata is computed (only if \emph{param} slot is "weight", "maturity" or "sex"). 
             Possible values are "totalW" or "totalN". Check that specified slot is not empty, otherwise resulting table of estimates will also be empty.}
+  \item{incl.precision}{Logical. If TRUE, 'dbeCalc' method function is internally called to compute CVs and CIs.}
+  \item{probs}{Numeric vector of probabilities with values in [0,1]. Defines CI bounds (relevant only if \code{incl.precision=TRUE}). See \emph{dbeCalc}.}
   \item{\dots}{Further arguments}  
 }
 

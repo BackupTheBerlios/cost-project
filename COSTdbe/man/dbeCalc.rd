@@ -43,7 +43,7 @@ clObject <- clDataCons(clDataVal(sole.cl),strD)
 dbeOutput <- dbeObject(species="Solea solea",catchCat="LAN",strataDesc=strD)
 
 # total numbers at length
-dbeOutput <- RaiseLgth (dbeOutput, csObject, clObject)
+dbeOutput <- RaiseLgth (dbeOutput, csObject, clObject,incl.precision=FALSE)
 #object is updated with cv-at-length 
 dbeOutput <- dbeCalc(dbeOutput,type="CV")
 

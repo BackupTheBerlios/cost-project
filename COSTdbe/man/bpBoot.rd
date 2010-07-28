@@ -5,7 +5,7 @@
 \title{Bootstrap estimates of biological parameters}
 \description{
  This method implements a non-parametric bootstrap procedure to estimate empirical estimates of weight-at-length, maturity-at-length, 
- sex-ratio-at-length, weight-at-age, maturity-at-age, sex-ratio-at-age and their associated variances. It requires a csDataCons object and a dbeOutput object.}
+ sex-ratio-at-length, weight-at-age, maturity-at-age, sex-ratio-at-age, length-at-age and their associated variances. It requires a csDataCons object and a dbeOutput object.}
 
 \usage{
 bpBoot(dbeOutput,object,mat.scale=list(immature=c(0,1),mature=c(2:8)),
@@ -35,7 +35,7 @@ The results of this method are included as components of the object of class "db
 \references{B. Efron and R. Tibshirani (1993). \emph{An Introduction to the Bootstrap}. Chapman & Hall.}
 
 \author{Paz Sampedro}
-\seealso{\code{\link{dbeOutput},\link[COSTcore]{csDataCons},\link{dbePlot}}}
+\seealso{\code{\link{bpEstim},\link{dbeOutput},\link[COSTcore]{csDataCons},\link{dbePlot}}}
 
 \examples{
 ## Mean weight-at-length/age and variance for IFREMER sole data

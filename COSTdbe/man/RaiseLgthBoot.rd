@@ -8,7 +8,7 @@ RaiseLgthBoot follows the approach of RaiseLgth to calculate numbers-at-length b
 }
 
 \usage{
-RaiseLgthBoot(dbeOutput,csObject,clObject,spp,taxon,sex=as.character(NA),B ,\dots)
+RaiseLgthBoot(dbeOutput,csObject,clObject,spp,taxon,sex=as.character(NA),sampPar=TRUE,B,incl.precision=TRUE,probs=c(0.025,0.975),\dots)
 }
                    
 \arguments{
@@ -18,7 +18,10 @@ RaiseLgthBoot(dbeOutput,csObject,clObject,spp,taxon,sex=as.character(NA),B ,\dot
   \item{spp}{Species, if missing this is set to dbeOutput@species}
   \item{taxon}{Taxon, if missing this is set to dbeOutput@species}
   \item{sex}{Sex}
+  \item{sampPar}{Logical specifying if given species is considered to be automatically sampled during the sampling process (default value is TRUE)}
   \item{B}{Number of bootstrap interations}
+  \item{incl.precision}{Logical. If TRUE, 'dbeCalc' method function is internally called to compute CVs and CIs.}
+  \item{probs}{Numeric vector of probabilities with values in [0,1]. Defines CI bounds (relevant only if \code{incl.precision=TRUE}). See \emph{dbeCalc}.}
   \item{\dots}{Further arguments}  
 }
                       
@@ -33,7 +36,7 @@ Slots nSamp\$len & nMeas\$len with number of samples and measurements,
 
 
 \author{David Maxwell & Mathieu Merzereaud}
-\seealso{\code{\link{dbeOutput}}, \code{\link{dbeObject}}, \code{\link[COSTcore]{csDataCons}}, \code{\link[COSTcore]{clDataCons}}, \code{\link{RaiseLgth}} }
+\seealso{\code{\link{dbeOutput}}, \code{\link{dbeObject}}, \code{\link{dbeCalc}}, \code{\link[COSTcore]{csDataCons}}, \code{\link[COSTcore]{clDataCons}}, \code{\link{RaiseLgth}} }
 
 
 \examples{

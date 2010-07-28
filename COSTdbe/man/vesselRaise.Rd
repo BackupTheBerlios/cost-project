@@ -16,8 +16,8 @@ vesselRaise.boot provides variance estimates by bootstrapping the age and length
 }
 
 \usage{
-vesselRaise.an(csObject, clObject, dbeOutp, age.plus = -1)                                    %modif MM
-vesselRaise.boot(csObject, clObject, dbeOutp, B, age.plus = -1, bootMethod = "samples")
+vesselRaise.an(csObject, clObject, dbeOutp, age.plus = -1, incl.precision=TRUE, probs=c(0.025,0.975))                                   
+vesselRaise.boot(csObject, clObject, dbeOutp, B, age.plus = -1, bootMethod = "samples", incl.precision=TRUE, probs=c(0.025,0.975))
 }
 
 \arguments{
@@ -27,6 +27,8 @@ vesselRaise.boot(csObject, clObject, dbeOutp, B, age.plus = -1, bootMethod = "sa
   \item{B}{numeric, length=1. Number of bootstrap iterations}
   \item{age.plus}{numeric, length=1. All ages greater than \code{age.plus} are set to \code{age.plus} to form a plus group}
   \item{bootMethod}{only acceptable value is "samples" to bootstrap samples.}
+  \item{incl.precision}{Logical. If TRUE, 'dbeCalc' method function is internally called to compute CVs and CIs.}
+  \item{probs}{Numeric vector of probabilities with values in [0,1]. Defines CI bounds (relevant only if \code{incl.precision=TRUE}). See \emph{dbeCalc}.}
 }
 \details{
  Estimates by length are provided for each combination of the space, time and technical strata specified in dbeOutp. Estimates by age are provided for each combination of the space and time strata because the biological data (ca table) does not include technical stratification.

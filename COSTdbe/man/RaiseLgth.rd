@@ -9,7 +9,7 @@ This method calculates total numbers-at-length by strata from market sampling da
 }
 
 \usage{
-RaiseLgth(dbeOutput,csObject,clObject,spp,taxon,sex=as.character(NA),\dots)
+RaiseLgth(dbeOutput,csObject,clObject,spp,taxon,sex=as.character(NA),sampPar=TRUE,incl.precision=TRUE,probs=c(0.025,0.975),\dots)
 }
 
 \arguments{
@@ -19,6 +19,9 @@ RaiseLgth(dbeOutput,csObject,clObject,spp,taxon,sex=as.character(NA),\dots)
   \item{spp}{Species, if missing this is set to dbeOutput@species}
   \item{taxon}{Taxon, if missing this is set to dbeOutput@species}
   \item{sex}{Sex}
+  \item{sampPar}{logical specifying if given species is considered to be automatically sampled during the sampling process (default value is TRUE)}
+  \item{incl.precision}{Logical. If TRUE, 'dbeCalc' method function is internally called to compute CVs and CIs.}
+  \item{probs}{Numeric vector of probabilities with values in [0,1]. Defines CI bounds (relevant only if \code{incl.precision=TRUE}). See \emph{dbeCalc}.}
   \item{\dots}{Further arguments}  
 }
 
@@ -27,12 +30,14 @@ RaiseLgth(dbeOutput,csObject,clObject,spp,taxon,sex=as.character(NA),\dots)
 Slots nSamp\$len & nMeas\$len with number of samples and measurements,
 totalW\$estim with total weight,
 lenStruc\$estim with numbers-at-length estimates,
-lenVar with the variance of numbers-at-length.
+lenVar with the variance of numbers-at-length,
+totalN\$estim with total numbers,
+totalNvar with the variance of total numbers.
  }
 
 
 \author{Mathieu Merzereaud}
-\seealso{\code{\link{dbeOutput}}, \code{\link{dbeObject}}, \code{\link{RaiseAge}}, \code{\link[COSTcore]{csDataCons}}, \code{\link[COSTcore]{clDataCons}}
+\seealso{\code{\link{dbeOutput}}, \code{\link{dbeObject}}, \code{\link{RaiseAge}}, \code{\link{dbeCalc}}, \code{\link[COSTcore]{csDataCons}}, \code{\link[COSTcore]{clDataCons}}
 }
 
 \examples{

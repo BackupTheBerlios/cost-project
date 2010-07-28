@@ -20,6 +20,9 @@ RaiseAge(dbeOutput,csObject,clObject,\dots)
 \tabular{ll}{ 
     \bold{type} \tab Character. Specification of the raising method : \code{"p"} (default value), \code{"fixedK"}, \code{"propK"}, \code{"agesK"}, or \code{"direct"}.\cr
     \bold{sex} \tab Character. Sex specification, basically \code{"M"}, \code{"F"} or \code{as.character(NA)} (default value) for no restriction. \cr
+    \bold{incl.precision} \tab Logical (default value = TRUE). If TRUE, 'dbeCalc' method function is internally called to compute CVs and CIs. \cr
+    \bold{probs} \tab Numeric vector of probabilities with values in [0,1]. Defines CI bounds (relevant only if \code{incl.precision=TRUE}). See \emph{dbeCalc}. \cr
+
 }
 }} 
 
@@ -42,7 +45,7 @@ ageVar with the variance of numbers-at-age .}
 
 
 \author{Mathieu Merzereaud & Marcel Machiels}
-\seealso{\code{\link{dbeOutput}}, \code{\link{dbeObject}}, \code{\link{RaiseAgeBoot}}, \code{\link{RaiseLgth}}, \code{\link[COSTcore]{csDataCons}}, \code{\link[COSTcore]{clDataCons}}}
+\seealso{\code{\link{dbeOutput}}, \code{\link{dbeObject}}, \code{\link{RaiseAgeBoot}}, \code{\link{RaiseLgth}}, \code{\link{dbeCalc}}, \code{\link[COSTcore]{csDataCons}}, \code{\link[COSTcore]{clDataCons}}}
 
 \examples{
 data(sole)

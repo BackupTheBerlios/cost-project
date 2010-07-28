@@ -22,9 +22,12 @@ totVolume(dbeOutput,csObject,ceObject,clObject,\dots)
   \bold{type} \tab Specification of the raising method : \code{"trip"} (default value) for raising by trip, \code{"fo"} for raising by fishing operations, 
 \code{"fd"} for raising by fishing days,\code{"landings"} for ratio-to-total landings raising method, and \code{"time"} for ratio-to-fishing duration 
 raising method. \cr
+  \bold{landSpp} \tab Character vector describing the species considered in the 'volume of landings' variable if chosen raising method is ratio-to-landings (see 'clObject' description).\cr 
   \bold{val} \tab Estimated parameter. To be chosen between \code{"weight"} (default value), \code{"number"} and \code{"nAtLength"}.\cr
-  \bold{sampPar} \tab Logical specifying if given species is considered to be automatically sampled during the sampling process (default value is \code{TRUE}).\cr
-  \bold{landSpp} \tab Character vector describing the species considered in the 'volume of landings' variable if chosen raising method is ratio-to-landings (see 'clObject' description).\cr  
+  \bold{sampPar} \tab Logical specifying if given species is considered to be automatically sampled during the sampling process (default value is \code{TRUE}).\cr 
+  \bold{incl.precision} \tab Logical. If TRUE, 'dbeCalc' method function is internally called to compute CVs and CIs.\cr
+  \bold{probs} \tab Numeric vector of probabilities with values in [0,1]. Defines CI bounds (relevant only if \code{incl.precision=TRUE}). See \emph{dbeCalc}.\cr
+
 }
 }
 }
@@ -37,7 +40,7 @@ raising method. \cr
 }
 
 \author{Mathieu Merzereaud}
-\seealso{\code{\link{dbeOutput}}, \code{\link{dbeObject}}, \code{\link[COSTcore]{csDataCons}}, \code{\link[COSTcore]{ceDataCons}}, \code{\link[COSTcore]{clDataCons}}
+\seealso{\code{\link{dbeOutput}}, \code{\link{dbeObject}}, \code{\link{dbeCalc}}, \code{\link[COSTcore]{csDataCons}}, \code{\link[COSTcore]{ceDataCons}}, \code{\link[COSTcore]{clDataCons}}
 }
 
 \examples{

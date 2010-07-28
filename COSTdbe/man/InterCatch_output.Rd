@@ -26,18 +26,18 @@ makeICfile(ICdfs, filename, append=FALSE)
   \item{CANUMtype}{"age" for numbers at age, "lngt" or "length" for numbers at length}
   \item{Country}{The remaining arguments are character elements that match the InterCatch format description and are transferred directly to the output file}
   \item{Species}{If species is NA then it is taken from the dbeOutput, but note this is likely to be scientific name and InterCatch expects FAO code}
-  \item{ReportingCategory}{}
-  \item{Usage}{}
-  \item{DataToFrom}{}
-  \item{SamplesOrigin}{}
-  \item{InfoFleet}{}
-  \item{InfoStockCoordinator}{}
-  \item{InfoGeneral}{}
-  \item{Sex}{}
-  \item{PlusGroup}{}
-  \item{unitMeanWeight}{}
-  \item{unitCANUM}{}
-  \item{Maturity}{}
+  \item{ReportingCategory}{ToDo}
+  \item{Usage}{ToDo}
+  \item{DataToFrom}{ToDo}
+  \item{SamplesOrigin}{ToDo}
+  \item{InfoFleet}{ToDo}
+  \item{InfoStockCoordinator}{ToDo}
+  \item{InfoGeneral}{ToDo}
+  \item{Sex}{ToDo}
+  \item{PlusGroup}{ToDo}
+  \item{unitMeanWeight}{ToDo}
+  \item{unitCANUM}{ToDo}
+  \item{Maturity}{ToDo}
 
 }
 \details{
