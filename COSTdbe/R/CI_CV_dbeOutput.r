@@ -356,6 +356,8 @@ setGeneric("stratAggreg", function(object,                  # 'dbeOutput' object
                                   spaceStrata=TRUE,        # if TRUE, aggregation is made over space strata
                                   techStrata=FALSE,        # if TRUE, aggregation is made over technical strata
                                   wt="totalW",             # can be also "totalN" : weights values for weighted mean calculation (param="weight", "maturity" or "sex")
+                                  incl.precision=TRUE,
+                                  probs=c(0.025,0.975),
                                   ...){
 standardGeneric("stratAggreg")
 })
@@ -368,6 +370,8 @@ setMethod("stratAggreg", signature(object="dbeOutput"),function(object,         
                                                                spaceStrata=TRUE,        # if TRUE, aggregation is made over space strata
                                                                techStrata=FALSE,        # if TRUE, aggregation is made over technical strata
                                                                wt="totalW",             # can be also "totalN" : weights values for weighted mean calculation (param="weight", "maturity" or "sex")
+                                                               incl.precision=TRUE,
+                                                               probs=c(0.025,0.975),
                                                                ...){
 
 #'strataDesc' field is updated according to input parameters                                                            #
@@ -491,6 +495,68 @@ if (object@param%in%c("weight","maturity","sex")) {
   object@ageStruc$estim <- agg(object@ageStruc$estim)
   object@ageStruc$rep <- agg(object@ageStruc$rep)
   object@ageVar <- agg(object@ageVar)
+}
+
+if (incl.precision) {
+
+  if (!all(is.na(object@lenStruc$rep))) {
+    
+    object <- dbeCalc(object,type="CV",vrbl="l",replicates=TRUE,update=TRUE)
+    object <- dbeCalc(object,type="CI",vrbl="l",probs=probs,replicates=TRUE,update=TRUE)
+    
+  } else {
+  
+    if (!all(is.na(object@lenStruc$estim)) & !all(is.na(object@lenVar))) {
+      object <- dbeCalc(object,type="CV",vrbl="l",replicates=FALSE,update=TRUE)
+      object <- dbeCalc(object,type="CI",vrbl="l",probs=probs,replicates=FALSE,update=TRUE)
+    }
+  }
+
+
+
+  if (!all(is.na(object@totalN$rep))) {
+  
+    object <- dbeCalc(object,type="CV",vrbl="n",replicates=TRUE,update=TRUE)
+    object <- dbeCalc(object,type="CI",vrbl="n",probs=probs,replicates=TRUE,update=TRUE)
+  
+  } else {
+  
+    if (!all(is.na(object@totalN$estim)) & !all(is.na(object@totalNvar))) {
+      object <- dbeCalc(object,type="CV",vrbl="n",replicates=FALSE,update=TRUE)
+      object <- dbeCalc(object,type="CI",vrbl="n",probs=probs,replicates=FALSE,update=TRUE)
+    }
+  }
+
+
+
+  if (!all(is.na(object@totalW$rep))) {
+  
+    object <- dbeCalc(object,type="CV",vrbl="w",replicates=TRUE,update=TRUE)
+    object <- dbeCalc(object,type="CI",vrbl="w",probs=probs,replicates=TRUE,update=TRUE)
+  
+  } else {
+  
+    if (!all(is.na(object@totalW$estim)) & !all(is.na(object@totalWvar))) {
+      object <- dbeCalc(object,type="CV",vrbl="w",replicates=FALSE,update=TRUE)
+      object <- dbeCalc(object,type="CI",vrbl="w",probs=probs,replicates=FALSE,update=TRUE)
+    }
+  }
+
+
+
+  if (!all(is.na(object@ageStruc$rep))) {
+  
+    object <- dbeCalc(object,type="CV",vrbl="a",replicates=TRUE,update=TRUE)
+    object <- dbeCalc(object,type="CI",vrbl="a",probs=probs,replicates=TRUE,update=TRUE)
+  
+  } else {
+  
+    if (!all(is.na(object@ageStruc$estim)) & !all(is.na(object@ageVar))) {
+      object <- dbeCalc(object,type="CV",vrbl="a",replicates=FALSE,update=TRUE)
+      object <- dbeCalc(object,type="CI",vrbl="a",probs=probs,replicates=FALSE,update=TRUE)
+    }
+  }
+
 }
 
 return(object)
