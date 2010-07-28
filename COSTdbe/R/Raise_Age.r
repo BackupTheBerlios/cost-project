@@ -292,7 +292,7 @@ return(dbeOutput)
 
 setGeneric("RaiseAge", function(dbeOutput,
                                  csObject,
-                                 clObject,              #only used if type="direct" (stratified simple random sampling)
+                                 clObject,              #only used if type="direct" (stratified simple random sampling) 
                                  ...){
 	standardGeneric("RaiseAge")}
 )
@@ -303,9 +303,27 @@ setMethod("RaiseAge", signature(dbeOutput="dbeOutput",csObject="csDataCons",clOb
                                                                                                           csObject,
                                                                                                           type="p",  #type= "p" or "fixedK", "propK" or "agesK" or "direct"
                                                                                                           sex=as.character(NA),
+                                                                                                          incl.precision=TRUE,   ## added MM 26/07/2010
+                                                                                                          probs=c(0.025,0.975),
                                                                                                           ...){
-if (type=="direct") stop("'clObject' parameter is missing!!")                                                                                                           
-Raise_Age(csObject,dbeOutput,type=type,sex=sex)
+if (type=="direct") stop("'clObject' parameter is missing!!") 
+
+if (incl.precision) {
+
+  obj <- Raise_Age(csObject,dbeOutput,type=type,sex=sex)
+  
+  if (!all(is.na(obj@ageStruc$estim)) & !all(is.na(obj@ageVar))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="a",replicates=FALSE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="a",probs=probs,replicates=FALSE,update=TRUE)
+  }
+  
+  return(obj)
+
+} else {
+                                                                                                         
+  Raise_Age(csObject,dbeOutput,type=type,sex=sex)
+
+}
 
 })
 
@@ -315,13 +333,38 @@ setMethod("RaiseAge", signature(dbeOutput="dbeOutput",csObject="csDataCons",clOb
                                                                                                              clObject,      #only used if type="direct" (stratified simple random sampling)
                                                                                                              type="p",  #type= "p" or "fixedK", "propK" or "agesK" or "direct"
                                                                                                              sex=as.character(NA),
+                                                                                                             incl.precision=TRUE,   ## added MM 26/07/2010
+                                                                                                             probs=c(0.025,0.975),
                                                                                                              ...){
-if (type=="direct") {
-  N_at_Age_direct(dbeOutput,csObject,clObject,sex=sex)
-} else {                                                                                                             
-  Raise_Age(csObject,dbeOutput,type=type,sex=sex)
+if (incl.precision) {
+
+  if (type=="direct") {
+    obj <- N_at_Age_direct(dbeOutput,csObject,clObject,sex=sex)
+  } else {                                                                                                             
+    obj <- Raise_Age(csObject,dbeOutput,type=type,sex=sex)
+  }
+  
+  if (!all(is.na(obj@ageStruc$estim)) & !all(is.na(obj@ageVar))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="a",replicates=FALSE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="a",probs=probs,replicates=FALSE,update=TRUE)
+  }
+  
+  return(obj)
+
+} else {                                                                                                               
+
+  if (type=="direct") {
+    N_at_Age_direct(dbeOutput,csObject,clObject,sex=sex)
+  } else {                                                                                                             
+    Raise_Age(csObject,dbeOutput,type=type,sex=sex)
+  }
+
 }
+
 })
+
+
+
 
 
 #obj1 <- RaiseAge(dbeOutput,csObject,type="p")

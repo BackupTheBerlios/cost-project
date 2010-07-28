@@ -1220,9 +1220,31 @@ setMethod("totVolume", signature(dbeOutput="dbeOutput",csObject="csDataCons",ceO
                                                                                                                                  type="trip",   #or "fo", "fd", "time"
                                                                                                                                  val="weight",  #or "number" or "nAtLength"
                                                                                                                                  sampPar=TRUE,
+                                                                                                                                 incl.precision=TRUE,    ## added MM 26/07/2010
+                                                                                                                                 probs=c(0.025,0.975),
                                                                                                                                  ...){
 if (type=="landings") stop("'landings' type requires a cs, a ce and a cl object!!")
-eval(parse('',text=paste("procRaise.",type,"(csObject,ceObject,dbeOutput,val=val,sampPar=sampPar)",sep="")))                                                                                                           
+eval(parse('',text=paste("obj <- procRaise.",type,"(csObject,ceObject,dbeOutput,val=val,sampPar=sampPar)",sep=""))) 
+
+if (incl.precision) {  
+
+  if (!all(is.na(obj@lenStruc$estim)) & !all(is.na(obj@lenVar))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="l",replicates=FALSE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="l",probs=probs,replicates=FALSE,update=TRUE)
+  }
+
+  if (!all(is.na(obj@totalN$estim)) & !all(is.na(obj@totalNvar))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="n",replicates=FALSE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="n",probs=probs,replicates=FALSE,update=TRUE)
+  }
+
+  if (!all(is.na(obj@totalW$estim)) & !all(is.na(obj@totalWvar))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="w",replicates=FALSE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="w",probs=probs,replicates=FALSE,update=TRUE)
+  }
+}
+
+return(obj)
 
 })
 
@@ -1234,11 +1256,34 @@ setMethod("totVolume", signature(dbeOutput="dbeOutput",csObject="csDataCons",ceO
                                                                                                                                     landSpp=as.character(NA),
                                                                                                                                     val="weight",  #or "number" or "nAtLength"
                                                                                                                                     sampPar=TRUE,
+                                                                                                                                    incl.precision=TRUE,    ## added MM 26/07/2010
+                                                                                                                                    probs=c(0.025,0.975),
                                                                                                                                     ...){
 para <- match.call()
 if (!is.null(para$type)) {
   if (para$type!="landings") warning("CL object as input!! Raising is made by total landings!!")} 
-procRaise.landings(csObject,ceObject,clObject,dbeOutput,landSpp=landSpp,val=val,sampPar=sampPar)                                                                                                          
+obj <- procRaise.landings(csObject,ceObject,clObject,dbeOutput,landSpp=landSpp,val=val,sampPar=sampPar)  
+
+
+if (incl.precision) {  
+
+  if (!all(is.na(obj@lenStruc$estim)) & !all(is.na(obj@lenVar))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="l",replicates=FALSE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="l",probs=probs,replicates=FALSE,update=TRUE)
+  }
+
+  if (!all(is.na(obj@totalN$estim)) & !all(is.na(obj@totalNvar))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="n",replicates=FALSE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="n",probs=probs,replicates=FALSE,update=TRUE)
+  }
+
+  if (!all(is.na(obj@totalW$estim)) & !all(is.na(obj@totalWvar))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="w",replicates=FALSE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="w",probs=probs,replicates=FALSE,update=TRUE)
+  }
+}
+
+return(obj)                                                                                                        
 
 })
 

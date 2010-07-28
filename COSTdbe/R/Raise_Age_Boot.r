@@ -254,6 +254,8 @@ setGeneric("RaiseAgeBoot", function(dbeOutput,
                                  type="p",
                                  sex=as.character(NA),
                                  bootMethod = "samples",
+                                 incl.precision=TRUE,
+                                 probs=c(0.025,0.975),
                                  ...){
 	standardGeneric("RaiseAgeBoot")}
 )
@@ -264,10 +266,26 @@ setMethod("RaiseAgeBoot", signature(dbeOutput="dbeOutput",csObject="csDataCons")
                                                                                        type="p",
                                                                                        sex=as.character(NA),
                                                                                        bootMethod = "samples",
+                                                                                       incl.precision=TRUE,
+                                                                                       probs=c(0.025,0.975),
                                                                                        ...){
-                                                                                                           
-Raise_Age_Boot(csObject=csObject,dbeOutput=dbeOutput,type=type,sex=sex, bootMethod=bootMethod)
 
+if (incl.precision) {                                                                                             
+                                                                                                     
+  obj <- Raise_Age_Boot(csObject=csObject,dbeOutput=dbeOutput,type=type,sex=sex, bootMethod=bootMethod)
+  
+  if (!all(is.na(obj@ageStruc$rep))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="a",replicates=TRUE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="a",probs=probs,replicates=TRUE,update=TRUE)
+  }
+  
+  return(obj)
+
+} else {
+
+  Raise_Age_Boot(csObject=csObject,dbeOutput=dbeOutput,type=type,sex=sex, bootMethod=bootMethod)
+
+}
 })
 
 

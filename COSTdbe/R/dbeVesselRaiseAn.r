@@ -54,7 +54,9 @@ As.num <- COSTcore:::As.num
 setGeneric("vesselRaise.an", function(csObject,        #consolidated CS table
                                 clObject,                #consolidated CL table (same stratification as csObject)
                                 dbeOutp,                 #'dbeOutput' object with descriptive fields
-                                age.plus = -1           # age of plus group, if < 0 then no plus group applied
+                                age.plus = -1,           # age of plus group, if < 0 then no plus group applied
+                                incl.precision=TRUE,    ## added MM 26/07/2010
+                                probs=c(0.025,0.975)
                                 ){
   standardGeneric("vesselRaise.an")
 
@@ -65,7 +67,9 @@ setMethod("vesselRaise.an", signature(csObject="csDataCons", clObject="clDataCon
                             function(csObject,       #consolidated CS table
                             clObject,                #consolidated CL table (same stratification as csObject)
                             dbeOutp,                 #'dbeOutput' object with descriptive fields
-                            age.plus = -1           # age of plus group, if < 0 then no plus group applied
+                            age.plus = -1,           # age of plus group, if < 0 then no plus group applied
+                            incl.precision=TRUE,    ## added MM 26/07/2010
+                            probs=c(0.025,0.975)
                             )  {
 
 dbeOutp@catchCat <- toupper(dbeOutp@catchCat)                               #
@@ -465,6 +469,30 @@ dbeOutp@totalW$estim = data.frame (CLagg[,c("time", "space", "technical")], valu
 if (length.range.warn == T) print ("Note that length samples may not cover full length range. There were empty length classes in some LDs where the corresponding length class in the ALK contained ages.")
 
 if (any (nSampLen$value == 1)) warning ("Strata present with one length sample, variance cannot be estimated for these strata", call.=F)
+
+
+if (incl.precision) {       #added MM 26/07/2010
+
+  if (!all(is.na(dbeOutp@lenStruc$estim)) & !all(is.na(dbeOutp@lenVar))) {
+    dbeOutp <- dbeCalc(dbeOutp,type="CV",vrbl="l",replicates=FALSE,update=TRUE)
+    dbeOutp <- dbeCalc(dbeOutp,type="CI",vrbl="l",probs=probs,replicates=FALSE,update=TRUE)
+  }
+
+  if (!all(is.na(dbeOutp@ageStruc$estim)) & !all(is.na(dbeOutp@ageVar))) {
+    dbeOutp <- dbeCalc(dbeOutp,type="CV",vrbl="a",replicates=FALSE,update=TRUE)
+    dbeOutp <- dbeCalc(dbeOutp,type="CI",vrbl="a",probs=probs,replicates=FALSE,update=TRUE)
+  }
+
+  if (!all(is.na(dbeOutp@totalN$estim)) & !all(is.na(dbeOutp@totalNvar))) {
+    dbeOutp <- dbeCalc(dbeOutp,type="CV",vrbl="n",replicates=FALSE,update=TRUE)
+    dbeOutp <- dbeCalc(dbeOutp,type="CI",vrbl="n",probs=probs,replicates=FALSE,update=TRUE)
+  }
+
+  if (!all(is.na(dbeOutp@totalW$estim)) & !all(is.na(dbeOutp@totalWvar))) {
+    dbeOutp <- dbeCalc(dbeOutp,type="CV",vrbl="w",replicates=FALSE,update=TRUE)
+    dbeOutp <- dbeCalc(dbeOutp,type="CI",vrbl="w",probs=probs,replicates=FALSE,update=TRUE)
+  }
+}
 
 return(dbeOutp)
 

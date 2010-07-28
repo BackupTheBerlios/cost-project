@@ -68,7 +68,9 @@ setGeneric("vesselRaise.boot", function(csObject,        #consolidated CS table
                                 dbeOutp,                 #'dbeOutput' object with descriptive fields
                                 B,                       # number of bootstrap iterations
                                 age.plus = -1,           # age of plus group, if < 0 then no plus group applied
-                                bootMethod = "samples"   # "samples" to resample age samples
+                                bootMethod = "samples",   # "samples" to resample age samples
+                                incl.precision=TRUE,    ## added MM 26/07/2010
+                                probs=c(0.025,0.975)
                                 ){
   standardGeneric("vesselRaise.boot")
 
@@ -83,7 +85,9 @@ setMethod("vesselRaise.boot", signature(csObject="csDataCons", clObject="clDataC
                             dbeOutp,                 #'dbeOutput' object with descriptive fields
                             B,                       # number of bootstrap iterations
                             age.plus = -1,           # age of plus group, if < 0 then no plus group applied
-                            bootMethod = "samples"   # "samples" to resample age samples,
+                            bootMethod = "samples",   # "samples" to resample age samples,
+                            incl.precision=TRUE,    ## added MM 26/07/2010
+                            probs=c(0.025,0.975)
                                                      # NOT IMPLEMENTED "otoliths" to resample otoliths within length classes of ALK
                             )  {
 
@@ -515,6 +519,31 @@ if (length.range.warn == T) print ("Note that length samples may not cover full 
 
 if (any (nSampLen$value < 5)) warning ("Strata present with fewer than 5 length samples. Low sample numbers reduce the accuracy and precision of bootstrap estimates.", call.=F)
 if (any (nSampAge$value < 5)) warning ("Strata present with fewer than 5 age samples. Low sample numbers reduce the accuracy and precision of bootstrap estimates.", call.=F)
+
+
+if (incl.precision) {  
+
+  if (!all(is.na(dbeOutp@lenStruc$rep))) {
+    
+    dbeOutp <- dbeCalc(dbeOutp,type="CV",vrbl="l",replicates=TRUE,update=TRUE)
+    dbeOutp <- dbeCalc(dbeOutp,type="CI",vrbl="l",probs=probs,replicates=TRUE,update=TRUE)
+  }
+
+  if (!all(is.na(dbeOutp@ageStruc$rep))) {
+    dbeOutp <- dbeCalc(dbeOutp,type="CV",vrbl="a",replicates=TRUE,update=TRUE)
+    dbeOutp <- dbeCalc(dbeOutp,type="CI",vrbl="a",probs=probs,replicates=TRUE,update=TRUE)
+  }
+
+  if (!all(is.na(dbeOutp@totalN$rep))) {
+    dbeOutp <- dbeCalc(dbeOutp,type="CV",vrbl="n",replicates=TRUE,update=TRUE)
+    dbeOutp <- dbeCalc(dbeOutp,type="CI",vrbl="n",probs=probs,replicates=TRUE,update=TRUE)
+  }
+
+  if (!all(is.na(dbeOutp@totalW$rep))) {
+    dbeOutp <- dbeCalc(dbeOutp,type="CV",vrbl="w",replicates=TRUE,update=TRUE)
+    dbeOutp <- dbeCalc(dbeOutp,type="CI",vrbl="w",probs=probs,replicates=TRUE,update=TRUE)
+  }
+}
 
 return(dbeOutp)
   } ## END OF vesselRaise.boot FUNCTION

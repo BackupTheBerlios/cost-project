@@ -303,7 +303,15 @@ n <- n[names(W_b$val)] ; names(n) <- names(W_b$val)
   ##VarD_j[is.infinite(VarD_j)] <- 0
 
 first  <- (W_b$val)^2
-second <- (1-(sum.wl_psu$val / W_b$val))/(sum.wl_psu$val^2/n)
+if (!missing(clObject)) {
+
+  second <- (1-(sum.wl_psu$val / W_b$val))/(sum.wl_psu$val^2/n)
+
+} else {   #raising to trips
+  
+  second <- 1/(sum.wl_psu$val^2/n)
+
+}
   third  <- list(val = sum.d_jpsu$val/dbeReplic(sum.wl_psu,sum.d_jpsu$ind[1,])$val , ind = sum.d_jpsu$ind)
 #  third.2 <- aperm(array(rep(as.vector(third.1),dim(w_psu)[2]),dim=dim(d_jpsu)[c(1,3,2)]),c(1,3,2))
   third.2 <- d_jpsu.new$val - dbeReplic(third,d_jpsu.new$ind[c(1,3),])$val * dbeReplic(wl_psu,d_jpsu.new$ind[1:2,])$val  ##attention ici aux 0-values
@@ -333,13 +341,13 @@ names(df.D_j) <- c("STR","length","value","time","space","technical")
 df.D_j <- df.D_j[order(df.D_j$time,df.D_j$space,df.D_j$technical,df.D_j$length),] ; rownames(df.D_j) <- 1:nrow(df.D_j)
 dbeOutput@lenStruc$estim <- df.D_j[,names(dbeOutput@lenStruc$estim)]
 
-if (!missing(clObject)) {     #variance is filled only if clObject is available
+
     #VarD_j
   df.VarD_j <- cbind(df.VarD_j,do.call("rbind",lapply(as.character(df.VarD_j[,1]),function(x) strsplit(x,":-:")[[1]])))
   names(df.VarD_j) <- c("STR","length","value","time","space","technical")
   df.VarD_j <- df.VarD_j[order(df.VarD_j$time,df.VarD_j$space,df.VarD_j$technical,df.VarD_j$length),] ; rownames(df.VarD_j) <- 1:nrow(df.VarD_j)
   dbeOutput@lenVar <- df.VarD_j[,names(dbeOutput@lenVar)]
-}
+
 
   #WHat
 df.WHat <- cbind(value=WHat$val/1000,as.data.frame(do.call("rbind",lapply(names(WHat$val),function(x) strsplit(x,":-:")[[1]]))))    #weight in kg : MM 07/04/2009
@@ -357,6 +365,14 @@ totN <- totN[!is.na(totN$value),]
 rownames(totN) <- 1:nrow(totN)                                                                                                #
 dbeOutput@totalN$estim <- totN[,names(dbeOutput@totalN$estim)]                                                                     #
 
+  #totalNvar slot is filled with aggregated 'lenVar' table                                                                    #added MM 26/07/2010
+totNvar <- with(dbeOutput@lenVar,aggregate(value,by=list(technical=technical,space=space,time=time),sum,na.rm=TRUE))          #
+names(totNvar)[ncol(totNvar)] <- "value"                                                                                                 #
+#totNvar$value <- round(totNvar$value)  
+totNvar <- totNvar[!is.na(totNvar$value),]  
+rownames(totNvar) <- 1:nrow(totNvar)                                                                                                #
+dbeOutput@totalNvar <- totNvar[,names(dbeOutput@totalNvar)]                                                                     #
+
 return(dbeOutput)
 
 }
@@ -373,6 +389,9 @@ setGeneric("RaiseLgth", function(dbeOutput,
                                  spp,
                                  taxon,
                                  sex=as.character(NA),
+                                 sampPar=TRUE,
+                                 incl.precision=TRUE,
+                                 probs=c(0.025,0.975),
                                  ...){                                                         #'sampPar' parameter is left to be added
 	standardGeneric("RaiseLgth")}
 )
@@ -385,15 +404,37 @@ setMethod("RaiseLgth", signature(dbeOutput="dbeOutput",csObject="csDataCons",clO
                                                                                                               spp,
                                                                                                               taxon,
                                                                                                               sex=as.character(NA),
+                                                                                                              sampPar=TRUE,
+                                                                                                              incl.precision=TRUE,    ## added MM 26/07/2010
+                                                                                                              probs=c(0.025,0.975),
                                                                                                               ...){
 
+if (incl.precision) {  
 
+  obj <- Raise_Lgth(csObject=csObject,clObject=clObject,dbeOutput=dbeOutput,spp=spp,taxon=taxon,sex=sex,sampPar=sampPar)
 
+  if (!all(is.na(obj@lenStruc$estim)) & !all(is.na(obj@lenVar))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="l",replicates=FALSE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="l",probs=probs,replicates=FALSE,update=TRUE)
+  }
 
+  if (!all(is.na(obj@totalN$estim)) & !all(is.na(obj@totalNvar))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="n",replicates=FALSE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="n",probs=probs,replicates=FALSE,update=TRUE)
+  }
 
+  if (!all(is.na(obj@totalW$estim)) & !all(is.na(obj@totalWvar))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="w",replicates=FALSE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="w",probs=probs,replicates=FALSE,update=TRUE)
+  }
 
+  return(obj)
+
+} else {
                                                                                                            
-Raise_Lgth(csObject=csObject,clObject=clObject,dbeOutput=dbeOutput,spp=spp,taxon=taxon,sex=sex)
+  Raise_Lgth(csObject=csObject,clObject=clObject,dbeOutput=dbeOutput,spp=spp,taxon=taxon,sex=sex,sampPar=sampPar)
+
+}
 
 })
 
@@ -405,19 +446,39 @@ setMethod("RaiseLgth", signature(dbeOutput="dbeOutput",csObject="csDataCons",clO
                                                                                                               spp,
                                                                                                               taxon,
                                                                                                               sex=as.character(NA),
+                                                                                                              sampPar=TRUE,
+                                                                                                              incl.precision=TRUE,    ## added MM 26/07/2010
+                                                                                                              probs=c(0.025,0.975),
                                                                                                               ...){
 
+if (incl.precision) {  
 
+  obj <- Raise_Lgth(csObject=csObject,dbeOutput=dbeOutput,spp=spp,taxon=taxon,sex=sex,sampPar=sampPar)
 
+  if (!all(is.na(obj@lenStruc$estim)) & !all(is.na(obj@lenVar))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="l",replicates=FALSE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="l",probs=probs,replicates=FALSE,update=TRUE)
+  }
 
+  if (!all(is.na(obj@totalN$estim)) & !all(is.na(obj@totalNvar))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="n",replicates=FALSE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="n",probs=probs,replicates=FALSE,update=TRUE)
+  }
 
+  if (!all(is.na(obj@totalW$estim)) & !all(is.na(obj@totalWvar))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="w",replicates=FALSE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="w",probs=probs,replicates=FALSE,update=TRUE)
+  }
 
-                                                                                                           
-Raise_Lgth(csObject=csObject,dbeOutput=dbeOutput,spp=spp,taxon=taxon,sex=sex)
+  return(obj)
+
+} else {
+                                                                                                          
+  Raise_Lgth(csObject=csObject,dbeOutput=dbeOutput,spp=spp,taxon=taxon,sex=sex,sampPar=sampPar)
+
+}
 
 })
-
-
 
 
 

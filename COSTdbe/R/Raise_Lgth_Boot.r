@@ -539,8 +539,11 @@ setGeneric("RaiseLgthBoot", function(dbeOutput,
                                  clObject,
                                  spp,
                                  taxon,
-                                 sex=as.character(NA),  #MM added 30/07/2009 'sampPar' parameter is left to be added
+                                 sex=as.character(NA),  
+                                 sampPar=TRUE,
                                  B,
+                                 incl.precision=TRUE,
+                                 probs=c(0.025,0.975),
                                  ...){
 	standardGeneric("RaiseLgthBoot")}
 )
@@ -552,11 +555,40 @@ setMethod("RaiseLgthBoot", signature(dbeOutput="dbeOutput",csObject="csDataCons"
                                                                                                               clObject,
                                                                                                               spp,
                                                                                                               taxon,
-                                                                                                              sex=as.character(NA),     #MM added 30/07/2009 'sampPar' parameter is left to be added
+                                                                                                              sex=as.character(NA),
+                                                                                                              sampPar=TRUE,     
                                                                                                               B,
+                                                                                                              incl.precision=TRUE,
+                                                                                                              probs=c(0.025,0.975),
                                                                                                               ...){
+
+if (incl.precision) {  
+
+  obj <- Raise_Lgth_Boot(dbeOutput = dbeOutput, csObject = csObject, clObject = clObject, spp=spp,taxon=taxon,sex=sex,sampPar=sampPar,B=B)
+
+  if (!all(is.na(obj@lenStruc$rep))) {
+    
+    obj <- dbeCalc(obj,type="CV",vrbl="l",replicates=TRUE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="l",probs=probs,replicates=TRUE,update=TRUE)
+  }
+
+  if (!all(is.na(obj@totalN$rep))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="n",replicates=TRUE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="n",probs=probs,replicates=TRUE,update=TRUE)
+  }
+
+  if (!all(is.na(obj@totalW$rep))) {
+    obj <- dbeCalc(obj,type="CV",vrbl="w",replicates=TRUE,update=TRUE)
+    obj <- dbeCalc(obj,type="CI",vrbl="w",probs=probs,replicates=TRUE,update=TRUE)
+  }
+
+  return(obj)
+
+} else {
                                                                                                            
-Raise_Lgth_Boot(dbeOutput = dbeOutput, csObject = csObject, clObject = clObject, spp=spp,taxon=taxon,sex=sex,B=B)
+  Raise_Lgth_Boot(dbeOutput = dbeOutput, csObject = csObject, clObject = clObject, spp=spp,taxon=taxon,sex=sex,sampPar=sampPar,B=B)
+
+}
 
 })
 
