@@ -284,23 +284,154 @@ if (all(is.na(tab2))) {
 return(res[,names(tab1)])
 } 
 
-
+eT <- e1
 elt <- c("nSamp$len","nSamp$age","nMeas$len","nMeas$age",
          "lenStruc$estim","lenStruc$rep","lenVar",
          "ageStruc$estim","ageStruc$rep","ageVar",
          "totalN$estim","totalN$rep","totalNvar",
          "totalW$estim","totalW$rep","totalWvar")
 
-invisible(sapply(elt,function(z) eval(parse('',text=paste("e1@",z," <<- addDBE(e1@",z,",e2@",z,")",sep=""))))) 
+invisible(sapply(elt,function(z) eval(parse('',text=paste("eT@",z," <<- addDBE(e1@",z,",e2@",z,")",sep=""))))) 
+
+
 
 eltNA <- c("lenNum$ci","lenNum$cv","lenNum$DCRcvIndicator",
            "ageNum$ci","ageNum$cv","ageNum$DCRcvIndicator",
            "totalNnum$ci","totalNnum$cv","totalNnum$DCRcvIndicator",
            "totalWnum$ci","totalWnum$cv","totalWnum$DCRcvIndicator")
 
-invisible(sapply(eltNA,function(z) eval(parse('',text=paste("e1@",z," <<- new(\"dbeOutput\")@",z,sep=""))))) 
+invisible(sapply(eltNA,function(z) eval(parse('',text=paste("eT@",z," <<- new(\"dbeOutput\")@",z,sep=""))))) 
 
-return(e1)
+
+if (!all(is.na(e1@lenNum$ci)) & !all(is.na(e2@lenNum$ci))) { #alors, on procède au calcul!!
+
+  if (!all(is.na(eT@lenStruc$rep))) {
+    
+    eT <- dbeCalc(eT,type="CI",vrbl="l",probs=c(0.025,0.975),replicates=TRUE,update=TRUE)
+    
+  } else {
+  
+    if (!all(is.na(eT@lenStruc$estim)) & !all(is.na(eT@lenVar))) {
+
+      eT <- dbeCalc(eT,type="CI",vrbl="l",probs=c(0.025,0.975),replicates=FALSE,update=TRUE)
+    
+    }
+  }
+}
+
+if (!all(is.na(e1@lenNum$cv)) & !all(is.na(e2@lenNum$cv))) { #alors, on procède au calcul!!
+
+  if (!all(is.na(eT@lenStruc$rep))) {
+    
+    eT <- dbeCalc(eT,type="CV",vrbl="l",replicates=TRUE,update=TRUE)
+    
+  } else {
+  
+    if (!all(is.na(eT@lenStruc$estim)) & !all(is.na(eT@lenVar))) {
+      
+      eT <- dbeCalc(eT,type="CV",vrbl="l",replicates=FALSE,update=TRUE)
+
+    }
+  }
+}
+
+if (!all(is.na(e1@ageNum$ci)) & !all(is.na(e2@ageNum$ci))) { #alors, on procède au calcul!!
+
+  if (!all(is.na(eT@ageStruc$rep))) {
+    
+    eT <- dbeCalc(eT,type="CI",vrbl="a",probs=c(0.025,0.975),replicates=TRUE,update=TRUE)
+    
+  } else {
+  
+    if (!all(is.na(eT@ageStruc$estim)) & !all(is.na(eT@ageVar))) {
+
+      eT <- dbeCalc(eT,type="CI",vrbl="a",probs=c(0.025,0.975),replicates=FALSE,update=TRUE)
+    
+    }
+  }
+}
+
+if (!all(is.na(e1@ageNum$cv)) & !all(is.na(e2@ageNum$cv))) { #alors, on procède au calcul!!
+
+  if (!all(is.na(eT@ageStruc$rep))) {
+    
+    eT <- dbeCalc(eT,type="CV",vrbl="a",replicates=TRUE,update=TRUE)
+    
+  } else {
+  
+    if (!all(is.na(eT@ageStruc$estim)) & !all(is.na(eT@ageVar))) {
+      
+      eT <- dbeCalc(eT,type="CV",vrbl="a",replicates=FALSE,update=TRUE)
+
+    }
+  }
+}
+
+if (!all(is.na(e1@totalNnum$ci)) & !all(is.na(e2@totalNnum$ci))) { #alors, on procède au calcul!!
+
+  if (!all(is.na(eT@totalN$rep))) {
+    
+    eT <- dbeCalc(eT,type="CI",vrbl="n",probs=c(0.025,0.975),replicates=TRUE,update=TRUE)
+    
+  } else {
+  
+    if (!all(is.na(eT@totalN$estim)) & !all(is.na(eT@totalNvar))) {
+
+      eT <- dbeCalc(eT,type="CI",vrbl="n",probs=c(0.025,0.975),replicates=FALSE,update=TRUE)
+    
+    }
+  }
+}
+
+if (!all(is.na(e1@totalNnum$cv)) & !all(is.na(e2@totalNnum$cv))) { #alors, on procède au calcul!!
+
+  if (!all(is.na(eT@totalN$rep))) {
+    
+    eT <- dbeCalc(eT,type="CV",vrbl="n",replicates=TRUE,update=TRUE)
+    
+  } else {
+  
+    if (!all(is.na(eT@totalN$estim)) & !all(is.na(eT@totalNvar))) {
+      
+      eT <- dbeCalc(eT,type="CV",vrbl="n",replicates=FALSE,update=TRUE)
+
+    }
+  }
+}
+
+if (!all(is.na(e1@totalWnum$ci)) & !all(is.na(e2@totalWnum$ci))) { #alors, on procède au calcul!!
+
+  if (!all(is.na(eT@totalW$rep))) {
+    
+    eT <- dbeCalc(eT,type="CI",vrbl="w",probs=c(0.025,0.975),replicates=TRUE,update=TRUE)
+    
+  } else {
+  
+    if (!all(is.na(eT@totalW$estim)) & !all(is.na(eT@totalWvar))) {
+
+      eT <- dbeCalc(eT,type="CI",vrbl="w",probs=c(0.025,0.975),replicates=FALSE,update=TRUE)
+    
+    }
+  }
+}
+
+if (!all(is.na(e1@totalWnum$cv)) & !all(is.na(e2@totalWnum$cv))) { #alors, on procède au calcul!!
+
+  if (!all(is.na(eT@totalW$rep))) {
+    
+    eT <- dbeCalc(eT,type="CV",vrbl="w",replicates=TRUE,update=TRUE)
+    
+  } else {
+  
+    if (!all(is.na(eT@totalW$estim)) & !all(is.na(eT@totalWvar))) {
+      
+      eT <- dbeCalc(eT,type="CV",vrbl="w",replicates=FALSE,update=TRUE)
+
+    }
+  }
+}
+
+return(eT)
 
 })
 
