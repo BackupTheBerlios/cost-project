@@ -73,7 +73,9 @@ bio <- switch(type,
             maturity =  as.numeric(recode(ca$matStage, mat.scale$immature, mat.scale$mature)),
             # Rename Females=1 and Males=0 (sexratio=F/F+M)
             sex = As.num(factor(ca$sex,levels=c("F","M"),labels=c("1","0"))),
-            weight = As.num(ca$indWt))
+            weight = As.num(ca$indWt),
+            length = As.num(ca$lenCls)         #MM 27/07/2010
+            )
                         
 if (is.null(bio)) stop(paste ("no" ,type,"data in", deparse(substitute(object))))
 
