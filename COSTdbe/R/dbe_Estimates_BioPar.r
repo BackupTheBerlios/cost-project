@@ -18,6 +18,8 @@ setGeneric("bpEstim", function(dbeOutput,                                       
                                                                                 #if TRUE, hl information is used to adjust estimates at age
                                                                                 #     (length distribution in ca is not representative of ld in the catch)
                                immature.scale=1,                                #numeric or character specifying immature stages
+                               incl.precision=TRUE,    
+                               probs=c(0.025,0.975),
                                ...){
 
   standardGeneric("bpEstim")
@@ -28,6 +30,8 @@ setMethod("bpEstim", signature(dbeOutput="dbeOutput",object="csDataCons",dbeLD="
                                                                                                     object,
                                                                                                     adjust=TRUE,
                                                                                                     immature.scale=1,
+                                                                                                    incl.precision=TRUE,  
+                                                                                                    probs=c(0.025,0.975),
                                                                                                     ...){
 
 #As.num <- function(x) as.numeric(as.character(x))
@@ -69,7 +73,8 @@ type <- dbeOutput@param
 bio <- switch(type,
               maturity = As.num(cut(As.num(ca$matStage),c(0,1.5,50),labels=c(0,1))),
               sex = As.num(factor(ca$sex,levels=c("F","M"),labels=c("1","0"))),
-              weight = As.num(ca$indWt)
+              weight = As.num(ca$indWt),
+              length = As.num(ca$lenCls)
               )
 if (is.null(bio)) stop("wrong 'param' slot in 'dbeOutput' object!!")
 ca$bio <- bio
@@ -194,6 +199,23 @@ dbeOutput@ageVar <- formatt(VarAtA,timeStrata=timeStrata,spaceStrata=spaceStrata
 if (!dbeOutput@methodDesc%in%"analytical") warning("'methodDesc' slot in 'dbeOutput' object will be updated!!")
 dbeOutput@methodDesc <- "analytical"
 
+if (incl.precision) {
+
+dbeOutput <- dbeCalc(dbeOutput,type="CI", vrbl="l",probs=probs,replicates=FALSE,update=TRUE)
+dbeOutput <- dbeCalc(dbeOutput,type="CV", vrbl="l",probs=probs,replicates=FALSE,update=TRUE)
+dbeOutput <- dbeCalc(dbeOutput,type="CI", vrbl="a",probs=probs,replicates=FALSE,update=TRUE)
+dbeOutput <- dbeCalc(dbeOutput,type="CV", vrbl="a",probs=probs,replicates=FALSE,update=TRUE)                       
+
+if (!all(is.na(dbeOutput@totalN$estim)) & !all(is.na(dbeOutput@totalNvar))) {
+    dbeOutput <- dbeCalc(dbeOutput,type="CV",vrbl="n",replicates=FALSE,update=TRUE)
+    dbeOutput <- dbeCalc(dbeOutput,type="CI",vrbl="n",probs=probs,replicates=FALSE,update=TRUE)
+  }
+
+if (!all(is.na(dbeOutput@totalW$estim)) & !all(is.na(dbeOutput@totalWvar))) {
+    dbeOutput <- dbeCalc(dbeOutput,type="CV",vrbl="w",replicates=FALSE,update=TRUE)
+    dbeOutput <- dbeCalc(dbeOutput,type="CI",vrbl="w",probs=probs,replicates=FALSE,update=TRUE)
+  }
+}
 
 #-------------------------------------------------------------------------------
 #result is returned
@@ -211,6 +233,8 @@ setMethod("bpEstim", signature(dbeOutput="dbeOutput",object="csDataCons",dbeLD="
                                                                                                       dbeLD,
                                                                                                       adjust=TRUE,
                                                                                                       immature.scale=1,
+                                                                                                      incl.precision=TRUE,    
+                                                                                                      probs=c(0.025,0.975),
                                                                                                       ...){
 
 species <- dbeOutput@species
@@ -219,7 +243,7 @@ if ("all"%in%species) species <- unique(as.character(c(object@ca$spp,object@hl$s
 #concistency with 'dbeLD' object
 if (!identical(sort(dbeLD@species),sort(species))) warning("'dbeOutput' and 'dbeLD' objects don't match!!")
 if (!identical(dbeOutput@strataDesc,dbeLD@strataDesc)) warning("'dbeOutput' and 'dbeLD' objects don't match!!")
-if (dbeLD@param%in%c("weight","maturity","sex")) stop("'dbeLD@lenStruc' must describe numbers-at-length!!")
+if (dbeLD@param%in%c("weight","maturity","sex","length")) stop("'dbeLD@lenStruc' must describe numbers-at-length!!")
 
 hl <- dbeLD@lenStruc$estim
 #-------------------------------------------------------------------------------
@@ -257,7 +281,8 @@ type <- dbeOutput@param
 bio <- switch(type,
               maturity = As.num(cut(As.num(ca$matStage),c(0,1.5,50),labels=c(0,1))),
               sex = As.num(factor(ca$sex,levels=c("F","M"),labels=c("1","0"))),
-              weight = As.num(ca$indWt)
+              weight = As.num(ca$indWt),
+              length = As.num(ca$lenCls)
               )
 if (is.null(bio)) stop("wrong 'param' slot in 'dbeOutput' object!!")
 ca$bio <- bio
@@ -367,9 +392,26 @@ dbeOutput@ageVar <- formatt(VarAtA,timeStrata=timeStrata,spaceStrata=spaceStrata
 if (!dbeOutput@methodDesc%in%"analytical") warning("'methodDesc' slot in 'dbeOutput' object will be updated!!")
 dbeOutput@methodDesc <- "analytical"
 #totalN and totalW are taken from dbeLD object
-dbeOutput@totalN$estim <- dbeLD@totalN$estim
+dbeOutput@totalN$estim <- dbeLD@totalN$estim                                                            
 dbeOutput@totalW$estim <- dbeLD@totalW$estim
 
+if (incl.precision) {
+
+dbeOutput <- dbeCalc(dbeOutput,type="CI", vrbl="l",probs=probs,replicates=FALSE,update=TRUE)
+dbeOutput <- dbeCalc(dbeOutput,type="CV", vrbl="l",replicates=FALSE,update=TRUE)
+dbeOutput <- dbeCalc(dbeOutput,type="CI", vrbl="a",probs=probs,replicates=FALSE,update=TRUE)
+dbeOutput <- dbeCalc(dbeOutput,type="CV", vrbl="a",replicates=FALSE,update=TRUE)                       
+
+if (!all(is.na(dbeOutput@totalN$estim)) & !all(is.na(dbeOutput@totalNvar))) {
+    dbeOutput <- dbeCalc(dbeOutput,type="CV",vrbl="n",replicates=FALSE,update=TRUE)
+    dbeOutput <- dbeCalc(dbeOutput,type="CI",vrbl="n",probs=probs,replicates=FALSE,update=TRUE)
+  }
+
+if (!all(is.na(dbeOutput@totalW$estim)) & !all(is.na(dbeOutput@totalWvar))) {
+    dbeOutput <- dbeCalc(dbeOutput,type="CV",vrbl="w",replicates=FALSE,update=TRUE)
+    dbeOutput <- dbeCalc(dbeOutput,type="CI",vrbl="w",probs=probs,replicates=FALSE,update=TRUE)
+  }
+}
 #-------------------------------------------------------------------------------
 #result is returned
 #-------------------------------------------------------------------------------
