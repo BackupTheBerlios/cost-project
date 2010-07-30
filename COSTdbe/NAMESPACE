@@ -36,5 +36,7 @@ exportMethods(
 	"RaiseAgeBoot",
 	"rbind2",
 	"+",
-	"tkFillGaps"
+	"tkFillGaps",
+	"cvTripDCF",
+	"fillALKmult"
 )
