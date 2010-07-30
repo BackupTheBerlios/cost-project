@@ -102,17 +102,20 @@ deltCalcFun <- function(object,
                         spaceStrata,
                         techStrata,
                         indSamp=TRUE,
+                        method="delta",   #ou "subsample" si on ne procède pas à l'élévation des échantillons au niveau de l'OP --> actif seulement si 'indSamp=TRUE'
                         tpRec,
                         spRec,
                         tcRec,
                         ...){
                         
+if (method=="subsample" & indSamp) subsamp <- TRUE else subsamp <- FALSE        
+                
 fraction <- toupper(fraction)                                                   #
 object@sl$catchCat <- toupper(object@sl$catchCat)                                                 # MM 29/04/2010
 object@hl$catchCat <- toupper(object@hl$catchCat)                                                 #
 object@ca$catchCat <- toupper(object@ca$catchCat)                                                 #
 
-nbTot_Lg <- WkvTot <- DELTA <- Delta <- NkMatrix <- WkMatrix <- SampDeltaMat <- NULL 
+nbTot_Lg <- WkvTot <- DELTA <- Delta <- NkMatrix <- WkMatrix <- SampDeltaMat <- K <- Kid <- NULL 
 #strategy="metier" & techStrata="commCat" don't match
 if (is.na(techStrata)==FALSE & strategy=="metier" & techStrata=="commCat") 
     stop("'commCat' technical stratification does not match with 'metier' strategy!!") 
@@ -257,21 +260,27 @@ lenSp <- c(1,5,10,25)
 names(lenSp) <- c("mm","scm","cm","25mm")
 tabHL$Length <- factor(tabHL$lenCls,levels=seq(min(tabHL$lenCls,na.rm=TRUE),max(tabHL$lenCls,na.rm=TRUE),by=lenSp[as.character(unique(tabHL$lenCode)[1])]))
 
+vecN <- tabHL$Number
+if (subsamp) vecN <- tabHL$Number*tabHL$subSampWt/tabHL$wt
 #number by length classes and stratification
-eval(parse('',text=paste("nbTot_Lg <- tapply(tabHL$Number,list(tabHL$Length",","[any(c(!Ntp,!Nsp,!Ntc))],
+eval(parse('',text=paste("nbTot_Lg <- tapply(vecN,list(tabHL$Length",","[any(c(!Ntp,!Nsp,!Ntc))],
                           paste(c("as.character(tabHL[,timeStrata])"[!Ntp],"as.character(tabHL[,spaceStrata])"[!Nsp],
                           "as.character(tabHL[,techStrata])"[!Ntc]),collapse=",",sep=""),"),sum,na.rm=TRUE)",sep="")))
 TotLg <- apply(nbTot_Lg,1,sum,na.rm=TRUE)                             #total number on all crossed strata
 
 #weights by sample and stratification, depending on strategy
+vecW <- tabHL$wt ; field <- "wt"
+if (subsamp) {vecW <- tabHL$subSampWt ; field <- "subSampWt"}
+
 if (strategy=="cc") {
-  eval(parse('',text=paste("WkvTot <- tapply(tabHL$wt,list(as.character(tabHL$Unite)",","[any(c(!Ntp,!Nsp,!Ntc))],
+  eval(parse('',text=paste("WkvTot <- tapply(vecW,list(as.character(tabHL$Unite)",","[any(c(!Ntp,!Nsp,!Ntc))],
                            paste(c("as.character(tabHL[,timeStrata])"[!Ntp],"as.character(tabHL[,spaceStrata])"[!Nsp],
                            "as.character(tabHL[,techStrata])"[!Ntc]),collapse=",",sep=""),"),mean,na.rm=TRUE)",sep="")))                  
 } else {                                                                                           
-  tabtabHL <- cbind(tabHL[,1:13],tabHL[,c(timeStrata,spaceStrata,techStrata,"wt","Unite")])
-  tabtabHL <- unique(tabtabHL)                       
-  eval(parse('',text=paste("WkvTot <- tapply(tabtabHL$wt,list(as.character(tabtabHL$Unite)",","[any(c(!Ntp,!Nsp,!Ntc))],
+  tabtabHL <- cbind(tabHL[,1:13],tabHL[,c(timeStrata,spaceStrata,techStrata,field,"Unite")])
+  tabtabHL <- unique(tabtabHL)
+  vecW2 <- tabtabHL[,field]                       
+  eval(parse('',text=paste("WkvTot <- tapply(vecW2,list(as.character(tabtabHL$Unite)",","[any(c(!Ntp,!Nsp,!Ntc))],
                            paste(c("as.character(tabtabHL[,timeStrata])"[!Ntp],"as.character(tabtabHL[,spaceStrata])"[!Nsp],
                            "as.character(tabtabHL[,techStrata])"[!Ntc]),collapse=",",sep=""),"),sum,na.rm=TRUE)",sep="")))                          
 }       
@@ -284,17 +293,26 @@ TotW <- sum(WkvTot,na.rm=TRUE)
 #                                            ind=2 --> Nk (number of samples in the stratum)
 #                                            ind=3 --> Wk (total weight in the stratum)
 #                                            ind=4 --> DELTA (overall) --> for outlier detection process
-progint <- function(x,ind,tabHL) {           #x is a row index for tabHL corresponding to a specific stratum 
+progint <- function(x,ind,tabHL,subs=FALSE) {           #x is a row index for tabHL corresponding to a specific stratum 
   tab <- tabHL[x,]
   Djkv <- tapply(tab$Number,list(tab$Length,as.character(tab$Unite)),sum,na.rm=TRUE)
+  if (subsamp) Djkv <- tapply(tab$Number*tab$subSampWt/tab$wt,list(tab$Length,as.character(tab$Unite)),sum,na.rm=TRUE)
   Djkv[is.na(Djkv)] <- 0
   
   if (strategy=="cc") {
-    Wkv <- tapply(tab$wt,list(as.character(tab$Unite)),mean)                   
+    Wkv <- tapply(tab$wt,list(as.character(tab$Unite)),mean)
+    subWkv <- tapply(tab$subSampWt,list(as.character(tab$Unite)),mean)          #MM 27/07/2010         
   } else {                                                                                           
     tabtab <- cbind(tab[,1:13],tab[,c("wt","Unite")])
     tabtab <- unique(tabtab)                       
-    Wkv <- tapply(tabtab$wt,list(as.character(tabtab$Unite)),sum,na.rm=TRUE)}    
+    Wkv <- tapply(tabtab$wt,list(as.character(tabtab$Unite)),sum,na.rm=TRUE)
+    subtabtab <- cbind(tab[,1:13],tab[,c("subSampWt","Unite")])                                  #MM 27/07/2010  
+    subtabtab <- unique(subtabtab)                                                               #MM 27/07/2010  
+    subWkv <- tapply(subtabtab$subSampWt,list(as.character(subtabtab$Unite)),sum,na.rm=TRUE)     #MM 27/07/2010  
+  }
+  if (subsamp) Wkv <- subWkv  
+  Kunit <- tapply(1:nrow(tab),list(as.character(tab$Unite)),function(x) sum(tab[x,]$Number*tab[x,]$subSampWt*((tab[x,]$lenCls/10)^3)/tab[x,]$wt,na.rm=TRUE))     #MM 27/07/2010
+  Kunit <- Kunit/subWkv                                                                                                                                           #MM 27/07/2010
                                                                                                   
   DjkvSum <- apply(Djkv,1,sum,na.rm=TRUE)
   WkvSum <- sum(Wkv,na.rm=TRUE)
@@ -306,8 +324,12 @@ progint <- function(x,ind,tabHL) {           #x is a row index for tabHL corresp
   eval(parse('',text=paste("DELTA <- data.frame(samp=names(deltaSamp),delta=deltaSamp",","[any(c(!Ntp,!Nsp,!Ntc))],
                            paste(c("tp=as.character(tab[1,timeStrata])"[!Ntp],"sp=as.character(tab[1,spaceStrata])"[!Nsp],
                            "tc=as.character(tab[1,techStrata])"[!Ntc]),collapse=",",sep=""),")",sep="")))
+  eval(parse('',text=paste("K <- data.frame(samp=names(Kunit),K=Kunit",","[any(c(!Ntp,!Nsp,!Ntc))],                            #MM 27/07/2010
+                           paste(c("tp=as.character(tab[1,timeStrata])"[!Ntp],"sp=as.character(tab[1,spaceStrata])"[!Nsp],      #MM 27/07/2010
+                           "tc=as.character(tab[1,techStrata])"[!Ntc]),collapse=",",sep=""),")",sep="")))                       #MM 27/07/2010
+
   deltaSq <- apply(delta^2,1,sum,na.rm=TRUE)
-  ll <- list(deltaSq,Nk,Wk,DELTA)[[ind]]
+  ll <- list(deltaSq,Nk,Wk,DELTA,K)[[ind]]                                                                                      #MM 27/07/2010
   return(ll)
 }
 
@@ -359,7 +381,11 @@ if (!indSamp) {
  
   eval(parse('',text=paste("SampDeltaMat <- do.call(\"rbind\",tapply(1:nrow(tabHL),list(",
                            paste(c("as.character(tabHL[,timeStrata])"[!Ntp],"as.character(tabHL[,spaceStrata])"[!Nsp],
-                           "as.character(tabHL[,techStrata])"[!Ntc]),collapse=",",sep=""),"),function(x) progint(x,4,tabHL)))",sep="")))
+                           "as.character(tabHL[,techStrata])"[!Ntc]),collapse=",",sep=""),"),function(x) progint(x,4,tabHL,subsamp)))",sep="")))
+
+  eval(parse('',text=paste("Kid <- do.call(\"rbind\",tapply(1:nrow(tabHL),list(",
+                           paste(c("as.character(tabHL[,timeStrata])"[!Ntp],"as.character(tabHL[,spaceStrata])"[!Nsp],
+                           "as.character(tabHL[,techStrata])"[!Ntc]),collapse=",",sep=""),"),function(x) progint(x,5,tabHL)))",sep="")))
 
   result <- list(species=species,
                  fraction=fraction,
@@ -368,6 +394,7 @@ if (!indSamp) {
                  spaceStrata=spaceStrata,
                  techStrata=techStrata,
                  SampDeltaMat=SampDeltaMat,
+                 Kid=Kid,
                  DFsamp=DFsamp,
                  tab=tabHL[,c("Unite","wt","Length","Number")])
    
@@ -386,12 +413,13 @@ if (!indSamp) {
 
 
 
-plotDelta <- function(x,    #x is to be an object 'edaResult' with desc="sampDeltaCalc"
+plotDelta <- function(x,    #x is to be an object 'edaResult' with desc="sampDeltaCalc"  
                       elmts=list(tp="all",sp="all",tc="all"),   #zoom on classes
                       strat1,strat2="NULL",# graphical display (to be chosen between "timeStrata", "spaceStrata" or "techStrata")
                       selection=FALSE,
                       show.legend="right",
-                      shift=FALSE,         
+                      shift=FALSE,
+                      Kplot=FALSE,         
                       ...){  
 
 #importation of specifications from x object
@@ -419,6 +447,8 @@ if (length(stra)==0) {
  
 object2 <- x@outPut$SampDeltaMat
 
+if (Kplot) object2 <- x@outPut$Kid
+
 if (is.null(dots$l.col)) dots$l.col <- "#8CC2FFE6"
 #graphical parameters specification
 data(GraphsPar,envir=environment())                                                                                                                          
@@ -428,13 +458,16 @@ sapply(names(gp),function(x)
                     eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
   dots$xlab <- "Samples"
-if (is.null(dots$ylab)) 
-  dots$ylab <- "Delta values" 
+if (is.null(dots$ylab)) { 
+  dots$ylab <- "Delta values"
+  if (Kplot) dots$ylab <- "K values"
+  } 
 if (is.null(dots$main)) 
   dots$main <- paste("Delta plot / Species : ",paste(species,collapse=", "),sep="") 
 
 XX <- 1:nrow(object2)
 YY <- object2$delta
+if (Kplot) YY <- object2$K
 
   #-----------------------------------------------------------------------------
   # Graphical display
@@ -460,6 +493,8 @@ if (missing(strat1)) {
 }
 
 object <- x@outPut$SampDeltaMat
+if (Kplot) object <- x@outPut$Kid
+
 
 #selection of samples specified by 'elmts' parameter
 invisible(sapply(names(object)[3:ncol(object)],function(x) {
@@ -483,8 +518,10 @@ sapply(names(gp),function(x)
                     eval(parse('',text=paste("dots$",x," <<- gp$",x,sep=""))))
 if (is.null(dots$xlab)) 
   dots$xlab <- "Samples"
-if (is.null(dots$ylab)) 
-  dots$ylab <- "Delta values" 
+if (is.null(dots$ylab)) { 
+  dots$ylab <- "Delta values"
+  if (Kplot) dots$ylab <- "K values"
+  }  
 if (is.null(dots$main)) 
   dots$main <- paste("Delta plot / Species : ",paste(species,collapse=", "),"\n Primary strata : ",eval(parse('',text=strat1)),sep="") 
 
@@ -500,6 +537,7 @@ else
 
 XX <- 1:nrow(object2)
 YY <- object2$delta
+if (Kplot) YY <- object2$K
   #intra strata color distribution
 if (!is.null(SStr)) 
   ff <- factor(object2[,SStr],levels=levels(object2[,SStr]),labels=rep(dots$p.bg,length=length(levels(object2[,SStr])))) 
@@ -510,13 +548,21 @@ delimit <- tapply(object2[,FStr],list(object2[,FStr]),length)
 delimit <- delimit[!is.na(delimit)]
 indLab <- cumsum(delimit)
   #shifting option for text
-amp <- max(object2$delta)-min(object2$delta)
+if (Kplot) {
+  amp <- max(object2$K)-min(object2$K)
+} else {
+  amp <- max(object2$delta)-min(object2$delta)
+}
 if (shift) 
   decal <- rep(c(1,-1),length=length(delimit)) 
 else 
   decal <- 0                                                                                  
 
-
+if (Kplot) {
+  MIN <- min(object2$K)
+} else {
+  MIN <- min(object2$delta)
+}
   #-----------------------------------------------------------------------------
   # Graphical display
   #-----------------------------------------------------------------------------
@@ -529,7 +575,7 @@ print(xyplot(YY~XX,main=list(dots$main,font=dots$font.main),xlab=list(dots$xlab,
               panel.xyplot(x,y,pch=dots$pch[1],fill=as.character(ff),cex=dots$p.cex[1],lwd=dots$lwd[1],col=dots$col[1])
               panel.abline(v=indLab[-length(indLab)]+0.5,lwd=dots$l.lwd[1],lty=dots$lty[1],col=dots$l.col[1])
               panel.abline(h=0,lwd=dots$l.lwd[1],lty=dots$lty[1],col=dots$l.col[1])
-              panel.text(0.5+indLab-delimit/2,min(object2$delta)+amp*0.03+amp*0.04*decal,names(indLab),col="black",font=4,cex=dots$cex.sub[1])}        
+              panel.text(0.5+indLab-delimit/2,MIN+amp*0.03+amp*0.04*decal,names(indLab),col="black",font=4,cex=dots$cex.sub[1])}        
 ))
 }
 
@@ -751,7 +797,8 @@ setGeneric("deltCalc", function(data,                #cs/cl/ceData or cs/cl/ceDa
                                 species,
                                 fraction="LAN", #or "all" or "DIS"
                                 strategy="metier", #or "cc"
-                                indSamp=TRUE,    
+                                indSamp=TRUE,
+                                method="delta",    
                                 ...){
 
   standardGeneric("deltCalc")
@@ -766,11 +813,12 @@ setMethod("deltCalc", signature("csData","strIni"), function(data,
                                                              species,
                                                              fraction="LAN", #or "all" or "DIS"
                                                              strategy="metier", #or "cc"
-                                                             indSamp=TRUE,       
+                                                             indSamp=TRUE,
+                                                             method="delta",       
                                                              ...){
 
 deltCalcFun(data,species=species,fraction=fraction,strategy=strategy,timeStrata=strDef@timeStrata,
-            spaceStrata=strDef@spaceStrata,techStrata=strDef@techStrata,indSamp=indSamp,tpRec=strDef@tpRec,spRec=strDef@spRec,
+            spaceStrata=strDef@spaceStrata,techStrata=strDef@techStrata,indSamp=indSamp,method=method,tpRec=strDef@tpRec,spRec=strDef@spRec,
             tcRec=strDef@tcRec,...)
       
 })         
@@ -784,11 +832,12 @@ setMethod("deltCalc", signature("csDataVal","strIni"), function(data,
                                                                 species,
                                                                 fraction="LAN", #or "all" or "DIS"
                                                                 strategy="metier", #or "cc"
-                                                                indSamp=TRUE,       
+                                                                indSamp=TRUE,
+                                                                method="delta",       
                                                                 ...){
 
 deltCalcFun(data,species=species,fraction=fraction,strategy=strategy,timeStrata=strDef@timeStrata,
-            spaceStrata=strDef@spaceStrata,techStrata=strDef@techStrata,indSamp=indSamp,tpRec=strDef@tpRec,spRec=strDef@spRec,
+            spaceStrata=strDef@spaceStrata,techStrata=strDef@techStrata,indSamp=indSamp,method=method,tpRec=strDef@tpRec,spRec=strDef@spRec,
             tcRec=strDef@tcRec,...)
       
 })         
