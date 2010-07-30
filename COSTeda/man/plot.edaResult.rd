@@ -47,6 +47,7 @@ This method is a generic function for plotting \emph{edaResult} objects. These o
                         \tab \tab \tab \code{sampId} returned data.frame.\cr
  \tab show.legend \tab \code{"right"} \tab Display the legend (\code{""} means "no legend").\cr
  \tab shift \tab \code{FALSE} \tab If \code{TRUE}, displayed text is shifted.\cr
+ \tab Kplot \tab \code{FALSE} \tab If \code{TRUE}, condition factors 'K' are plotted instead of delta values.\cr 
  \tab \dots \tab \tab Further graphical parameters. \cr
 \bold{\code{"sampDeltaId"}} \tab \tab \tab  \cr
  \tab x \tab  \tab \emph{edaResult} object with \emph{desc="sampDeltaId"} \cr
