@@ -3,6 +3,8 @@
 NEW FEATURES
     o the methods for calculating the variances, CVs and confidence intervals are included as part of the raising methods
     o estimation of mean length at age and precision (bpBoot & bpEstim)
+    o new method for calculating CVs per stratum of trip level estimates ("cvTripDCF")
+    o new method for filling out ALKs with multinomial model ("fillALKmult")
 DOCUMENTATION 
     o help files updated
 BUG FIXES	
