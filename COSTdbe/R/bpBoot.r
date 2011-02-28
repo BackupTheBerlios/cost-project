@@ -268,7 +268,7 @@ dbeOutput@lenStruc$estim <- data.frame(time=res.length$time,space=res.length$spa
 dbeOutput@lenStruc$rep <- data.frame(time=iter.length$time,space=iter.length$space,technical=iter.length$technical,length=iter.length$value,value=as.numeric(iter.length$value.iter),iter=iter.length$iter)
 dbeOutput@lenVar <- data.frame(time=res.length$time,space=res.length$space,technical=res.length$technical,length=res.length$value,value=as.numeric(res.length$variance))
 dbeOutput@lenNum$ci <- dbeCalc(dbeOutput,type="CI", vrbl="l",probs=c(0.025,0.975),replicates=T,update=F)
-dbeOutput@lenNum$cv <- dbeCalc(dbeOutput,type="CV", vrbl="l",probs=c(0.025,0.975),replicates=T,update=F)
+dbeOutput@lenNum$cv <- dbeCalc(dbeOutput,type="CV", vrbl="l",probs=c(0.025,0.975),replicates=T,update=F)$DF
 
 ## Results by age 
 if (nrow(age)!=0)
