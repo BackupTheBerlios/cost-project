@@ -132,9 +132,10 @@ bio.fun <- function(data,i,ind=NULL)
     data <- data [i,]
     # Extract individuals of resampled "samples"
     j2 <- c()
+ 
     for(i in data$trp)
-    {
-      j <- as.numeric(rownames(ind[ind$trpCode==data$trp[i],]))
+    {  
+      j <- as.numeric(rownames(ind[ind$trpCode==i,]))#data$trp[i],]))   modif MM 28/02/2011
       j2<- c(j2,j)
       j2
     }
@@ -213,8 +214,7 @@ if (sample.boot==FALSE) # Resampling unit= individual fish
  l <- length(levels(ca$bootstr))
  levels (ca$bootstr) <- 1:l
  bio.boot <- boot(ca,bio.fun,strata=ca$bootstr,R=nboot)
- }
-else  # Resampling unit= sample
+ } else  # Resampling unit= sample
  {
 
  # Define stratification variable: time, space and technical
