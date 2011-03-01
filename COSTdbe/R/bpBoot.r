@@ -269,6 +269,7 @@ dbeOutput@lenStruc$rep <- data.frame(time=iter.length$time,space=iter.length$spa
 dbeOutput@lenVar <- data.frame(time=res.length$time,space=res.length$space,technical=res.length$technical,length=res.length$value,value=as.numeric(res.length$variance))
 dbeOutput@lenNum$ci <- dbeCalc(dbeOutput,type="CI", vrbl="l",probs=c(0.025,0.975),replicates=T,update=F)
 dbeOutput@lenNum$cv <- dbeCalc(dbeOutput,type="CV", vrbl="l",probs=c(0.025,0.975),replicates=T,update=F)$DF
+dbeOutput@lenNum$DCRcvIndicator <- dbeCalc(dbeOutput,type="CV", vrbl="l",probs=c(0.025,0.975),replicates=T,update=F)$dcrInd
 
 ## Results by age 
 if (nrow(age)!=0)
@@ -282,6 +283,7 @@ if (nrow(age)!=0)
   dbeOutput@ageVar <- data.frame(time=res.age$time,space=res.age$space,technical=res.age$technical,age=res.age$value,value=as.numeric(res.age$variance)) 
   dbeOutput@ageNum$ci <- dbeCalc(dbeOutput,type="CI", vrbl="a",probs=c(0.025,0.975),replicates=T,update=F)
   dbeOutput@ageNum$cv <- dbeCalc(dbeOutput,type="CV", vrbl="a",probs=c(0.025,0.975),replicates=T,update=F)$DF                            ######### MM 03/04/2009
+  dbeOutput@ageNum$DCRcvIndicator <- dbeCalc(dbeOutput,type="CV", vrbl="a",probs=c(0.025,0.975),replicates=T,update=F)$dcrInd
   }
 if (!dbeOutput@methodDesc%in%"bootstrap") warnings("'methodDesc' slot in 'dbeOutput' object will be updated!!")
 dbeOutput@methodDesc <- "bootstrap"
