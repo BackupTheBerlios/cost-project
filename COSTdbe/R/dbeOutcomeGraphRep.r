@@ -181,6 +181,10 @@ if (all(levels(factor(as.character(tab$time)))=="all")) tab$time <- NA
 if (all(levels(factor(as.character(tab$space)))=="all")) tab$space <- NA
 if (all(levels(factor(as.character(tab$technical)))=="all")) tab$technical <- NA
 
+#nb Iter
+B <- length(unique(tab$iter))              #added MM 15/03/2011
+
+
 timeStrata <- spaceStrata <- techStrata <- TRUE
 if (all(is.na(tab$time))) timeStrata <- FALSE
 if (all(is.na(tab$space))) spaceStrata <- FALSE
@@ -214,10 +218,17 @@ ic <- (all(is.na(probs)))
 tab0 <- tab[tab$iter==0,] ; if (nrow(tab0)==0) origin <- FALSE
 tab <- tab[tab$iter!=0,]
 
+fieldSpec <- paste(vrbl,"=tab$",vrbl,sep="")
 tab1 <- tab2 <- tab3 <- NULL
-eval(parse('',text=paste("tab1 <- aggregate(tab$value,list(",
-                            paste(c("time=tab$time"[timeStrata],"space=tab$space"[spaceStrata],"technical=tab$technical"[techStrata],"length=tab$length"),sep="",collapse=","),
-                            "),mean,na.rm=TRUE)",sep="")))
+if (object@param%in%c("sex","length","weight","maturity")) {
+  eval(parse('',text=paste("tab1 <- aggregate(tab$value,list(",
+                              paste(c("time=tab$time"[timeStrata],"space=tab$space"[spaceStrata],"technical=tab$technical"[techStrata],fieldSpec),sep="",collapse=","),
+                              "),mean,na.rm=TRUE))",sep="")))
+} else {
+  eval(parse('',text=paste("tab1 <- aggregate(tab$value,list(",
+                              paste(c("time=tab$time"[timeStrata],"space=tab$space"[spaceStrata],"technical=tab$technical"[techStrata],fieldSpec),sep="",collapse=","),
+                              "),function(x) mean(c(x,rep(0,length=B-length(x))),na.rm=TRUE))",sep="")))
+}
 names(tab1)[ncol(tab1)] <- "mean"
 
 if (KurtSkew) {
@@ -229,14 +240,26 @@ if (KurtSkew) {
     paste(c("for ",paste("\"",object@species,"\" species",sep="")," and ",
     paste("\"",object@catchCat,"\" fraction",sep=""))[c(tstSp|tstCat,tstSp,tstSp&tstCat,tstCat)],collapse=""),sep="")   
 
+if (object@param%in%c("sex","length","weight","maturity")) {
   eval(parse('',text=paste("tab2 <- aggregate(tab$value,list(",        #skewness
-                             paste(c("time=tab$time"[timeStrata],"space=tab$space"[spaceStrata],"technical=tab$technical"[techStrata],"length=tab$length"),sep="",collapse=","),
-                             "),function(x) sum((x-mean(x))^3/sqrt(var(x))^3)/length(x))",sep="")))
+                             paste(c("time=tab$time"[timeStrata],"space=tab$space"[spaceStrata],"technical=tab$technical"[techStrata],fieldSpec),sep="",collapse=","),
+                             "),function(x) sum( (x-mean(x,na.rm=TRUE))^3 / sqrt(var(x,na.rm=TRUE))^3 , na.rm=TRUE)/sum(!is.na(x)) )",sep="")))
+} else {
+  eval(parse('',text=paste("tab2 <- aggregate(tab$value,list(",        #skewness
+                             paste(c("time=tab$time"[timeStrata],"space=tab$space"[spaceStrata],"technical=tab$technical"[techStrata],fieldSpec),sep="",collapse=","),
+                             "),function(x) sum( (c(x,rep(0,length=B-length(x)))-mean(c(x,rep(0,length=B-length(x))),na.rm=TRUE))^3 / sqrt(var(c(x,rep(0,length=B-length(x))),na.rm=TRUE))^3, na.rm=TRUE)/ (B-sum(is.na(x))) )",sep="")))
+}
   names(tab2)[ncol(tab2)] <- "skewness"
-  
+
+if (object@param%in%c("sex","length","weight","maturity")) {
   eval(parse('',text=paste("tab3 <- aggregate(tab$value,list(",        #kurtosis
-                             paste(c("time=tab$time"[timeStrata],"space=tab$space"[spaceStrata],"technical=tab$technical"[techStrata],"length=tab$length"),sep="",collapse=","),
-                             "),function(x) sum((x-mean(x))^4/var(x)^2)/length(x) - 3 )",sep="")))
+                             paste(c("time=tab$time"[timeStrata],"space=tab$space"[spaceStrata],"technical=tab$technical"[techStrata],fieldSpec),sep="",collapse=","),
+                             "),function(x) sum( (x-mean(x,na.rm=TRUE))^4 / var(x,na.rm=TRUE)^2, na.rm=TRUE)/sum(!is.na(x)) - 3 )",sep="")))
+} else {  
+  eval(parse('',text=paste("tab3 <- aggregate(tab$value,list(",        #kurtosis
+                             paste(c("time=tab$time"[timeStrata],"space=tab$space"[spaceStrata],"technical=tab$technical"[techStrata],fieldSpec),sep="",collapse=","),
+                             "),function(x) sum( (c(x,rep(0,length=B-length(x)))-mean(c(x,rep(0,length=B-length(x))),na.rm=TRUE))^4 / var(c(x,rep(0,length=B-length(x))),na.rm=TRUE)^2, na.rm=TRUE)/ (B-sum(is.na(x))) - 3 )",sep="")))
+}
   names(tab3)[ncol(tab3)] <- "kurtosis"
 
   TAB <- merge(tab1,tab2) ; TAB <- merge(TAB,tab3)
@@ -254,14 +277,26 @@ if (KurtSkew) {
 
   if (!ic) {
 
+if (object@param%in%c("sex","length","weight","maturity")) {
     eval(parse('',text=paste("tab2 <- aggregate(tab$value,list(",
-                             paste(c("time=tab$time"[timeStrata],"space=tab$space"[spaceStrata],"technical=tab$technical"[techStrata],"length=tab$length"),sep="",collapse=","),
+                             paste(c("time=tab$time"[timeStrata],"space=tab$space"[spaceStrata],"technical=tab$technical"[techStrata],fieldSpec),sep="",collapse=","),
                              "),function(x) quantile(x,probs=probs)[1])",sep="")))
+} else {
+    eval(parse('',text=paste("tab2 <- aggregate(tab$value,list(",
+                             paste(c("time=tab$time"[timeStrata],"space=tab$space"[spaceStrata],"technical=tab$technical"[techStrata],fieldSpec),sep="",collapse=","),
+                             "),function(x) quantile(c(x,rep(0,length=B-length(x))),probs=probs)[1])",sep="")))
+}
     names(tab2)[ncol(tab2)] <- "down"
-  
+
+if (object@param%in%c("sex","length","weight","maturity")) {
     eval(parse('',text=paste("tab3 <- aggregate(tab$value,list(",
-                             paste(c("time=tab$time"[timeStrata],"space=tab$space"[spaceStrata],"technical=tab$technical"[techStrata],"length=tab$length"),sep="",collapse=","),
+                             paste(c("time=tab$time"[timeStrata],"space=tab$space"[spaceStrata],"technical=tab$technical"[techStrata],fieldSpec),sep="",collapse=","),
                              "),function(x) quantile(x,probs=probs)[2])",sep="")))
+} else {  
+    eval(parse('',text=paste("tab3 <- aggregate(tab$value,list(",
+                             paste(c("time=tab$time"[timeStrata],"space=tab$space"[spaceStrata],"technical=tab$technical"[techStrata],fieldSpec),sep="",collapse=","),
+                             "),function(x) quantile(c(x,rep(0,length=B-length(x))),probs=probs)[2])",sep="")))
+}
     names(tab3)[ncol(tab3)] <- "up"
 
     TAB <- merge(tab1,tab2) ; TAB <- merge(TAB,tab3)
@@ -275,7 +310,7 @@ if (KurtSkew) {
 
   if (origin) {
   
-  TAB <- merge(TAB,tab0[,c("time"[timeStrata],"space"[spaceStrata],"technical"[techStrata],"length","value")],all.x=TRUE)  #'value' is the raw estimate
+  TAB <- merge(TAB,tab0[,c("time"[timeStrata],"space"[spaceStrata],"technical"[techStrata],vrbl,"value")],all.x=TRUE)  #'value' is the raw estimate
 
   }
 
