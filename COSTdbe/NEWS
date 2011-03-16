@@ -5,6 +5,7 @@ DOCUMENTATION
 BUG FIXES
     o CI et CV calculation from replicates reviewed (dbeCalc & dbePlotRep)
     o 'fillALKmult' crashed when considering empty strata -> fixed
+    o "+" operator applied to dbeOutput objects 
  
 		CHANGES IN COSTdbe VERSION 1.3.7
 
