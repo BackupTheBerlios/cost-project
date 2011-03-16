@@ -42,6 +42,9 @@ if (all(is.na(dfRep))) stop("missing data in input object!!")
   #is there any data?
 if (nrow(dfRep)==0) stop("no available data!!")
 
+#nb Iter
+B <- length(unique(dfRep$iter))              #added MM 15/03/2011
+
 #definition of aggregation fields
 exprBy <- paste("length=as.numeric(as.character(dfRep$length)),"["l"%in%vrbl],
                 "age=as.numeric(as.character(dfRep$age)),"["a"%in%vrbl],
@@ -53,9 +56,16 @@ exprBy <- paste("length=as.numeric(as.character(dfRep$length)),"["l"%in%vrbl],
 exprBy <- substr(exprBy,1,nchar(exprBy)-1)
 #stratified CI
 CIdf1 <- CIdf2 <- NULL
-eval(parse('',text=paste("CIdf1 <- aggregate(dfRep$value,list(",exprBy,"),function(x) quantile(x,probs=probs,...)[1])",sep=""))) ; names(CIdf1)[ncol(CIdf1)] <- "inf" 
-eval(parse('',text=paste("CIdf2 <- aggregate(dfRep$value,list(",exprBy,"),function(x) quantile(x,probs=probs,...)[2])",sep=""))) ; names(CIdf2)[ncol(CIdf2)] <- "sup" 
-eval(parse('',text=paste("CIdf3 <- aggregate(dfRep$value,list(",exprBy,"),mean,na.rm=TRUE)",sep=""))) ; names(CIdf3)[ncol(CIdf3)] <- "value" 
+
+if (object@param%in%c("sex","length","weight","maturity")) {
+  eval(parse('',text=paste("CIdf1 <- aggregate(dfRep$value,list(",exprBy,"),function(x) quantile(x,probs=probs,...)[1])",sep=""))) ; names(CIdf1)[ncol(CIdf1)] <- "inf"         #modified MM 15/03/2011
+  eval(parse('',text=paste("CIdf2 <- aggregate(dfRep$value,list(",exprBy,"),function(x) quantile(x,probs=probs,...)[2])",sep=""))) ; names(CIdf2)[ncol(CIdf2)] <- "sup"         #
+  eval(parse('',text=paste("CIdf3 <- aggregate(dfRep$value,list(",exprBy,"),mean,na.rm=TRUE)",sep=""))) ; names(CIdf3)[ncol(CIdf3)] <- "value"                   #
+} else {
+  eval(parse('',text=paste("CIdf1 <- aggregate(dfRep$value,list(",exprBy,"),function(x) quantile(c(x,rep(0,length=B-length(x))),probs=probs,...)[1])",sep=""))) ; names(CIdf1)[ncol(CIdf1)] <- "inf"         #modified MM 15/03/2011
+  eval(parse('',text=paste("CIdf2 <- aggregate(dfRep$value,list(",exprBy,"),function(x) quantile(c(x,rep(0,length=B-length(x))),probs=probs,...)[2])",sep=""))) ; names(CIdf2)[ncol(CIdf2)] <- "sup"         #
+  eval(parse('',text=paste("CIdf3 <- aggregate(dfRep$value,list(",exprBy,"),function(x) mean(c(x,rep(0,length=B-length(x))),na.rm=TRUE))",sep=""))) ; names(CIdf3)[ncol(CIdf3)] <- "value"                   #
+}
 #result
 df <- merge(CIdf1,CIdf2,sort=FALSE)
 df <- merge(df,CIdf3,sort=FALSE)
@@ -95,6 +105,9 @@ if (all(is.na(dfRep))) stop("missing data in input object!!")
   #is there any data?
 if (nrow(dfRep)==0) stop("no available data!!")
 
+#nb Iter
+B <- length(unique(dfRep$iter))              #added MM 15/03/2011
+
 #definition of aggregation fields
 exprBy <- paste("length=as.numeric(as.character(dfRep$length)),"["l"%in%vrbl],
                 "age=as.numeric(as.character(dfRep$age)),"["a"%in%vrbl],
@@ -106,7 +119,11 @@ exprBy <- paste("length=as.numeric(as.character(dfRep$length)),"["l"%in%vrbl],
 exprBy <- substr(exprBy,1,nchar(exprBy)-1)
 #stratified CV
 CVdf <- NULL
-eval(parse('',text=paste("CVdf <- aggregate(dfRep$value,list(",exprBy,"),function(x) sd(x)/mean(x))",sep=""))) 
+if (object@param%in%c("sex","length","weight","maturity")) {
+  eval(parse('',text=paste("CVdf <- aggregate(dfRep$value,list(",exprBy,"),function(x) sd(x,na.rm=TRUE)/mean(x,na.rm=TRUE))",sep="")))     #added MM 15/03/2011
+} else {
+  eval(parse('',text=paste("CVdf <- aggregate(dfRep$value,list(",exprBy,"),function(x) sd(c(x,rep(0,length=B-length(x))),na.rm=TRUE)/mean(c(x,rep(0,length=B-length(x))),na.rm=TRUE))",sep="")))     #added MM 15/03/2011
+}
 names(CVdf)[ncol(CVdf)] <- "value" 
 
 #formatting process
@@ -117,7 +134,11 @@ rownames(DF) <- 1:nrow(DF)
 #dcrCvIndicator calculation
 #stratified estimates
 ESTdf <- NULL
-eval(parse('',text=paste("ESTdf <- aggregate(dfRep$value,list(",exprBy,"),mean)",sep=""))) 
+if (object@param%in%c("sex","length","weight","maturity")) {
+  eval(parse('',text=paste("ESTdf <- aggregate(dfRep$value,list(",exprBy,"),mean,na.rm=TRUE)",sep=""))) 
+} else {
+  eval(parse('',text=paste("ESTdf <- aggregate(dfRep$value,list(",exprBy,"),function(x) mean(c(x,rep(0,length=B-length(x))),na.rm=TRUE))",sep=""))) 
+}
 names(ESTdf)[ncol(ESTdf)] <- "value" 
 dcrInd <- sum(CVdf$value*ESTdf$value/sum(ESTdf$value,na.rm=TRUE),na.rm=TRUE)
 
