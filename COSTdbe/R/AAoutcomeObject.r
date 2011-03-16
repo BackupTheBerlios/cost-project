@@ -278,6 +278,11 @@ if (all(is.na(tab2))) {
   res <- tab1
 } else {
   TAB <- rbind(tab1,tab2)
+  if ("time"%in%names(TAB)) TAB$time <- factor(as.character(TAB$time))                                      #modif MM 15/03/2011
+  if ("space"%in%names(TAB)) TAB$space <- factor(as.character(TAB$space))                                   #
+  if ("technical"%in%names(TAB)) TAB$technical <- factor(as.character(TAB$technical))                       #
+  if ("length"%in%names(TAB)) TAB$length <- factor(as.numeric(as.character(TAB$length)))                    #
+  if ("age"%in%names(TAB)) TAB$age <- factor(as.numeric(as.character(TAB$age)))                             #
   res <- aggregate(TAB$value,as.list(TAB[,rev(names(TAB)[-match("value",names(TAB))])]),sum,na.rm=TRUE)
   names(res)[ncol(res)] <- "value"
 }}
@@ -291,8 +296,8 @@ elt <- c("nSamp$len","nSamp$age","nMeas$len","nMeas$age",
          "totalN$estim","totalN$rep","totalNvar",
          "totalW$estim","totalW$rep","totalWvar")
 
-invisible(sapply(elt,function(z) eval(parse('',text=paste("eT@",z," <<- addDBE(e1@",z,",e2@",z,")",sep=""))))) 
-
+#invisible(sapply(elt,function(z) eval(parse('',text=paste("eT@",z," <<- addDBE(e1@",z,",e2@",z,")",sep="")))))    #problème d'écrasement de 'e1' lors de la première itération (nSamp écrasé??!??)
+for (i in elt) eval(parse('',text=paste("eT@",i," <- addDBE(e1@",i,",e2@",i,")",sep="")))
 
 
 eltNA <- c("lenNum$ci","lenNum$cv","lenNum$DCRcvIndicator",
@@ -300,8 +305,8 @@ eltNA <- c("lenNum$ci","lenNum$cv","lenNum$DCRcvIndicator",
            "totalNnum$ci","totalNnum$cv","totalNnum$DCRcvIndicator",
            "totalWnum$ci","totalWnum$cv","totalWnum$DCRcvIndicator")
 
-invisible(sapply(eltNA,function(z) eval(parse('',text=paste("eT@",z," <<- new(\"dbeOutput\")@",z,sep=""))))) 
-
+#invisible(sapply(eltNA,function(z) eval(parse('',text=paste("eT@",z," <<- new(\"dbeOutput\")@",z,sep="")))))      #idem
+for (i in eltNA) eval(parse('',text=paste("eT@",i," <- new(\"dbeOutput\")@",i,sep="")))
 
 if (!all(is.na(e1@lenNum$ci)) & !all(is.na(e2@lenNum$ci))) { #alors, on procède au calcul!!
 
