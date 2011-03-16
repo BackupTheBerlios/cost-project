@@ -28,22 +28,24 @@ for (i in 1:nrow(strat)) {
   print(strat[i,,drop=TRUE])
   CAsub <- merge(strat[i,,drop=FALSE],CA)
   missSub <- merge(strat[i,,drop=FALSE],missingLC )
-  #multinomial model is computed on this dataset
-  mult <- multinom(age~lenCls,data=CAsub)
-  mlc <- sort(missSub$lenCls)
-
-  nbAtAge <- round(p*predict(mult,data.frame(lenCls=mlc),type="probs"))
-  rownames(nbAtAge) <- mlc
-  #--> table
-  nbAtAgeT <- data.frame(expand.grid(dimnames(nbAtAge)),as.vector(nbAtAge))
-  nbAtAgeT2 <- data.frame(lenCls=rep(nbAtAgeT[,1],nbAtAgeT[,3]), age=rep(nbAtAgeT[,2],nbAtAgeT[,3]))
-  minId <- min(c(0,CA$fishId),na.rm=TRUE) ; nbAtAgeT2$fishId <- minId-1:nrow(nbAtAgeT2)
-  root <- CAsub[1,] ; root$sex <- root$otoWt <- root$otoSide <- root$indWt <- root$matMeth <- root$matScale <- root$matStage <- NA
-  virtual <- do.call("rbind",lapply(1:nrow(nbAtAgeT2),function(x) return(root)))
-  virtual[,c("lenCls","age","fishId")] <- nbAtAgeT2
-  virtual$lenCls <- as.numeric(as.character(virtual$lenCls)) ; virtual$age <- as.numeric(as.character(virtual$age))
-
-  CA <- rbind(CA,virtual)
+  if (nrow(CAsub)>1) {                                                          #MM modif 15/03/2011
+    #multinomial model is computed on this dataset
+    mult <- multinom(age~lenCls,data=CAsub)
+    mlc <- sort(missSub$lenCls)
+  
+    nbAtAge <- round(p*predict(mult,data.frame(lenCls=mlc),type="probs"))
+    rownames(nbAtAge) <- mlc
+    #--> table
+    nbAtAgeT <- data.frame(expand.grid(dimnames(nbAtAge)),as.vector(nbAtAge))
+    nbAtAgeT2 <- data.frame(lenCls=rep(nbAtAgeT[,1],nbAtAgeT[,3]), age=rep(nbAtAgeT[,2],nbAtAgeT[,3]))
+    minId <- min(c(0,CA$fishId),na.rm=TRUE) ; nbAtAgeT2$fishId <- minId-1:nrow(nbAtAgeT2)
+    root <- CAsub[1,] ; root$sex <- root$otoWt <- root$otoSide <- root$indWt <- root$matMeth <- root$matScale <- root$matStage <- NA
+    virtual <- do.call("rbind",lapply(1:nrow(nbAtAgeT2),function(x) return(root)))
+    virtual[,c("lenCls","age","fishId")] <- nbAtAgeT2
+    virtual$lenCls <- as.numeric(as.character(virtual$lenCls)) ; virtual$age <- as.numeric(as.character(virtual$age))
+  
+    CA <- rbind(CA,virtual)  
+  }                                                                             #MM modif 15/03/2011
 
  }
 }
