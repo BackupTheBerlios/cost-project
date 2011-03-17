@@ -163,10 +163,12 @@ recFun <- function(df,field,rec) {                                              
   return(df)                                                                                                                  #
 }                                                                                                                             #
 
+
+if (!Cons) { #recoding process                                                  #modif 20/01/2009
+
 #a time stratification field is missing in cl/ce table, so we add it to df
 df$semester <- ceiling(df$quarter/2)
 
-if (!Cons) { #recoding process                                                  #modif 20/01/2009
   if (!is.na(tpRec[1])) df <- recFun(df,timeStrata,tpRec)                       #
   if (!is.na(spRec[1])) df <- recFun(df,spaceStrata,spRec)                      #
   if (!is.na(tcRec[1])) df <- recFun(df,techStrata,tcRec)                       #
