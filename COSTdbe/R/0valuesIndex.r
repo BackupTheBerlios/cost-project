@@ -77,7 +77,8 @@ if (nrow(restrHL)>0) {#recorded information in HL                               
 #detect FOs that are recorded in SL but not in HL
 restrHL$Ind <- 1 ; indMeas <- merge(unique(restrSL),restrHL,all.x=TRUE) ; indMeas$Ind[is.na(indMeas$Ind)] <- 0
 #match index with HH
-indMs <- merge(x@hh,indMeas[indMeas$Ind==0,c("PSUid","SSUid","TSUid","Ind")],all.x=TRUE)$Ind
+indMeas <- with(indMeas,aggregate(list(Ind=Ind),list(PSUid=PSUid,SSUid=SSUid),max))       ##added MM 13/04/2011  FO sampled for at least one TTSUid
+indMs <- merge(x@hh,indMeas[indMeas$Ind==0,c("PSUid","SSUid","Ind")],all.x=TRUE)$Ind
 #NAs in 'indMS' means that if info is in SL, then it is in HL
 #so, Lindex is...
 Lindex <- Windex ; Lindex[!is.na(indMs)] <- NA
