@@ -34,6 +34,8 @@ for (i in 1:nrow(strat)) {
     mlc <- sort(missSub$lenCls)
   
     nbAtAge <- round(p*predict(mult,data.frame(lenCls=mlc),type="probs"))
+    if (is.null(nrow(nbAtAge))) nbAtAge <- t(as.matrix(nbAtAge))
+
     rownames(nbAtAge) <- mlc
     #--> table
     nbAtAgeT <- data.frame(expand.grid(dimnames(nbAtAge)),as.vector(nbAtAge))
