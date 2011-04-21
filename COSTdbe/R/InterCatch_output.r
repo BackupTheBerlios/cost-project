@@ -93,7 +93,7 @@ HI <- within (HI, {
 SI <- data.frame (
   RecordType = "SI" ,
   Country,
-  Year = substr (dbeOutput@totalN$estim$time, start=1, stop=4) ,
+  Year = substr (dbeOutput@totalW$estim$time, start=1, stop=4) ,     #MM 15/04/2010   totalN-->totalW
   SeasonType = dbeOutput@strataDesc@timeStrata ,
   Season = sapply (strsplit (as.character (dbeOutput@totalW$estim$time), " - "), FUN = function(x){x[2]} ) ,
   Fleet = as.character (dbeOutput@totalW$estim$technical) ,
