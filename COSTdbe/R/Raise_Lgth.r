@@ -117,6 +117,8 @@ csObject@sl$subSampWt <- csObject@sl$subSampWt*IndSL$ind                        
 
 #some calculations must be made BEFORE subsetting
 
+#SL_STR <- do.call(`paste`, c(csObject@sl[,c("time","space","technical")],list(sep=":-:")))   #modif MM 6/6/2011  ; concatenation problems with 'apply' and 'paste' (spaces)
+
 SL_STR <- apply(csObject@sl[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
 
 
@@ -148,6 +150,13 @@ dbeOutput@nMeas$len <- nMEAS                                                    
 SL <- csObject@sl                            #MM 24/04/2009
 HL <- csObject@hl                             #MM 24/04/2009
 #creating STR field, concatenation of time, space, technical
+
+#HHSTR <- do.call(`paste`, c(csObject@hh[,c("time","space","technical")],list(sep=":-:")))   #modif MM 6/6/2011
+#SL$STR <- do.call(`paste`, c(SL[,c("time","space","technical")],list(sep=":-:")))           #modif MM 6/6/2011
+#HL$STR <- do.call(`paste`, c(HL[,c("time","space","technical")],list(sep=":-:")))           #modif MM 6/6/2011
+#Hl$STR <- do.call(`paste`, c(Hl[,c("time","space","technical")],list(sep=":-:")))           #modif MM 6/6/2011
+
+
 HHSTR <- apply(csObject@hh[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
 SL$STR <- apply(SL[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
 HL$STR <- apply(HL[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))
@@ -190,7 +199,7 @@ wl_tsu <- dbeAgg(wl,c(1,3:5),sum,na.rm=TRUE)
 #SSUid stage
   #sum.d_jssu <- apply(d_jtsu,c(1,4,5),sum,na.rm=TRUE)
   ##expr <- d_j*(as.vector(wl/ws)) <------
-expr <- list(val = d_j$val * dbeReplic(list(val = wl$val/ws$val, ind = wl$ind), d_j$ind[1:5,])$val , ind = d_j$ind)
+expr <- list(val = d_j$val * dbeReplic(list(val = wl$val/ws$val, ind = wl$ind), d_j$ind[1:5,,drop=FALSE])$val , ind = d_j$ind)
 
   ##sum.d_jssu <- RowSum(expr,c(1,5,6)) <------
 sum.d_jssu <- dbeAgg(expr,c(1,5,6),sum,na.rm=TRUE)
@@ -206,16 +215,16 @@ sum.wl_ssu <- dbeAgg(wl_tsu,c(1,4),sum,na.rm=TRUE)
   ##                                      PSUid=factor(csObject@hh$PSUid,levels=nam$PSUid)),function(x) length(unique(x))) <------
 
 Mi <- catApply(csObject@hh$SSUid,list(as.character(HHSTR),as.character(csObject@hh$PSUid)),function(x) length(unique(x)))
-Mi_a <- dbeReplic(Mi,sum.d_jssu$ind[1:2,])  #on met à la dimension de 'sum.d_jssu'
-Mi_b <- dbeReplic(Mi,sum.w_ssu$ind[1:2,])  #on met à la dimension de 'sum.w_ssu'
+Mi_a <- dbeReplic(Mi,sum.d_jssu$ind[1:2,,drop=FALSE])  #on met à la dimension de 'sum.d_jssu'
+Mi_b <- dbeReplic(Mi,sum.w_ssu$ind[1:2,,drop=FALSE])  #on met à la dimension de 'sum.w_ssu'
 
 Hl <- Hl[!is.na(Hl$ind),]
   ##mi <- tapply(Hl$ind,list(STR=factor(Hl$STR,levels=nam$STR),
   ##                         PSUid=factor(Hl$PSUid,levels=nam$PSUid)),function(x) length(unique(x))) <------
 
 mi <- catApply(Hl$ind,list(STR=as.character(Hl$STR),as.character(Hl$PSUid)),length)
-mi_a <- dbeReplic(mi,sum.d_jssu$ind[1:2,])
-mi_b <- dbeReplic(mi,sum.w_ssu$ind[1:2,])
+mi_a <- dbeReplic(mi,sum.d_jssu$ind[1:2,,drop=FALSE])
+mi_b <- dbeReplic(mi,sum.w_ssu$ind[1:2,,drop=FALSE])
 #mi <- tapply(SL$SSUid,list(STR=factor(SL$STR,levels=nam$STR),
 #                           PSUid=factor(SL$PSUid,levels=nam$PSUid)),function(x) length(unique(x)))
 
@@ -262,8 +271,15 @@ if (!missing(clObject)) {
 
   ##W <- tapply(totLandings$W*1000,list(factor(apply(totLandings[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:")),
     ##levels=dimnames(d_j)[[1]])),sum,na.rm=TRUE) <------ + l.185
+
+#W <- catApply(totLandings$W*1000,list(do.call(`paste`, c(totLandings[,c("time","space","technical")],list(sep=":-:")))),
+#        sum,na.rm=TRUE)                                     #modif MM 6/6/2011
+
+
 W <- catApply(totLandings$W*1000,list(apply(totLandings[,c("time","space","technical")],1,function(x) paste(x,collapse=":-:"))),
         sum,na.rm=TRUE)
+
+
         
 } else {
   
@@ -272,9 +288,9 @@ W <- sum.wl_psu
 }
 
 #on remet au format
-W_a <- dbeReplic(W,sum.d_jpsu$ind[1,])
-sum.wl_psu_a <- dbeReplic(sum.wl_psu,sum.d_jpsu$ind[1,])
-W_b <- dbeReplic(W,sum.w_psu$ind[1,])
+W_a <- dbeReplic(W,sum.d_jpsu$ind[1,,drop=FALSE])
+sum.wl_psu_a <- dbeReplic(sum.wl_psu,sum.d_jpsu$ind[1,,drop=FALSE])
+W_b <- dbeReplic(W,sum.w_psu$ind[1,,drop=FALSE])
 
   ##D_j <- sum.d_jpsu*as.vector(W/sum.wl_psu) <------
 D_j <- list(val = sum.d_jpsu$val * W_a$val / sum.wl_psu_a$val, ind = sum.d_jpsu$ind)
@@ -312,12 +328,12 @@ if (!missing(clObject)) {
   second <- 1/(sum.wl_psu$val^2/n)
 
 }
-  third  <- list(val = sum.d_jpsu$val/dbeReplic(sum.wl_psu,sum.d_jpsu$ind[1,])$val , ind = sum.d_jpsu$ind)
+  third  <- list(val = sum.d_jpsu$val/dbeReplic(sum.wl_psu,sum.d_jpsu$ind[1,,drop=FALSE])$val , ind = sum.d_jpsu$ind)
 #  third.2 <- aperm(array(rep(as.vector(third.1),dim(w_psu)[2]),dim=dim(d_jpsu)[c(1,3,2)]),c(1,3,2))
-  third.2 <- d_jpsu.new$val - dbeReplic(third,d_jpsu.new$ind[c(1,3),])$val * dbeReplic(wl_psu,d_jpsu.new$ind[1:2,])$val  ##attention ici aux 0-values
+  third.2 <- d_jpsu.new$val - dbeReplic(third,d_jpsu.new$ind[c(1,3),,drop=FALSE])$val * dbeReplic(wl_psu,d_jpsu.new$ind[1:2,,drop=FALSE])$val  ##attention ici aux 0-values
   third.3 <- dbeAgg(list(val = third.2^2, ind = d_jpsu.new$ind),c(1,3),sum,na.rm=TRUE)
-third <- third.3$val / (n-1)[third.3$ind[1,]]
-VarD_j <- third * (first*second)[third.3$ind[1,]]
+third <- third.3$val / (n-1)[third.3$ind[1,,drop=FALSE]]
+VarD_j <- third * (first*second)[third.3$ind[1,,drop=FALSE]]
 VarD_j[is.nan(VarD_j)] <- 0
 VarD_j[is.infinite(VarD_j)] <- 0
 

@@ -187,36 +187,36 @@ N <- tapply(ceObject@ce$trpNum,list(factor(CEstrat,levels=unique(as.character(yi
 #so, estimate of the total volume is...
   ##yiBar <- RowSum(yijk,c(1,3,4))/as.vector(mi)
 tt <- dbeAgg(yijk.new,c(1,3,4),sum,na.rm=TRUE)
-yiBar <- list(val = tt$val/dbeReplic(mi,tt$ind[1:2,])$val, ind = tt$ind)
+yiBar <- list(val = tt$val/dbeReplic(mi,tt$ind[1:2,,drop=FALSE])$val, ind = tt$ind)
 
   ##yI <- RowSum(yiBar*as.vector(Mi),c(2,3))*as.vector(N/n)         
-tt <- dbeAgg(list(val = yiBar$val * dbeReplic(list(val = Mi, ind= mi$ind),tt$ind[1:2,])$val , ind = yiBar$ind),2:3,sum,na.rm=TRUE)
+tt <- dbeAgg(list(val = yiBar$val * dbeReplic(list(val = Mi, ind= mi$ind),tt$ind[1:2,,drop=FALSE])$val , ind = yiBar$ind),2:3,sum,na.rm=TRUE)
 yI <- list(val = tt$val*(N/n)[tt$ind[1,]] , ind = tt$ind)
 
 #and, its associated variance is...
   ##yiHat <- yiBar*as.vector(Mi) 
-yiHat <- list(val = yiBar$val*dbeReplic(list(val=Mi,ind=mi$ind),yiBar$ind[1:2,])$val, ind= yiBar$ind)
+yiHat <- list(val = yiBar$val*dbeReplic(list(val=Mi,ind=mi$ind),yiBar$ind[1:2,,drop=FALSE])$val, ind= yiBar$ind)
   ##yBar <- RowSum(yiHat,c(2,3))/as.vector(n)
 tt <- dbeAgg(yiHat,c(2,3),sum,na.rm=TRUE)
 yBar <- list(val = tt$val/(n)[tt$ind[1,]] , ind = tt$ind)
 
   ##s2i <- RowSum(aperm(aperm(yijk,c(1,3,4,2))-rep(yiBar,dim(yijk)[2]),c(1,4,2,3))^2,c(1,3,4))/as.vector(mi-1)
-tt <- dbeAgg(list(val = (yijk.new$val - dbeReplic(yiBar,yijk.new$ind[c(1,3:4),])$val)^2, ind = yijk.new$ind),c(1,3,4),sum,na.rm=TRUE) 
-s2i <- list(val = tt$val/dbeReplic(list(val = mi$val-1, ind = mi$ind),tt$ind[1:2,])$val , ind = tt$ind)
+tt <- dbeAgg(list(val = (yijk.new$val - dbeReplic(yiBar,yijk.new$ind[c(1,3:4),,drop=FALSE])$val)^2, ind = yijk.new$ind),c(1,3,4),sum,na.rm=TRUE) 
+s2i <- list(val = tt$val/dbeReplic(list(val = mi$val-1, ind = mi$ind),tt$ind[1:2,,drop=FALSE])$val , ind = tt$ind)
 
   #Nan & Inf values in 's2i' must be replaced by 0 (mi=1 ==> var=0)
 s2i$val[is.nan(s2i$val)] <- 0 ; s2i$val[is.infinite(s2i$val)] <- 0 
 
   #first part of the formula of variance
   ##first <- RowSum((yiHat-rep(yBar,each=dim(yiHat)[1]))^2,c(2,3))*as.vector(N*N/(n*(n-1)))
-tt <- dbeAgg(list(val = (yiHat$val - dbeReplic(yBar,yiHat$ind[2:3,])$val)^2, ind = yiHat$ind),c(2,3),sum,na.rm=TRUE)
+tt <- dbeAgg(list(val = (yiHat$val - dbeReplic(yBar,yiHat$ind[2:3,,drop=FALSE])$val)^2, ind = yiHat$ind),c(2,3),sum,na.rm=TRUE)
 first <- tt$val * (N*N/(n*(n-1)))[tt$ind[1,]]
 
 first[is.nan(first)] <- 0 ; first[is.infinite(first)] <- 0                  #(variance inter trip, so n=1 ==> first=0 ????)
   
   #second part of the formula
   ##second <- RowSum(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3))*as.vector(N/n)                     #variance intra trip
-tt <- dbeAgg(list(val= s2i$val * dbeReplic(list(val = Mi*(Mi-mi$val)/mi$val, ind = mi$ind), s2i$ind[1:2,])$val , ind = s2i$ind) , 
+tt <- dbeAgg(list(val= s2i$val * dbeReplic(list(val = Mi*(Mi-mi$val)/mi$val, ind = mi$ind), s2i$ind[1:2,,drop=FALSE])$val , ind = s2i$ind) , 
                     2:3, sum, na.rm=TRUE) 
 second <- tt$val * (N/n)[tt$ind[1,]]
 #VyI
@@ -389,10 +389,10 @@ Mo <- tapply(ceObject@ce$foNum,list(factor(CEstrat,levels=unique(as.character(yi
 #so, estimate of the total volume is...
   ##yiBar <- RowSum(yijk,c(1,3,4))/as.vector(mi)
 tt <- dbeAgg(yijk.new,c(1,3,4),sum,na.rm=TRUE)
-yiBar <- list(val = tt$val/dbeReplic(mi,tt$ind[1:2,])$val, ind = tt$ind)
+yiBar <- list(val = tt$val/dbeReplic(mi,tt$ind[1:2,,drop=FALSE])$val, ind = tt$ind)
 
   ##yII <- RowSum(yiBar*as.vector(Mi),c(2,3))*as.vector(Mo/apply(Mi,2,sum,na.rm=TRUE))         #if NAs, should be coming from Mo (unavailable population level data)
-tt <- dbeAgg(list(val = yiBar$val * dbeReplic(list(val = Mi, ind= mi$ind),yiBar$ind[1:2,])$val , ind = yiBar$ind),2:3,sum,na.rm=TRUE)
+tt <- dbeAgg(list(val = yiBar$val * dbeReplic(list(val = Mi, ind= mi$ind),yiBar$ind[1:2,,drop=FALSE])$val , ind = yiBar$ind),2:3,sum,na.rm=TRUE)
 yII <- tt$val * Mo[tt$ind[1,]] / dbeAgg(list(val=Mi,ind=mi$ind),2,sum,na.rm=TRUE)$val[tt$ind[1,]]
 
 
@@ -402,23 +402,23 @@ tt <- dbeAgg(yiBar,c(2,3),sum,na.rm=TRUE)
 yBarBar <- list(val = tt$val/(n)[tt$ind[1,]] , ind = tt$ind)
 
   ##s2i <- RowSum(aperm(aperm(yijk,c(1,3,4,2))-rep(yiBar,dim(yijk)[2]),c(1,4,2,3))^2,c(1,3,4))/as.vector(mi-1)
-tt <- dbeAgg(list(val = (yijk.new$val - dbeReplic(yiBar,yijk.new$ind[c(1,3:4),])$val)^2, ind = yijk.new$ind),c(1,3,4),sum,na.rm=TRUE) 
-s2i <- list(val = tt$val/dbeReplic(list(val = mi$val-1, ind = mi$ind),tt$ind[1:2,])$val , ind = tt$ind)
+tt <- dbeAgg(list(val = (yijk.new$val - dbeReplic(yiBar,yijk.new$ind[c(1,3:4),,drop=FALSE])$val)^2, ind = yijk.new$ind),c(1,3,4),sum,na.rm=TRUE) 
+s2i <- list(val = tt$val/dbeReplic(list(val = mi$val-1, ind = mi$ind),tt$ind[1:2,,drop=FALSE])$val , ind = tt$ind)
 
   #Nan & Inf values in 's2i' must be replaced by 0 (mi=1 ==> var=0)
 s2i$val[is.nan(s2i$val)] <- 0 ; s2i$val[is.infinite(s2i$val)] <- 0 
  
   #first part of the formula
   ##first <- RowSum(((yiBar-rep(yBarBar,each=dim(yiBar)[1]))*as.vector(Mi))^2,c(2,3))*as.vector(Mo*Mo/(n*MBar*MBar*(n-1)))
-tt <- dbeAgg(list(val = ((yiBar$val - dbeReplic(yBarBar,yiBar$ind[2:3,])$val) * 
-                  dbeReplic(list(val= Mi,ind = mi$ind),yiBar$ind[1:2,])$val)^2, ind = yiBar$ind),c(2,3),sum,na.rm=TRUE)
+tt <- dbeAgg(list(val = ((yiBar$val - dbeReplic(yBarBar,yiBar$ind[2:3,,drop=FALSE])$val) * 
+                  dbeReplic(list(val= Mi,ind = mi$ind),yiBar$ind[1:2,,drop=FALSE])$val)^2, ind = yiBar$ind),c(2,3),sum,na.rm=TRUE)
 first <- tt$val * (Mo*Mo/(n*(n-1)))[tt$ind[1,]] / (MBar$val*MBar$val)[tt$ind[1,]]
 
 first[is.nan(first)] <- 0 ; first[is.infinite(first)] <- 0                  #(variance inter trip, so n=1 ==> first=0 ????)
   
   #second part of the formula
   ##second <- RowSum(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3))*as.vector(Mo/(n*MBar))                     #variance intra trip
-tt <- dbeAgg(list(val= s2i$val * dbeReplic(list(val = Mi*(Mi-mi$val)/mi$val, ind = mi$ind), s2i$ind[1:2,])$val , ind = s2i$ind) , 
+tt <- dbeAgg(list(val= s2i$val * dbeReplic(list(val = Mi*(Mi-mi$val)/mi$val, ind = mi$ind), s2i$ind[1:2,,drop=FALSE])$val , ind = s2i$ind) , 
                     2:3, sum, na.rm=TRUE) 
 second <- tt$val * (Mo/n)[tt$ind[1,]] / MBar$val[tt$ind[1,]]
 
@@ -610,14 +610,14 @@ X <- tapply(ceObject@ce$foDur*60,list(factor(CEstrat,levels=unique(as.character(
 #so, estimate of the total volume is...
   ##yiBar <- RowSum(yijk,c(1,3,4))/as.vector(mi) 
 tt <- dbeAgg(yijk.new,c(1,3,4),sum,na.rm=TRUE)
-yiBar <- list(val = tt$val/dbeReplic(mi,tt$ind[1:2,])$val, ind = tt$ind)
+yiBar <- list(val = tt$val/dbeReplic(mi,tt$ind[1:2,,drop=FALSE])$val, ind = tt$ind)
 
   ##xiBar <- RowSum(xij,c(1,3))/mi 
 tt <- dbeAgg(TT,c(1,3),sum,na.rm=TRUE)
 xiBar <- list(val = tt$val/mi$val[names(tt$val)], ind = tt$ind)
     
   ##Rhat <- RowSum(yiBar*as.vector(Mi),c(2,3))/as.vector(apply(Mi*xiBar,2,sum,na.rm=TRUE))        
-tt <- dbeAgg(list(val = yiBar$val * dbeReplic(list(val = Mi, ind= mi$ind),yiBar$ind[1:2,])$val , ind = yiBar$ind),2:3,sum,na.rm=TRUE)
+tt <- dbeAgg(list(val = yiBar$val * dbeReplic(list(val = Mi, ind= mi$ind),yiBar$ind[1:2,,drop=FALSE])$val , ind = yiBar$ind),2:3,sum,na.rm=TRUE)
 tt2 <- dbeAgg(list(val = xiBar$val * Mi[names(xiBar$val)] , ind = xiBar$ind),2,sum,na.rm=TRUE)
 Rhat <- list(val = tt$val / tt2$val[tt$ind[1,]] , ind = tt$ind)
     
@@ -626,34 +626,34 @@ yIII <- Rhat$val*X[Rhat$ind[1,]]                                                
 #and, its associated variance is...
 
   ##yiHat <- yiBar*as.vector(Mi) 
-yiHat <- list(val = yiBar$val*dbeReplic(list(val=Mi,ind=mi$ind),yiBar$ind[1:2,])$val, ind= yiBar$ind)
+yiHat <- list(val = yiBar$val*dbeReplic(list(val=Mi,ind=mi$ind),yiBar$ind[1:2,,drop=FALSE])$val, ind= yiBar$ind)
 
   ##xiHat <- Mi*xiBar
 xiHat <- xiBar$val * Mi[names(xiBar$val)]
   
   ##s2iPart1 <- yijk-rep(xij,dim(yijk)[4])*rep(Rhat,each=prod(dim(yijk)[1:2]))  #warning : length data in 'yijk and 'Rhat', but not in 'xij'
-s2iPart1 <- list(val = yijk.new$val - dbeReplic(TT,yijk.new$ind[1:3,])$val * dbeReplic(Rhat,yijk.new$ind[3:4,])$val , ind = yijk.new$ind)
+s2iPart1 <- list(val = yijk.new$val - dbeReplic(TT,yijk.new$ind[1:3,,drop=FALSE])$val * dbeReplic(Rhat,yijk.new$ind[3:4,,drop=FALSE])$val , ind = yijk.new$ind)
 
   ##s2iPart2 <- yiBar-rep(xiBar,dim(yijk)[4])*rep(Rhat,each=dim(xiBar)[1])
-s2iPart2 <- list(val = yiBar$val - dbeReplic(xiBar,yiBar$ind[1:2,])$val * dbeReplic(Rhat,yiBar$ind[2:3,])$val , ind = yiBar$ind)
+s2iPart2 <- list(val = yiBar$val - dbeReplic(xiBar,yiBar$ind[1:2,,drop=FALSE])$val * dbeReplic(Rhat,yiBar$ind[2:3,,drop=FALSE])$val , ind = yiBar$ind)
 
   ##s2i <- RowSum(aperm(aperm(s2iPart1,c(1,3,4,2))-rep(s2iPart2,dim(s2iPart1)[2]),c(1,4,2,3))^2,c(1,3,4))/as.vector(mi-1)
-tt <- dbeAgg(list(val = (s2iPart1$val - dbeReplic(s2iPart2,s2iPart1$ind[c(1,3:4),])$val)^2 , ind = s2iPart1$ind),c(1,3,4), sum, na.rm=TRUE)
-s2i <- list(val = tt$val / (dbeReplic(mi, tt$ind[1:2,])$val - 1) , ind = tt$ind)
+tt <- dbeAgg(list(val = (s2iPart1$val - dbeReplic(s2iPart2,s2iPart1$ind[c(1,3:4),,drop=FALSE])$val)^2 , ind = s2iPart1$ind),c(1,3,4), sum, na.rm=TRUE)
+s2i <- list(val = tt$val / (dbeReplic(mi, tt$ind[1:2,,drop=FALSE])$val - 1) , ind = tt$ind)
   #Nan & Inf values in 's2i' must be replaced by 0 (mi=1 ==> var=0)
 s2i$val[is.nan(s2i$val)] <- 0 ; s2i$val[is.infinite(s2i$val)] <- 0 
   
   #first part of the formula
   ##first <- RowSum((yiHat-rep(xiHat,dim(yijk)[4])*rep(Rhat,each=dim(xiHat)[1]))^2,c(2,3))*as.vector(N*N/(n*(n-1)))  
-tt <- dbeAgg(list(val = (yiHat$val - dbeReplic(list(val = xiHat, ind = xiBar$ind),yiHat$ind[1:2,])$val * 
-                          dbeReplic(Rhat,yiHat$ind[2:3,])$val)^2, ind = yiHat$ind),c(2,3),sum,na.rm=TRUE)
+tt <- dbeAgg(list(val = (yiHat$val - dbeReplic(list(val = xiHat, ind = xiBar$ind),yiHat$ind[1:2,,drop=FALSE])$val * 
+                          dbeReplic(Rhat,yiHat$ind[2:3,,drop=FALSE])$val)^2, ind = yiHat$ind),c(2,3),sum,na.rm=TRUE)
 first <- tt$val * (N*N/(n*(n-1)))[tt$ind[1,]]
 
 first[is.nan(first)] <- 0 ; first[is.infinite(first)] <- 0                  #not sure about that (variance inter trip, so n=1 ==> first=0 ????)
   
   #second part of the formula
   ##second <- RowSum(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3))*as.vector(N/n)                     
-tt <- dbeAgg(list(val= s2i$val * dbeReplic(list(val = Mi*(Mi-mi$val)/mi$val, ind = mi$ind), s2i$ind[1:2,])$val , ind = s2i$ind) , 
+tt <- dbeAgg(list(val= s2i$val * dbeReplic(list(val = Mi*(Mi-mi$val)/mi$val, ind = mi$ind), s2i$ind[1:2,,drop=FALSE])$val , ind = s2i$ind) , 
                     2:3, sum, na.rm=TRUE) 
 second <- tt$val * (N/n)[tt$ind[1,]]
 
@@ -862,14 +862,14 @@ X <- tapply(TotLand,list(factor(CLstrat,levels=unique(as.character(yijk.new$ind[
 
   ##yiBar <- RowSum(yijk,c(1,3,4))/as.vector(mi) 
 tt <- dbeAgg(yijk.new,c(1,3,4),sum,na.rm=TRUE)
-yiBar <- list(val = tt$val/dbeReplic(mi,tt$ind[1:2,])$val, ind = tt$ind)
+yiBar <- list(val = tt$val/dbeReplic(mi,tt$ind[1:2,,drop=FALSE])$val, ind = tt$ind)
 
   ##xiBar <- RowSum(xij,c(1,3))/mi 
 tt <- dbeAgg(TT,c(1,3),sum,na.rm=TRUE)
 xiBar <- list(val = tt$val/mi$val[names(tt$val)], ind = tt$ind)
     
   ##Rhat <- RowSum(yiBar*as.vector(Mi),c(2,3))/as.vector(apply(Mi*xiBar,2,sum,na.rm=TRUE))        
-tt <- dbeAgg(list(val = yiBar$val * dbeReplic(list(val = Mi, ind= mi$ind),yiBar$ind[1:2,])$val , ind = yiBar$ind),2:3,sum,na.rm=TRUE)
+tt <- dbeAgg(list(val = yiBar$val * dbeReplic(list(val = Mi, ind= mi$ind),yiBar$ind[1:2,,drop=FALSE])$val , ind = yiBar$ind),2:3,sum,na.rm=TRUE)
 tt2 <- dbeAgg(list(val = xiBar$val * Mi[names(xiBar$val)] , ind = xiBar$ind),2,sum,na.rm=TRUE)
 Rhat <- list(val = tt$val / tt2$val[tt$ind[1,]] , ind = tt$ind)
     
@@ -880,34 +880,34 @@ yIII <- Rhat$val*X[Rhat$ind[1,]]                                                
 #and, its associated variance is...
 
   ##yiHat <- yiBar*as.vector(Mi) 
-yiHat <- list(val = yiBar$val*dbeReplic(list(val=Mi,ind=mi$ind),yiBar$ind[1:2,])$val, ind= yiBar$ind)
+yiHat <- list(val = yiBar$val*dbeReplic(list(val=Mi,ind=mi$ind),yiBar$ind[1:2,,drop=FALSE])$val, ind= yiBar$ind)
 
   ##xiHat <- Mi*xiBar
 xiHat <- xiBar$val * Mi[names(xiBar$val)]
   
   ##s2iPart1 <- yijk-rep(xij,dim(yijk)[4])*rep(Rhat,each=prod(dim(yijk)[1:2]))  #warning : length data in 'yijk and 'Rhat', but not in 'xij'
-s2iPart1 <- list(val = yijk.new$val - dbeReplic(TT,yijk.new$ind[1:3,])$val * dbeReplic(Rhat,yijk.new$ind[3:4,])$val , ind = yijk.new$ind)
+s2iPart1 <- list(val = yijk.new$val - dbeReplic(TT,yijk.new$ind[1:3,,drop=FALSE])$val * dbeReplic(Rhat,yijk.new$ind[3:4,,drop=FALSE])$val , ind = yijk.new$ind)
 
   ##s2iPart2 <- yiBar-rep(xiBar,dim(yijk)[4])*rep(Rhat,each=dim(xiBar)[1])
-s2iPart2 <- list(val = yiBar$val - dbeReplic(xiBar,yiBar$ind[1:2,])$val * dbeReplic(Rhat,yiBar$ind[2:3,])$val , ind = yiBar$ind)
+s2iPart2 <- list(val = yiBar$val - dbeReplic(xiBar,yiBar$ind[1:2,,drop=FALSE])$val * dbeReplic(Rhat,yiBar$ind[2:3,,drop=FALSE])$val , ind = yiBar$ind)
 
   ##s2i <- RowSum(aperm(aperm(s2iPart1,c(1,3,4,2))-rep(s2iPart2,dim(s2iPart1)[2]),c(1,4,2,3))^2,c(1,3,4))/as.vector(mi-1)
-tt <- dbeAgg(list(val = (s2iPart1$val - dbeReplic(s2iPart2,s2iPart1$ind[c(1,3:4),])$val)^2 , ind = s2iPart1$ind),c(1,3,4), sum, na.rm=TRUE)
-s2i <- list(val = tt$val / (dbeReplic(mi, tt$ind[1:2,])$val - 1) , ind = tt$ind)
+tt <- dbeAgg(list(val = (s2iPart1$val - dbeReplic(s2iPart2,s2iPart1$ind[c(1,3:4),,drop=FALSE])$val)^2 , ind = s2iPart1$ind),c(1,3,4), sum, na.rm=TRUE)
+s2i <- list(val = tt$val / (dbeReplic(mi, tt$ind[1:2,,drop=FALSE])$val - 1) , ind = tt$ind)
   #Nan & Inf values in 's2i' must be replaced by 0 (mi=1 ==> var=0)
 s2i$val[is.nan(s2i$val)] <- 0 ; s2i$val[is.infinite(s2i$val)] <- 0 
   
   #first part of the formula
   ##first <- RowSum((yiHat-rep(xiHat,dim(yijk)[4])*rep(Rhat,each=dim(xiHat)[1]))^2,c(2,3))*as.vector(N*N/(n*(n-1)))  
-tt <- dbeAgg(list(val = (yiHat$val - dbeReplic(list(val = xiHat, ind = xiBar$ind),yiHat$ind[1:2,])$val * 
-                          dbeReplic(Rhat,yiHat$ind[2:3,])$val)^2, ind = yiHat$ind),c(2,3),sum,na.rm=TRUE)
+tt <- dbeAgg(list(val = (yiHat$val - dbeReplic(list(val = xiHat, ind = xiBar$ind),yiHat$ind[1:2,,drop=FALSE])$val * 
+                          dbeReplic(Rhat,yiHat$ind[2:3,,drop=FALSE])$val)^2, ind = yiHat$ind),c(2,3),sum,na.rm=TRUE)
 first <- tt$val * (N*N/(n*(n-1)))[tt$ind[1,]]
 
 first[is.nan(first)] <- 0 ; first[is.infinite(first)] <- 0                  #not sure about that (variance inter trip, so n=1 ==> first=0 ????)
   
   #second part of the formula
   ##second <- RowSum(s2i*as.vector(Mi*(Mi-mi)/mi),c(2,3))*as.vector(N/n)                     
-tt <- dbeAgg(list(val= s2i$val * dbeReplic(list(val = Mi*(Mi-mi$val)/mi$val, ind = mi$ind), s2i$ind[1:2,])$val , ind = s2i$ind) , 
+tt <- dbeAgg(list(val= s2i$val * dbeReplic(list(val = Mi*(Mi-mi$val)/mi$val, ind = mi$ind), s2i$ind[1:2,,drop=FALSE])$val , ind = s2i$ind) , 
                     2:3, sum, na.rm=TRUE) 
 second <- tt$val * (N/n)[tt$ind[1,]]
 
@@ -1084,18 +1084,18 @@ D <- tapply(ceObject@ce$daysAtSea,list(factor(CEstrat,levels=unique(as.character
 
   ##yikBar <- RowSum(yikjl,c(1,2,4,5))/as.vector(mik) 
 tt <- dbeAgg(yikjl.new,c(1,2,4,5),sum,na.rm=TRUE)
-temp <- dbeReplic(mik,tt$ind[1:3,])$val
+temp <- dbeReplic(mik,tt$ind[1:3,,drop=FALSE])$val
 yikBar <- list(val = tt$val/temp, ind = tt$ind)
 
 yikHat <- list(val = yikBar$val * Mik[names(temp)] ,ind =  yikBar$ind)
 
   ##yiBar <- RowSum(yikHat,c(1,3,4))/as.vector(di)
 tt <- dbeAgg(yikHat,c(1,3,4),sum,na.rm=TRUE)
-temp <- dbeReplic(di,tt$ind[1:2,])$val
+temp <- dbeReplic(di,tt$ind[1:2,,drop=FALSE])$val
 yiBar <- list(val = tt$val/temp, ind = tt$ind)
 
   ##yBarBar <- RowSum(yiBar*as.vector(Di),c(2,3))/as.vector(apply(Di,2,sum,na.rm=TRUE))
-tt <- dbeAgg(list(val = yiBar$val * dbeReplic(list(val = Di, ind = di$ind),yiBar$ind[1:2,])$val , ind = yiBar$ind), 2:3, sum, na.rm=TRUE)
+tt <- dbeAgg(list(val = yiBar$val * dbeReplic(list(val = Di, ind = di$ind),yiBar$ind[1:2,,drop=FALSE])$val , ind = yiBar$ind), 2:3, sum, na.rm=TRUE)
 tt2 <- dbeAgg(list(val = Di, ind = di$ind),2,sum,na.rm=TRUE)
 yBarBar <- tt$val / tt2$val[tt$ind[1,]]
 
@@ -1107,7 +1107,7 @@ yIV <- yBarBar * D[tt$ind[1,]]         #if NAs, should be coming from D (unavail
   ##first <- RowSum((yiBar-rep(yBarBar,each=dim(yiBar)[1]))^2,c(2,3))*
   ##    as.vector(n*((D/apply(Di,2,sum,na.rm=TRUE))^2)*(1-apply(Di,2,sum,na.rm=TRUE)/D)/(n-1))
 yBarBar <- list(val=yBarBar, ind = tt$ind)
-tt <- dbeAgg(list(val = (yiBar$val - dbeReplic(yBarBar,yiBar$ind[2:3,])$val)^2 ,ind = yiBar$ind), c(2,3), sum, na.rm=TRUE)
+tt <- dbeAgg(list(val = (yiBar$val - dbeReplic(yBarBar,yiBar$ind[2:3,,drop=FALSE])$val)^2 ,ind = yiBar$ind), c(2,3), sum, na.rm=TRUE)
 ttt <- (n/(n-1))[names(D)] * ((D / tt2$val[names(D)])^2) * (1-tt2$val[names(D)]/D) 
 first <- tt$val * ttt[tt$ind[1,]]  
 
@@ -1117,8 +1117,8 @@ first[is.nan(first)] <- 0 ; first[is.infinite(first)] <- 0
   #second part of the formula of variance
   ##  second <- RowSum(RowSum(aperm(aperm(yikHat,c(1,3,4,2))-as.vector(yiBar),c(1,4,2,3))^2,c(1,3,4))*
   ##     as.vector(Di*(Di-di)/(di*(di-1))),c(2,3))*as.vector(D/apply(Di,2,sum,na.rm=TRUE))
-tt1 <- dbeAgg(list(val = (yikHat$val - dbeReplic(yiBar,yikHat$ind[c(1,3:4),])$val)^2 ,ind = yikHat$ind), c(1,3,4), sum, na.rm=TRUE)
-ttt1 <- dbeReplic(list(val = Di[names(di$val)]*(Di[names(di$val)]-di$val)/(di$val*(di$val-1)) , ind = di$ind), tt1$ind[1:2,]) 
+tt1 <- dbeAgg(list(val = (yikHat$val - dbeReplic(yiBar,yikHat$ind[c(1,3:4),,drop=FALSE])$val)^2 ,ind = yikHat$ind), c(1,3,4), sum, na.rm=TRUE)
+ttt1 <- dbeReplic(list(val = Di[names(di$val)]*(Di[names(di$val)]-di$val)/(di$val*(di$val-1)) , ind = di$ind), tt1$ind[1:2,,drop=FALSE]) 
 tt <- dbeAgg(list(val = tt1$val * ttt1$val, ind = tt1$ind), 2:3, sum, na.rm=TRUE) 
 second <- tt$val * (D / tt2$val[names(D)])[tt$ind[1,]] 
 
@@ -1129,11 +1129,11 @@ second[is.nan(second)] <- 0 ; second[is.infinite(second)] <- 0
   ##stepp <- RowSum(aperm(aperm(yikjl,c(1,2,4,5,3))-as.vector(yikBar),c(1,2,5,3,4))^2,c(1,2,4,5))*as.vector(Mik*(Mik-mik)/(mik*(mik-1)))
   ##third <- RowSum(RowSum(stepp,c(1,3,4))*as.vector(Di/di),c(2,3))*as.vector(D/apply(Di,2,sum,na.rm=TRUE))                                           
   
-stepp <- dbeAgg(list(val = (yikjl.new$val - dbeReplic(yikBar,yikjl.new$ind[c(1,2,4,5),])$val)^2 ,ind = yikjl.new$ind), c(1,2,4,5), sum, na.rm=TRUE)
-stepp1 <- dbeReplic(list(val = Mik[names(mik$val)]*(Mik[names(mik$val)]-mik$val)/(mik$val*(mik$val-1)), ind = mik$ind), stepp$ind[1:3,])
+stepp <- dbeAgg(list(val = (yikjl.new$val - dbeReplic(yikBar,yikjl.new$ind[c(1,2,4,5),,drop=FALSE])$val)^2 ,ind = yikjl.new$ind), c(1,2,4,5), sum, na.rm=TRUE)
+stepp1 <- dbeReplic(list(val = Mik[names(mik$val)]*(Mik[names(mik$val)]-mik$val)/(mik$val*(mik$val-1)), ind = mik$ind), stepp$ind[1:3,,drop=FALSE])
 third1 <- dbeAgg(list(val = stepp$val * stepp1$val, ind= stepp$ind), c(1,3,4), sum, na.rm=TRUE)   
 third2 <- dbeAgg(
-  list(val = third1$val * dbeReplic(list(val = Di[names(di$val)]/di$val, ind = di$ind) , third1$ind[1:2,])$val, ind = third1$ind),
+  list(val = third1$val * dbeReplic(list(val = Di[names(di$val)]/di$val, ind = di$ind) , third1$ind[1:2,,drop=FALSE])$val, ind = third1$ind),
   2:3, sum, na.rm=TRUE)  
 third <- third2$val * (D / tt2$val[names(D)])[third2$ind[1,]]  
   
