@@ -1,4 +1,4 @@
-import("utils","graphics","lattice","nnet")
+import("utils","graphics","lattice","nnet","tcltk","tcltk2")
 
 importClassesFrom("COSTcore")
 importFrom("COSTcore")
@@ -56,5 +56,6 @@ exportMethods(
   "cstSummary",
   "disInfo",
   "spacePlot",
-  "disCorrPlot"
+  "disCorrPlot",
+  "controlMap"
 )
