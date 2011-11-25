@@ -1218,13 +1218,16 @@ setMethod("totVolume", signature(dbeOutput="dbeOutput",csObject="csDataCons",ceO
                                                                                                                                  csObject,
                                                                                                                                  ceObject,
                                                                                                                                  type="trip",   #or "fo", "fd", "time"
-                                                                                                                                 val="weight",  #or "number" or "nAtLength"
+                                                                                                                                 #val="weight",  #or "number" or "nAtLength"
                                                                                                                                  sampPar=TRUE,
                                                                                                                                  incl.precision=TRUE,    ## added MM 26/07/2010
                                                                                                                                  probs=c(0.025,0.975),
                                                                                                                                  ...){
 if (type=="landings") stop("'landings' type requires a cs, a ce and a cl object!!")
-eval(parse('',text=paste("obj <- procRaise.",type,"(csObject,ceObject,dbeOutput,val=val,sampPar=sampPar)",sep=""))) 
+eval(parse('',text=paste("obj <- procRaise.",type,"(csObject,ceObject,dbeOutput,val=\"weight\",sampPar=sampPar)",sep=""))) 
+eval(parse('',text=paste("obj <- procRaise.",type,"(csObject,ceObject,obj,val=\"number\",sampPar=sampPar)",sep=""))) 
+eval(parse('',text=paste("obj <- procRaise.",type,"(csObject,ceObject,obj,val=\"nAtLength\",sampPar=sampPar)",sep=""))) 
+
 
 if (incl.precision) {  
 
@@ -1254,7 +1257,7 @@ setMethod("totVolume", signature(dbeOutput="dbeOutput",csObject="csDataCons",ceO
                                                                                                                                     ceObject,
                                                                                                                                     clObject,
                                                                                                                                     landSpp=as.character(NA),
-                                                                                                                                    val="weight",  #or "number" or "nAtLength"
+                                                                                                                                    #val="weight",  #or "number" or "nAtLength"
                                                                                                                                     sampPar=TRUE,
                                                                                                                                     incl.precision=TRUE,    ## added MM 26/07/2010
                                                                                                                                     probs=c(0.025,0.975),
@@ -1262,7 +1265,9 @@ setMethod("totVolume", signature(dbeOutput="dbeOutput",csObject="csDataCons",ceO
 para <- match.call()
 if (!is.null(para$type)) {
   if (para$type!="landings") warning("CL object as input!! Raising is made by total landings!!")} 
-obj <- procRaise.landings(csObject,ceObject,clObject,dbeOutput,landSpp=landSpp,val=val,sampPar=sampPar)  
+obj <- procRaise.landings(csObject,ceObject,clObject,dbeOutput,landSpp=landSpp,val="weight",sampPar=sampPar)  
+obj <- procRaise.landings(csObject,ceObject,clObject,obj,landSpp=landSpp,val="number",sampPar=sampPar)  
+obj <- procRaise.landings(csObject,ceObject,clObject,obj,landSpp=landSpp,val="nAtLength",sampPar=sampPar)  
 
 
 if (incl.precision) {  

@@ -35,7 +35,7 @@
 
 
 
-Raise_Age_Boot <- function(csObject,dbeOutput,type="p",sex=as.character(NA), bootMethod = "samples"){
+Raise_Age_Boot <- function(csObject,dbeOutput,type="p",sex=as.character(NA), bootMethod = "samples", fillGaps=FALSE, p=10, trace=FALSE){
 #type= "fixed" or "prop" or "ages"
 #bootMethod="samples" or "otoliths"
 
@@ -131,6 +131,13 @@ N <- tapply(Ldf$value,list(length=Ldf$length,time=Ldf$time,space=Ldf$space,techn
 
 if (bootMethod == "samples") {
   ca = merge(data.frame(Unit = bootAgeid[,i]), CA.orig, by="Unit")
+  
+  if (fillGaps) {                                                                                                                  #
+    cs_cons_temp <- new("csDataCons",tr=csObject@tr,hh=csObject@hh,sl=csObject@sl,hl=csObject@hl,ca=ca[,-match("Unit",names(ca))]) # MM 18/11/2011
+    cs_cons_temp <- fillALKmult(cs_cons_temp,spp=sp,p=p,trace=trace)                                                               #
+    ca <- ca(cs_cons_temp)                                                                                                         #
+  }                                                                                                                                #
+  
   ALK <- tapply(ca$age,list(length=factor(ca$lenCls,levels=dimnames(N)[[1]]),age=ca$age,
                           time=factor(ca$time,levels=dimnames(N)[[2]]),space=factor(ca$space,levels=dimnames(N)[[3]])),length)
   ALK[is.na(ALK)] <- 0
@@ -256,6 +263,9 @@ setGeneric("RaiseAgeBoot", function(dbeOutput,
                                  bootMethod = "samples",
                                  incl.precision=TRUE,
                                  probs=c(0.025,0.975),
+                                 fillGaps=FALSE,
+                                 p=10,
+                                 trace=FALSE,
                                  ...){
 	standardGeneric("RaiseAgeBoot")}
 )
@@ -268,11 +278,14 @@ setMethod("RaiseAgeBoot", signature(dbeOutput="dbeOutput",csObject="csDataCons")
                                                                                        bootMethod = "samples",
                                                                                        incl.precision=TRUE,
                                                                                        probs=c(0.025,0.975),
+                                                                                       fillGaps=FALSE,
+                                                                                       p=10,
+                                                                                       trace=FALSE,
                                                                                        ...){
 
 if (incl.precision) {                                                                                             
                                                                                                      
-  obj <- Raise_Age_Boot(csObject=csObject,dbeOutput=dbeOutput,type=type,sex=sex, bootMethod=bootMethod)
+  obj <- Raise_Age_Boot(csObject=csObject,dbeOutput=dbeOutput,type=type,sex=sex, bootMethod=bootMethod, fillGaps=fillGaps, p=p, trace=trace)
   
   if (!all(is.na(obj@ageStruc$rep))) {
     obj <- dbeCalc(obj,type="CV",vrbl="a",replicates=TRUE,update=TRUE)
@@ -283,7 +296,7 @@ if (incl.precision) {
 
 } else {
 
-  Raise_Age_Boot(csObject=csObject,dbeOutput=dbeOutput,type=type,sex=sex, bootMethod=bootMethod)
+  Raise_Age_Boot(csObject=csObject,dbeOutput=dbeOutput,type=type,sex=sex, bootMethod=bootMethod, fillGaps=fillGaps, p=p, trace=trace)
 
 }
 })
