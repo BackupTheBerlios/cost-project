@@ -3,9 +3,9 @@
 \alias{totVolume,dbeOutput,csDataCons,ceDataCons,missing-method}
 \alias{totVolume,dbeOutput,csDataCons,ceDataCons,clDataCons-method}
 \docType{methods}
-\title{Estimation of total volume of discards or/and landings (weight, number or number-at-length)}
+\title{Estimation of total volume of discards or/and landings (weight, number & number-at-length)}
 \description{
-Generic function to estimate total volume of discards or/and landings (weight, number or number-at-length) based on various raising methods.
+Generic function to estimate total volume of discards or/and landings (weight, number & number-at-length) based on various raising methods.
 }
 
 \usage{
@@ -23,7 +23,7 @@ totVolume(dbeOutput,csObject,ceObject,clObject,\dots)
 \code{"fd"} for raising by fishing days,\code{"landings"} for ratio-to-total landings raising method, and \code{"time"} for ratio-to-fishing duration 
 raising method. \cr
   \bold{landSpp} \tab Character vector describing the species considered in the 'volume of landings' variable if chosen raising method is ratio-to-landings (see 'clObject' description).\cr 
-  \bold{val} \tab Estimated parameter. To be chosen between \code{"weight"} (default value), \code{"number"} and \code{"nAtLength"}.\cr
+%  \bold{val} \tab Estimated parameter. To be chosen between \code{"weight"} (default value), \code{"number"} and \code{"nAtLength"}.\cr
   \bold{sampPar} \tab Logical specifying if given species is considered to be automatically sampled during the sampling process (default value is \code{TRUE}).\cr 
   \bold{incl.precision} \tab Logical. If TRUE, 'dbeCalc' method function is internally called to compute CVs and CIs.\cr
   \bold{probs} \tab Numeric vector of probabilities with values in [0,1]. Defines CI bounds (relevant only if \code{incl.precision=TRUE}). See \emph{dbeCalc}.\cr

@@ -9,7 +9,7 @@ This method requires RaiseLgthBoot to have been run to estimate the length struc
 }
 
 \usage{
-RaiseAgeBoot(dbeOutput, csObject, type="p", sex=as.character(NA), bootMethod = "samples", incl.precision=TRUE, probs=c(0.025,0.975), \dots)
+RaiseAgeBoot(dbeOutput, csObject, type="p", sex=as.character(NA), bootMethod = "samples", incl.precision=TRUE, probs=c(0.025,0.975), fillGaps=FALSE, p=10, trace=FALSE, \dots)
 }
                                           
 \arguments{
@@ -20,6 +20,9 @@ RaiseAgeBoot(dbeOutput, csObject, type="p", sex=as.character(NA), bootMethod = "
   \item{bootMethod}{"samples" (the default) or "otoliths"}
   \item{incl.precision}{Logical. If TRUE, 'dbeCalc' method function is internally called to compute CVs and CIs.}
   \item{probs}{Numeric vector of probabilities with values in [0,1]. Defines CI bounds (relevant only if \code{incl.precision=TRUE}). See \emph{dbeCalc}.}
+  \item{fillGaps}{Logical. Apply 'fillALKmult' method during bootstrap process (only if \code{bootMethod="samples"}). }
+  \item{p}{Numeric. p-parameter used in 'fillALKmult' method if \code{fillGaps=TRUE}. See \emph{fillALKmult} for further details. }
+  \item{trace}{Logical. Switch for tracing 'fillALKmult' optimization process.}
   \item{\dots}{Further arguments}
 }
 
@@ -40,7 +43,7 @@ ageStruc\$rep with bootstrap replicates for numbers-at-age, iter=0 is assigned t
 
 
 \author{David Maxwell & Mathieu Merzereaud}
-\seealso{\code{\link{dbeOutput}}, \code{\link{dbeObject}}, \code{\link{dbeCalc}}, \code{\link[COSTcore]{csDataCons}}, \code{\link[COSTcore]{clDataCons}}, \code{\link{RaiseAge}}, \code{\link{RaiseLgthBoot}} }
+\seealso{\code{\link{dbeOutput}}, \code{\link{dbeObject}}, \code{\link{dbeCalc}}, \code{\link[COSTcore]{csDataCons}}, \code{\link[COSTcore]{clDataCons}}, \code{\link{RaiseAge}}, \code{\link{RaiseLgthBoot}}, \code{\link{fillALKmult}} }
 
 
 \examples{

@@ -7,7 +7,7 @@
 }
 
 \usage{           
-fillALKmult(object,spp,p=10,\dots)
+fillALKmult(object,spp,p=10,trace=TRUE,\dots)
 }
 
 
@@ -15,6 +15,7 @@ fillALKmult(object,spp,p=10,\dots)
   \item{object}{A \emph{csDataCons} object.}
   \item{spp}{Character. The species for which filling process is wished (only one species).}
   \item{p}{Number of (virtual) individuals to be added for each empty length class.}
+  \item{trace}{Logical. Switch for tracing optimization.}
   \item{...}{Further arguments}
 } 
   
