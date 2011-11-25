@@ -1,6 +1,7 @@
 setGeneric("fillALKmult", function(object,
                                    spp,
                                    p=10,          #number of inviduals to include for filling the missing length class
+                                   trace=TRUE,
                                    ...){
 	standardGeneric("fillALKmult")}
 )
@@ -8,6 +9,7 @@ setGeneric("fillALKmult", function(object,
 setMethod("fillALKmult", signature(object="csDataCons"),function(object,
                                                                  spp,
                                                                  p=10,
+                                                                 trace=TRUE,
                                                                  ...){
 
 require(nnet)
@@ -23,14 +25,13 @@ if (nrow(missingLC)>0) {
 strat <- unique(missingLC[,c("time","space")])
 
 for (i in 1:nrow(strat)) {
-  
-  print("Stratum :")
-  print(strat[i,,drop=TRUE])
+  if (trace) print("Stratum :")
+  if (trace) print(strat[i,,drop=TRUE])
   CAsub <- merge(strat[i,,drop=FALSE],CA)
   missSub <- merge(strat[i,,drop=FALSE],missingLC )
-  if (nrow(CAsub)>1) {                                                          #MM modif 15/03/2011
+  if (nrow(CAsub)>1 & length(unique(CAsub$age))>2) {                                                          #MM modif 15/03/2011
     #multinomial model is computed on this dataset
-    mult <- multinom(age~lenCls,data=CAsub)
+    mult <- multinom(age~lenCls,data=CAsub,trace=trace)
     mlc <- sort(missSub$lenCls)
   
     nbAtAge <- round(p*predict(mult,data.frame(lenCls=mlc),type="probs"))
