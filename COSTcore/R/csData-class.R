@@ -910,7 +910,7 @@ setMethod("subset", signature(x="csData"), function(x,subset,..., table="tr",lin
 subset <- substitute(subset)
 tab <- eval(parse('',text=paste("x@",table,sep="")))
 x <- subsetCOST(x,subset=eval(subset,tab),table=table)
-if (link) subsetCOST(x,subset=eval(subset,tab),table="ca") else x
+if (link) subsetCOST(x,subset=eval(subset,x@ca),table="ca") else x        #modif 9/05/2011
 })
 
 
