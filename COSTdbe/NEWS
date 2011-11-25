@@ -82,5 +82,13 @@ NEW FEATURES
 DOCUMENTATION
     o 'dbeOutput-class.rd' help file updated  
 BUG FIXES		
+    
+    CHANGES IN COSTdbe VERSION 1.4-0
 
+NEW FEATURES
+    o 'fillALKmult' process integrated in 'RaiseAgeBoot' method
+    o 'trace' option added in 'fillALKmult' method
+    o full process applied in 'totVolume' (val="weight", "number" & "nAtLength") 
+DOCUMENTATION
+BUG FIXES		
 
