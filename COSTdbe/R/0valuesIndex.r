@@ -44,21 +44,21 @@ if (fraction=="DIS") frac <- "Dis" else frac <- "Lan"
     # A haul is considered as sampled (weights) for a given species and a given fraction if :
     #   1) (catchReg=="All") OR (catchReg==frac)
     #   AND
-    #   2) (sppReg=="All") OR (sppReg=="Par" AND sampPar=TRUE)
+    #   2) (sppReg=="All") OR (sppReg=="Par" AND (sampPar=TRUE  OR  species recorded in SL table for 'frac' fraction) )
     #---------------------------------------------------------------------------
 
 #hh-index for sampled(1/0)/non sampled(NA) haul (weights) will be the combination of 2 indexes
 indexCat <- indexSpp <- rep(0,nrow(x@hh))
 #indexCat==1 if catReg=="All" or frac
 indexCat[x@hh$catReg%in%c("All",frac)] <- 1
-#indexSpp==1 if sppReg=="All" or if sppReg=="Par" & sampPar==TRUE
+#indexSpp==1 if sppReg=="All" or if sppReg=="Par" & (sampPar==TRUE or species recorded in SL table for 'frac' fraction)
 restrSL <- x@sl[x@sl$spp%in%species & extCatchCat(x@sl$sort)%in%fraction,1:3]
 if (nrow(restrSL)>0) {#recorded information in SL                                ### added 12/06/2009
-restrSL$ind <- 1 ; indSpp <- merge(x@hh,unique(restrSL[,c(1:2,4)]),all.x=TRUE)$ind     #indSpp <-> index of hauls with related information in sl for given species and fraction
+restrSL$ind <- 1 ; indSpp <- merge(x@hh,unique(restrSL[,c(1:2,4)]),all.x=TRUE,sort=FALSE)$ind     #indSpp <-> index of hauls with related information in sl for given species and fraction
 } else {                                                                         ###
 indSpp <- rep(NA,nrow(x@hh))                                                     ###
 }                                                                                ###
-indexSpp[x@hh$sppReg=="All" | (x@hh$sppReg=="Par" & sampPar)] <- 1
+indexSpp[x@hh$sppReg=="All" | (x@hh$sppReg=="Par" & (sampPar | (!is.na(indSpp)) ))] <- 1      ##corr MM 27/02/2012
 #so, Windex = indexCat*indexSpp (sampled haul index)
 Windex <- indexCat*indexSpp
 indZero <- (Windex==1) & (is.na(indSpp))    #indZero : index of sampled hauls with 0 values 
@@ -78,7 +78,7 @@ if (nrow(restrHL)>0) {#recorded information in HL                               
 restrHL$Ind <- 1 ; indMeas <- merge(unique(restrSL),restrHL,all.x=TRUE) ; indMeas$Ind[is.na(indMeas$Ind)] <- 0
 #match index with HH
 indMeas <- with(indMeas,aggregate(list(Ind=Ind),list(PSUid=PSUid,SSUid=SSUid),max))       ##added MM 13/04/2011  FO sampled for at least one TTSUid
-indMs <- merge(x@hh,indMeas[indMeas$Ind==0,c("PSUid","SSUid","Ind")],all.x=TRUE)$Ind
+indMs <- merge(x@hh,indMeas[indMeas$Ind==0,c("PSUid","SSUid","Ind")],all.x=TRUE,sort=FALSE)$Ind
 #NAs in 'indMS' means that if info is in SL, then it is in HL
 #so, Lindex is...
 Lindex <- Windex ; Lindex[!is.na(indMs)] <- NA
