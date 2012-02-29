@@ -43,8 +43,12 @@ sapply(x, function(x) substring(as.character(x),1,3))
 
 # spdAgreg
 spdAgreg <- function(X,BY,FUN,...){
-FactCar <- sapply(BY,as.character)
-val <- apply(FactCar,1,function(x) paste(x,collapse=":-:"))
+if (length(BY[[1]])>1) {
+  FactCar <- sapply(BY,as.character)
+  val <- apply(FactCar,1,function(x) paste(x,collapse=":-:"))
+} else {
+  val <- paste(BY,collapse=":-:")
+}
 valAg <- aggregate(X,list(val=val),FUN,...)
 tab <- as.data.frame(matrix(unlist(strsplit(as.character(valAg$val),":-:")),ncol=length(BY),byrow=TRUE))
 tab.ag <- data.frame(tab,valAg[,-1])
