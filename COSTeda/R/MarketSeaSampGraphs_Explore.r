@@ -116,8 +116,9 @@ indexCat <- indexSpp <- rep(0,nrow(op.sub))
 #indexCat==1 if catReg=="All" or frac
 indexCat[op.sub$catReg%in%c("All",fract)] <- 1
 #indexSpp==1 if sppReg=="All" or if sppReg=="Par" & sampPar==TRUE
-capt.sub$ind <- 1 ; indSpp <- merge(op.sub,unique(capt.sub[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","ind")]),all.x=TRUE)$ind     #indSpp <-> index of hauls with related information in sl for given species and fraction
-indexSpp[op.sub$sppReg=="All" | (op.sub$sppReg=="Par" & sampPar)] <- 1
+capt.sub$ind <- 1 ; indSpp <- merge(op.sub,unique(capt.sub[,c("sampType","landCtry","vslFlgCtry","year","proj","trpCode","staNum","ind")]),all.x=TRUE,sort=FALSE)$ind     #indSpp <-> index of hauls with related information in sl for given species and fraction
+#indexSpp[op.sub$sppReg=="All" | (op.sub$sppReg=="Par" & sampPar)] <- 1
+indexSpp[op.sub$sppReg=="All" | (op.sub$sppReg=="Par" & (sampPar | (!is.na(indSpp)) ))] <- 1
 #so, Windex = indexCat*indexSpp (sampled haul index)
 Windex <- indexCat*indexSpp
 indZero <- (Windex==1) & (is.na(indSpp))    #indZero : index of sampled hauls with 0 values 
