@@ -1,9 +1,9 @@
 Package: COSTdata
 Type: Package
 Title: COST data sets
-Version: 1.2
-Date: 1 April 2009
+Version: 1.3
+Date: 2012
 Author: Alastair Pout
 Maintainer: <a.pout@marlab.ac.uk>
 Description: Collection of data sets for COSTcore and COSTeda 
-License: GLP version 2 or newer
+License: GPL (>= 2)
