@@ -1,9 +1,18 @@
+		CHANGES IN COSTcore VERSION 1.4-0
+
+NEW FEATURES
+DOCUMENTATION
+BUG FIXES		
+    o bug in 'spdAgreg' when input table is only one row : fixed
+    o .rda files not allowed anymore : conversion to .RData
+
 		CHANGES IN COSTcore VERSION 1.3-9
 
 NEW FEATURES
 DOCUMENTATION
 BUG FIXES
     o subset method applied to csData object : 'link' parameter activated 		
+    o bug in 'spdAgreg' when input table is only one row : fixed in COSTcore
 
 		CHANGES IN COSTcore VERSION 1.3-8
 
