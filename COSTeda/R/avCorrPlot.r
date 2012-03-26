@@ -51,7 +51,7 @@ indexCat[x@hh$catReg%in%c("All",frac)] <- 1
 #indexSpp==1 if sppReg=="All" or if sppReg=="Par" & (sampPar==TRUE or species recorded in SL table for 'frac' fraction)
 restrSL <- x@sl[x@sl$spp%in%species & extCatchCat(x@sl$sort)%in%fraction,1:3]
 if (nrow(restrSL)>0) {#recorded information in SL                                ### added 12/06/2009
-restrSL$ind <- 1 ; indSpp <- merge(x@hh,unique(restrSL[,c(1:2,4)]),all.x=TRUE,sort=FALSE)$ind     #indSpp <-> index of hauls with related information in sl for given species and fraction
+restrSL$ind <- 1 ; indSpp <- merge(cbind(x@hh,ord=1:nrow(x@hh)),unique(restrSL[,c(1:2,4)]),all.x=TRUE,sort=FALSE) ; indSpp <- indSpp$ind[order(indSpp$ord)]     #indSpp <-> index of hauls with related information in sl for given species and fraction
 } else {                                                                         ###
 indSpp <- rep(NA,nrow(x@hh))                                                     ###
 }                                                                                ###
@@ -75,7 +75,7 @@ if (nrow(restrHL)>0) {#recorded information in HL                               
 restrHL$Ind <- 1 ; indMeas <- merge(unique(restrSL),restrHL,all.x=TRUE) ; indMeas$Ind[is.na(indMeas$Ind)] <- 0
 #match index with HH
 indMeas <- with(indMeas,aggregate(list(Ind=Ind),list(PSUid=PSUid,SSUid=SSUid),max))       ##added MM 13/04/2011  FO sampled for at least one TTSUid
-indMs <- merge(x@hh,indMeas[indMeas$Ind==0,c("PSUid","SSUid","Ind")],all.x=TRUE,sort=FALSE)$Ind
+indMs <- merge(cbind(x@hh,ord=1:nrow(x@hh)),indMeas[indMeas$Ind==0,c("PSUid","SSUid","Ind")],all.x=TRUE,sort=FALSE) ; indMs <- indMs$Ind[order(indMs$ord)]
 #NAs in 'indMS' means that if info is in SL, then it is in HL
 #so, Lindex is...
 Lindex <- Windex ; Lindex[!is.na(indMs)] <- NA
